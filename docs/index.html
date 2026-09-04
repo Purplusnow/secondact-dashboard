@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SECONDACT BOARD — 마케팅비 · 매출</title>
+<meta name="description" content="일별 광고매출·인앱매출·마케팅비를 누적으로 추적하는 대시보드.">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">▚</span>
+    <span class="brand-name">SECOND<em>ACT</em></span>
+    <span class="brand-sub" id="brand-sub">마케팅비 × 매출</span>
+  </div>
+  <div class="status">
+    <span class="updated" id="updated">—</span>
+  </div>
+</header>
+
+<div class="demo-banner" id="demo-banner" hidden>
+  데모 데이터입니다 — 실제 기록이 아닙니다. <a href="./">실제 데이터 보기</a>
+</div>
+
+<main class="wrap">
+
+  <p class="fx-note" id="fx-note" hidden></p>
+
+  <nav class="tabs" id="tabs" role="tablist">
+    <button class="tab" data-days="7"   role="tab">7일</button>
+    <button class="tab" data-days="30"  role="tab">30일</button>
+    <button class="tab" data-days="90"  role="tab">90일</button>
+    <button class="tab is-on" data-days="0" role="tab">전체</button>
+  </nav>
+
+  <section class="empty" id="empty" hidden>
+    <h2>아직 기록이 없습니다</h2>
+    <p><code>docs/data/daily.json</code> 의 <code>daily</code> 배열에 하루 한 줄씩 넣으면 채워집니다.</p>
+<pre>{ "date": "2026-09-04", "admob": 4200, "iap": 11000, "ads": 30000 }</pre>
+    <p>구글플레이에 찍힌 각국 통화를 그대로 넣어도 됩니다 — 그날 환율로 원화 환산합니다.</p>
+<pre>{ "date": "2026-09-04",
+  "iap": { "KRW": 11000, "USD": 8.97, "JPY": 600 },
+  "admob": 4200, "ads": 30000 }</pre>
+    <p>터미널이 편하면:</p>
+<pre>python3 tools/add.py 2026-09-04 --admob 4200 --ads 30000 \
+    --iap KRW:11000 USD:8.97 JPY:600</pre>
+    <p class="empty-cta">
+      화면이 어떻게 보이는지 먼저 확인하려면 <a href="?demo=1">데모 데이터로 보기</a>.
+    </p>
+  </section>
+
+  <div id="content" hidden>
+
+    <section class="kpis" id="kpis"></section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>일별</h2>
+        <p class="card-sub">위쪽이 그날 들어온 돈(광고매출 + 인앱매출), 아래쪽이 그날 나간 마케팅비. 흰 선은 그날의 손익.</p>
+      </div>
+      <div class="chart" id="chart-daily"></div>
+      <div class="legend" id="legend-daily"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>누적</h2>
+        <p class="card-sub">첫 기록일부터 계속 더한 값. 굵은 선(누적 손익)이 0을 넘은 날이 마케팅비를 다 회수한 날입니다.</p>
+      </div>
+      <div class="chart" id="chart-cum"></div>
+      <div class="legend" id="legend-cum"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>원장</h2>
+        <p class="card-sub">입력한 값 그대로와, 거기서 더해진 값.</p>
+      </div>
+      <div class="table-scroll">
+        <table class="ledger" id="ledger"></table>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <p>
+    세 숫자는 손으로 입력합니다. 각국 통화로 넣으면 <b>그날의 ECB 고시환율</b>로 원화 환산하고
+    (주말·공휴일은 직전 영업일 환율), <b id="foot-fee-target">인앱매출</b>에서 스토어 수수료
+    <b id="foot-fee">15%</b>를 뗀 값을 씁니다. 원장에서 <i class="fx-mark">*</i>가 붙은 칸은 환산된 값이며,
+    올려두면 원래 통화와 적용 환율이 보입니다. 수수료율은 <code>config.json</code>에서 바꿉니다.
+  </p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
