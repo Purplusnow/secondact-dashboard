@@ -431,7 +431,7 @@ function drawDaily(rows) {
   document.getElementById('daily-sub').textContent = spec.sub;
   const shown = [...spec.up, ...spec.down];
 
-  const H = 320, ML = 62, MR = 14, MT = 18, MB = 30;
+  const H = 344, ML = 62, MR = 14, MT = 26, MB = 46;   /* 위아래 라벨 자리 */
   const { svg, tip, w } = frame(host, H);
   const iw = w - ML - MR, ih = H - MT - MB;
 
@@ -482,6 +482,27 @@ function drawDaily(rows) {
   };
 
   rows.forEach((r, i) => { stack(r, i, spec.up, +1); stack(r, i, spec.down, -1); });
+
+  /* 막대 끝 숫자. 조각마다 붙이면 안쪽 조각엔 붙일 자리가 없으므로 기둥 합계만 캡에 얹는다.
+     좁아서 겹칠 것 같으면 자르지 않고 건너뛰되, 몇 칸마다 찍었는지 부제에 밝힌다. */
+  const textW = t => [...t].reduce((a, c) => a + (c.charCodeAt(0) > 127 ? 10 : 5.6), 0);
+  const caps = rows.map(r => [total(r, spec.up), total(r, spec.down)]);
+  const widest = Math.max(6, ...caps.flat().filter(v => v > 0).map(v => textW(short(v))));
+  const step = Math.max(1, Math.ceil((widest + 8) / band));
+
+  rows.forEach((r, i) => {
+    if (i % step) return;
+    const [up, down] = caps[i];
+    if (up > 0) svg.appendChild(el('text', { class: 'bar-label', x: x(i), y: zeroY - sc(up) - 7 },
+      short(up)));
+    if (down > 0) svg.appendChild(el('text', { class: 'bar-label', x: x(i), y: zeroY + sc(down) + 14 },
+      short(down)));
+  });
+
+  if (step > 1) {
+    const sub = document.getElementById('daily-sub');
+    sub.textContent += ` 막대가 좁아 숫자는 ${step}칸마다 표시합니다.`;
+  }
 
   svg.appendChild(el('line', { class: 'g-zero', x1: ML, x2: w - MR, y1: zeroY, y2: zeroY }));
 

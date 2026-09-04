@@ -123,6 +123,12 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .g-label, .x-label { fill: var(--ink-3); font-family: var(--sans); font-size: 11px;
                      font-variant-numeric: tabular-nums; }
 .x-label { text-anchor: middle; }
+/* 막대 끝 숫자 — 계열색이 아니라 잉크 토큰을 입는다 */
+.bar-label { fill: var(--ink-2); font-family: var(--sans); font-size: 10.5px;
+             font-variant-numeric: tabular-nums; text-anchor: middle;
+             /* 손익 선이 숫자를 가로지르는 자리가 있어 표면색 테두리를 뒤에 깐다 */
+             paint-order: stroke; stroke: var(--surface); stroke-width: 3px;
+             stroke-linejoin: round; }
 .band { fill: var(--ink); opacity: 0; transition: opacity .1s; }
 .band.is-on { opacity: .045; }
 
