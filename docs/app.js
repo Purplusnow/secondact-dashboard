@@ -19,7 +19,7 @@ const INK = '#0b0b0b';
 const SURFACE = '#fcfcfb';
 const GAP = 2;            /* 마크 사이를 가르는 건 선이 아니라 표면색 2px 틈이다 */
 
-const state = { cfg: null, rows: [], days: 0, fx: null };
+const state = { cfg: null, rows: [], days: 0, fx: null, cumView: 'both' };
 
 /* ── 포맷 ────────────────────────────────────────── */
 const won = n => Math.round(n).toLocaleString('ko-KR') + '원';
@@ -465,16 +465,46 @@ function drawDaily(rows) {
      { color: INK, name: '그날 손익', line: true }]);
 }
 
-/* ── 누적: 세 계열 + 누적 손익 ──────────────────── */
+/* ── 누적 ────────────────────────────────────────
+ *
+ * 마케팅비가 매출보다 한 자릿수 크면 한 축에 겹쳐 그릴 때 매출 두 선이 바닥에 붙어
+ * 읽히지 않는다. 이중 축은 임의의 정렬로 없는 상관을 만들어내니 쓰지 않고,
+ * 대신 보고 싶은 쪽만 남겨 축을 다시 잡는다. 계열색은 그대로 둔다 —
+ * 남은 계열을 다시 칠하면 "인앱은 초록"을 학습한 눈이 속는다.
+ */
+function cumSpec(rows) {
+  const { series } = state.cfg;
+  const rev = series.filter(s => s.type !== 'spend');
+  const spd = series.filter(s => s.type === 'spend');
+  const sumOf = list => r => list.reduce((a, s) => a + (r.cum[s.key] || 0), 0);
+
+  if (state.cumView === 'rev') return {
+    picked: rev,
+    agg: { name: '누적 매출 합계', pick: sumOf(rev) },
+    sub: '광고매출과 인앱매출만. 마케팅비 축에 눌리지 않아 두 매출의 기울기가 보입니다.',
+  };
+  if (state.cumView === 'spend') return {
+    picked: spd, agg: null,
+    sub: '마케팅비만. 지금까지 태운 총액이 어떤 속도로 늘고 있는지 봅니다.',
+  };
+  return {
+    picked: series,
+    agg: { name: '누적 손익', pick: r => r.cumProfit },
+    sub: '첫 기록일부터 계속 더한 값. 검은 선(누적 손익)이 0을 넘은 날이 마케팅비를 다 회수한 날입니다.',
+  };
+}
+
 function drawCum(rows) {
   const host = document.getElementById('chart-cum');
-  const { series } = state.cfg;
+  const { picked, agg, sub } = cumSpec(rows);
+  document.getElementById('cum-sub').textContent = sub;
 
   const H = 300, ML = 62, MR = 14, MT = 18, MB = 30;
   const { svg, tip, w } = frame(host, H);
   const iw = w - ML - MR, ih = H - MT - MB;
 
-  const all = rows.flatMap(r => [...series.map(s => r.cum[s.key] || 0), r.cumProfit]);
+  const all = rows.flatMap(r => [...picked.map(s => r.cum[s.key] || 0),
+                                 ...(agg ? [agg.pick(r)] : [])]);
   const lo = Math.min(0, ...all), hi = Math.max(1, ...all);
   const pad = (hi - lo) * 0.08;
   const y = v => MT + ih * (1 - (v - (lo - pad)) / ((hi + pad) - (lo - pad)));
@@ -492,8 +522,8 @@ function drawCum(rows) {
     stroke: 'var(--axis)', 'stroke-width': 1, opacity: 0 });
   svg.appendChild(cross);
 
-  const lines = [...series.map(s => ({ color: s.color, pick: r => r.cum[s.key] || 0 })),
-                 { color: INK, pick: r => r.cumProfit, width: 2.5 }];
+  const lines = [...picked.map(s => ({ color: s.color, pick: r => r.cum[s.key] || 0 })),
+                 ...(agg ? [{ color: INK, pick: agg.pick, width: 2.5 }] : [])];
 
   lines.forEach(L => {
     svg.appendChild(el('path', {
@@ -529,14 +559,14 @@ function drawCum(rows) {
     cross.setAttribute('opacity', 0);
     dots.forEach(({ c }) => c.setAttribute('opacity', 0));
   }, r => [
-    ...series.map(s => ({ color: s.color, name: '누적 ' + s.label, value: won(r.cum[s.key] || 0) })),
-    { sep: true },
-    { color: INK, name: '누적 손익', value: won(r.cumProfit) },
+    ...picked.map(s => ({ color: s.color, name: '누적 ' + s.label, value: won(r.cum[s.key] || 0) })),
+    ...(agg ? [{ sep: true }, { color: INK, name: agg.name, value: won(agg.pick(r)) }] : []),
   ]);
 
-  legend(document.getElementById('legend-cum'),
-    [...series.map(s => ({ color: s.color, name: '누적 ' + s.label, line: true })),
-     { color: INK, name: '누적 손익', line: true }]);
+  /* 계열이 하나뿐이면 범례는 제목이 이미 한 말을 되풀이할 뿐이라 달지 않는다 */
+  const keys = [...picked.map(s => ({ color: s.color, name: '누적 ' + s.label, line: true })),
+                ...(agg ? [{ color: INK, name: agg.name, line: true }] : [])];
+  legend(document.getElementById('legend-cum'), keys.length > 1 ? keys : []);
 }
 
 /* 포인터는 날짜만 맞히면 된다 — 가장 가까운 열을 잡는다 */
@@ -648,6 +678,15 @@ document.querySelector('.toolbar').addEventListener('click', e => {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('is-on', t === b));
   state.days = +b.dataset.days;
   render();
+});
+
+document.getElementById('cum-view').addEventListener('click', e => {
+  const b = e.target.closest('.seg-btn');
+  if (!b) return;
+  document.querySelectorAll('#cum-view .seg-btn')
+    .forEach(t => t.classList.toggle('is-on', t === b));
+  state.cumView = b.dataset.view;
+  if (visible().length) drawCum(visible());
 });
 
 let rt;

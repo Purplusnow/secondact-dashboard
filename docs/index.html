@@ -68,9 +68,16 @@
     </section>
 
     <section class="card">
-      <div class="card-head">
-        <h2>누적</h2>
-        <p class="card-sub">첫 기록일부터 계속 더한 값. 검은 선(누적 손익)이 0을 넘은 날이 마케팅비를 다 회수한 날입니다.</p>
+      <div class="card-head card-head-row">
+        <div>
+          <h2>누적</h2>
+          <p class="card-sub" id="cum-sub"></p>
+        </div>
+        <div class="seg" id="cum-view" role="group" aria-label="누적 차트 표시 범위">
+          <button class="seg-btn is-on" data-view="both"  type="button">둘 다</button>
+          <button class="seg-btn"       data-view="rev"   type="button">매출만</button>
+          <button class="seg-btn"       data-view="spend" type="button">비용만</button>
+        </div>
       </div>
       <div class="chart" id="chart-cum"></div>
       <div class="legend" id="legend-cum"></div>
