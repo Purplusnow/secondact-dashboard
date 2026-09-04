@@ -7,7 +7,7 @@
 <meta name="description" content="일별 광고매출·인앱매출·마케팅비를 누적으로 추적하는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=0d0d89b2">
+<link rel="stylesheet" href="style.css?v=72302d02">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -59,9 +59,16 @@
     <section class="tiles" id="tiles"></section>
 
     <section class="card">
-      <div class="card-head">
-        <h2>일별</h2>
-        <p class="card-sub">0선 위가 그날 들어온 돈, 아래가 그날 나간 마케팅비. 검은 선은 그날의 손익.</p>
+      <div class="card-head card-head-row">
+        <div>
+          <h2>일별</h2>
+          <p class="card-sub" id="daily-sub"></p>
+        </div>
+        <div class="seg" id="daily-view" role="group" aria-label="일별 차트 표시 범위">
+          <button class="seg-btn is-on" data-view="both"  type="button">둘 다</button>
+          <button class="seg-btn"       data-view="rev"   type="button">매출만</button>
+          <button class="seg-btn"       data-view="spend" type="button">비용만</button>
+        </div>
       </div>
       <div class="chart" id="chart-daily"></div>
       <div class="legend" id="legend-daily"></div>
@@ -105,6 +112,6 @@
   </p>
 </footer>
 
-<script src="app.js?v=2c1d1370"></script>
+<script src="app.js?v=130e90be"></script>
 </body>
 </html>

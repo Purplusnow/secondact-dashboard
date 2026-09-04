@@ -19,7 +19,8 @@ const INK = '#0b0b0b';
 const SURFACE = '#fcfcfb';
 const GAP = 2;            /* 마크 사이를 가르는 건 선이 아니라 표면색 2px 틈이다 */
 
-const state = { cfg: null, rows: [], days: 0, fx: null, cumView: 'both' };
+const state = { cfg: null, rows: [], days: 0, fx: null,
+                dailyView: 'both', cumView: 'both' };
 
 /* ── 포맷 ────────────────────────────────────────── */
 const won = n => Math.round(n).toLocaleString('ko-KR') + '원';
@@ -387,36 +388,58 @@ function fxText(r, key) {
      p.src === 'unknown' ? ' (환율 없음)' : '')).join(' · ');
 }
 
-function dayTipRows(r) {
-  const out = state.cfg.series.map(s => ({
-    color: s.color, name: s.label, value: won(r.val[s.key] || 0), fx: fxText(r, s.key),
-  }));
-  out.push({ sep: true });
-  out.push({ color: INK, name: '손익', value: won(r.profit) });
-  return out;
-}
-
-/* ── 일별: 0선 위 매출, 아래 마케팅비 ───────────── */
-function drawDaily(rows) {
-  const host = document.getElementById('chart-daily');
+/* ── 일별 ────────────────────────────────────────
+ *
+ * '둘 다'는 0선을 가운데 두고 위로 들어온 돈, 아래로 나간 돈을 마주 세운다 —
+ * 같은 축이라 길이를 그대로 비교할 수 있다. 한쪽만 볼 때는 마주 세울 상대가 없으니
+ * 기준선을 바닥으로 내리고 축을 다시 잡는다. 그래야 남은 계열이 화면을 다 쓴다.
+ */
+function dailySpec() {
   const { series } = state.cfg;
   const rev = series.filter(s => s.type !== 'spend');
   const spd = series.filter(s => s.type === 'spend');
 
+  if (state.dailyView === 'rev') return {
+    up: rev, down: [], profit: false,
+    sub: '광고매출과 인앱매출만. 마케팅비를 뺀 축이라 매출이 적던 날의 차이도 보입니다.',
+  };
+  if (state.dailyView === 'spend') return {
+    up: spd, down: [], profit: false,
+    sub: '그날 태운 마케팅비만.',
+  };
+  return {
+    up: rev, down: spd, profit: true,
+    sub: '0선 위가 그날 들어온 돈, 아래가 그날 나간 마케팅비. 검은 선은 그날의 손익.',
+  };
+}
+
+function drawDaily(rows) {
+  const host = document.getElementById('chart-daily');
+  const spec = dailySpec();
+  document.getElementById('daily-sub').textContent = spec.sub;
+  const shown = [...spec.up, ...spec.down];
+
   const H = 320, ML = 62, MR = 14, MT = 18, MB = 30;
   const { svg, tip, w } = frame(host, H);
   const iw = w - ML - MR, ih = H - MT - MB;
-  const zeroY = MT + ih / 2;
 
-  const cap = Math.max(1, ...rows.map(r => Math.max(r.rev, r.spend, Math.abs(r.profit))));
-  const sc = v => (v / cap) * (ih / 2);
+  const total = (r, list) => list.reduce((a, s) => a + (r.val[s.key] || 0), 0);
+  const mirrored = spec.down.length > 0;
+
+  /* 마주 세울 때만 축을 반으로 접는다 */
+  const zeroY = mirrored ? MT + ih / 2 : MT + ih;
+  const reach = mirrored ? ih / 2 : ih;
+  const cap = Math.max(1, ...rows.map(r => Math.max(
+    total(r, spec.up), total(r, spec.down), spec.profit ? Math.abs(r.profit) : 0)));
+  const sc = v => (v / cap) * reach;
+
   const band = iw / rows.length;
   const bw = Math.max(3, Math.min(24, band * 0.55));
   const x = i => ML + band * (i + 0.5);
 
   niceTicks(0, cap, 4).forEach(v => {
     if (v <= 0) return;
-    [1, -1].forEach(sign => {
+    (mirrored ? [1, -1] : [1]).forEach(sign => {
       const y = zeroY - sign * sc(v);
       svg.appendChild(el('line', { class: 'g-line', x1: ML, x2: w - MR, y1: y, y2: y }));
       svg.appendChild(el('text', { class: 'g-label', x: ML - 10, y: y + 4, 'text-anchor': 'end' },
@@ -424,11 +447,10 @@ function drawDaily(rows) {
     });
   });
 
-  const bands = [];
-  rows.forEach((r, i) => {
+  const bands = rows.map((r, i) => {
     const b = el('rect', { class: 'band', x: ML + band * i, y: MT, width: band, height: ih });
     svg.appendChild(b);
-    bands.push(b);
+    return b;
   });
 
   /* 조각은 테두리가 아니라 표면색 2px 틈으로 가른다. 바깥 끝(데이터 끝)만 둥글다. */
@@ -447,64 +469,119 @@ function drawDaily(rows) {
     });
   };
 
-  rows.forEach((r, i) => { stack(r, i, rev, +1); stack(r, i, spd, -1); });
+  rows.forEach((r, i) => { stack(r, i, spec.up, +1); stack(r, i, spec.down, -1); });
 
   svg.appendChild(el('line', { class: 'g-zero', x1: ML, x2: w - MR, y1: zeroY, y2: zeroY }));
-  svg.appendChild(el('path', {
-    d: rows.map((r, i) => `${i ? 'L' : 'M'}${x(i)},${zeroY - sc(r.profit)}`).join(' '),
-    fill: 'none', stroke: INK, 'stroke-width': 2,
-    'stroke-linejoin': 'round', 'stroke-linecap': 'round',
-  }));
+
+  if (spec.profit) {
+    svg.appendChild(el('path', {
+      d: rows.map((r, i) => `${i ? 'L' : 'M'}${x(i)},${zeroY - sc(r.profit)}`).join(' '),
+      fill: 'none', stroke: INK, 'stroke-width': 2,
+      'stroke-linejoin': 'round', 'stroke-linecap': 'round',
+    }));
+  }
 
   xLabels(svg, rows, x, H - 10);
-  attachHover(host, svg, tip, rows, band, ML, bands);
 
-  const used = k => rows.some(r => (r.val[k] || 0) > 0);
-  legend(document.getElementById('legend-daily'),
-    [...series.filter(s => used(s.key)).map(s => ({ color: s.color, name: s.label })),
-     { color: INK, name: '그날 손익', line: true }]);
+  attachHover(host, svg, tip, rows, band, ML, bands, null, null, r => [
+    ...shown.map(s => ({ color: s.color, name: s.label, value: won(r.val[s.key] || 0),
+                         fx: fxText(r, s.key) })),
+    ...(spec.profit ? [{ sep: true }, { color: INK, name: '손익', value: won(r.profit) }] : []),
+  ]);
+
+  /* 계열이 하나뿐이면 범례는 제목이 이미 한 말을 되풀이할 뿐이라 달지 않는다 */
+  const used = s => rows.some(r => (r.val[s.key] || 0) > 0);
+  const keys = [...shown.filter(used).map(s => ({ color: s.color, name: s.label })),
+                ...(spec.profit ? [{ color: INK, name: '그날 손익', line: true }] : [])];
+  legend(document.getElementById('legend-daily'), keys.length > 1 ? keys : []);
 }
+
 
 /* ── 누적 ────────────────────────────────────────
  *
- * 마케팅비가 매출보다 한 자릿수 크면 한 축에 겹쳐 그릴 때 매출 두 선이 바닥에 붙어
- * 읽히지 않는다. 이중 축은 임의의 정렬로 없는 상관을 만들어내니 쓰지 않고,
- * 대신 보고 싶은 쪽만 남겨 축을 다시 잡는다. 계열색은 그대로 둔다 —
- * 남은 계열을 다시 칠하면 "인앱은 초록"을 학습한 눈이 속는다.
+ * 누적값은 정의상 단조증가라 막대로 그리면 같은 램프를 무겁게 다시 그릴 뿐이다.
+ * 여기서 읽고 싶은 건 크기가 아니라 기울기라서 선이 맞다. 셋을 쌓는 면적도 틀리다 —
+ * 광고+인앱은 부분-전체지만 마케팅비는 그 전체의 일부가 아니라 부호가 반대인 값이다.
+ *
+ * '둘 다'는 회수 여부 하나만 답하게 두 선으로 줄이고 사이를 칠한다. 그 면적이 곧
+ * 미회수액이고, 두 선이 만나는 날이 회수 완료일이다. 누적 손익 선을 따로 그리는 건
+ * 두 선의 차이를 한 번 더 그리는 중복이라 뺐다 — 숫자는 툴팁과 히어로에 남는다.
+ * 계열이 하나뿐인 '비용만'은 면적으로 채운다(면적은 단일 계열일 때만 맞다).
  */
-function cumSpec(rows) {
+function cumSpec() {
   const { series } = state.cfg;
   const rev = series.filter(s => s.type !== 'spend');
   const spd = series.filter(s => s.type === 'spend');
   const sumOf = list => r => list.reduce((a, s) => a + (r.cum[s.key] || 0), 0);
+  const revSum = sumOf(rev), spdSum = sumOf(spd);
 
   if (state.cumView === 'rev') return {
-    picked: rev,
-    agg: { name: '누적 매출 합계', pick: sumOf(rev) },
+    lines: [...rev.map(s => ({ color: s.color, name: '누적 ' + s.label, pick: r => r.cum[s.key] || 0 })),
+            { color: INK, name: '누적 매출 합계', pick: revSum, width: 2.5 }],
     sub: '광고매출과 인앱매출만. 마케팅비 축에 눌리지 않아 두 매출의 기울기가 보입니다.',
   };
+
   if (state.cumView === 'spend') return {
-    picked: spd, agg: null,
+    lines: spd.map(s => ({ color: s.color, name: '누적 ' + s.label, pick: r => r.cum[s.key] || 0 })),
+    area: { color: spd[0] ? spd[0].color : INK, pick: spdSum },
     sub: '마케팅비만. 지금까지 태운 총액이 어떤 속도로 늘고 있는지 봅니다.',
   };
+
   return {
-    picked: series,
-    agg: { name: '누적 손익', pick: r => r.cumProfit },
-    sub: '첫 기록일부터 계속 더한 값. 검은 선(누적 손익)이 0을 넘은 날이 마케팅비를 다 회수한 날입니다.',
+    lines: [{ color: INK, name: '누적 매출 합계', pick: revSum, width: 2.5 },
+            ...spd.map(s => ({ color: s.color, name: '누적 ' + s.label, pick: r => r.cum[s.key] || 0 }))],
+    band: { hi: revSum, lo: spdSum },
+    extraTip: r => [{ sep: true }, { color: INK, name: '누적 손익', value: won(r.cumProfit) }],
+    sub: '두 선 사이의 칠해진 면적이 아직 회수 못 한 금액입니다. 선이 교차하는 날이 마케팅비를 다 회수한 날이고, ' +
+         '그때부터 색이 뒤집힙니다. 광고매출과 인앱매출을 나눠 보려면 “매출만”으로 바꾸세요.',
   };
+}
+
+/* 두 선 사이를 부호별로 잘라 칠한다. 교차점에서 끊어 이어붙이므로
+   부호가 바뀌는 날에도 색이 정직하다(클립으로 자르면 경계가 어긋난다). */
+function bandPaths(rows, x, y, hi, lo) {
+  const p = rows.map((r, i) => ({ x: x(i), h: hi(r), l: lo(r) }));
+  const out = [];
+  let seg = null;
+
+  const open = sign => (seg = { sign, top: [], bot: [] });
+  const at = (px, hv, lv) => { seg.top.push(`${px},${y(hv)}`); seg.bot.push(`${px},${y(lv)}`); };
+
+  p.forEach((pt, i) => {
+    const d = pt.h - pt.l;
+    const sign = d >= 0 ? 1 : -1;
+    if (i === 0) open(sign);
+    else {
+      const dPrev = p[i - 1].h - p[i - 1].l;
+      if ((dPrev >= 0 ? 1 : -1) !== sign && dPrev !== d) {
+        const t = dPrev / (dPrev - d);
+        const cx = p[i - 1].x + t * (pt.x - p[i - 1].x);
+        const cv = p[i - 1].h + t * (pt.h - p[i - 1].h);
+        at(cx, cv, cv);
+        out.push(seg);
+        open(sign);
+        at(cx, cv, cv);
+      }
+    }
+    at(pt.x, pt.h, pt.l);
+  });
+  if (seg) out.push(seg);
+
+  return out
+    .filter(s => s.top.length > 1)
+    .map(s => ({ sign: s.sign, d: `M${s.top.join(' L')} L${s.bot.slice().reverse().join(' L')} Z` }));
 }
 
 function drawCum(rows) {
   const host = document.getElementById('chart-cum');
-  const { picked, agg, sub } = cumSpec(rows);
-  document.getElementById('cum-sub').textContent = sub;
+  const spec = cumSpec();
+  document.getElementById('cum-sub').textContent = spec.sub;
 
   const H = 300, ML = 62, MR = 14, MT = 18, MB = 30;
   const { svg, tip, w } = frame(host, H);
   const iw = w - ML - MR, ih = H - MT - MB;
 
-  const all = rows.flatMap(r => [...picked.map(s => r.cum[s.key] || 0),
-                                 ...(agg ? [agg.pick(r)] : [])]);
+  const all = rows.flatMap(r => spec.lines.map(L => L.pick(r)));
   const lo = Math.min(0, ...all), hi = Math.max(1, ...all);
   const pad = (hi - lo) * 0.08;
   const y = v => MT + ih * (1 - (v - (lo - pad)) / ((hi + pad) - (lo - pad)));
@@ -518,14 +595,27 @@ function drawCum(rows) {
   });
   svg.appendChild(el('line', { class: 'g-zero', x1: ML, x2: w - MR, y1: y(0), y2: y(0) }));
 
+  let signs = [];
+  if (spec.band) {
+    const paths = bandPaths(rows, x, y, spec.band.hi, spec.band.lo);
+    signs = [...new Set(paths.map(p => p.sign))];
+    paths.forEach(p => svg.appendChild(el('path', {
+      d: p.d, fill: p.sign > 0 ? 'var(--good)' : 'var(--bad)', 'fill-opacity': .12,
+    })));
+  }
+  if (spec.area) {
+    svg.appendChild(el('path', {
+      d: `M${x(0)},${y(0)} ` + rows.map((r, i) => `L${x(i)},${y(spec.area.pick(r))}`).join(' ') +
+         ` L${x(rows.length - 1)},${y(0)} Z`,
+      fill: spec.area.color, 'fill-opacity': .10,
+    }));
+  }
+
   const cross = el('line', { x1: 0, x2: 0, y1: MT, y2: MT + ih,
     stroke: 'var(--axis)', 'stroke-width': 1, opacity: 0 });
   svg.appendChild(cross);
 
-  const lines = [...picked.map(s => ({ color: s.color, pick: r => r.cum[s.key] || 0 })),
-                 ...(agg ? [{ color: INK, pick: agg.pick, width: 2.5 }] : [])];
-
-  lines.forEach(L => {
+  spec.lines.forEach(L => {
     svg.appendChild(el('path', {
       d: rows.map((r, i) => `${i ? 'L' : 'M'}${x(i)},${y(L.pick(r))}`).join(' '),
       fill: 'none', stroke: L.color, 'stroke-width': L.width || 2,
@@ -535,12 +625,12 @@ function drawCum(rows) {
 
   /* 끝점 마커는 표면색 2px 링을 둘러 선 위에서도 읽히게 한다 */
   const lastI = rows.length - 1;
-  lines.forEach(L => {
+  spec.lines.forEach(L => {
     svg.appendChild(el('circle', { cx: x(lastI), cy: y(L.pick(rows[lastI])), r: 4,
       fill: L.color, stroke: SURFACE, 'stroke-width': GAP }));
   });
 
-  const dots = lines.map(L => {
+  const dots = spec.lines.map(L => {
     const c = el('circle', { r: 4, fill: L.color, stroke: SURFACE, 'stroke-width': GAP, opacity: 0 });
     svg.appendChild(c);
     return { c, L };
@@ -559,15 +649,19 @@ function drawCum(rows) {
     cross.setAttribute('opacity', 0);
     dots.forEach(({ c }) => c.setAttribute('opacity', 0));
   }, r => [
-    ...picked.map(s => ({ color: s.color, name: '누적 ' + s.label, value: won(r.cum[s.key] || 0) })),
-    ...(agg ? [{ sep: true }, { color: INK, name: agg.name, value: won(agg.pick(r)) }] : []),
+    ...spec.lines.map(L => ({ color: L.color, name: L.name, value: won(L.pick(r)) })),
+    ...(spec.extraTip ? spec.extraTip(r) : []),
   ]);
 
   /* 계열이 하나뿐이면 범례는 제목이 이미 한 말을 되풀이할 뿐이라 달지 않는다 */
-  const keys = [...picked.map(s => ({ color: s.color, name: '누적 ' + s.label, line: true })),
-                ...(agg ? [{ color: INK, name: agg.name, line: true }] : [])];
+  const keys = [
+    ...spec.lines.map(L => ({ color: L.color, name: L.name, line: true })),
+    ...(signs.includes(-1) ? [{ color: 'var(--bad)', name: '미회수', wash: true }] : []),
+    ...(signs.includes(1) ? [{ color: 'var(--good)', name: '회수분', wash: true }] : []),
+  ];
   legend(document.getElementById('legend-cum'), keys.length > 1 ? keys : []);
 }
+
 
 /* 포인터는 날짜만 맞히면 된다 — 가장 가까운 열을 잡는다 */
 function attachHover(host, svg, tip, rows, band, ML, bands, onIn, onOut, rowsFn) {
@@ -582,7 +676,7 @@ function attachHover(host, svg, tip, rows, band, ML, bands, onIn, onOut, rowsFn)
     if (bands) bands.forEach((b, k) => b.classList.toggle('is-on', k === i));
     if (onIn) onIn(i);
     const box = svg.getBoundingClientRect();
-    showTip(tip, host, e.clientX - box.left, (rowsFn || dayTipRows)(r), r.date);
+    showTip(tip, host, e.clientX - box.left, rowsFn(r), r.date);
   };
   const out = () => {
     hideTip(tip);
@@ -600,7 +694,7 @@ function legend(host, items) {
     const k = document.createElement('span');
     k.className = 'key';
     const sw = document.createElement('i');
-    sw.className = 'sw' + (it.line ? ' line' : '');
+    sw.className = 'sw' + (it.line ? ' line' : it.wash ? ' wash' : '');
     sw.style.background = it.color;
     k.appendChild(sw);
     k.appendChild(document.createTextNode(it.name));
@@ -680,14 +774,19 @@ document.querySelector('.toolbar').addEventListener('click', e => {
   render();
 });
 
-document.getElementById('cum-view').addEventListener('click', e => {
-  const b = e.target.closest('.seg-btn');
-  if (!b) return;
-  document.querySelectorAll('#cum-view .seg-btn')
-    .forEach(t => t.classList.toggle('is-on', t === b));
-  state.cumView = b.dataset.view;
-  if (visible().length) drawCum(visible());
-});
+/* 카드 안의 표시 범위 전환 — 기간 필터와 달리 그 차트 하나만 다시 그린다 */
+function wireSeg(id, key, redraw) {
+  document.getElementById(id).addEventListener('click', e => {
+    const b = e.target.closest('.seg-btn');
+    if (!b) return;
+    document.querySelectorAll(`#${id} .seg-btn`).forEach(t => t.classList.toggle('is-on', t === b));
+    state[key] = b.dataset.view;
+    const rows = visible();
+    if (rows.length) redraw(rows);
+  });
+}
+wireSeg('daily-view', 'dailyView', drawDaily);
+wireSeg('cum-view', 'cumView', drawCum);
 
 let rt;
 addEventListener('resize', () => {
