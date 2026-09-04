@@ -19,8 +19,8 @@ const INK = '#0b0b0b';
 const SURFACE = '#fcfcfb';
 const GAP = 2;            /* 마크 사이를 가르는 건 선이 아니라 표면색 2px 틈이다 */
 
-const state = { cfg: null, rows: [], days: 0, fx: null,
-                dailyView: 'both', cumView: 'both' };
+const state = { cfg: null, raw: [], rows: [], days: 0, fx: null,
+                dailyView: 'both', cumView: 'both', applyFee: true };
 
 /* ── 포맷 ────────────────────────────────────────── */
 const won = n => Math.round(n).toLocaleString('ko-KR') + '원';
@@ -148,17 +148,29 @@ async function load() {
   await loadFx(daily, currenciesUsed(daily, state.cfg.series));
   renderFxNote();
 
-  state.rows = derive(daily);
-  render();
+  state.raw = daily;
+  try { state.applyFee = localStorage.getItem('applyFee') !== '0'; } catch {}
+  const box = document.getElementById('fee-toggle');
+  box.checked = state.applyFee;
+  document.getElementById('fee-label').textContent =
+    `인앱 수수료 ${pct(state.cfg.store_fee)} 반영`;
+
+  recompute();
 }
 
 const labelOf = k => (state.cfg.series.find(s => s.key === k) || {}).label || k;
 const colorOf = k => (state.cfg.series.find(s => s.key === k) || {}).color || INK;
 
 /* 누적은 항상 전체 기간 기준으로 미리 깔아둔다 — 7일 탭에서도 누적 위치는 진짜여야 한다. */
+function recompute() {
+  state.rows = derive(state.raw);
+  render();
+}
+
 function derive(raw) {
   const { series, store_fee } = state.cfg;
-  const feeKeys = new Set(state.cfg.fee_applies_to || []);
+  /* 체크를 풀면 구매자가 결제한 총액 그대로 — 화면 전체가 같은 기준으로 다시 계산된다 */
+  const feeKeys = new Set(state.applyFee ? (state.cfg.fee_applies_to || []) : []);
   const cum = {};
   let cumProfit = 0;
 
@@ -787,6 +799,14 @@ function wireSeg(id, key, redraw) {
 }
 wireSeg('daily-view', 'dailyView', drawDaily);
 wireSeg('cum-view', 'cumView', drawCum);
+
+/* 수수료는 표시 방식이 아니라 계산 기준이라 차트별로 두지 않는다 —
+   차트마다 다르면 같은 화면 안에서 숫자가 서로 안 맞는다. */
+document.getElementById('fee-toggle').addEventListener('change', e => {
+  state.applyFee = e.target.checked;
+  try { localStorage.setItem('applyFee', state.applyFee ? '1' : '0'); } catch {}
+  if (state.raw.length) recompute();
+});
 
 let rt;
 addEventListener('resize', () => {
