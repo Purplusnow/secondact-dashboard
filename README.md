@@ -70,6 +70,17 @@ cd docs && python3 -m http.server 8731
 
 `main` 브랜치의 `docs/` 폴더가 그대로 GitHub Pages로 나간다. 푸시하면 끝이고 빌드 단계가 없다.
 
+**`app.js` 나 `style.css` 를 고쳤으면 커밋 전에 반드시 돌린다:**
+
+```sh
+python3 tools/stamp.py
+```
+
+Pages는 정적 파일에 `max-age=600`을 걸기 때문에, 이걸 빼먹으면 배포 후 10분 동안
+브라우저가 옛날 `app.js` 를 계속 쓴다 — 고친 게 반영이 안 된 것처럼 보인다.
+stamp가 `app.js?v=<내용해시>` 로 URL을 바꿔서 그 창을 없앤다. 데이터 JSON은
+`cache: 'no-store'` 로 받으므로 해당 없음.
+
 ## 여기 없는 것
 
 설치수·DAU·CPI·LTV·코호트는 일부러 뺐다. 이 대시보드가 답하는 질문은 하나다 —
