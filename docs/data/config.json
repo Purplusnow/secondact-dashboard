@@ -1,10 +1,10 @@
 {
   "app_name": "인생 2막",
   "base_currency": "KRW",
-
   "store_fee": 0.15,
-  "fee_applies_to": ["iap"],
-
+  "fee_applies_to": [
+    "iap"
+  ],
   "fx_fallback_note": "frankfurter(ECB)가 다루지 않는 통화, 또는 API가 죽었을 때 쓰는 고정환율. 1단위 = N원.",
   "fx_fallback": {
     "USD": 1350,
@@ -28,10 +28,24 @@
     "COP": 0.33,
     "PEN": 360
   },
-
   "series": [
-    { "key": "admob", "label": "광고매출",  "color": "#22d3ee", "type": "revenue" },
-    { "key": "iap",   "label": "인앱매출",  "color": "#2ee6a8", "type": "revenue" },
-    { "key": "ads",   "label": "마케팅비",  "color": "#fbbf24", "type": "spend"   }
+    {
+      "key": "admob",
+      "label": "광고매출",
+      "color": "#2a78d6",
+      "type": "revenue"
+    },
+    {
+      "key": "iap",
+      "label": "인앱매출",
+      "color": "#1baf7a",
+      "type": "revenue"
+    },
+    {
+      "key": "ads",
+      "label": "마케팅비",
+      "color": "#eb6834",
+      "type": "spend"
+    }
   ]
 }
