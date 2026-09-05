@@ -354,7 +354,9 @@ function barPath(x, y, w, h, up, round = true) {
 }
 
 /* ── 툴팁 ────────────────────────────────────────── */
-function showTip(tip, host, px, rowsHtml, dateText) {
+/* 팝업은 가리키는 열 '옆'에 붙인다 — 위에 띄우면 그 열의 합계 숫자를 덮는다.
+   오른쪽이 모자라면 왼쪽으로 넘긴다. */
+function showTip(tip, host, px, rowsHtml, dateText, opts = {}) {
   tip.textContent = '';
   const d = document.createElement('div');
   d.className = 'tip-date';
@@ -385,9 +387,16 @@ function showTip(tip, host, px, rowsHtml, dateText) {
   }
 
   tip.classList.add('is-on');
-  const w = tip.offsetWidth, hw = host.clientWidth;
-  tip.style.left = Math.max(4, Math.min(px - w / 2, hw - w - 4)) + 'px';
-  tip.style.top = '6px';
+  const tw = tip.offsetWidth, th = tip.offsetHeight;
+  const hw = host.clientWidth, hh = host.clientHeight;
+  const gap = opts.gap || 16;
+
+  let left = px + gap;
+  if (left + tw > hw - 4) left = px - gap - tw;
+  tip.style.left = Math.max(4, Math.min(left, hw - tw - 4)) + 'px';
+
+  const top = opts.y == null ? 6 : opts.y - th / 2;
+  tip.style.top = Math.max(4, Math.min(top, hh - th - 4)) + 'px';
 }
 const hideTip = tip => tip.classList.remove('is-on');
 
@@ -698,18 +707,21 @@ function drawCum(rows) {
 
 /* 포인터는 날짜만 맞히면 된다 — 가장 가까운 열을 잡는다 */
 function attachHover(host, svg, tip, rows, band, ML, bands, onIn, onOut, rowsFn) {
-  const pick = e => {
-    const box = svg.getBoundingClientRect();
-    const px = (e.clientX - box.left) * (svg.viewBox.baseVal.width / box.width);
-    return Math.max(0, Math.min(rows.length - 1, Math.floor((px - ML) / band)));
-  };
   const move = e => {
-    const i = pick(e);
-    const r = rows[i];
-    if (bands) bands.forEach((b, k) => b.classList.toggle('is-on', k === i));
-    if (onIn) onIn(i);
     const box = svg.getBoundingClientRect();
-    showTip(tip, host, e.clientX - box.left, rowsFn(r), r.date);
+    const k = box.width / svg.viewBox.baseVal.width;      /* SVG 단위 → CSS px */
+    const px = (e.clientX - box.left) / k;
+    const i = Math.max(0, Math.min(rows.length - 1, Math.floor((px - ML) / band)));
+    const r = rows[i];
+
+    if (bands) bands.forEach((b, n) => b.classList.toggle('is-on', n === i));
+    if (onIn) onIn(i);
+
+    /* 열 중심에서 열 너비의 절반만큼 띄운다. 라벨이 칸보다 넓을 수 있어 최소값을 둔다. */
+    showTip(tip, host, (ML + band * (i + 0.5)) * k, rowsFn(r), r.date, {
+      gap: Math.max(band * k / 2, 28) + 12,
+      y: e.clientY - box.top,
+    });
   };
   const out = () => {
     hideTip(tip);
