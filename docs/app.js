@@ -27,6 +27,12 @@ const won = n => Math.round(n).toLocaleString('ko-KR') + '원';
 const num = n => Math.round(n).toLocaleString('ko-KR');
 const trim = v => (v >= 100 ? Math.round(v) : v.toFixed(1).replace(/\.0$/, '')).toString();
 
+/* 환율 전용 — VND(0.052원)처럼 1 미만인 통화가 있어 유효숫자로 끊는다 */
+const rateStr = v =>
+  v >= 100 ? Math.round(v).toLocaleString('ko-KR')
+  : v >= 1 ? v.toFixed(2).replace(/\.?0+$/, '')
+  : v.toPrecision(3).replace(/0+$/, '').replace(/\.$/, '');
+
 function short(n) {
   const s = n < 0 ? '-' : '';
   const a = Math.abs(n);
@@ -179,17 +185,22 @@ function derive(raw) {
     let rev = 0, spend = 0;
 
     for (const s of series) {
-      let krw = 0;
-      const breakdown = [];
+      /* 내역은 원화 건도 포함한다 — 빼놓으면 합이 표시 금액과 안 맞아 보인다 */
+      let gross = 0;
+      const bd = [];
       for (const [cur, amt] of parts(r[s.key])) {
-        const { rate, src, on } = rateOn(cur, r.date);
-        krw += (+amt) * rate;
-        if (cur.toUpperCase() !== 'KRW') breakdown.push({ cur, amt: +amt, rate, src, on });
+        const c = cur.toUpperCase();
+        const { rate, src, on } = rateOn(c, r.date);
+        gross += (+amt) * rate;
+        bd.push({ cur: c, amt: +amt, rate, src, on });
       }
-      if (feeKeys.has(s.key)) krw *= 1 - store_fee;
+      const feeOn = feeKeys.has(s.key) && gross > 0;
+      const krw = feeOn ? gross * (1 - store_fee) : gross;
 
       out.val[s.key] = krw;
-      if (breakdown.length) out.fx[s.key] = breakdown;
+      /* 원화 한 건뿐이고 수수료도 안 붙으면 설명할 게 없다 */
+      if (bd.length && (feeOn || bd.length > 1 || bd[0].cur !== 'KRW'))
+        out.fx[s.key] = { parts: bd, gross, fee: feeOn };
       cum[s.key] = (cum[s.key] || 0) + krw;
       out.cum[s.key] = cum[s.key];
 
@@ -400,13 +411,23 @@ function showTip(tip, host, px, rowsHtml, dateText, opts = {}) {
 }
 const hideTip = tip => tip.classList.remove('is-on');
 
+/* 결제 원통화 → 원화 → 수수료까지, 표시 금액이 어떻게 나왔는지 한 줄로 다 보여준다 */
 function fxText(r, key) {
   const b = r.fx[key];
   if (!b) return '';
-  return b.map(p =>
-    `${p.cur} ${p.amt.toLocaleString('ko-KR')} × ${trim(p.rate)}원` +
-    (p.src === 'fallback' ? ' (고정)' : p.src === 'carry' ? ` (${p.on} 고시)` :
-     p.src === 'unknown' ? ' (환율 없음)' : '')).join(' · ');
+
+  const bits = b.parts.map(p => p.cur === 'KRW'
+    ? `KRW ${p.amt.toLocaleString('ko-KR')}`
+    : `${p.cur} ${p.amt.toLocaleString('ko-KR')} × ${rateStr(p.rate)}원` +
+      (p.src === 'fallback' ? ' (고정)' : p.src === 'carry' ? ` (${p.on} 고시)` :
+       p.src === 'unknown' ? ' (환율 없음)' : ''));
+
+  let out = bits.join(' · ');
+  const converted = b.parts.length > 1 || b.parts[0].cur !== 'KRW';
+  if (converted) out += ` = ${won(b.gross)}`;
+  if (b.fee) out += ` → 수수료 ${pct(state.cfg.store_fee)} 떼고 ` +
+                    `${won(b.gross * (1 - state.cfg.store_fee))}`;
+  return out;
 }
 
 /* ── 일별 ────────────────────────────────────────

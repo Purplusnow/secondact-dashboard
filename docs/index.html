@@ -7,7 +7,7 @@
 <meta name="description" content="일별 광고매출·인앱매출·마케팅비를 누적으로 추적하는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=1296c84c">
+<link rel="stylesheet" href="style.css?v=e09a9bba">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -115,11 +115,12 @@
     원화 환산합니다(주말·공휴일은 직전 영업일). 상단의 <b>인앱 수수료 반영</b>은
     <b id="foot-fee-target">인앱매출</b>에서 스토어 수수료 <b id="foot-fee">15%</b>를 뗄지를 정하며,
     히어로·타일·두 차트·원장에 한꺼번에 걸립니다 — 차트마다 따로 두면 화면 안에서 숫자가 서로 안 맞습니다.
-    체크를 풀면 구매자가 결제한 총액 그대로가 됩니다. 원장에서 <i class="fx-mark">*</i>가 붙은 칸이 환산된
-    값이며, 올려두면 원래 통화와 적용 환율이 보입니다. 수수료율은 <code>config.json</code>에서 바꿉니다.
+    체크를 풀면 구매자가 결제한 총액 그대로가 됩니다. 원장에서 <i class="fx-mark">*</i>가 붙은 칸은 입력값을
+    그대로 쓴 게 아니라 환산·수수료 계산을 거친 값이며, 올려두면 결제 원통화부터 적용 환율,
+    수수료 공제까지 한 줄로 보입니다. 수수료율은 <code>config.json</code>에서 바꿉니다.
   </p>
 </footer>
 
-<script src="app.js?v=270d91ab"></script>
+<script src="app.js?v=e69f9631"></script>
 </body>
 </html>
