@@ -232,13 +232,11 @@ function render() {
       (document.getElementById(id).innerHTML = '<div class="no-data">이 기간에는 기록이 없습니다</div>'));
     ['legend-daily', 'legend-cum'].forEach(id => (document.getElementById(id).innerHTML = ''));
     document.getElementById('ledger').innerHTML = '';
-    renderGoals();
     return;
   }
   drawDaily(rows);
   drawCum(rows);
   renderLedger(rows);
-  renderGoals();          /* 목표는 기간 탭과 무관하게 전 기록 기준이다 */
 }
 
 function renderHero(rows, last) {
@@ -770,107 +768,6 @@ function legend(host, items) {
   }
 }
 
-
-/* ── 목표 ────────────────────────────────────────
- *
- * 체크는 손으로 하지 않는다. 전부 daily.json 기록에서 판정하므로 장부와 어긋날 수 없고,
- * 달성일도 그 값을 처음 넘은 날을 되짚어 찾는다. 한 번 넘었으면 달성이라 최고 기록으로 잰다.
- *
- * 두 축을 나란히 두는 이유: 매출만 보면 광고비를 얼마든 태워 올릴 수 있고,
- * 순매출만 보면 광고를 끊는 게 가장 빠른 길이 된다. 둘을 같이 봐야 속지 않는다.
- */
-const GOAL_PICK = {
-  rev:    r => r.rev,
-  profit: r => r.profit,
-};
-
-function renderGoals() {
-  const host = document.getElementById('goals');
-  const cfg = state.cfg.goals;
-  host.textContent = '';
-  if (!cfg || !cfg.axes || !state.rows.length) return;
-
-  let done = 0, total = 0;
-
-  for (const axis of cfg.axes) {
-    const pick = GOAL_PICK[axis.key];
-    if (!pick) continue;
-
-    /* 최고 기록과, 각 단계를 처음 넘은 날 */
-    const best = Math.max(...state.rows.map(pick));
-    const firstHit = v => (state.rows.find(r => pick(r) >= v) || {}).date;
-
-    const col = document.createElement('div');
-    col.className = 'goal-axis';
-
-    const hits = axis.steps.map(firstHit);
-    const cleared = hits.filter(Boolean).length;
-    done += cleared;
-    total += axis.steps.length;
-
-    const head = document.createElement('div');
-    head.className = 'goal-axis-head';
-    const nm = document.createElement('div');
-    nm.className = 'goal-axis-name';
-    nm.textContent = axis.name;
-    const ct = document.createElement('div');
-    ct.className = 'goal-axis-count';
-    ct.textContent = `${cleared} / ${axis.steps.length}`;
-    const cap = document.createElement('div');
-    cap.className = 'goal-axis-cap';
-    cap.textContent = axis.caption;
-    const top = document.createElement('div');
-    top.className = 'goal-axis-top';
-    top.append(nm, ct);
-    head.append(top, cap);
-    col.appendChild(head);
-
-    let nextMarked = false;
-    axis.steps.forEach((v, i) => {
-      const hit = hits[i];
-      const row = document.createElement('div');
-      row.className = 'goal' + (hit ? ' is-done' : '');
-      if (!hit && !nextMarked) { row.classList.add('is-next'); nextMarked = true; }
-      if (i === axis.steps.length - 1) row.classList.add('is-final');
-
-      const mark = document.createElement('span');
-      mark.className = 'goal-mark';
-      mark.textContent = hit ? '✓' : '';
-
-      const label = document.createElement('span');
-      label.className = 'goal-label';
-      label.textContent = won(v);
-
-      const right = document.createElement('span');
-      right.className = 'goal-right';
-
-      if (hit) {
-        right.textContent = hit;
-      } else {
-        const txt = document.createElement('span');
-        txt.textContent = `${won(best)} / ${pct(best / v)}`;
-        right.appendChild(txt);
-        const bar = document.createElement('span');
-        bar.className = 'goal-bar';
-        const fill = document.createElement('i');
-        fill.style.width = Math.max(0, Math.min(100, (best / v) * 100)).toFixed(1) + '%';
-        bar.appendChild(fill);
-        right.appendChild(bar);
-      }
-
-      row.append(mark, label, right);
-      col.appendChild(row);
-    });
-
-    host.appendChild(col);
-  }
-
-  const c = document.getElementById('goal-count');
-  c.textContent = '';
-  const b = document.createElement('b');
-  b.textContent = `${done}`;
-  c.append(b, document.createTextNode(` / ${total} 달성`));
-}
 
 /* ── 원장 ────────────────────────────────────────── */
 function renderLedger(rows) {
