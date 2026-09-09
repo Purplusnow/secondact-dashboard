@@ -48,5 +48,13 @@
       "color": "#eb6834",
       "type": "spend"
     }
-  ]
+  ],
+  "sync": {
+    "_note": "auto 에 적힌 계열은 자동 수집 대상이라, stale_hours 를 넘도록 갱신이 없으면 화면에 경고를 띄운다.",
+    "auto": [
+      "ads",
+      "admob"
+    ],
+    "stale_hours": 3
+  }
 }

@@ -233,3 +233,11 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .check:hover { background: var(--wash); color: var(--ink); }
 .check input { margin: 0; accent-color: var(--ink); width: 14px; height: 14px; cursor: pointer; }
 .check:has(input:not(:checked)) { color: var(--ink-3); }
+
+/* ── 갱신 시각 ────────────────────────────────────── */
+.sync-line {
+  max-width: 1120px; margin: 0 auto 10px !important;
+  font-size: 12px; color: var(--ink-3);
+}
+.sync-item { cursor: help; }
+.sync-item.is-stale { color: var(--bad); font-weight: 500; }

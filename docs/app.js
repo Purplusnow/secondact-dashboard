@@ -141,6 +141,7 @@ async function load() {
     (state.cfg.app_name ? state.cfg.app_name + ' · ' : '') + '마케팅비 × 매출';
   document.getElementById('updated').textContent = data.updated ? '갱신 ' + data.updated : '';
   document.getElementById('demo-banner').hidden = !demo;
+  renderSyncLine(data.synced);
   document.getElementById('foot-fee').textContent = pct(state.cfg.store_fee);
   document.getElementById('foot-fee-target').textContent =
     (state.cfg.fee_applies_to || []).map(labelOf).join(' · ') || '없음';
@@ -297,6 +298,49 @@ function renderTiles(rows, last) {
     el.append(lab, val, sub);
     host.appendChild(el);
   }
+}
+
+/* ── 갱신 시각 ────────────────────────────────────
+ *
+ * 계열마다 마지막으로 '확인된' 시각을 보여준다(값이 바뀐 시각이 아니라).
+ * 자동 수집 계열이 임계 시간을 넘도록 조용하면 경고를 띄운다 —
+ * 자동화는 소리 없이 멈추기 때문에, 멈춘 걸 화면이 말해줘야 한다.
+ */
+function ago(iso) {
+  const m = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+  if (m < 1) return '방금';
+  if (m < 60) return `${m}분 전`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}시간 전`;
+  return `${Math.floor(h / 24)}일 전`;
+}
+
+function renderSyncLine(synced) {
+  const el = document.getElementById('sync-line');
+  const cfg = state.cfg.sync || {};
+  const auto = new Set(cfg.auto || []);
+  const staleMs = (cfg.stale_hours || 3) * 3600e3;
+
+  const items = state.cfg.series.filter(s => synced && synced[s.key]);
+  if (!items.length) { el.hidden = true; return; }
+  el.hidden = false;
+  el.textContent = '';
+
+  el.appendChild(document.createTextNode('갱신 · '));
+  items.forEach((s, i) => {
+    const iso = synced[s.key];
+    const stale = auto.has(s.key) && Date.now() - new Date(iso).getTime() > staleMs;
+
+    if (i) el.appendChild(document.createTextNode('  ·  '));
+    const span = document.createElement('span');
+    span.className = 'sync-item' + (stale ? ' is-stale' : '');
+    span.title = new Date(iso).toLocaleString('ko-KR') +
+      (auto.has(s.key) ? ' · 자동 수집' : ' · 수동 입력') +
+      (stale ? `\n${cfg.stale_hours}시간 넘게 갱신이 없습니다 — 자동 수집이 멈췄을 수 있습니다` : '');
+    span.textContent = `${s.label} ${ago(iso)}` + (auto.has(s.key) ? '' : ' (수동)') +
+      (stale ? ' ⚠' : '');
+    el.appendChild(span);
+  });
 }
 
 function renderFxNote() {

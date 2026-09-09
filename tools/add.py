@@ -118,6 +118,10 @@ def main() -> int:
         row["note"] = a.note
 
     rows.sort(key=lambda r: r["date"])
+    # 손으로 넣은 계열도 자동 수집과 같은 자리에 시각을 남긴다
+    now = datetime.now(KST).isoformat(timespec="seconds")
+    for key in given:
+        data.setdefault("synced", {})[key] = now
     data["updated"] = today()
     DAILY.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 

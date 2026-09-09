@@ -7,7 +7,7 @@
 <meta name="description" content="일별 광고매출·인앱매출·마케팅비를 누적으로 추적하는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=e09a9bba">
+<link rel="stylesheet" href="style.css?v=2b1f0f6d">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -110,8 +110,10 @@
 </main>
 
 <footer class="foot">
+  <p class="sync-line" id="sync-line" hidden></p>
   <p>
-    세 숫자는 손으로 입력하고 날짜는 모두 <b>KST 기준</b>입니다. 각국 통화로 넣으면 그날의 ECB 고시환율로
+    광고매출과 마케팅비는 자동으로 수집되고 <b>인앱매출만 손으로</b> 넣습니다 — Play는 주문 목록을
+    API로 주지 않습니다. 날짜는 모두 <b>KST 기준</b>입니다. 각국 통화로 넣으면 그날의 ECB 고시환율로
     원화 환산합니다(주말·공휴일은 직전 영업일). 상단의 <b>인앱 수수료 반영</b>은
     <b id="foot-fee-target">인앱매출</b>에서 스토어 수수료 <b id="foot-fee">15%</b>를 뗄지를 정하며,
     히어로·타일·두 차트·원장에 한꺼번에 걸립니다 — 차트마다 따로 두면 화면 안에서 숫자가 서로 안 맞습니다.
@@ -121,6 +123,6 @@
   </p>
 </footer>
 
-<script src="app.js?v=a67c4aac"></script>
+<script src="app.js?v=d6532925"></script>
 </body>
 </html>

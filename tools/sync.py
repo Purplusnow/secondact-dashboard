@@ -40,14 +40,17 @@ def load() -> dict:
     return json.loads(DAILY.read_text(encoding="utf-8"))
 
 
+def stamp(data: dict, key: str) -> None:
+    """계열별 '마지막으로 확인한 시각'. 값이 안 바뀌어도 찍는다 —
+    화면에서 알고 싶은 건 '언제 바뀌었나'가 아니라 '지금 값이 최신인가'다."""
+    data.setdefault("synced", {})[key] = datetime.now(KST).isoformat(timespec="seconds")
+
+
 def save(data: dict, changed: list[str]) -> None:
-    if not changed:
-        print("변경 없음")
-        return
     data["daily"].sort(key=lambda r: r["date"])
     data["updated"] = today()
     DAILY.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print("갱신:", ", ".join(changed))
+    print("갱신:", ", ".join(changed) if changed else "값 변동 없음 (확인 시각만 기록)")
 
 
 def row_for(data: dict, date: str) -> dict:
@@ -80,6 +83,7 @@ def apply_ads(payload: str) -> None:
         if row.get("ads") != cost:
             changed.append(f"{date} 마케팅비 {row.get('ads', '-')}→{cost:,}")
             row["ads"] = cost
+    stamp(data, "ads")
     save(data, changed)
 
 
@@ -131,6 +135,7 @@ def apply_admob(days: int) -> None:
         if before != usd:
             changed.append(f"{date} 광고매출 ${before or 0}→${usd}")
             row["admob"] = {"USD": usd}
+    stamp(data, "admob")
     save(data, changed)
 
 
