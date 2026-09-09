@@ -25,6 +25,15 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
+
+    # secrets 컨텍스트는 스텝의 if 에서 못 읽는다. 잡 레벨 env 로 올려야
+    # "Secret 이 비었으면 건너뛴다"를 if 로 판정할 수 있다.
+    env:
+      ADMOB_CLIENT_ID: ${{ secrets.ADMOB_CLIENT_ID }}
+      ADMOB_CLIENT_SECRET: ${{ secrets.ADMOB_CLIENT_SECRET }}
+      ADMOB_REFRESH_TOKEN: ${{ secrets.ADMOB_REFRESH_TOKEN }}
+      ADMOB_PUBLISHER_ID: ${{ secrets.ADMOB_PUBLISHER_ID }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -40,12 +49,7 @@ jobs:
         run: python3 tools/sync.py --ads-json "$ADS_ROWS"
 
       - name: 광고매출 수집
-        if: ${{ secrets.ADMOB_REFRESH_TOKEN != '' }}
-        env:
-          ADMOB_CLIENT_ID: ${{ secrets.ADMOB_CLIENT_ID }}
-          ADMOB_CLIENT_SECRET: ${{ secrets.ADMOB_CLIENT_SECRET }}
-          ADMOB_REFRESH_TOKEN: ${{ secrets.ADMOB_REFRESH_TOKEN }}
-          ADMOB_PUBLISHER_ID: ${{ secrets.ADMOB_PUBLISHER_ID }}
+        if: env.ADMOB_REFRESH_TOKEN != ''
         run: python3 tools/sync.py --admob --days 3
 
       - name: 커밋
