@@ -34,6 +34,39 @@ python3 tools/add.py --show          # 최근 기록 확인
 
 같은 날짜를 다시 넣으면 **준 항목만** 덮어쓴다(안 준 항목은 그대로 남는다).
 
+## 자동 수집
+
+세 값 중 둘은 자동으로 들어온다. 인앱만 손으로 넣는다 — Play는 주문 목록을 API로 주지 않는다.
+
+| 계열 | 방식 | 주기 |
+|---|---|---|
+| 마케팅비 | Google Ads 스크립트 → `repository_dispatch` → Actions | 매시간 |
+| 광고매출 | Actions가 AdMob API(`networkReport`) 직접 호출 | 매시간 |
+| 인앱매출 | `tools/add.py` 로 수동 | — |
+
+**둘 다 오늘·어제를 같이 갱신한다.** 구글이 확정 수치를 하루 뒤에 상향 조정하기 때문이다
+(실측: 마케팅비 9/6 56,008→56,820, 9/7 54,124→55,200). 매시간 덮어쓰므로 손으로 넣던 때보다 정확하다.
+
+### 마케팅비 붙이기 (승인 대기 없음)
+
+`tools/google-ads-script.js` 를 Google Ads → 도구 및 설정 → 일괄 작업 → **스크립트**에
+붙여넣고 `GITHUB_TOKEN` 만 채운 뒤 빈도를 매시간으로 잡는다. 토큰은 이 저장소에만
+`Contents: Read and write` 를 준 fine-grained PAT 를 쓴다.
+
+Google Ads **API**가 아니라 계정 내장 스크립트라 개발자 토큰 승인 절차가 없다.
+
+### 광고매출 붙이기
+
+```sh
+python3 tools/admob_auth.py --client-id XXX.apps.googleusercontent.com --client-secret YYY
+```
+
+브라우저로 1회 인증하면 refresh token 과 퍼블리셔 ID를 출력한다. OAuth 클라이언트는
+**데스크톱 앱** 종류여야 한다(구글이 OOB 방식을 폐지해 로컬 루프백으로 받는다).
+출력된 값 넷을 저장소 Secrets(`ADMOB_CLIENT_ID` / `ADMOB_CLIENT_SECRET` /
+`ADMOB_REFRESH_TOKEN` / `ADMOB_PUBLISHER_ID`)에 넣으면 다음 정각부터 돈다.
+Secret이 비어 있으면 그 단계는 건너뛴다.
+
 ## 계산 규칙
 
 숫자를 만지는 곳은 두 군데뿐이고, 둘 다 `docs/data/config.json` 에서 바뀐다.

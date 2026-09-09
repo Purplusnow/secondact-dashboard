@@ -1,0 +1,61 @@
+# 마케팅비·광고매출 자동 수집
+#
+#   마케팅비 — Google Ads 스크립트가 매시간 repository_dispatch 로 쏜다.
+#              (Google Ads API가 아니라 계정 내장 스크립트라 개발자 토큰 승인이 필요 없다)
+#   광고매출 — 이 워크플로가 매시간 AdMob API를 직접 호출한다.
+#
+# 인앱매출은 손으로 넣는다 — Play는 주문 목록을 API로 주지 않는다.
+name: sync
+
+on:
+  schedule:
+    - cron: '7 * * * *'          # 매시 7분 (UTC). AdMob 수집용
+  workflow_dispatch:
+  repository_dispatch:
+    types: [ads-cost]
+
+permissions:
+  contents: write
+
+# 같은 파일을 고치므로 절대 겹쳐 돌리지 않는다
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # client_payload 는 외부 입력이라 쉘에 직접 끼워넣지 않고 env 로만 넘긴다
+      - name: 마케팅비 반영
+        if: github.event_name == 'repository_dispatch'
+        env:
+          ADS_ROWS: ${{ toJSON(github.event.client_payload.rows) }}
+        run: python3 tools/sync.py --ads-json "$ADS_ROWS"
+
+      - name: 광고매출 수집
+        if: ${{ secrets.ADMOB_REFRESH_TOKEN != '' }}
+        env:
+          ADMOB_CLIENT_ID: ${{ secrets.ADMOB_CLIENT_ID }}
+          ADMOB_CLIENT_SECRET: ${{ secrets.ADMOB_CLIENT_SECRET }}
+          ADMOB_REFRESH_TOKEN: ${{ secrets.ADMOB_REFRESH_TOKEN }}
+          ADMOB_PUBLISHER_ID: ${{ secrets.ADMOB_PUBLISHER_ID }}
+        run: python3 tools/sync.py --admob --days 3
+
+      - name: 커밋
+        run: |
+          if git diff --quiet -- docs/data/daily.json; then
+            echo "변경 없음 — 커밋 생략"
+            exit 0
+          fi
+          git config user.name  "secondact-bot"
+          git config user.email "34591718+Purplusnow@users.noreply.github.com"
+          git add docs/data/daily.json
+          git commit -m "자동 수집: $(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') KST"
+          git push
