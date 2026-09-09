@@ -820,8 +820,13 @@ function renderLedger(rows) {
   const t = document.getElementById('ledger');
   t.textContent = '';
 
+  /* 매출 두 계열 바로 뒤에 합계를 끼운다 — 마케팅비와 비교할 대상은 개별 계열이 아니라 이 값이다 */
+  const rev = series.filter(s => s.type !== 'spend');
+  const spend = series.filter(s => s.type === 'spend');
+
   const thead = t.createTHead().insertRow();
-  ['날짜', ...series.map(s => s.label), '손익', '누적 손익'].forEach((h, i) => {
+  ['날짜', ...rev.map(s => s.label), '매출 합계', ...spend.map(s => s.label),
+   '손익', '누적 손익'].forEach((h, i) => {
     const th = document.createElement('th');
     if (!i) th.className = 'date';
     th.textContent = h;
@@ -832,7 +837,8 @@ function renderLedger(rows) {
   rows.slice().reverse().forEach(r => {
     const tr = tbody.insertRow();
     const d = tr.insertCell(); d.className = 'date'; d.textContent = r.date;
-    series.forEach(s => {
+
+    const cell = s => {
       const td = tr.insertCell();
       td.textContent = money(r.val[s.key] || 0);
       if (r.fx[s.key]) {
@@ -842,7 +848,12 @@ function renderLedger(rows) {
         m.textContent = '*';
         td.appendChild(m);
       }
-    });
+    };
+
+    rev.forEach(cell);
+    const sum = tr.insertCell(); sum.className = 'sum'; sum.textContent = money(r.rev);
+    spend.forEach(cell);
+
     const p = tr.insertCell(); p.className = r.profit >= 0 ? 'pos' : 'neg'; p.textContent = money(r.profit);
     const c = tr.insertCell(); c.className = r.cumProfit >= 0 ? 'pos' : 'neg'; c.textContent = money(r.cumProfit);
   });
@@ -851,7 +862,10 @@ function renderLedger(rows) {
   const tp = rows.reduce((s, r) => s + r.profit, 0);
   const tf = t.createTFoot().insertRow();
   const fd = tf.insertCell(); fd.className = 'date'; fd.textContent = '합계';
-  series.forEach(s => (tf.insertCell().textContent = money(sum(s.key))));
+  rev.forEach(s => (tf.insertCell().textContent = money(sum(s.key))));
+  const fs = tf.insertCell(); fs.className = 'sum';
+  fs.textContent = money(rows.reduce((a, r) => a + r.rev, 0));
+  spend.forEach(s => (tf.insertCell().textContent = money(sum(s.key))));
   const fp = tf.insertCell(); fp.className = tp >= 0 ? 'pos' : 'neg'; fp.textContent = money(tp);
   tf.insertCell().textContent = '·';
 }

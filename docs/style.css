@@ -241,3 +241,6 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 }
 .sync-item { cursor: help; }
 .sync-item.is-stale { color: var(--bad); font-weight: 500; }
+
+/* 매출 합계 — 파생값이라 계열색을 안 쓰고 잉크로 무게만 준다 */
+.ledger td.sum { color: var(--ink); font-weight: 600; }
