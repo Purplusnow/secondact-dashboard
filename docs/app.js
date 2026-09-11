@@ -10,7 +10,7 @@
  * API가 죽은 경우는 config.json 의 fx_fallback 고정환율로 떨어진다.
  *
  * 색은 데이터에만 쓴다. 계열색은 검증된 카테고리 팔레트 슬롯이고(파랑·아쿠아·주황),
- * 손익은 계열이 아니라 파생값이라 잉크(검정)로 그린다.
+ * 순이익은 계열이 아니라 파생값이라 잉크(검정)로 그린다.
  */
 
 const FX_API = 'https://api.frankfurter.dev/v1';
@@ -495,7 +495,7 @@ function dailySpec() {
   };
   return {
     up: rev, down: spd, profit: true,
-    sub: '0선 위가 그날 들어온 돈, 아래가 그날 나간 마케팅비. 검은 선은 그날의 손익.',
+    sub: '0선 위가 그날 들어온 돈, 아래가 그날 나간 마케팅비. 검은 선은 그날의 순이익.',
   };
 }
 
@@ -593,13 +593,13 @@ function drawDaily(rows) {
   attachHover(host, svg, tip, rows, band, ML, bands, null, null, r => [
     ...shown.map(s => ({ color: s.color, name: s.label, value: won(r.val[s.key] || 0),
                          fx: fxText(r, s.key) })),
-    ...(spec.profit ? [{ sep: true }, { color: INK, name: '손익', value: won(r.profit) }] : []),
+    ...(spec.profit ? [{ sep: true }, { color: INK, name: '순이익', value: won(r.profit) }] : []),
   ]);
 
   /* 계열이 하나뿐이면 범례는 제목이 이미 한 말을 되풀이할 뿐이라 달지 않는다 */
   const used = s => rows.some(r => (r.val[s.key] || 0) > 0);
   const keys = [...shown.filter(used).map(s => ({ color: s.color, name: s.label })),
-                ...(spec.profit ? [{ color: INK, name: '그날 손익', line: true }] : [])];
+                ...(spec.profit ? [{ color: INK, name: '그날 순이익', line: true }] : [])];
   legend(document.getElementById('legend-daily'), keys.length > 1 ? keys : []);
 }
 
@@ -611,7 +611,7 @@ function drawDaily(rows) {
  * 광고+인앱은 부분-전체지만 마케팅비는 그 전체의 일부가 아니라 부호가 반대인 값이다.
  *
  * '둘 다'는 회수 여부 하나만 답하게 두 선으로 줄이고 사이를 칠한다. 그 면적이 곧
- * 미회수액이고, 두 선이 만나는 날이 회수 완료일이다. 누적 손익 선을 따로 그리는 건
+ * 미회수액이고, 두 선이 만나는 날이 회수 완료일이다. 누적 순이익 선을 따로 그리는 건
  * 두 선의 차이를 한 번 더 그리는 중복이라 뺐다 — 숫자는 툴팁과 히어로에 남는다.
  * 계열이 하나뿐인 '비용만'은 면적으로 채운다(면적은 단일 계열일 때만 맞다).
  */
@@ -638,7 +638,7 @@ function cumSpec() {
     lines: [{ color: INK, name: '누적 매출 합계', pick: revSum, width: 2.5 },
             ...spd.map(s => ({ color: s.color, name: '누적 ' + s.label, pick: r => r.cum[s.key] || 0 }))],
     band: { hi: revSum, lo: spdSum },
-    extraTip: r => [{ sep: true }, { color: INK, name: '누적 손익', value: won(r.cumProfit) }],
+    extraTip: r => [{ sep: true }, { color: INK, name: '누적 순이익', value: won(r.cumProfit) }],
     sub: '두 선 사이의 칠해진 면적이 아직 회수 못 한 금액입니다. 선이 교차하는 날이 마케팅비를 다 회수한 날이고, ' +
          '그때부터 색이 뒤집힙니다. 광고매출과 인앱매출을 나눠 보려면 “매출만”으로 바꾸세요.',
   };
@@ -826,7 +826,7 @@ function renderLedger(rows) {
 
   const thead = t.createTHead().insertRow();
   ['날짜', ...rev.map(s => s.label), '매출 합계', ...spend.map(s => s.label),
-   '손익', '누적 손익'].forEach((h, i) => {
+   '순이익', '누적 순이익'].forEach((h, i) => {
     const th = document.createElement('th');
     if (!i) th.className = 'date';
     th.textContent = h;
