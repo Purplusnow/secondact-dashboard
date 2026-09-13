@@ -456,21 +456,16 @@ function showTip(tip, host, px, rowsHtml, dateText, opts = {}) {
 const hideTip = tip => tip.classList.remove('is-on');
 
 /* 결제 원통화 → 원화 → 수수료까지, 표시 금액이 어떻게 나왔는지 한 줄로 다 보여준다.
-   terse 는 차트 툴팁용 — 고시일 같은 출처 표기를 뺀다. 그 정보는 원장 칸에 남아 있고,
-   차트에서 알고 싶은 건 "이 금액이 어디서 왔나"지 "어느 날 고시환율인가"가 아니다. */
-function fxText(r, key, terse) {
+   원장 칸에만 쓴다 — 차트 툴팁은 환산된 원화 금액만 보여준다. */
+function fxText(r, key) {
   const b = r.fx[key];
   if (!b) return '';
 
-  const note = p =>
-    terse ? ''
-    : p.src === 'fallback' ? ' (고정)'
-    : p.src === 'carry' ? ` (${p.on} 고시)`
-    : p.src === 'unknown' ? ' (환율 없음)' : '';
-
   const bits = b.parts.map(p => p.cur === 'KRW'
     ? `KRW ${p.amt.toLocaleString('ko-KR')}`
-    : `${p.cur} ${p.amt.toLocaleString('ko-KR')} × ${rateStr(p.rate)}원` + note(p));
+    : `${p.cur} ${p.amt.toLocaleString('ko-KR')} × ${rateStr(p.rate)}원` +
+      (p.src === 'fallback' ? ' (고정)' : p.src === 'carry' ? ` (${p.on} 고시)` :
+       p.src === 'unknown' ? ' (환율 없음)' : ''));
 
   let out = bits.join(' · ');
   const converted = b.parts.length > 1 || b.parts[0].cur !== 'KRW';
@@ -597,8 +592,7 @@ function drawDaily(rows) {
   xLabels(svg, rows, x, H - 10);
 
   attachHover(host, svg, tip, rows, band, ML, bands, null, null, r => [
-    ...shown.map(s => ({ color: s.color, name: s.label, value: won(r.val[s.key] || 0),
-                         fx: fxText(r, s.key, true) })),
+    ...shown.map(s => ({ color: s.color, name: s.label, value: won(r.val[s.key] || 0) })),
     ...(spec.profit ? [{ sep: true }, { color: INK, name: '순이익', value: won(r.profit) }] : []),
   ]);
 
