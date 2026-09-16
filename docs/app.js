@@ -506,7 +506,21 @@ function drawDaily(rows) {
   document.getElementById('daily-sub').textContent = spec.sub;
   const shown = [...spec.up, ...spec.down];
 
-  const H = 344, ML = 62, MR = 14, MT = 26, MB = 46;   /* 위아래 라벨 자리 */
+  const ML = 62, MR = 14;
+
+  /* 라벨을 건너뛰기 전에 먼저 위아래 두 줄로 엇갈려 본다 — 그러면 가로로 필요한
+     자리가 절반이 되어, 좁은 화면에서도 대부분 전부 표시된다. */
+  const w0 = Math.max(host.clientWidth || 640, 300);
+  const band0 = (w0 - ML - MR) / rows.length;
+  const textW = t => [...t].reduce((a, c) => a + (c.charCodeAt(0) > 127 ? 10 : 5.6), 0);
+  const total0 = (r, list) => list.reduce((a, x) => a + (r.val[x.key] || 0), 0);
+  const caps0 = rows.map(r => [total0(r, spec.up), total0(r, spec.down)]);
+  const widest = Math.max(6, ...caps0.flat().filter(v => v > 0).map(v => textW(short(v))));
+  /* 엇갈릴 여지가 있으면 위아래 여백을 미리 넓혀 둔다 */
+  const stagger = band0 < widest + 8;
+
+  const H = stagger ? 368 : 344;
+  const MT = stagger ? 38 : 26, MB = stagger ? 58 : 46;
   const { svg, tip, w } = frame(host, H);
   const iw = w - ML - MR, ih = H - MT - MB;
 
@@ -559,24 +573,38 @@ function drawDaily(rows) {
   rows.forEach((r, i) => { stack(r, i, spec.up, +1); stack(r, i, spec.down, -1); });
 
   /* 막대 끝 숫자. 조각마다 붙이면 안쪽 조각엔 붙일 자리가 없으므로 기둥 합계만 캡에 얹는다.
-     좁아서 겹칠 것 같으면 자르지 않고 건너뛰되, 몇 칸마다 찍었는지 부제에 밝힌다. */
-  const textW = t => [...t].reduce((a, c) => a + (c.charCodeAt(0) > 127 ? 10 : 5.6), 0);
+   *
+   * 자리는 추정하지 않고 실제로 놓아 본다: 왼쪽부터 차례로 기본 위치에 시도하고,
+   * 이미 놓인 라벨과 겹치면 한 줄 올려 보고, 그래도 겹치면 그 라벨만 건너뛴다.
+   * 막대 높이가 제각각이라 "한 칸 걸러 엇갈리기" 같은 규칙으로는 겹침을 못 막는다
+   * (이웃 막대 높이차가 엇갈림 폭과 비슷하면 오히려 같은 줄에 떨어진다).
+   */
   const caps = rows.map(r => [total(r, spec.up), total(r, spec.down)]);
-  const widest = Math.max(6, ...caps.flat().filter(v => v > 0).map(v => textW(short(v))));
-  const step = Math.max(1, Math.ceil((widest + 8) / band));
+  const placed = { up: [], down: [] };
+  let skipped = 0;
 
-  rows.forEach((r, i) => {
-    if (i % step) return;
-    const [up, down] = caps[i];
-    if (up > 0) svg.appendChild(el('text', { class: 'bar-label', x: x(i), y: zeroY - sc(up) - 7 },
-      short(up)));
-    if (down > 0) svg.appendChild(el('text', { class: 'bar-label', x: x(i), y: zeroY + sc(down) + 14 },
-      short(down)));
-  });
+  const put = (i, v, dir) => {
+    if (v <= 0) return;
+    const t = short(v);
+    const half = textW(t) / 2 + 3;
+    const x1 = x(i) - half, x2 = x(i) + half;
+    const base = dir > 0 ? zeroY - sc(v) - 7 : zeroY + sc(v) + 14;
+    const side = dir > 0 ? placed.up : placed.down;
 
-  if (step > 1) {
-    const sub = document.getElementById('daily-sub');
-    sub.textContent += ` 막대가 좁아 숫자는 ${step}칸마다 표시합니다.`;
+    const hits = y => side.some(b => x2 > b.x1 && b.x2 > x1 && Math.abs(y - b.y) < 11);
+    let y = base;
+    if (hits(y)) y = base - dir * 13;        /* 바깥쪽으로 한 줄 */
+    if (hits(y)) { skipped++; return; }
+
+    side.push({ x1, x2, y });
+    svg.appendChild(el('text', { class: 'bar-label', x: x(i), y }, t));
+  };
+
+  rows.forEach((r, i) => { put(i, caps[i][0], +1); put(i, caps[i][1], -1); });
+
+  if (skipped) {
+    document.getElementById('daily-sub').textContent +=
+      ` 막대가 좁아 숫자 ${skipped}개는 자리가 없어 생략했습니다 (값은 원장에 있습니다).`;
   }
 
   svg.appendChild(el('line', { class: 'g-zero', x1: ML, x2: w - MR, y1: zeroY, y2: zeroY }));
