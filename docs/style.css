@@ -244,3 +244,9 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 
 /* 매출 합계 — 파생값이라 계열색을 안 쓰고 잉크로 무게만 준다 */
 .ledger td.sum { color: var(--ink); font-weight: 600; }
+
+/* 버튼이 늘어 좁은 화면에서 줄바꿈될 수 있다 */
+.seg { flex-wrap: wrap; }
+@media (max-width: 720px) {
+  .seg-btn { padding: 6px 9px; font-size: 12px; }
+}

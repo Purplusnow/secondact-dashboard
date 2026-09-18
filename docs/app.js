@@ -146,6 +146,8 @@ async function load() {
   document.getElementById('foot-fee-target').textContent =
     (state.cfg.fee_applies_to || []).map(labelOf).join(' · ') || '없음';
 
+  buildSegs();
+
   const daily = (data.daily || []).slice().sort((a, b) => (a.date < b.date ? -1 : 1));
   const has = daily.length > 0;
   document.getElementById('empty').hidden = has;
@@ -166,6 +168,34 @@ async function load() {
 }
 
 const labelOf = k => (state.cfg.series.find(s => s.key === k) || {}).label || k;
+const seriesOf = k => state.cfg.series.find(s => s.key === k);
+
+/* 표시 범위 버튼은 config 의 계열에서 만든다 — 계열이 늘면 버튼도 따라 는다.
+   'only:<key>' 는 그 계열 하나만 보는 모드다. */
+function segViews() {
+  const rev = state.cfg.series.filter(s => s.type !== 'spend');
+  return [
+    { view: 'both', label: '둘 다' },
+    { view: 'rev', label: '매출만' },
+    ...rev.map(s => ({ view: 'only:' + s.key, label: s.label.replace('매출', '') + '만' })),
+    { view: 'spend', label: '비용만' },
+  ];
+}
+
+function buildSegs() {
+  for (const id of ['daily-view', 'cum-view']) {
+    const host = document.getElementById(id);
+    host.textContent = '';
+    segViews().forEach((v, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'seg-btn' + (i ? '' : ' is-on');
+      b.dataset.view = v.view;
+      b.textContent = v.label;
+      host.appendChild(b);
+    });
+  }
+}
 const colorOf = k => (state.cfg.series.find(s => s.key === k) || {}).color || INK;
 
 /* 누적은 항상 전체 기간 기준으로 미리 깔아둔다 — 7일 탭에서도 누적 위치는 진짜여야 한다. */
@@ -486,6 +516,14 @@ function dailySpec() {
   const rev = series.filter(s => s.type !== 'spend');
   const spd = series.filter(s => s.type === 'spend');
 
+  if (state.dailyView.startsWith('only:')) {
+    const one = seriesOf(state.dailyView.slice(5));
+    return {
+      up: one.type === 'spend' ? [] : [one], down: one.type === 'spend' ? [one] : [],
+      profit: false,
+      sub: `${one.label}만. 다른 계열을 뺀 축이라 적던 날의 차이도 보입니다.`,
+    };
+  }
   if (state.dailyView === 'rev') return {
     up: rev, down: [], profit: false,
     sub: '광고매출과 인앱매출만. 마케팅비를 뺀 축이라 매출이 적던 날의 차이도 보입니다.',
@@ -650,6 +688,15 @@ function cumSpec() {
   const sumOf = list => r => list.reduce((a, s) => a + (r.cum[s.key] || 0), 0);
   const revSum = sumOf(rev), spdSum = sumOf(spd);
 
+  if (state.cumView.startsWith('only:')) {
+    const one = seriesOf(state.cumView.slice(5));
+    const pick = r => r.cum[one.key] || 0;
+    return {
+      lines: [{ color: one.color, name: '누적 ' + one.label, pick }],
+      area: { color: one.color, pick },
+      sub: `${one.label}만 누적. 계열이 하나라 면적으로 채웁니다.`,
+    };
+  }
   if (state.cumView === 'rev') return {
     lines: [...rev.map(s => ({ color: s.color, name: '누적 ' + s.label, pick: r => r.cum[s.key] || 0 })),
             { color: INK, name: '누적 매출 합계', pick: revSum, width: 2.5 }],
