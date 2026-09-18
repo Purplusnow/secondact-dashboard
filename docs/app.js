@@ -389,6 +389,72 @@ function renderFxNote() {
   el.innerHTML = '환율 · ' + bits.join(' · ');
 }
 
+/* ── 이번 달 예상치 ──────────────────────────────
+ *
+ * 이번 달 1일부터 '어제'까지의 일평균에 이번 달 일수를 곱한다.
+ * 오늘을 빼는 이유: 오늘은 아직 안 끝난 날이라 평균을 끌어내린다.
+ * 기록이 없는 날은 0으로 치고 지난 날짜 수로 나눈다 — 그래야 쉰 날이 평균을 부풀리지 않는다.
+ *
+ * 보여줄 항목은 그 차트의 표시 범위 버튼을 따라간다(매출만 → 예상 매출, 비용만 → 예상 마케팅비).
+ */
+function monthProjection(view) {
+  const today = todayKST();
+  const first = today.slice(0, 7) + '-01';
+  const yest = daysAgo(1);
+  if (yest < first) return null;                       /* 오늘이 1일이면 아직 표본이 없다 */
+
+  const rows = state.rows.filter(r => r.date >= first && r.date <= yest);
+  if (!rows.length) return null;
+
+  const elapsed = +yest.slice(8);                      /* 1일부터 어제까지 = 어제의 일자 */
+  const y = +today.slice(0, 4), mo = +today.slice(5, 7);
+  const monthDays = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+  const scale = monthDays / elapsed;
+  const sum = f => rows.reduce((a, r) => a + f(r), 0);
+
+  let parts;
+  if (view === 'both') {
+    parts = [{ label: '예상 매출', v: sum(r => r.rev) },
+             { label: '예상 마케팅비', v: sum(r => r.spend) },
+             { label: '예상 순이익', v: sum(r => r.profit), signed: true }];
+  } else if (view === 'rev') {
+    parts = [{ label: '예상 매출', v: sum(r => r.rev) }];
+  } else if (view === 'spend') {
+    parts = [{ label: '예상 마케팅비', v: sum(r => r.spend) }];
+  } else {
+    const one = seriesOf(view.slice(5));
+    parts = [{ label: '예상 ' + one.label, v: sum(r => r.val[one.key] || 0) }];
+  }
+
+  return {
+    parts: parts.map(p => ({ ...p, v: p.v * scale })),
+    basis: `${mmdd(first)}~${mmdd(yest)} 일평균 × ${monthDays}일`,
+  };
+}
+
+function renderProjection(id, view) {
+  const el = document.getElementById(id);
+  const p = monthProjection(view);
+  el.textContent = '';
+  if (!p) { el.hidden = true; return; }
+  el.hidden = false;
+
+  el.appendChild(document.createTextNode('이번 달 '));
+  p.parts.forEach((x, i) => {
+    if (i) el.appendChild(document.createTextNode('  ·  '));
+    el.appendChild(document.createTextNode(x.label + ' '));
+    const b = document.createElement('b');
+    if (x.signed) b.className = x.v >= 0 ? 'pos' : 'neg';
+    b.textContent = won(x.v);
+    el.appendChild(b);
+  });
+
+  const s = document.createElement('span');
+  s.className = 'basis';
+  s.textContent = '  ' + p.basis;
+  el.appendChild(s);
+}
+
 /* ── SVG 유틸 ────────────────────────────────────── */
 const NS = 'http://www.w3.org/2000/svg';
 function el(tag, attrs, text) {
@@ -542,6 +608,7 @@ function drawDaily(rows) {
   const host = document.getElementById('chart-daily');
   const spec = dailySpec();
   document.getElementById('daily-sub').textContent = spec.sub;
+  renderProjection('daily-proj', state.dailyView);
   const shown = [...spec.up, ...spec.down];
 
   const ML = 62, MR = 14;
@@ -758,6 +825,7 @@ function drawCum(rows) {
   const host = document.getElementById('chart-cum');
   const spec = cumSpec();
   document.getElementById('cum-sub').textContent = spec.sub;
+  renderProjection('cum-proj', state.cumView);
 
   const H = 300, ML = 62, MR = 14, MT = 18, MB = 30;
   const { svg, tip, w } = frame(host, H);

@@ -250,3 +250,13 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 @media (max-width: 720px) {
   .seg-btn { padding: 6px 9px; font-size: 12px; }
 }
+
+/* ── 이번 달 예상치 ───────────────────────────────── */
+.proj {
+  margin: 9px 0 0; font-size: 12.5px; color: var(--ink-3);
+  line-height: 1.7;
+}
+.proj b { color: var(--ink); font-weight: 620; font-variant-numeric: tabular-nums; }
+.proj b.pos { color: var(--good); }
+.proj b.neg { color: var(--bad); }
+.proj .basis { color: #a8a6a0; }  /* --grid 는 배경선용이라 글자로는 안 읽힌다 */
