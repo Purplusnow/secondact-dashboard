@@ -110,7 +110,8 @@ async function loadFx(daily, currencies) {
 
 /* Play 표시가에는 부가세가 포함돼 있다. 구글은 세금을 먼저 떼고 그 나머지에서
    수수료를 가져간다 — 표시가에 바로 15%만 떼면 실수령액이 15~20% 부풀려진다.
-   (실측: EUR 8.99 중 세금 1.62 → 세율 22%, 구글 예상수익 9,986원) */
+   세율은 Play Console 국가별 가격표에서 읽은 값이다(config.tax_rates).
+   같은 통화라도 나라마다 다를 수 있으므로 _caveats 를 함께 볼 것. */
 function taxOf(cur) {
   const t = state.cfg.tax_rates || {};
   const v = t[cur.toUpperCase()];
