@@ -260,3 +260,9 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .proj b.pos { color: var(--good); }
 .proj b.neg { color: var(--bad); }
 .proj .basis { color: #a8a6a0; }  /* --grid 는 배경선용이라 글자로는 안 읽힌다 */
+
+/* 계열 이름 아래 붙는 단서(예: 부가세·수수료 뗀 뒤) */
+.ledger th .th-note {
+  display: block; font-size: 10.5px; font-weight: 400;
+  color: var(--ink-3); opacity: .75; margin-top: 2px; white-space: nowrap;
+}

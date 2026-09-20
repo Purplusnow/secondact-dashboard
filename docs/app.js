@@ -178,6 +178,13 @@ async function load() {
 }
 
 const labelOf = k => (state.cfg.series.find(s => s.key === k) || {}).label || k;
+
+/* 세금·수수료가 붙는 계열에는 그 사실을 붙여 쓴다 — 표시된 숫자가 표시가가 아니라
+   실수령액이라는 걸 화면에서 바로 알 수 있어야 한다. 체크를 풀면 문구도 따라 바뀐다. */
+function netNote(key) {
+  if (!(state.cfg.fee_applies_to || []).includes(key)) return '';
+  return state.applyFee ? '부가세·수수료 뗀 뒤' : '부가세·수수료 전';
+}
 const seriesOf = k => state.cfg.series.find(s => s.key === k);
 
 /* 표시 범위 버튼은 config 의 계열에서 만든다 — 계열이 늘면 버튼도 따라 는다.
@@ -304,10 +311,13 @@ function renderTiles(rows, last) {
   const spend = rows.reduce((s, r) => s + r.spend, 0);
   const roas = spend > 0 ? rev / spend : null;
 
-  const tiles = state.cfg.series.map(s => ({
-    dot: s.color, label: s.label, value: short(sum(s.key)) + '원',
-    sub: '누적 ' + short(last.cum[s.key] || 0) + '원',
-  }));
+  const tiles = state.cfg.series.map(s => {
+    const note = netNote(s.key);
+    return {
+      dot: s.color, label: s.label, value: short(sum(s.key)) + '원',
+      sub: (note ? note + ' · ' : '') + '누적 ' + short(last.cum[s.key] || 0) + '원',
+    };
+  });
   tiles.push({
     label: 'ROAS', value: roas === null ? '—' : pct(roas),
     sub: roas === null ? '이 기간 마케팅비 없음' : `마케팅비 1원당 ${roas.toFixed(2)}원`,
@@ -983,11 +993,19 @@ function renderLedger(rows) {
   const spend = series.filter(s => s.type === 'spend');
 
   const thead = t.createTHead().insertRow();
-  ['날짜', ...rev.map(s => s.label), '매출 합계', ...spend.map(s => s.label),
-   '순이익', '누적 순이익'].forEach((h, i) => {
+  const cols = [{ h: '날짜' }, ...rev.map(s => ({ h: s.label, note: netNote(s.key) })),
+                { h: '매출 합계' }, ...spend.map(s => ({ h: s.label, note: netNote(s.key) })),
+                { h: '순이익' }, { h: '누적 순이익' }];
+  cols.forEach((c, i) => {
     const th = document.createElement('th');
     if (!i) th.className = 'date';
-    th.textContent = h;
+    th.appendChild(document.createTextNode(c.h));
+    if (c.note) {
+      const n = document.createElement('span');
+      n.className = 'th-note';
+      n.textContent = c.note;
+      th.appendChild(n);
+    }
     thead.appendChild(th);
   });
 
