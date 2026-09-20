@@ -108,6 +108,15 @@ async function loadFx(daily, currencies) {
   return fx;
 }
 
+/* Play 표시가에는 부가세가 포함돼 있다. 구글은 세금을 먼저 떼고 그 나머지에서
+   수수료를 가져간다 — 표시가에 바로 15%만 떼면 실수령액이 15~20% 부풀려진다.
+   (실측: EUR 8.99 중 세금 1.62 → 세율 22%, 구글 예상수익 9,986원) */
+function taxOf(cur) {
+  const t = state.cfg.tax_rates || {};
+  const v = t[cur.toUpperCase()];
+  return typeof v === 'number' ? v : (typeof t._default === 'number' ? t._default : 0);
+}
+
 /* 그날 고시가가 없으면(주말·공휴일) 직전 영업일로 끌어온다. */
 function rateOn(cur, date) {
   const c = cur.toUpperCase();
@@ -217,21 +226,23 @@ function derive(raw) {
 
     for (const s of series) {
       /* 내역은 원화 건도 포함한다 — 빼놓으면 합이 표시 금액과 안 맞아 보인다 */
-      let gross = 0;
+      let gross = 0, taxed = 0;
       const bd = [];
       for (const [cur, amt] of parts(r[s.key])) {
         const c = cur.toUpperCase();
         const { rate, src, on } = rateOn(c, r.date);
-        gross += (+amt) * rate;
+        const g = (+amt) * rate;
+        gross += g;
+        taxed += g / (1 + taxOf(c));      /* 표시가에 포함된 부가세를 먼저 뺀다 */
         bd.push({ cur: c, amt: +amt, rate, src, on });
       }
       const feeOn = feeKeys.has(s.key) && gross > 0;
-      const krw = feeOn ? gross * (1 - store_fee) : gross;
+      const krw = feeOn ? taxed * (1 - store_fee) : gross;
 
       out.val[s.key] = krw;
       /* 원화 한 건뿐이고 수수료도 안 붙으면 설명할 게 없다 */
       if (bd.length && (feeOn || bd.length > 1 || bd[0].cur !== 'KRW'))
-        out.fx[s.key] = { parts: bd, gross, fee: feeOn };
+        out.fx[s.key] = { parts: bd, gross, taxed, fee: feeOn };
       cum[s.key] = (cum[s.key] || 0) + krw;
       out.cum[s.key] = cum[s.key];
 
@@ -566,8 +577,11 @@ function fxText(r, key) {
   let out = bits.join(' · ');
   const converted = b.parts.length > 1 || b.parts[0].cur !== 'KRW';
   if (converted) out += ` = ${won(b.gross)}`;
-  if (b.fee) out += ` → 수수료 ${pct(state.cfg.store_fee)} 떼고 ` +
-                    `${won(b.gross * (1 - state.cfg.store_fee))}`;
+  if (b.fee) {
+    const taxShare = b.gross > 0 ? 1 - b.taxed / b.gross : 0;
+    out += ` → 세금 ${pct(taxShare)} · 수수료 ${pct(state.cfg.store_fee)} 떼고 ` +
+           `${won(b.taxed * (1 - state.cfg.store_fee))}`;
+  }
   return out;
 }
 
