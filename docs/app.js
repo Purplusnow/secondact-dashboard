@@ -768,10 +768,13 @@ function drawDaily(rows) {
  * 여기서 읽고 싶은 건 크기가 아니라 기울기라서 선이 맞다. 셋을 쌓는 면적도 틀리다 —
  * 광고+인앱은 부분-전체지만 마케팅비는 그 전체의 일부가 아니라 부호가 반대인 값이다.
  *
- * '둘 다'는 회수 여부 하나만 답하게 두 선으로 줄이고 사이를 칠한다. 그 면적이 곧
- * 미회수액이고, 두 선이 만나는 날이 회수 완료일이다. 누적 순이익 선을 따로 그리는 건
+ * '둘 다'는 회수 여부 하나만 답하게 두 선으로 줄이고 사이를 칠한다. 읽는 값은 '세로 간격'
+ * (그날의 미회수액)이지 칠한 넓이가 아니다 — 넓이는 ∫(미회수액)dt 라 대응물이 없다.
+ * 두 선이 만나는 날이 회수 완료일이다. 누적 순이익 선을 따로 그리는 건
  * 두 선의 차이를 한 번 더 그리는 중복이라 뺐다 — 숫자는 툴팁과 히어로에 남는다.
- * 계열이 하나뿐인 '비용만'은 면적으로 채운다(면적은 단일 계열일 때만 맞다).
+ * 면적으로 채우지 않는다. 면적이 맞는 건 유량(일별 금액)일 때뿐이고 — 그때는 곡선 아래
+ * 면적이 곧 누적 총액이다 — 이 차트의 y는 이미 누적값이라 그 아래 면적은 ∫(누적)dt,
+ * 단위가 원·일인 정체불명의 양이 된다. 읽어야 할 값은 오른쪽 끝의 높이다.
  */
 function cumSpec() {
   const { series } = state.cfg;
@@ -785,8 +788,7 @@ function cumSpec() {
     const pick = r => r.cum[one.key] || 0;
     return {
       lines: [{ color: one.color, name: '누적 ' + one.label, pick }],
-      area: { color: one.color, pick },
-      sub: `${one.label}만 누적. 계열이 하나라 면적으로 채웁니다.`,
+      sub: `${one.label}만 누적. 오른쪽 끝의 높이가 지금까지의 총액입니다.`,
     };
   }
   if (state.cumView === 'rev') return {
@@ -797,7 +799,6 @@ function cumSpec() {
 
   if (state.cumView === 'spend') return {
     lines: spd.map(s => ({ color: s.color, name: '누적 ' + s.label, pick: r => r.cum[s.key] || 0 })),
-    area: { color: spd[0] ? spd[0].color : INK, pick: spdSum },
     sub: '마케팅비만. 지금까지 태운 총액이 어떤 속도로 늘고 있는지 봅니다.',
   };
 
@@ -806,8 +807,9 @@ function cumSpec() {
             ...spd.map(s => ({ color: s.color, name: '누적 ' + s.label, pick: r => r.cum[s.key] || 0 }))],
     band: { hi: revSum, lo: spdSum },
     extraTip: r => [{ sep: true }, { color: INK, name: '누적 순이익', value: won(r.cumProfit) }],
-    sub: '두 선 사이의 칠해진 면적이 아직 회수 못 한 금액입니다. 선이 교차하는 날이 마케팅비를 다 회수한 날이고, ' +
-         '그때부터 색이 뒤집힙니다. 광고매출과 인앱매출을 나눠 보려면 “매출만”으로 바꾸세요.',
+    sub: '두 선의 세로 간격이 그날 기준 아직 회수 못 한 금액입니다(칠한 넓이가 아니라 간격입니다). ' +
+         '선이 교차하는 날이 마케팅비를 다 회수한 날이고, 그때부터 색이 뒤집힙니다. ' +
+         '광고매출과 인앱매출을 나눠 보려면 “매출만”으로 바꾸세요.',
   };
 }
 
@@ -877,13 +879,6 @@ function drawCum(rows) {
     paths.forEach(p => svg.appendChild(el('path', {
       d: p.d, fill: p.sign > 0 ? 'var(--good)' : 'var(--bad)', 'fill-opacity': .12,
     })));
-  }
-  if (spec.area) {
-    svg.appendChild(el('path', {
-      d: `M${x(0)},${y(0)} ` + rows.map((r, i) => `L${x(i)},${y(spec.area.pick(r))}`).join(' ') +
-         ` L${x(rows.length - 1)},${y(0)} Z`,
-      fill: spec.area.color, 'fill-opacity': .10,
-    }));
   }
 
   const cross = el('line', { x1: 0, x2: 0, y1: MT, y2: MT + ih,
