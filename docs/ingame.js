@@ -266,14 +266,49 @@
     });
   }
 
-  // ── 페이싱 커브 ───────────────────────────────────────────
+  // ── 페이싱: 구간당 소요시간(시간/%) 막대 + 표본 N게이팅 ────────
+  const N_MIN = 30;
   function renderPacing(d) {
     const host = $('#ig-pacing'); host.innerHTML = '';
-    const p = (d.pacing || []).filter(x => x.median_hours != null);
-    if (!p.length) { host.innerHTML = '<p class="card-sub">데이터 없음</p>'; return; }
-    host.innerHTML = lineChart(p.map(x => ({ x: x.pct, y: x.median_hours })), { xlab: '%', ylab: 'h' });
-    const at = q => (p.find(x => x.pct === q) || {}).median_hours;
+    const p = (d.pacing || []).filter(x => x.median_hours != null).sort((a, b) => a.pct - b.pct);
+    if (p.length < 2) { host.innerHTML = '<p class="card-sub">데이터 없음</p>'; return; }
+    // 신뢰 구간: 처음부터 표본 N≥N_MIN 인 동안만(뒤로 갈수록 N 급감 → 생존자편향 컷)
+    const kept = [];
+    for (const x of p) { if (x.users >= N_MIN) kept.push(x); else break; }
+    if (kept.length < 2) { host.innerHTML = '<p class="card-sub">표본 부족(N≥' + N_MIN + ' 구간 없음)</p>'; return; }
+    // 구간당 시간(시간/%): 0→1%(진입)부터 연속 구간의 미분값
+    const segs = []; let pp = 0, ph = 0;
+    kept.forEach(x => { const dp = x.pct - pp; if (dp > 0) segs.push({ from: pp, to: x.pct, cost: (x.median_hours - ph) / dp }); pp = x.pct; ph = x.median_hours; });
+    host.innerHTML = barsChart(segs);
+    const lastPct = kept[kept.length - 1].pct;
+    // 봉우리(벽) = 중앙값의 2배 넘는 구간. 반복 패턴을 그대로 보여줌.
+    const sorted = segs.map(s => s.cost).sort((a, b) => a - b);
+    const med = sorted[Math.floor(sorted.length / 2)] || 1;
+    const spikes = segs.filter(s => s.cost > Math.max(2 * med, 6)).map(s => `${s.from}~${s.to}%`);
     host.appendChild(el('p', 'chart-note',
-      `1% ${at(1) ?? '—'}h · 3% ${at(3) ?? '—'}h · 10% ${at(10) ?? '—'}h · 50% ${at(50) ?? '—'}h · 100% ${at(100) ?? '—'}h`));
+      (spikes.length
+        ? `<b class="drop">벽(봉우리): ${spikes.join(', ')}</b> — 약 3%마다 반복 = <b>환생 경계마다 정체</b>. `
+        : '') +
+      `사이 구간은 저렴. 신뢰 ${lastPct}%까지(N≥${N_MIN}) · 캘린더라 대기·수면 포함`));
+  }
+
+  // 세로 막대(SVG): 각 구간의 시간/%. 최대=붉게.
+  function barsChart(segs, { w = 640, h = 190, pad = 30 } = {}) {
+    if (!segs.length) return '';
+    const maxC = Math.max(...segs.map(s => s.cost), 0.1);
+    const first = segs[0].from, last = segs[segs.length - 1].to, span = (last - first) || 1;
+    const X = p => pad + ((p - first) / span) * (w - pad * 2);
+    const Y = c => h - pad - (c / maxC) * (h - pad * 2);
+    const peak = segs.reduce((a, b) => b.cost > a.cost ? b : a, segs[0]);
+    let bars = '';
+    segs.forEach(s => {
+      const x0 = X(s.from), x1 = X(s.to), bw = Math.max(x1 - x0 - 1, 1), y = Y(s.cost), hot = s === peak;
+      bars += `<rect x="${x0.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${(h - pad - y).toFixed(1)}" fill="${hot ? '#e2504b' : '#4b74e2'}" fill-opacity="${hot ? 0.9 : 0.6}"/>`;
+    });
+    return `<svg class="lc" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img">` +
+      `<line x1="${pad}" y1="${h - pad}" x2="${w - pad}" y2="${h - pad}" stroke="var(--axis)" stroke-width="1"/>` + bars +
+      `<text x="${pad}" y="14" class="lc-ax">시간/% (최대 ${maxC.toFixed(1)}h)</text>` +
+      `<text x="${pad}" y="${h - 6}" class="lc-ax">${first}%</text>` +
+      `<text x="${w - pad}" y="${h - 6}" class="lc-ax" text-anchor="end">${last}%</text></svg>`;
   }
 })();
