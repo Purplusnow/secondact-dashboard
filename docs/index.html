@@ -20,11 +20,16 @@
   <span class="updated" id="updated"></span>
 </header>
 
+<nav class="viewnav">
+  <button class="vtab is-on" data-view="revenue" type="button">매출</button>
+  <button class="vtab" data-view="ingame" type="button">인게임</button>
+</nav>
+
 <div class="demo-banner" id="demo-banner" hidden>
   데모 데이터입니다 — 실제 기록이 아닙니다. <a href="./">실제 데이터 보기</a>
 </div>
 
-<main class="wrap">
+<main class="wrap" id="view-revenue">
 
   <div class="toolbar">
     <button class="tab" data-days="7"  type="button">최근 7일</button>
@@ -103,6 +108,40 @@
   </div>
 </main>
 
+<main class="wrap" id="view-ingame" hidden>
+  <section class="tiles" id="ig-kpi"></section>
+
+  <section class="card">
+    <div class="card-head"><h2>은퇴 → 첫환생 퍼널</h2>
+      <p class="card-sub" id="ig-funnel-sub">은퇴한 유저가 어디서 막히나 · 미환생 원인 3분할</p></div>
+    <div id="ig-funnel"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>0 ~ 3.2% 이탈 곡선</h2>
+      <p class="card-sub">첫 환생까지 0.1%단위 생존곡선 · 절벽 지점(붉은 표시)</p></div>
+    <div id="ig-deci"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>온보딩 퍼널</h2>
+      <p class="card-sub">첫 세션 20스텝 · 어디서 대량 이탈하나</p></div>
+    <div id="ig-onb"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>진행 페이싱</h2>
+      <p class="card-sub">추월%별 도달까지 걸린 시간(중앙값, 시간)</p></div>
+    <div id="ig-pacing"></div>
+  </section>
+
+  <section class="empty" id="ig-empty" hidden>
+    <h2>아직 인게임 데이터가 없습니다</h2>
+    <p>BigQuery 수집(Action)이 <code>docs/data/ingame.json</code> 을 만들면 채워집니다.
+       GA4 export가 다음날 landing되므로 배포 다음날부터 채워집니다.</p>
+  </section>
+</main>
+
 <footer class="foot">
   <p class="sync-line" id="sync-line" hidden></p>
   <p>
@@ -119,5 +158,6 @@
 </footer>
 
 <script src="app.js?v=2a3f7c51"></script>
+<script src="ingame.js?v=1"></script>
 </body>
 </html>

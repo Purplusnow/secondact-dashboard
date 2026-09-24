@@ -1,0 +1,30 @@
+{
+  "updated": "2026-09-24 (샘플 · 내일 자동수집으로 교체)",
+  "window_days": 45,
+  "last_table": "20260923",
+  "kpi": { "new_users_win": 0, "active_users_win": 0 },
+  "rebirth_funnel": [
+    { "stage": "은퇴", "users": 468 },
+    { "stage": "환생자격", "users": 0 },
+    { "stage": "화면방문", "users": 0 },
+    { "stage": "첫환생", "users": 26 }
+  ],
+  "rebirth_reasons": { "slow_climb": 442, "discoverability": 0, "reset_shock": 0 },
+  "deci_curve": [],
+  "onboarding_funnel": [],
+  "pacing": [
+    { "pct": 1, "users": 3986, "median_hours": 20.8 },
+    { "pct": 2, "users": 2600, "median_hours": 23.9 },
+    { "pct": 3, "users": 2154, "median_hours": 26.5 },
+    { "pct": 4, "users": 900, "median_hours": 47.0 },
+    { "pct": 5, "users": 800, "median_hours": 49.6 },
+    { "pct": 7, "users": 500, "median_hours": 71.4 },
+    { "pct": 10, "users": 1082, "median_hours": 92.6 },
+    { "pct": 15, "users": 500, "median_hours": 115.0 },
+    { "pct": 20, "users": 380, "median_hours": 144.6 },
+    { "pct": 30, "users": 200, "median_hours": 182.5 },
+    { "pct": 50, "users": 104, "median_hours": 252.1 },
+    { "pct": 75, "users": 55, "median_hours": 291.7 },
+    { "pct": 100, "users": 25, "median_hours": 303.5 }
+  ]
+}

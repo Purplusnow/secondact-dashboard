@@ -1,0 +1,56 @@
+# 인게임 분석 수집 — BigQuery(GA4 export) → docs/data/ingame.json
+#
+# GA4 일별 export가 다음날 landing되므로 하루 1회면 충분(스트리밍 유료 안 씀).
+# 인증: 서비스계정 키(GitHub Secret GCP_SA_KEY). BigQuery Data Viewer + Job User 권한만.
+name: ingame
+
+on:
+  schedule:
+    - cron: '20 2 * * *'          # 매일 02:20 UTC = 11:20 KST (전날치 landing 후)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ingame
+  cancel-in-progress: false
+
+jobs:
+  ingame:
+    runs-on: ubuntu-latest
+    env:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 의존성
+        if: env.GCP_SA_KEY != ''
+        run: pip install --quiet google-cloud-bigquery
+
+      - name: 서비스계정 키 파일화
+        if: env.GCP_SA_KEY != ''
+        run: |
+          printf '%s' "$GCP_SA_KEY" > "$RUNNER_TEMP/sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+
+      - name: 인게임 데이터 수집
+        if: env.GCP_SA_KEY != ''
+        run: python3 tools/ingame.py
+
+      - name: 커밋
+        if: env.GCP_SA_KEY != ''
+        run: |
+          if git diff --quiet -- docs/data/ingame.json; then
+            echo "변경 없음 — 커밋 생략"
+            exit 0
+          fi
+          git config user.name  "secondact-bot"
+          git config user.email "34591718+Purplusnow@users.noreply.github.com"
+          git add docs/data/ingame.json
+          git commit -m "인게임 수집: $(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') KST"
+          git push
