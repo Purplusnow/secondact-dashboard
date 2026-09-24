@@ -1,30 +1,687 @@
 {
-  "updated": "2026-09-24 (샘플 · 내일 자동수집으로 교체)",
+  "updated": "2026-09-24",
   "window_days": 45,
+  "kpi": {
+    "new_users_win": 13283,
+    "active_users_win": 13388
+  },
   "last_table": "20260923",
-  "kpi": { "new_users_win": 0, "active_users_win": 0 },
   "rebirth_funnel": [
-    { "stage": "은퇴", "users": 468 },
-    { "stage": "환생자격", "users": 0 },
-    { "stage": "화면방문", "users": 0 },
-    { "stage": "첫환생", "users": 26 }
+    {
+      "stage": "은퇴",
+      "users": 468
+    },
+    {
+      "stage": "환생자격",
+      "users": 0
+    },
+    {
+      "stage": "화면방문",
+      "users": 0
+    },
+    {
+      "stage": "첫환생",
+      "users": 26
+    }
   ],
-  "rebirth_reasons": { "slow_climb": 442, "discoverability": 0, "reset_shock": 0 },
+  "rebirth_reasons": {
+    "slow_climb": 442,
+    "discoverability": 0,
+    "reset_shock": 0
+  },
   "deci_curve": [],
-  "onboarding_funnel": [],
+  "onboarding_funnel": [
+    {
+      "idx": 1,
+      "step": "new_game",
+      "users": 12986
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_2",
+      "users": 11762
+    },
+    {
+      "idx": 2,
+      "step": "intro_done",
+      "users": 12022
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_9",
+      "users": 11694
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_6",
+      "users": 11712
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_3",
+      "users": 11738
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_8",
+      "users": 11699
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_7",
+      "users": 11705
+    },
+    {
+      "idx": 2,
+      "step": "intro_shown",
+      "users": 12254
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_1",
+      "users": 11796
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_4",
+      "users": 11727
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_5",
+      "users": 11721
+    },
+    {
+      "idx": 3,
+      "step": "dev_concept",
+      "users": 11655
+    },
+    {
+      "idx": 4,
+      "step": "dev_design",
+      "users": 11140
+    },
+    {
+      "idx": 5,
+      "step": "dev_prototype",
+      "users": 10477
+    },
+    {
+      "idx": 6,
+      "step": "dev_alpha",
+      "users": 9964
+    },
+    {
+      "idx": 7,
+      "step": "dev_beta",
+      "users": 9658
+    },
+    {
+      "idx": 8,
+      "step": "dev_launch",
+      "users": 9503
+    },
+    {
+      "idx": 9,
+      "step": "first_ops",
+      "users": 9314
+    },
+    {
+      "idx": 10,
+      "step": "property_1",
+      "users": 9497
+    },
+    {
+      "idx": 11,
+      "step": "property_2",
+      "users": 8653
+    },
+    {
+      "idx": 12,
+      "step": "property_3",
+      "users": 8352
+    },
+    {
+      "idx": 13,
+      "step": "property_4",
+      "users": 8163
+    },
+    {
+      "idx": 14,
+      "step": "property_5",
+      "users": 8061
+    },
+    {
+      "idx": 15,
+      "step": "game_sale",
+      "users": 7965
+    },
+    {
+      "idx": 16,
+      "step": "first_manager",
+      "users": 5813
+    },
+    {
+      "idx": 17,
+      "step": "first_donate",
+      "users": 7797
+    },
+    {
+      "idx": 18,
+      "step": "first_settle",
+      "users": 11153
+    },
+    {
+      "idx": 19,
+      "step": "first_finance",
+      "users": 6667
+    },
+    {
+      "idx": 20,
+      "step": "first_rebirth",
+      "users": 3349
+    }
+  ],
   "pacing": [
-    { "pct": 1, "users": 3986, "median_hours": 20.8 },
-    { "pct": 2, "users": 2600, "median_hours": 23.9 },
-    { "pct": 3, "users": 2154, "median_hours": 26.5 },
-    { "pct": 4, "users": 900, "median_hours": 47.0 },
-    { "pct": 5, "users": 800, "median_hours": 49.6 },
-    { "pct": 7, "users": 500, "median_hours": 71.4 },
-    { "pct": 10, "users": 1082, "median_hours": 92.6 },
-    { "pct": 15, "users": 500, "median_hours": 115.0 },
-    { "pct": 20, "users": 380, "median_hours": 144.6 },
-    { "pct": 30, "users": 200, "median_hours": 182.5 },
-    { "pct": 50, "users": 104, "median_hours": 252.1 },
-    { "pct": 75, "users": 55, "median_hours": 291.7 },
-    { "pct": 100, "users": 25, "median_hours": 303.5 }
+    {
+      "pct": 1,
+      "users": 3940,
+      "median_hours": 20.7
+    },
+    {
+      "pct": 2,
+      "users": 3641,
+      "median_hours": 23.9
+    },
+    {
+      "pct": 3,
+      "users": 3467,
+      "median_hours": 26.4
+    },
+    {
+      "pct": 4,
+      "users": 2215,
+      "median_hours": 46.9
+    },
+    {
+      "pct": 5,
+      "users": 2122,
+      "median_hours": 49.4
+    },
+    {
+      "pct": 6,
+      "users": 2051,
+      "median_hours": 52.8
+    },
+    {
+      "pct": 7,
+      "users": 1445,
+      "median_hours": 71.4
+    },
+    {
+      "pct": 8,
+      "users": 1392,
+      "median_hours": 74.3
+    },
+    {
+      "pct": 9,
+      "users": 1367,
+      "median_hours": 74.9
+    },
+    {
+      "pct": 10,
+      "users": 1056,
+      "median_hours": 92.5
+    },
+    {
+      "pct": 11,
+      "users": 995,
+      "median_hours": 95.5
+    },
+    {
+      "pct": 12,
+      "users": 974,
+      "median_hours": 98.0
+    },
+    {
+      "pct": 13,
+      "users": 798,
+      "median_hours": 107.5
+    },
+    {
+      "pct": 14,
+      "users": 721,
+      "median_hours": 112.5
+    },
+    {
+      "pct": 15,
+      "users": 716,
+      "median_hours": 115.8
+    },
+    {
+      "pct": 16,
+      "users": 706,
+      "median_hours": 115.0
+    },
+    {
+      "pct": 17,
+      "users": 537,
+      "median_hours": 128.7
+    },
+    {
+      "pct": 18,
+      "users": 531,
+      "median_hours": 130.8
+    },
+    {
+      "pct": 19,
+      "users": 528,
+      "median_hours": 131.1
+    },
+    {
+      "pct": 20,
+      "users": 436,
+      "median_hours": 144.6
+    },
+    {
+      "pct": 21,
+      "users": 425,
+      "median_hours": 146.7
+    },
+    {
+      "pct": 22,
+      "users": 419,
+      "median_hours": 146.7
+    },
+    {
+      "pct": 23,
+      "users": 346,
+      "median_hours": 156.7
+    },
+    {
+      "pct": 24,
+      "users": 328,
+      "median_hours": 161.4
+    },
+    {
+      "pct": 25,
+      "users": 323,
+      "median_hours": 162.6
+    },
+    {
+      "pct": 26,
+      "users": 274,
+      "median_hours": 166.2
+    },
+    {
+      "pct": 27,
+      "users": 262,
+      "median_hours": 168.4
+    },
+    {
+      "pct": 28,
+      "users": 259,
+      "median_hours": 168.4
+    },
+    {
+      "pct": 29,
+      "users": 253,
+      "median_hours": 170.2
+    },
+    {
+      "pct": 30,
+      "users": 222,
+      "median_hours": 179.7
+    },
+    {
+      "pct": 31,
+      "users": 220,
+      "median_hours": 181.5
+    },
+    {
+      "pct": 32,
+      "users": 214,
+      "median_hours": 182.8
+    },
+    {
+      "pct": 33,
+      "users": 187,
+      "median_hours": 191.7
+    },
+    {
+      "pct": 34,
+      "users": 188,
+      "median_hours": 193.5
+    },
+    {
+      "pct": 35,
+      "users": 187,
+      "median_hours": 193.5
+    },
+    {
+      "pct": 36,
+      "users": 164,
+      "median_hours": 205.5
+    },
+    {
+      "pct": 37,
+      "users": 162,
+      "median_hours": 207.2
+    },
+    {
+      "pct": 38,
+      "users": 160,
+      "median_hours": 214.1
+    },
+    {
+      "pct": 39,
+      "users": 139,
+      "median_hours": 221.9
+    },
+    {
+      "pct": 40,
+      "users": 134,
+      "median_hours": 212.2
+    },
+    {
+      "pct": 41,
+      "users": 132,
+      "median_hours": 215.0
+    },
+    {
+      "pct": 42,
+      "users": 126,
+      "median_hours": 224.9
+    },
+    {
+      "pct": 43,
+      "users": 122,
+      "median_hours": 230.1
+    },
+    {
+      "pct": 44,
+      "users": 121,
+      "median_hours": 233.9
+    },
+    {
+      "pct": 45,
+      "users": 121,
+      "median_hours": 233.9
+    },
+    {
+      "pct": 46,
+      "users": 110,
+      "median_hours": 238.8
+    },
+    {
+      "pct": 47,
+      "users": 110,
+      "median_hours": 238.8
+    },
+    {
+      "pct": 48,
+      "users": 110,
+      "median_hours": 239.0
+    },
+    {
+      "pct": 49,
+      "users": 101,
+      "median_hours": 252.8
+    },
+    {
+      "pct": 50,
+      "users": 100,
+      "median_hours": 252.1
+    },
+    {
+      "pct": 51,
+      "users": 100,
+      "median_hours": 252.1
+    },
+    {
+      "pct": 52,
+      "users": 88,
+      "median_hours": 249.5
+    },
+    {
+      "pct": 53,
+      "users": 85,
+      "median_hours": 255.8
+    },
+    {
+      "pct": 54,
+      "users": 84,
+      "median_hours": 251.6
+    },
+    {
+      "pct": 55,
+      "users": 79,
+      "median_hours": 261.8
+    },
+    {
+      "pct": 56,
+      "users": 79,
+      "median_hours": 261.8
+    },
+    {
+      "pct": 57,
+      "users": 79,
+      "median_hours": 262.3
+    },
+    {
+      "pct": 58,
+      "users": 79,
+      "median_hours": 262.3
+    },
+    {
+      "pct": 59,
+      "users": 67,
+      "median_hours": 263.9
+    },
+    {
+      "pct": 60,
+      "users": 67,
+      "median_hours": 265.3
+    },
+    {
+      "pct": 61,
+      "users": 67,
+      "median_hours": 266.7
+    },
+    {
+      "pct": 62,
+      "users": 68,
+      "median_hours": 264.1
+    },
+    {
+      "pct": 63,
+      "users": 66,
+      "median_hours": 266.0
+    },
+    {
+      "pct": 64,
+      "users": 66,
+      "median_hours": 266.0
+    },
+    {
+      "pct": 65,
+      "users": 62,
+      "median_hours": 273.9
+    },
+    {
+      "pct": 66,
+      "users": 62,
+      "median_hours": 274.0
+    },
+    {
+      "pct": 67,
+      "users": 62,
+      "median_hours": 274.5
+    },
+    {
+      "pct": 68,
+      "users": 59,
+      "median_hours": 279.1
+    },
+    {
+      "pct": 69,
+      "users": 58,
+      "median_hours": 281.5
+    },
+    {
+      "pct": 70,
+      "users": 58,
+      "median_hours": 281.5
+    },
+    {
+      "pct": 71,
+      "users": 56,
+      "median_hours": 286.9
+    },
+    {
+      "pct": 72,
+      "users": 57,
+      "median_hours": 288.9
+    },
+    {
+      "pct": 73,
+      "users": 56,
+      "median_hours": 289.3
+    },
+    {
+      "pct": 74,
+      "users": 56,
+      "median_hours": 289.3
+    },
+    {
+      "pct": 75,
+      "users": 53,
+      "median_hours": 295.4
+    },
+    {
+      "pct": 76,
+      "users": 53,
+      "median_hours": 297.7
+    },
+    {
+      "pct": 77,
+      "users": 52,
+      "median_hours": 295.5
+    },
+    {
+      "pct": 78,
+      "users": 48,
+      "median_hours": 305.9
+    },
+    {
+      "pct": 79,
+      "users": 47,
+      "median_hours": 306.1
+    },
+    {
+      "pct": 80,
+      "users": 47,
+      "median_hours": 306.1
+    },
+    {
+      "pct": 81,
+      "users": 44,
+      "median_hours": 308.4
+    },
+    {
+      "pct": 82,
+      "users": 44,
+      "median_hours": 308.7
+    },
+    {
+      "pct": 83,
+      "users": 43,
+      "median_hours": 308.7
+    },
+    {
+      "pct": 84,
+      "users": 40,
+      "median_hours": 314.9
+    },
+    {
+      "pct": 85,
+      "users": 40,
+      "median_hours": 311.9
+    },
+    {
+      "pct": 86,
+      "users": 40,
+      "median_hours": 311.9
+    },
+    {
+      "pct": 87,
+      "users": 40,
+      "median_hours": 311.9
+    },
+    {
+      "pct": 88,
+      "users": 36,
+      "median_hours": 313.9
+    },
+    {
+      "pct": 89,
+      "users": 36,
+      "median_hours": 313.9
+    },
+    {
+      "pct": 90,
+      "users": 36,
+      "median_hours": 313.9
+    },
+    {
+      "pct": 91,
+      "users": 34,
+      "median_hours": 293.6
+    },
+    {
+      "pct": 92,
+      "users": 33,
+      "median_hours": 295.4
+    },
+    {
+      "pct": 93,
+      "users": 33,
+      "median_hours": 295.4
+    },
+    {
+      "pct": 94,
+      "users": 28,
+      "median_hours": 296.1
+    },
+    {
+      "pct": 95,
+      "users": 28,
+      "median_hours": 296.2
+    },
+    {
+      "pct": 96,
+      "users": 28,
+      "median_hours": 296.2
+    },
+    {
+      "pct": 97,
+      "users": 26,
+      "median_hours": 301.9
+    },
+    {
+      "pct": 98,
+      "users": 25,
+      "median_hours": 303.5
+    },
+    {
+      "pct": 99,
+      "users": 25,
+      "median_hours": 303.5
+    },
+    {
+      "pct": 100,
+      "users": 25,
+      "median_hours": 303.5
+    }
   ]
 }
