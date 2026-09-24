@@ -1,6 +1,7 @@
 {
   "updated": "2026-09-24",
   "window_days": 45,
+  "diag_start": "2026-09-23",
   "kpi": {
     "new_users_win": 13283,
     "active_users_win": 13388
@@ -38,38 +39,18 @@
     },
     {
       "idx": 2,
-      "step": "intro_done",
-      "users": 12022
-    },
-    {
-      "idx": 2,
-      "step": "intro_beat_1",
-      "users": 11796
-    },
-    {
-      "idx": 2,
-      "step": "intro_beat_5",
-      "users": 11721
-    },
-    {
-      "idx": 2,
-      "step": "intro_beat_6",
-      "users": 11712
-    },
-    {
-      "idx": 2,
-      "step": "intro_shown",
-      "users": 12254
-    },
-    {
-      "idx": 2,
       "step": "intro_beat_8",
       "users": 11699
     },
     {
       "idx": 2,
-      "step": "intro_beat_3",
-      "users": 11738
+      "step": "intro_done",
+      "users": 12022
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_9",
+      "users": 11694
     },
     {
       "idx": 2,
@@ -78,18 +59,38 @@
     },
     {
       "idx": 2,
+      "step": "intro_shown",
+      "users": 12254
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_1",
+      "users": 11796
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_6",
+      "users": 11712
+    },
+    {
+      "idx": 2,
       "step": "intro_beat_2",
       "users": 11762
     },
     {
       "idx": 2,
-      "step": "intro_beat_7",
-      "users": 11705
+      "step": "intro_beat_5",
+      "users": 11721
     },
     {
       "idx": 2,
-      "step": "intro_beat_9",
-      "users": 11694
+      "step": "intro_beat_3",
+      "users": 11738
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_7",
+      "users": 11705
     },
     {
       "idx": 3,
@@ -191,7 +192,7 @@
     {
       "pct": 2,
       "users": 3641,
-      "median_hours": 23.8
+      "median_hours": 24.0
     },
     {
       "pct": 3,
@@ -201,57 +202,57 @@
     {
       "pct": 4,
       "users": 2215,
-      "median_hours": 47.5
+      "median_hours": 47.0
     },
     {
       "pct": 5,
       "users": 2122,
-      "median_hours": 48.8
+      "median_hours": 49.3
     },
     {
       "pct": 6,
       "users": 2051,
-      "median_hours": 51.5
+      "median_hours": 53.7
     },
     {
       "pct": 7,
       "users": 1445,
-      "median_hours": 71.1
+      "median_hours": 71.3
     },
     {
       "pct": 8,
       "users": 1392,
-      "median_hours": 74.8
+      "median_hours": 73.6
     },
     {
       "pct": 9,
       "users": 1367,
-      "median_hours": 74.8
+      "median_hours": 76.9
     },
     {
       "pct": 10,
       "users": 1056,
-      "median_hours": 92.6
+      "median_hours": 93.1
     },
     {
       "pct": 11,
       "users": 995,
-      "median_hours": 95.4
+      "median_hours": 95.7
     },
     {
       "pct": 12,
       "users": 974,
-      "median_hours": 97.4
+      "median_hours": 97.0
     },
     {
       "pct": 13,
       "users": 798,
-      "median_hours": 107.0
+      "median_hours": 107.4
     },
     {
       "pct": 14,
       "users": 721,
-      "median_hours": 113.1
+      "median_hours": 113.4
     },
     {
       "pct": 15,
@@ -261,7 +262,7 @@
     {
       "pct": 16,
       "users": 706,
-      "median_hours": 115.0
+      "median_hours": 114.5
     },
     {
       "pct": 17,
@@ -271,52 +272,52 @@
     {
       "pct": 18,
       "users": 531,
-      "median_hours": 130.3
+      "median_hours": 129.8
     },
     {
       "pct": 19,
       "users": 528,
-      "median_hours": 131.3
+      "median_hours": 130.1
     },
     {
       "pct": 20,
       "users": 436,
-      "median_hours": 144.8
+      "median_hours": 144.3
     },
     {
       "pct": 21,
       "users": 425,
-      "median_hours": 146.7
+      "median_hours": 146.6
     },
     {
       "pct": 22,
       "users": 419,
-      "median_hours": 146.6
+      "median_hours": 146.7
     },
     {
       "pct": 23,
       "users": 346,
-      "median_hours": 157.7
+      "median_hours": 158.3
     },
     {
       "pct": 24,
       "users": 328,
-      "median_hours": 161.1
+      "median_hours": 161.4
     },
     {
       "pct": 25,
       "users": 323,
-      "median_hours": 163.8
+      "median_hours": 162.5
     },
     {
       "pct": 26,
       "users": 274,
-      "median_hours": 163.1
+      "median_hours": 167.1
     },
     {
       "pct": 27,
       "users": 262,
-      "median_hours": 167.7
+      "median_hours": 168.4
     },
     {
       "pct": 28,
@@ -326,17 +327,17 @@
     {
       "pct": 29,
       "users": 253,
-      "median_hours": 168.8
+      "median_hours": 170.2
     },
     {
       "pct": 30,
       "users": 222,
-      "median_hours": 180.7
+      "median_hours": 179.7
     },
     {
       "pct": 31,
       "users": 220,
-      "median_hours": 181.5
+      "median_hours": 182.8
     },
     {
       "pct": 32,
@@ -346,7 +347,7 @@
     {
       "pct": 33,
       "users": 187,
-      "median_hours": 193.2
+      "median_hours": 191.7
     },
     {
       "pct": 34,
@@ -356,7 +357,7 @@
     {
       "pct": 35,
       "users": 187,
-      "median_hours": 193.7
+      "median_hours": 193.5
     },
     {
       "pct": 36,
@@ -366,7 +367,7 @@
     {
       "pct": 37,
       "users": 162,
-      "median_hours": 206.0
+      "median_hours": 207.2
     },
     {
       "pct": 38,
@@ -1034,7 +1035,7 @@
     {
       "version": "1.0 (v750)",
       "users": 1400,
-      "cohort_age_days": 6.2,
+      "cohort_age_days": 6.3,
       "new_game": 1360,
       "retired": 898,
       "rebirthed": 393,
@@ -2222,7 +2223,7 @@
     {
       "version": "1.0 (v689)",
       "users": 775,
-      "cohort_age_days": 16.3,
+      "cohort_age_days": 16.4,
       "new_game": 764,
       "retired": 526,
       "rebirthed": 275,
