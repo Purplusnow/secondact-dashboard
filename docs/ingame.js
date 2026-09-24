@@ -32,27 +32,99 @@
     renderKpi(d); renderFunnel(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
   }
 
-  // ── 버전 비교 테이블 ──────────────────────────────────────
+  const MATURE_D = 7;  // 이 나이(일) 미만 코호트 = 미성숙(전환율 착시)
+  const vshort = v => String(v).replace(/^1\.0\s*\(v?/i, 'v').replace(/\)$/, '');
+
+  // ── 버전 비교: 산점도 + A/B 비교 + 표 ─────────────────────
   function renderVersions(d) {
+    const rows = (d.by_version || []).filter(r => r.conv_retire_to_rebirth != null);
+    const viz = $('#ig-versions-viz');
+    if (!rows.length) { if (viz) viz.innerHTML = '<p class="card-sub">버전 데이터 없음</p>'; renderVersionTable([]); return; }
+
+    // ① 산점도(전환% vs 나이)
+    let html = '<div class="vscatter-wrap"><div class="vhint">전환% vs 코호트나이 — 우상향이 자연(나이↑=전환↑). <b>추세 위로 튄 점 = 진짜 개선</b></div>' +
+      scatterConvAge(rows) + '</div>';
+
+    // ② A/B 선택 비교
+    const opt = (sel) => rows.map((r, i) =>
+      `<option value="${i}"${i === sel ? ' selected' : ''}>${esc(vshort(r.version))} · ${r.cohort_age_days}일</option>`).join('');
+    const bIdx = rows.length > 1 ? 1 : 0;
+    html += '<div class="vcmp">' +
+      '<div class="vcmp-pick">' +
+      `<label>A <select id="vcmp-a">${opt(0)}</select></label>` +
+      `<span class="vcmp-vs">vs</span>` +
+      `<label>B <select id="vcmp-b">${opt(bIdx)}</select></label>` +
+      '</div><div id="vcmp-out"></div></div>';
+    viz.innerHTML = html;
+
+    const a = $('#vcmp-a'), b = $('#vcmp-b');
+    const upd = () => renderCompare(rows[+a.value], rows[+b.value]);
+    a.addEventListener('change', upd); b.addEventListener('change', upd);
+    upd();
+    renderVersionTable(rows);
+  }
+
+  // 산점도(SVG): x=나이, y=은퇴→환생%. 미성숙=주황, 성숙=파랑.
+  function scatterConvAge(rows) {
+    const w = 640, h = 210, pad = 34;
+    const ages = rows.map(r => r.cohort_age_days || 0), cs = rows.map(r => r.conv_retire_to_rebirth);
+    const axmax = Math.max(...ages, 1), cymax = Math.max(...cs, 1) * 1.15;
+    const X = a => pad + (a / axmax) * (w - pad * 2);
+    const Y = c => h - pad - (c / cymax) * (h - pad * 2);
+    let dots = '';
+    rows.forEach(r => {
+      const young = (r.cohort_age_days || 0) < MATURE_D;
+      const col = young ? '#e0a020' : '#4b74e2';
+      dots += `<circle cx="${X(r.cohort_age_days).toFixed(1)}" cy="${Y(r.conv_retire_to_rebirth).toFixed(1)}" r="5" fill="${col}" fill-opacity=".85"/>` +
+        `<text x="${X(r.cohort_age_days).toFixed(1)}" y="${(Y(r.conv_retire_to_rebirth) - 9).toFixed(1)}" class="lc-ax" text-anchor="middle">${esc(vshort(r.version))}</text>`;
+    });
+    return `<svg class="lc vscatter" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img">` +
+      `<line x1="${pad}" y1="${h - pad}" x2="${w - pad}" y2="${h - pad}" stroke="var(--axis)" stroke-width="1"/>` +
+      `<line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h - pad}" stroke="var(--axis)" stroke-width="1"/>` +
+      dots +
+      `<text x="${w - pad}" y="${h - pad + 16}" class="lc-ax" text-anchor="end">나이 ${axmax}일 →</text>` +
+      `<text x="${pad}" y="${pad - 8}" class="lc-ax">↑ 은퇴→환생 ${Math.round(cymax)}%</text>` +
+      `</svg>`;
+  }
+
+  // A vs B head-to-head
+  function renderCompare(A, B) {
+    const out = $('#vcmp-out'); if (!out) return;
+    const metric = (lab, av, bv, unit, higher = true) => {
+      const d = (av != null && bv != null) ? +(av - bv).toFixed(1) : null;
+      const good = d == null ? '' : ((higher ? d > 0 : d < 0) ? 'up' : (d === 0 ? '' : 'down'));
+      const ds = d == null ? '' : `<span class="delta ${good}">${d > 0 ? '+' : ''}${d}${unit === '%' ? '%p' : unit}</span>`;
+      return `<div class="cmp-row"><div class="cmp-lab">${lab}</div>` +
+        `<div class="cmp-a num">${av != null ? av + unit : '—'}</div>` +
+        `<div class="cmp-d">${ds}</div>` +
+        `<div class="cmp-b num">${bv != null ? bv + unit : '—'}</div></div>`;
+    };
+    const ageWarn = (A.cohort_age_days != null && B.cohort_age_days != null &&
+      Math.abs(A.cohort_age_days - B.cohort_age_days) >= 3)
+      ? `<p class="chart-note">⚠️ 코호트 나이차 ${Math.abs(+(A.cohort_age_days - B.cohort_age_days).toFixed(1))}일 — 은퇴→환생 차이는 성숙도 영향 포함(참고만). 신규→은퇴는 나이 영향 적음.</p>` : '';
+    out.innerHTML =
+      `<div class="cmp-head"><div></div><div class="cmp-a">${esc(vshort(A.version))}<span class="cmp-age">${A.cohort_age_days}일·${num(A.users)}명</span></div><div class="cmp-d">Δ</div><div class="cmp-b">${esc(vshort(B.version))}<span class="cmp-age">${B.cohort_age_days}일·${num(B.users)}명</span></div></div>` +
+      metric('신규→은퇴', A.conv_new_to_retire, B.conv_new_to_retire, '%') +
+      metric('은퇴→환생', A.conv_retire_to_rebirth, B.conv_retire_to_rebirth, '%') +
+      metric('은퇴 유저', A.retired, B.retired, '', true) +
+      metric('첫환생 유저', A.rebirthed, B.rebirthed, '', true) +
+      ageWarn;
+  }
+
+  function renderVersionTable(rows) {
     const host = $('#ig-versions'); if (!host) return;
-    const rows = d.by_version || [];
     if (!rows.length) { host.innerHTML = '<tr><td class="vt-empty">버전 데이터 없음</td></tr>'; return; }
-    const convs = rows.map(r => r.conv_retire_to_rebirth).filter(v => v != null);
-    const best = Math.max(...convs, 0);
+    const best = Math.max(...rows.map(r => r.conv_retire_to_rebirth), 0);
     let html = '<thead><tr><th>버전</th><th>유저</th><th>은퇴</th><th>첫환생</th>' +
-      '<th>은퇴→환생</th><th>신규→은퇴</th><th>코호트나이</th></tr></thead><tbody>';
+      '<th>은퇴→환생</th><th>신규→은퇴</th><th>나이</th></tr></thead><tbody>';
     rows.forEach(r => {
       const c = r.conv_retire_to_rebirth;
-      const hot = c != null && c === best && convs.length > 1 ? ' class="vt-best"' : '';
-      html += '<tr>' +
-        `<td class="vt-ver">${esc(r.version)}</td>` +
-        `<td class="num">${num(r.users)}</td>` +
-        `<td class="num">${num(r.retired)}</td>` +
-        `<td class="num">${num(r.rebirthed)}</td>` +
+      const hot = c === best && rows.length > 1 ? ' class="vt-best"' : '';
+      html += `<tr><td class="vt-ver">${esc(vshort(r.version))}</td><td class="num">${num(r.users)}</td>` +
+        `<td class="num">${num(r.retired)}</td><td class="num">${num(r.rebirthed)}</td>` +
         `<td class="num"${hot}>${c != null ? c + '%' : '—'}</td>` +
         `<td class="num">${r.conv_new_to_retire != null ? r.conv_new_to_retire + '%' : '—'}</td>` +
-        `<td class="num vt-age">${r.cohort_age_days != null ? r.cohort_age_days + '일' : '—'}</td>` +
-        '</tr>';
+        `<td class="num vt-age">${r.cohort_age_days != null ? r.cohort_age_days + '일' : '—'}</td></tr>`;
     });
     host.innerHTML = html + '</tbody>';
   }
