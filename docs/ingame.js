@@ -175,17 +175,27 @@
     const host = $('#ig-funnel'); host.innerHTML = '';
     const rows = d.rebirth_funnel || [];
     const top = rows.length ? rows[0].users : 0;
+    // 이벤트 발화 결함으로 0인 중간 단계 → 회색+"계측 결함", 드롭배지는 직전 신뢰단계 기준.
+    const BROKEN = new Set(['환생자격', '화면방문']);
+    let lastGood = top;
     rows.forEach((r, i) => {
+      const broken = BROKEN.has(r.stage) && r.users === 0;
       const pctTop = top ? (100 * r.users / top) : 0;
-      const wrap = el('div', 'fbar');
-      const step = i > 0 && rows[i - 1].users ? Math.round(100 * (rows[i - 1].users - r.users) / rows[i - 1].users) : null;
+      let badge = '';
+      if (!broken && i > 0) {
+        const drop = lastGood ? Math.round(100 * (lastGood - r.users) / lastGood) : null;
+        if (drop != null && drop > 0) badge = ` <span class="drop">▼${drop}%</span>`;
+      }
+      const wrap = el('div', 'fbar' + (broken ? ' fbar-muted' : ''));
       wrap.innerHTML =
-        `<div class="fbar-head"><span>${esc(r.stage)}</span>` +
-        `<span class="num">${num(r.users)} · ${pctTop.toFixed(0)}%` +
-        (step != null && step > 0 ? ` <span class="drop">▼${step}%</span>` : '') + `</span></div>` +
+        `<div class="fbar-head"><span>${esc(r.stage)}${broken ? '<span class="fbar-tag">계측 결함</span>' : ''}</span>` +
+        `<span class="num">${broken ? '—' : num(r.users) + ' · ' + pctTop.toFixed(0) + '%'}${badge}</span></div>` +
         `<div class="fbar-track"><div class="fbar-fill" style="width:${Math.max(pctTop, 1.5)}%"></div></div>`;
       host.appendChild(wrap);
+      if (!broken) lastGood = r.users;
     });
+    const sub = $('#ig-funnel-sub');
+    if (sub) sub.textContent = `은퇴→첫환생 · ${(d.diag_start || '2026-09-23')}~${(d.last_table || '')} 기준 · 중간 2단계는 이벤트 결함으로 계측 불가`;
     const rz = d.rebirth_reasons || {};
     const total = (rz.slow_climb || 0) + (rz.discoverability || 0) + (rz.reset_shock || 0);
     if (total) {

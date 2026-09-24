@@ -43,7 +43,8 @@ def main() -> None:
     win_start = (end - timedelta(days=WINDOW_DAYS)).strftime("%Y%m%d")
     end_s = end.strftime("%Y%m%d")
 
-    out: dict = {"updated": date.today().isoformat(), "window_days": WINDOW_DAYS}
+    out: dict = {"updated": date.today().isoformat(), "window_days": WINDOW_DAYS,
+                 "diag_start": f"{DIAG_START[:4]}-{DIAG_START[4:6]}-{DIAG_START[6:]}"}
 
     # ── KPI: 신규(7d)·활성(7d)·마지막 테이블 ───────────────────────────
     kpi = q(f"""

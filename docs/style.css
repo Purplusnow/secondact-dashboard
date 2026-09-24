@@ -350,3 +350,9 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .vftable .stick { position: sticky; left: 0; z-index: 1; background: var(--surface); text-align: left; box-shadow: 1px 0 0 var(--hair); }
 .vftable thead .stick { z-index: 2; }
 .fcell { color: #1a1a1a; font-variant-numeric: tabular-nums; }
+
+/* 퍼널 결함 단계 */
+.fbar-muted { opacity: .5; }
+.fbar-muted .fbar-fill { background: var(--axis); }
+.fbar-tag { font-size: 10px; font-weight: 600; color: #6b4a00; background: #fff0cc;
+  border-radius: 999px; padding: 1px 7px; margin-left: 7px; vertical-align: middle; }
