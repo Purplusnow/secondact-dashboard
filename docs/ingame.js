@@ -62,6 +62,26 @@
     a.addEventListener('change', upd); b.addEventListener('change', upd);
     upd();
     renderVersionTable(rows);
+    renderFunnelTable(rows, d.stage_labels || []);
+  }
+
+  // 구간 도달율 히트맵(넓은 표, 좌우 스크롤, 첫 열 고정)
+  function renderFunnelTable(rows, labels) {
+    const host = $('#ig-versions-funnel'); if (!host) return;
+    if (!rows.length || !labels.length) { host.innerHTML = '<tr><td class="vt-empty">데이터 없음</td></tr>'; return; }
+    const cell = pct => `hsl(${Math.round(1.2 * pct)},62%,${(93 - pct * 0.1).toFixed(0)}%)`;
+    let h = '<thead><tr><th class="stick">버전</th><th>나이</th>' +
+      labels.map(l => `<th>${esc(l.label)}</th>`).join('') + '</tr></thead><tbody>';
+    rows.forEach(r => {
+      const by = {}; (r.stages || []).forEach(s => by[s.key] = s);
+      h += `<tr><td class="stick vt-ver">${esc(vshort(r.version))}</td>` +
+        `<td class="num vt-age">${r.cohort_age_days != null ? r.cohort_age_days + '일' : '—'}</td>` +
+        labels.map(l => {
+          const s = by[l.key]; if (!s) return '<td class="num">—</td>';
+          return `<td class="num fcell" style="background:${cell(s.pct)}" title="${esc(l.label)}: ${num(s.n)}명">${s.pct}%</td>`;
+        }).join('') + '</tr>';
+    });
+    host.innerHTML = h + '</tbody>';
   }
 
   // 산점도(SVG): x=나이, y=은퇴→환생%. 미성숙=주황, 성숙=파랑.

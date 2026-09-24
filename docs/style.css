@@ -342,3 +342,11 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 /* 버전: 표(원본) 아래 보조 시각화 구분선 */
 .vsub { margin: 18px 0 8px; padding-top: 14px; border-top: 1px solid var(--hair);
   font-size: 12px; font-weight: 600; color: var(--ink-3); letter-spacing: .02em; }
+
+/* 구간 도달율 히트맵(넓은 표) */
+.vftable { border-collapse: collapse; font-size: 12px; }
+.vftable th, .vftable td { padding: 6px 9px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--hair); }
+.vftable th { color: var(--ink-3); font-weight: 560; font-size: 11px; background: var(--surface); }
+.vftable .stick { position: sticky; left: 0; z-index: 1; background: var(--surface); text-align: left; box-shadow: 1px 0 0 var(--hair); }
+.vftable thead .stick { z-index: 2; }
+.fcell { color: #1a1a1a; font-variant-numeric: tabular-nums; }
