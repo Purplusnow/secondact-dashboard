@@ -29,7 +29,32 @@
     } catch (e) { $('#ig-empty').hidden = false; return; }
     if (!d || !d.rebirth_funnel) { $('#ig-empty').hidden = false; return; }
     const up = $('#updated'); if (up && d.updated) up.textContent = '갱신 ' + d.updated;
-    renderKpi(d); renderFunnel(d); renderDeci(d); renderOnb(d); renderPacing(d);
+    renderKpi(d); renderFunnel(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
+  }
+
+  // ── 버전 비교 테이블 ──────────────────────────────────────
+  function renderVersions(d) {
+    const host = $('#ig-versions'); if (!host) return;
+    const rows = d.by_version || [];
+    if (!rows.length) { host.innerHTML = '<tr><td class="vt-empty">버전 데이터 없음</td></tr>'; return; }
+    const convs = rows.map(r => r.conv_retire_to_rebirth).filter(v => v != null);
+    const best = Math.max(...convs, 0);
+    let html = '<thead><tr><th>버전</th><th>유저</th><th>은퇴</th><th>첫환생</th>' +
+      '<th>은퇴→환생</th><th>신규→은퇴</th><th>코호트나이</th></tr></thead><tbody>';
+    rows.forEach(r => {
+      const c = r.conv_retire_to_rebirth;
+      const hot = c != null && c === best && convs.length > 1 ? ' class="vt-best"' : '';
+      html += '<tr>' +
+        `<td class="vt-ver">${esc(r.version)}</td>` +
+        `<td class="num">${num(r.users)}</td>` +
+        `<td class="num">${num(r.retired)}</td>` +
+        `<td class="num">${num(r.rebirthed)}</td>` +
+        `<td class="num"${hot}>${c != null ? c + '%' : '—'}</td>` +
+        `<td class="num">${r.conv_new_to_retire != null ? r.conv_new_to_retire + '%' : '—'}</td>` +
+        `<td class="num vt-age">${r.cohort_age_days != null ? r.cohort_age_days + '일' : '—'}</td>` +
+        '</tr>';
+    });
+    host.innerHTML = html + '</tbody>';
   }
 
   // ── KPI 타일 ──────────────────────────────────────────────

@@ -164,11 +164,48 @@ def main() -> None:
         "median_hours": (round(int(x["median_secs"]) / 3600.0, 1) if x["median_secs"] is not None else None),
     } for x in pacing]
 
+    # ── 버전별 비교 (첫 등장 버전 코호트) ────────────────────────────
+    # 유저를 '처음 나타난 app_version'으로 묶고 그 코호트의 은퇴→환생 전환을 본다.
+    # ⚠️ 최신 버전 코호트는 어려서(cohort_age 작음) 전환율이 낮게 보이는 게 정상 → age 함께 표시.
+    ver = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id,
+          ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp LIMIT 1)[SAFE_OFFSET(0)] AS fver,
+          MIN(event_timestamp) AS first_ts,
+          MAX(IF(event_name='onb_step' AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='new_game',1,0))      AS new_game,
+          MAX(IF(event_name='onb_step' AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='game_sale',1,0))     AS retired,
+          MAX(IF(event_name='onb_step' AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='first_rebirth',1,0)) AS rebirthed
+        FROM {TABLE}
+        WHERE {suffix_daily(f"_TABLE_SUFFIX BETWEEN '{win_start}' AND '{end_s}'")}
+        GROUP BY user_pseudo_id
+      )
+      SELECT fver AS version,
+        COUNT(*) AS users,
+        SUM(new_game) AS new_game,
+        SUM(retired) AS retired,
+        SUM(rebirthed) AS rebirthed,
+        ROUND(100*SUM(retired)/NULLIF(SUM(new_game),0),1)   AS conv_new_to_retire,
+        ROUND(100*SUM(rebirthed)/NULLIF(SUM(retired),0),1)  AS conv_retire_to_rebirth,
+        ROUND(AVG(TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), TIMESTAMP_MICROS(first_ts), HOUR))/24.0, 1) AS cohort_age_days
+      FROM u
+      WHERE fver IS NOT NULL
+      GROUP BY version HAVING COUNT(*) >= 50
+      ORDER BY version DESC LIMIT 12
+    """)
+    out["by_version"] = [{
+        "version": x["version"],
+        "users": int(x["users"]), "new_game": int(x["new_game"] or 0),
+        "retired": int(x["retired"] or 0), "rebirthed": int(x["rebirthed"] or 0),
+        "conv_new_to_retire": (float(x["conv_new_to_retire"]) if x["conv_new_to_retire"] is not None else None),
+        "conv_retire_to_rebirth": (float(x["conv_retire_to_rebirth"]) if x["conv_retire_to_rebirth"] is not None else None),
+        "cohort_age_days": (float(x["cohort_age_days"]) if x["cohort_age_days"] is not None else None),
+    } for x in ver]
+
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
     print(f"wrote {OUT}: retired={r['retired']} rebirth={r['rebirthed']} "
           f"deci_rows={len(out['deci_curve'])} onb={len(out['onboarding_funnel'])} "
-          f"pacing={len(out['pacing'])} last_table={out['last_table']}")
+          f"pacing={len(out['pacing'])} versions={len(out['by_version'])} last_table={out['last_table']}")
 
 
 if __name__ == "__main__":

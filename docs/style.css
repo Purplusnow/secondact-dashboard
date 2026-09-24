@@ -304,3 +304,13 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .obar-hot .obar-fill { background: var(--bad); }
 .obar-n { font-size: 12px; color: var(--ink-2); text-align: right; }
 @media (max-width: 520px) { .obar { grid-template-columns: 80px 1fr 70px; } }
+
+/* 버전 비교 테이블 */
+.vtable { width: 100%; border-collapse: collapse; font-size: 13px; }
+.vtable th, .vtable td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--hair); white-space: nowrap; }
+.vtable th { color: var(--ink-3); font-weight: 560; font-size: 12px; }
+.vtable th:first-child, .vtable .vt-ver { text-align: left; }
+.vt-ver { font-weight: 560; color: var(--ink); }
+.vt-age { color: var(--ink-3); }
+.vt-best { color: var(--good); font-weight: 700; }
+.vt-empty { text-align: center; color: var(--ink-3); padding: 18px; }
