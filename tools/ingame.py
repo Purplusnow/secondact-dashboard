@@ -114,19 +114,34 @@ def main() -> None:
           APPROX_QUANTILES(class,2)[OFFSET(1)] AS median_class
         FROM d WHERE deci BETWEEN 1 AND 32 GROUP BY deci
       )
-      SELECT deci, users, median_secs, median_class,
-        ROUND(100*(LAG(users) OVER (ORDER BY deci)-users)/NULLIF(LAG(users) OVER (ORDER BY deci),0),1) AS step_drop_pct
-      FROM agg ORDER BY deci
+      SELECT deci, users, median_secs, median_class FROM agg ORDER BY deci
     """)
-    peak = max((row["users"] for row in deci), default=0) or 1
-    out["deci_curve"] = [{
-        "deci": int(x["deci"]), "pct": round(int(x["deci"]) / 10.0, 1),
-        "users": int(x["users"]),
-        "pct_of_start": round(100 * int(x["users"]) / peak, 1),
-        "step_drop_pct": (round(float(x["step_drop_pct"]), 1) if x["step_drop_pct"] is not None else None),
-        "median_hours": (round(int(x["median_secs"]) / 3600.0, 1) if x["median_secs"] is not None else None),
-        "median_class": (int(x["median_class"]) if x["median_class"] is not None else None),
-    } for x in deci]
+    # ★모수 = 은퇴(game_sale) 유저 = 추월(신분등반) 0% 시작점. deci는 0.1% 크로싱만 찍혀
+    #   0%→0.1% 이탈이 안 보이던 문제 → deci=0(은퇴수)을 baseline으로 넣어 첫 드롭까지 드러낸다.
+    base = q(f"""
+      SELECT COUNT(DISTINCT user_pseudo_id) AS n FROM {TABLE}
+      WHERE event_name='onb_step'
+        AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='game_sale'
+        AND {suffix_daily(f"_TABLE_SUFFIX >= '{DIAG_START}'")}
+    """)[0]["n"] or 0
+    series = [{"deci": 0, "pct": 0.0, "users": int(base), "median_secs": 0, "median_class": None}]
+    for x in deci:
+        series.append({"deci": int(x["deci"]), "pct": round(int(x["deci"]) / 10.0, 1),
+                       "users": int(x["users"]), "median_secs": x["median_secs"], "median_class": x["median_class"]})
+    start = int(base) or (series[1]["users"] if len(series) > 1 else 1) or 1
+    out["deci_baseline"] = int(base)
+    out["deci_curve"] = []
+    prev = None
+    for s in series:
+        drop = (round(100 * (prev - s["users"]) / prev, 1) if (prev and prev > 0) else None)
+        out["deci_curve"].append({
+            "deci": s["deci"], "pct": s["pct"], "users": s["users"],
+            "pct_of_start": round(100 * s["users"] / start, 1),
+            "step_drop_pct": drop,
+            "median_hours": (round(int(s["median_secs"]) / 3600.0, 1) if s["median_secs"] else None),
+            "median_class": (int(s["median_class"]) if s["median_class"] is not None else None),
+        })
+        prev = s["users"]
 
     # ── 온보딩 퍼널 (20스텝, distinct users) ──────────────────────────
     onb = q(f"""
