@@ -29,7 +29,38 @@
     } catch (e) { $('#ig-empty').hidden = false; return; }
     if (!d || !d.rebirth_funnel) { $('#ig-empty').hidden = false; return; }
     const up = $('#updated'); if (up && d.updated) up.textContent = '갱신 ' + d.updated;
-    renderKpi(d); renderFunnel(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
+    renderKpi(d); renderFunnel(d); renderEntry(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
+  }
+
+  // ── 은퇴→진입 세부 퍼널 (0%→0.1% 세분) ────────────────────
+  function renderEntry(d) {
+    const host = $('#ig-entry'); if (!host) return;
+    const rows = d.entry_funnel || [];
+    if (!rows.length) { host.innerHTML = '<p class="card-sub">데이터 없음</p>'; return; }
+    host.innerHTML = '';
+    const top = rows[0].users || 1;
+    // 최대 드롭 구간 찾기(붉게)
+    let worstI = -1, worstD = -1;
+    for (let i = 1; i < rows.length; i++) {
+      const dr = rows[i - 1].users ? (rows[i - 1].users - rows[i].users) / rows[i - 1].users : 0;
+      if (dr > worstD) { worstD = dr; worstI = i; }
+    }
+    rows.forEach((r, i) => {
+      const pctTop = top ? (100 * r.users / top) : 0;
+      const drop = i > 0 && rows[i - 1].users ? Math.round(100 * (rows[i - 1].users - r.users) / rows[i - 1].users) : null;
+      const hot = i === worstI;
+      const wrap = el('div', 'fbar');
+      wrap.innerHTML =
+        `<div class="fbar-head"><span>${esc(r.stage)}</span>` +
+        `<span class="num">${num(r.users)} · ${pctTop.toFixed(0)}%` +
+        (drop != null && drop > 0 ? ` <span class="drop">▼${drop}%${hot ? ' ⚠' : ''}</span>` : '') + `</span></div>` +
+        `<div class="fbar-track"><div class="fbar-fill${hot ? ' fbar-fill-hot' : ''}" style="width:${Math.max(pctTop, 1.5)}%"></div></div>`;
+      host.appendChild(wrap);
+    });
+    if (worstI > 0) {
+      host.appendChild(el('p', 'chart-note',
+        `최대 이탈: <b class="drop">${esc(rows[worstI - 1].stage)} → ${esc(rows[worstI].stage)} (▼${Math.round(worstD * 100)}%)</b> — 여기가 진짜 벽`));
+    }
   }
 
   const MATURE_D = 7;  // 이 나이(일) 미만 코호트 = 미성숙(전환율 착시)

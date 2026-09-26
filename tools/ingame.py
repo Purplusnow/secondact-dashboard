@@ -143,6 +143,39 @@ def main() -> None:
         })
         prev = s["users"]
 
+    # ── 은퇴→진입 세부 퍼널 (0%→0.1% 구간을 class_up·first_donate로 세분) ──────
+    # 은퇴자의 73% 이탈이 0%→0.1%에 몰려 있어, 그 안을 후원·신분2/3/4로 쪼갠다.
+    ef = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id,
+          MAX(IF(event_name='onb_step' AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='game_sale',1,0))    AS retired,
+          MAX(IF(event_name='onb_step' AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='first_donate',1,0)) AS donated,
+          MAX(IF(event_name='class_up' AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='level')>=2,1,0)) AS c2,
+          MAX(IF(event_name='class_up' AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='level')>=3,1,0)) AS c3,
+          MAX(IF(event_name='class_up' AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='level')>=4,1,0)) AS c4,
+          MAX(IF(event_name='progress_deci',1,0)) AS d1
+        FROM {TABLE}
+        WHERE {suffix_daily(f"_TABLE_SUFFIX >= '{DIAG_START}'")}
+        GROUP BY user_pseudo_id
+      )
+      SELECT SUM(retired) AS retired,
+        SUM(IF(retired=1 AND donated=1,1,0)) AS donated,
+        SUM(IF(retired=1 AND c2=1,1,0)) AS c2,
+        SUM(IF(retired=1 AND c3=1,1,0)) AS c3,
+        SUM(IF(retired=1 AND c4=1,1,0)) AS c4,
+        SUM(IF(retired=1 AND d1=1,1,0)) AS d1
+      FROM u WHERE retired=1
+    """)[0]
+    ef = {k: int(v or 0) for k, v in ef.items()}
+    out["entry_funnel"] = [
+        {"stage": "은퇴", "users": ef["retired"]},
+        {"stage": "첫 후원", "users": ef["donated"]},
+        {"stage": "신분2", "users": ef["c2"]},
+        {"stage": "신분3", "users": ef["c3"]},
+        {"stage": "신분4", "users": ef["c4"]},
+        {"stage": "추월 0.1%", "users": ef["d1"]},
+    ]
+
     # ── 온보딩 퍼널 (20스텝, distinct users) ──────────────────────────
     onb = q(f"""
       SELECT
