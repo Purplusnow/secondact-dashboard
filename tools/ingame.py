@@ -229,6 +229,26 @@ def main() -> None:
         f"MAX(IF(event_name='onb_step' AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='{k}',1,0)) AS s_{k}"
         for k, _ in STAGES)
     sum_sql = ", ".join(f"SUM(s_{k}) AS s_{k}" for k, _ in STAGES)
+    # 신분 등반(class_up level>=N) 단계 — 첫후원 뒤에 신분2~7 삽입.
+    CLASS_STAGES = [(2, "신분2"), (3, "신분3"), (4, "신분4"), (5, "신분5"), (6, "신분6"), (7, "신분7")]
+    flag_sql += ",\n          " + ",\n          ".join(
+        f"MAX(IF(event_name='class_up' AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='level')>={lv},1,0)) AS c{lv}"
+        for lv, _ in CLASS_STAGES)
+    sum_sql += ", " + ", ".join(f"SUM(c{lv}) AS c{lv}" for lv, _ in CLASS_STAGES)
+    # 표시 순서(라벨 + 각 버전 steps 조립 공용): 첫후원 뒤 신분2~7.
+    ORDER = []
+    for k, lab in STAGES:
+        ORDER.append((k, lab, "s_" + k))
+        if k == "first_donate":
+            for lv, clab in CLASS_STAGES:
+                ORDER.append((f"class{lv}", clab, f"c{lv}"))
+
+    def steps_from(x: dict, ng: int) -> list:
+        res = []
+        for key, lab, col in ORDER:
+            n = int(x.get(col) or 0)
+            res.append({"key": key, "label": lab, "n": n, "pct": round(100 * n / ng, 1)})
+        return res
     ver = q(f"""
       WITH u AS (
         SELECT user_pseudo_id,
@@ -246,7 +266,7 @@ def main() -> None:
       GROUP BY version HAVING COUNT(*) >= 50
       ORDER BY version DESC LIMIT 12
     """)
-    out["stage_labels"] = [{"key": k, "label": lab} for k, lab in STAGES]
+    out["stage_labels"] = [{"key": k, "label": lab} for k, lab, _ in ORDER]
     out["by_version"] = []
     for x in ver:
         ng = int(x["s_new_game"] or 0) or 1
@@ -258,8 +278,7 @@ def main() -> None:
             "new_game": int(x["s_new_game"] or 0), "retired": retired, "rebirthed": reborn,
             "conv_new_to_retire": round(100 * retired / ng, 1) if ng else None,
             "conv_retire_to_rebirth": round(100 * reborn / retired, 1) if retired else None,
-            "stages": [{"key": k, "label": lab, "n": int(x[f"s_{k}"] or 0),
-                        "pct": round(100 * int(x[f"s_{k}"] or 0) / ng, 1)} for k, lab in STAGES],
+            "stages": steps_from(x, ng),
         })
 
     # ── (전체기간) 버전별 온보딩 퍼널 — 첫 등장 버전 코호트, all-time ──────
@@ -284,8 +303,7 @@ def main() -> None:
         out["onb_versions"].append({
             "version": x["version"], "users": int(x["users"]),
             "new_game": int(x["s_new_game"] or 0),
-            "steps": [{"key": k, "label": lab, "n": int(x[f"s_{k}"] or 0),
-                       "pct": round(100 * int(x[f"s_{k}"] or 0) / ng, 1)} for k, lab in STAGES],
+            "steps": steps_from(x, ng),
         })
 
     # ── (전체기간) 버전별 '최대 추월%' 도달 분포 ──────────────────────────
