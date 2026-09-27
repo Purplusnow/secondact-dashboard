@@ -30,6 +30,101 @@
     if (!d || !d.rebirth_funnel) { $('#ig-empty').hidden = false; return; }
     const up = $('#updated'); if (up && d.updated) up.textContent = '갱신 ' + d.updated;
     renderKpi(d); renderFunnel(d); renderEntry(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
+    renderVersionViews(d);
+  }
+
+  // ── 버전 선택(체크박스) 뷰: 온보딩 퍼널 + 단계×버전 + 추월% 도달분포 ──
+  // 전체 기간 데이터(onb_versions / reach_versions). 기본 전체 선택, 체크한 버전만.
+  let _vvSel = null;  // Set<version> — 선택 상태(첫 로드 시 전체)
+  function renderVersionViews(d) {
+    const onbV = d.onb_versions || [];
+    const host = $('#ig-vsel'); if (!host) return;
+    if (!onbV.length) { host.innerHTML = '<span class="card-sub">데이터 없음(다음 수집 후 채워짐)</span>'; return; }
+    const versions = onbV.map(v => v.version);
+    if (_vvSel === null) _vvSel = new Set(versions);  // 기본: 전체 선택
+    // 체크박스 바(스크롤)
+    host.innerHTML = versions.map(v =>
+      `<label class="vchip${_vvSel.has(v) ? ' on' : ''}"><input type="checkbox" data-v="${esc(v)}"${_vvSel.has(v) ? ' checked' : ''}> ${esc(vshort(v))}</label>`
+    ).join('') +
+      `<button class="vchip-all" data-all="1">전체</button><button class="vchip-all" data-all="0">해제</button>`;
+    host.querySelectorAll('input[type=checkbox]').forEach(cb => cb.addEventListener('change', () => {
+      const v = cb.getAttribute('data-v');
+      if (cb.checked) _vvSel.add(v); else _vvSel.delete(v);
+      drawVV(d);
+    }));
+    host.querySelectorAll('.vchip-all').forEach(b => b.addEventListener('click', () => {
+      _vvSel = b.getAttribute('data-all') === '1' ? new Set(versions) : new Set();
+      renderVersionViews(d);  // 체크박스 상태 갱신 + 재그림
+    }));
+    drawVV(d);
+  }
+
+  function drawVV(d) {
+    const onbV = (d.onb_versions || []).filter(v => _vvSel.has(v.version));
+    const labels = d.stage_labels || [];
+    // ① 온보딩 퍼널(선택 합계) — 단계별 도달 유저 합 + 완료율/이탈률
+    const onbHost = $('#ig-onbv'); if (onbHost) {
+      if (!onbV.length) { onbHost.innerHTML = '<p class="card-sub">버전을 선택하세요</p>'; }
+      else {
+        const sum = labels.map(l => onbV.reduce((a, v) => a + ((v.steps.find(s => s.key === l.key) || {}).n || 0), 0));
+        const top = sum[0] || 1;
+        onbHost.innerHTML = '';
+        labels.forEach((l, i) => {
+          const p = 100 * sum[i] / top;
+          const step = i > 0 && sum[i - 1] ? Math.round(100 * (sum[i - 1] - sum[i]) / sum[i - 1]) : null;
+          const big = step != null && step >= 20;
+          const bar = el('div', 'obar' + (big ? ' obar-hot' : ''));
+          bar.innerHTML =
+            `<div class="obar-lab">${esc(l.label)}</div>` +
+            `<div class="obar-track"><div class="obar-fill" style="width:${Math.max(p, 1)}%"></div></div>` +
+            `<div class="obar-n num">${num(sum[i])}${step != null && step > 0 ? ` <span class="drop">▼${step}%</span>` : ''}</div>`;
+          onbHost.appendChild(bar);
+        });
+      }
+    }
+    // ② 단계 × 버전 테이블 (행=단계, 열=선택 버전, 셀=도달 유저 + %)
+    const t = $('#ig-onbv-table');
+    if (t) {
+      if (!onbV.length) { t.innerHTML = '<tr><td class="vt-empty">버전을 선택하세요</td></tr>'; }
+      else {
+        const cellCol = pct => `hsl(${Math.round(1.2 * pct)},62%,${(93 - pct * 0.1).toFixed(0)}%)`;
+        let h = '<thead><tr><th class="stick">단계</th>' +
+          onbV.map(v => `<th>${esc(vshort(v.version))}<span class="vt-u">${num(v.users)}</span></th>`).join('') + '</tr></thead><tbody>';
+        labels.forEach(l => {
+          h += `<tr><td class="stick vt-ver">${esc(l.label)}</td>` +
+            onbV.map(v => {
+              const s = v.steps.find(x => x.key === l.key); if (!s) return '<td class="num">—</td>';
+              return `<td class="num fcell" style="background:${cellCol(s.pct)}" title="${s.pct}%">${num(s.n)}</td>`;
+            }).join('') + '</tr>';
+        });
+        t.innerHTML = h + '</tbody>';
+      }
+    }
+    // ③ 최대 추월% 도달 분포 × 버전 (행=버킷, 열=선택 버전, 셀=유저)
+    const rv = $('#ig-reachv');
+    if (rv) {
+      const R = d.reach_versions || { buckets: [], versions: [], cap: 20 };
+      const rverV = (R.versions || []).filter(v => _vvSel.has(v.version));
+      if (!rverV.length || !(R.buckets || []).length) { rv.innerHTML = '<tr><td class="vt-empty">데이터 없음</td></tr>'; }
+      else {
+        const cap = R.cap != null ? R.cap : 20;
+        // 각 버전 열 최댓값으로 셀 음영 정규화
+        const colMax = {};
+        rverV.forEach(v => { colMax[v.version] = Math.max(1, ...R.buckets.map(b => v.dist[String(b)] || 0)); });
+        let h = '<thead><tr><th class="stick">추월%</th>' +
+          rverV.map(v => `<th>${esc(vshort(v.version))}<span class="vt-u">${num(v.users)}</span></th>`).join('') + '</tr></thead><tbody>';
+        R.buckets.forEach(b => {
+          const lab = b > cap ? (cap + 1) + '+' : String(b);
+          h += `<tr><td class="stick vt-ver">${lab}%</td>` +
+            rverV.map(v => {
+              const n = v.dist[String(b)] || 0;
+              const sh = 96 - Math.round(46 * n / colMax[v.version]);
+              return `<td class="num fcell" style="background:hsl(214,70%,${sh}%)">${n ? num(n) : '·'}</td>`;
+            }).join('') + '</tr>';
+        });
+        rv.innerHTML = h + '</tbody>';
+      }
+    }
   }
 
   // ── 은퇴→진입 세부 퍼널 (0%→0.1% 세분) ────────────────────

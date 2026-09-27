@@ -262,11 +262,73 @@ def main() -> None:
                         "pct": round(100 * int(x[f"s_{k}"] or 0) / ng, 1)} for k, lab in STAGES],
         })
 
+    # ── (전체기간) 버전별 온보딩 퍼널 — 첫 등장 버전 코호트, all-time ──────
+    # 대시보드 '버전 선택(체크박스)' 뷰용. 윈도우 없이 전 기간. 첫 등장 버전으로 코호트.
+    ver_onb = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id,
+          ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp)[SAFE_OFFSET(0)] AS fver,
+          {flag_sql}
+        FROM {TABLE}
+        WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
+        GROUP BY user_pseudo_id
+      )
+      SELECT fver AS version, COUNT(*) AS users, {sum_sql}
+      FROM u WHERE fver IS NOT NULL
+      GROUP BY version HAVING COUNT(*) >= 30
+      ORDER BY version DESC
+    """)
+    out["onb_versions"] = []
+    for x in ver_onb:
+        ng = int(x["s_new_game"] or 0) or 1
+        out["onb_versions"].append({
+            "version": x["version"], "users": int(x["users"]),
+            "new_game": int(x["s_new_game"] or 0),
+            "steps": [{"key": k, "label": lab, "n": int(x[f"s_{k}"] or 0),
+                       "pct": round(100 * int(x[f"s_{k}"] or 0) / ng, 1)} for k, lab in STAGES],
+        })
+
+    # ── (전체기간) 버전별 '최대 추월%' 도달 분포 ──────────────────────────
+    # progress_pct(pct=정수 추월%)의 유저별 최대값 분포. 미도달(1% 미만)=0 버킷.
+    # 버킷 0~20 개별 + 21+ 묶음. 첫 등장 버전 코호트.
+    reach = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id,
+          ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp)[SAFE_OFFSET(0)] AS fver,
+          MAX(IF(event_name='progress_pct',
+                 (SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct'), 0)) AS maxpct
+        FROM {TABLE}
+        WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
+        GROUP BY user_pseudo_id
+      )
+      SELECT fver AS version, IFNULL(maxpct, 0) AS maxpct, COUNT(*) AS users
+      FROM u WHERE fver IS NOT NULL
+      GROUP BY version, maxpct
+    """)
+    from collections import defaultdict
+    CAP = 20  # 0~20 개별, 그 이상은 CAP+1(=21, "21+")로 묶음
+    vtot: dict = defaultdict(int)
+    vdist: dict = defaultdict(lambda: defaultdict(int))
+    for x in reach:
+        v = x["version"]
+        b = min(int(x["maxpct"] or 0), CAP + 1)
+        vtot[v] += int(x["users"])
+        vdist[v][b] += int(x["users"])
+    keep = sorted([v for v in vtot if vtot[v] >= 30], reverse=True)
+    out["reach_versions"] = {
+        "buckets": list(range(0, CAP + 2)),  # 0..21 (21 = 21+)
+        "cap": CAP,
+        "versions": [{"version": v, "users": vtot[v],
+                      "dist": {str(b): vdist[v].get(b, 0) for b in range(0, CAP + 2)}} for v in keep],
+    }
+
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
     print(f"wrote {OUT}: retired={r['retired']} rebirth={r['rebirthed']} "
           f"deci_rows={len(out['deci_curve'])} onb={len(out['onboarding_funnel'])} "
-          f"pacing={len(out['pacing'])} versions={len(out['by_version'])} last_table={out['last_table']}")
+          f"pacing={len(out['pacing'])} versions={len(out['by_version'])} "
+          f"onb_versions={len(out['onb_versions'])} reach_versions={len(out['reach_versions']['versions'])} "
+          f"last_table={out['last_table']}")
 
 
 if __name__ == "__main__":
