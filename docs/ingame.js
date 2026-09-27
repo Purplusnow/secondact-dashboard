@@ -7,6 +7,29 @@
   const num = n => Math.round(n).toLocaleString('ko-KR');
   const esc = s => String(s).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
 
+  // ── 셀 표시 모드(숫자/퍼센트) — 버전 히트맵 뷰 공용 토글 ──────────
+  let _data = null;                 // 마지막 로드 데이터(토글 재그림용)
+  let _cellMode = 'num';            // 'num' | 'pct'
+  const cellText = (n, pct) => _cellMode === 'pct'
+    ? (pct != null ? pct + '%' : '—')
+    : num(n);
+  function buildModeToggle(hostId) {
+    const host = $('#' + hostId); if (!host) return;
+    host.innerHTML =
+      `<button class="mchip${_cellMode === 'num' ? ' on' : ''}" data-m="num">숫자</button>` +
+      `<button class="mchip${_cellMode === 'pct' ? ' on' : ''}" data-m="pct">%</button>`;
+    host.querySelectorAll('.mchip').forEach(b => b.addEventListener('click', () => {
+      _cellMode = b.getAttribute('data-m'); redrawAll();
+    }));
+  }
+  function redrawAll() {
+    if (!_data) return;
+    buildModeToggle('ig-vmode'); buildModeToggle('ig-vmode-bv');
+    drawVV(_data);
+    const rows = (_data.by_version || []).filter(r => r.conv_retire_to_rebirth != null);
+    renderFunnelTable(rows, _data.stage_labels || []);
+  }
+
   // ── 뷰 토글 ────────────────────────────────────────────────
   let loaded = false;
   function show(view) {
@@ -29,8 +52,10 @@
     } catch (e) { $('#ig-empty').hidden = false; return; }
     if (!d || !d.rebirth_funnel) { $('#ig-empty').hidden = false; return; }
     const up = $('#updated'); if (up && d.updated) up.textContent = '갱신 ' + d.updated;
+    _data = d;
     renderKpi(d); renderFunnel(d); renderEntry(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
     renderVersionViews(d);
+    buildModeToggle('ig-vmode'); buildModeToggle('ig-vmode-bv');
   }
 
   // ── 버전 선택(체크박스) 뷰: 온보딩 퍼널 + 단계×버전 + 추월% 도달분포 ──
@@ -94,7 +119,7 @@
           h += `<tr><td class="stick vt-ver">${esc(l.label)}</td>` +
             onbV.map(v => {
               const s = v.steps.find(x => x.key === l.key); if (!s) return '<td class="num">—</td>';
-              return `<td class="num fcell" style="background:${cellCol(s.pct)}" title="${s.pct}%">${num(s.n)}</td>`;
+              return `<td class="num fcell" style="background:${cellCol(s.pct)}" title="${num(s.n)}명 · ${s.pct}%">${cellText(s.n, s.pct)}</td>`;
             }).join('') + '</tr>';
         });
         t.innerHTML = h + '</tbody>';
@@ -118,8 +143,9 @@
           h += `<tr><td class="stick vt-ver">${lab}%</td>` +
             rverV.map(v => {
               const n = v.dist[String(b)] || 0;
+              const pct = v.users ? Math.round(1000 * n / v.users) / 10 : 0;
               const sh = 96 - Math.round(46 * n / colMax[v.version]);
-              return `<td class="num fcell" style="background:hsl(214,70%,${sh}%)">${n ? num(n) : '·'}</td>`;
+              return `<td class="num fcell" style="background:hsl(214,70%,${sh}%)" title="${num(n)}명 · ${pct}%">${n ? cellText(n, pct) : '·'}</td>`;
             }).join('') + '</tr>';
         });
         rv.innerHTML = h + '</tbody>';
@@ -204,7 +230,7 @@
         `<td class="num vt-age">${r.cohort_age_days != null ? r.cohort_age_days + '일' : '—'}</td>` +
         labels.map(l => {
           const s = by[l.key]; if (!s) return '<td class="num">—</td>';
-          return `<td class="num fcell" style="background:${cell(s.pct)}" title="${esc(l.label)}: ${num(s.n)}명">${s.pct}%</td>`;
+          return `<td class="num fcell" style="background:${cell(s.pct)}" title="${esc(l.label)}: ${num(s.n)}명 · ${s.pct}%">${cellText(s.n, s.pct)}</td>`;
         }).join('') + '</tr>';
     });
     host.innerHTML = h + '</tbody>';

@@ -366,6 +366,14 @@ a { color: #2a78d6; text-underline-offset: 2px; }
   padding: 4px 8px; border: 1px dashed var(--hair); border-radius: 999px; background: none; }
 .vchip-all:hover { color: var(--ink); }
 
+/* 숫자/% 셀 표시 토글 (세그먼트) */
+.vmode { display: inline-flex; gap: 0; margin: 6px 0 2px;
+  border: 1px solid var(--hair); border-radius: 8px; overflow: hidden; }
+.mchip { cursor: pointer; font-size: 12px; font-weight: 600; color: var(--ink-3);
+  padding: 4px 14px; border: 0; background: var(--surface); }
+.mchip + .mchip { border-left: 1px solid var(--hair); }
+.mchip.on { color: #fff; background: var(--accent, #4b74e2); }
+
 /* 퍼널 결함 단계 */
 .fbar-muted { opacity: .5; }
 .fbar-muted .fbar-fill { background: var(--axis); }
