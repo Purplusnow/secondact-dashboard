@@ -7,6 +7,14 @@
   const num = n => Math.round(n).toLocaleString('ko-KR');
   const esc = s => String(s).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
 
+  // ── 신분(class_up) 계측 시작 버전 ─────────────────────────────
+  // v819 진단 릴리스부터 class_up 로깅 → 그 미만 코호트의 신분2~7은 과소집계(업데이트 후 도달분만).
+  // 오독 방지: 계측 시작 미만 버전의 신분 셀은 '—'(계측전)로 표시.
+  const CLASS_INSTR_VER = 819;
+  const vcode = v => { const m = String(v).match(/v(\d+)/); return m ? +m[1] : 0; };
+  const isClassKey = k => /^class\d/.test(k);
+  const classNA = (key, version) => isClassKey(key) && vcode(version) < CLASS_INSTR_VER;
+
   // ── 셀 표시 모드(숫자/퍼센트) — 버전 히트맵 뷰 공용 토글 ──────────
   let _data = null;                 // 마지막 로드 데이터(토글 재그림용)
   let _cellMode = 'num';            // 'num' | 'pct'
@@ -119,6 +127,7 @@
           h += `<tr><td class="stick vt-ver">${esc(l.label)}</td>` +
             onbV.map(v => {
               const s = v.steps.find(x => x.key === l.key); if (!s) return '<td class="num">—</td>';
+              if (classNA(l.key, v.version)) return `<td class="num cell-na" title="v${CLASS_INSTR_VER}부터 신분 계측 — 이전 버전은 과소집계">—</td>`;
               return `<td class="num fcell" style="background:${cellCol(s.pct)}" title="${num(s.n)}명 · ${s.pct}%">${cellText(s.n, s.pct)}</td>`;
             }).join('') + '</tr>';
         });
@@ -230,6 +239,7 @@
         `<td class="num vt-age">${r.cohort_age_days != null ? r.cohort_age_days + '일' : '—'}</td>` +
         labels.map(l => {
           const s = by[l.key]; if (!s) return '<td class="num">—</td>';
+          if (classNA(l.key, r.version)) return `<td class="num cell-na" title="v${CLASS_INSTR_VER}부터 신분 계측 — 이전 버전은 과소집계">—</td>`;
           return `<td class="num fcell" style="background:${cell(s.pct)}" title="${esc(l.label)}: ${num(s.n)}명 · ${s.pct}%">${cellText(s.n, s.pct)}</td>`;
         }).join('') + '</tr>';
     });
