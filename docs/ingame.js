@@ -186,6 +186,15 @@
     const rows = d.entry_funnel || [];
     if (!rows.length) { host.innerHTML = '<p class="card-sub">데이터 없음</p>'; return; }
     host.innerHTML = '';
+    // 모수 설명: 이 퍼널의 하위단계(첫후원·신분2~4)는 진단 릴리스(diag_start)부터만 계측 →
+    // 은퇴 기준을 진단창으로 스코프. 위 퍼널(전체기간)과 모수가 다른 이유를 명시.
+    const sub = $('#ig-entry-sub');
+    if (sub) {
+      const ds = d.diag_start || '진단 릴리스';
+      const lifeRet = (d.rebirth_funnel || []).find(x => x.stage === '은퇴');
+      const cmp = lifeRet ? ` · 위 퍼널 은퇴(${num(lifeRet.users)})는 전체기간이라 모수가 다름` : '';
+      sub.innerHTML = `세부단계(후원·신분)는 <b>${esc(ds)} 진단 릴리스부터 계측</b> → 은퇴도 그 이후로 스코프${cmp}`;
+    }
     const top = rows[0].users || 1;
     // 최대 드롭 구간 찾기(붉게)
     let worstI = -1, worstD = -1;
