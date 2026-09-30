@@ -85,17 +85,13 @@ def main() -> None:
       FROM u WHERE retired=1
     """)[0]
     r = {k: int(v or 0) for k, v in fr.items()}
+    # ⚠ 중간 2단계(환생자격=rebirth_available, 화면방문=rebirth_screen_view)는 이벤트가 과소기록돼
+    #   첫환생보다 작게 잡힘(퍼널 역전) → 신뢰 불가라 제외. 원인분할도 이 깨진 플래그 파생이라 제거.
+    #   은퇴(game_sale)·첫환생(first_rebirth)은 onb_step이라 신뢰 가능 → 이 2단계 전환만 표시.
     out["rebirth_funnel"] = [
         {"stage": "은퇴", "users": r["retired"]},
-        {"stage": "환생자격", "users": r["eligible"]},
-        {"stage": "화면방문", "users": r["opened"]},
         {"stage": "첫환생", "users": r["rebirthed"]},
     ]
-    out["rebirth_reasons"] = {
-        "slow_climb": r["reason_slow_climb"],
-        "discoverability": r["reason_discoverability"],
-        "reset_shock": r["reason_reset_shock"],
-    }
 
     # ── 0~3.2% deci 이탈곡선 (진단이벤트 기간) ────────────────────────
     deci = q(f"""
