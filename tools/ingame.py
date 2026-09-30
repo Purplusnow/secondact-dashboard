@@ -251,6 +251,17 @@ def main() -> None:
         for x in diag:
             print(f"[PURCHASE-DIAG] {x['cur']} | ev={x['ev']} tx={x['tx']} u={x['users']} | "
                   f"raw sum={x['raw_sum']} min={x['raw_min']} med={x['raw_med']} max={x['raw_max']} | usd={x['usd_sum']}")
+        ver = q(f"""
+          SELECT app_info.version AS ver,
+            (SELECT value.string_value FROM UNNEST(event_params) WHERE key='currency') AS cur,
+            COUNT(*) AS ev, COUNT(DISTINCT user_pseudo_id) AS users,
+            ROUND(SUM(event_value_in_usd),1) AS usd
+          FROM {TABLE} WHERE event_name='purchase' AND _TABLE_SUFFIX NOT LIKE 'intraday%'
+          GROUP BY ver, cur ORDER BY usd DESC LIMIT 30
+        """)
+        print("[PURCHASE-VER] app_version | cur | ev users usd")
+        for x in ver:
+            print(f"[PURCHASE-VER] {x['ver']} | {x['cur']} | ev={x['ev']} u={x['users']} usd={x['usd']}")
     except Exception as e:
         print("[PURCHASE-DIAG] ERR", repr(e))
     payers = int(mon["payers"] or 0)
