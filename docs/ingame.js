@@ -102,30 +102,7 @@
   function drawVV(d) {
     const onbV = (d.onb_versions || []).filter(v => _vvSel.has(v.version));
     const labels = d.stage_labels || [];
-    // ① 온보딩 퍼널(선택 합계) — 단계별 도달 유저 합 + 완료율/이탈률
-    // ⚠ '통합'은 개별 버전의 합이라 합산에서 제외(같이 더하면 이중합산). 통합만 선택했으면 통합을 사용.
-    const real = onbV.filter(v => v.version !== '통합');
-    const base = real.length ? real : onbV;
-    const onbHost = $('#ig-onbv'); if (onbHost) {
-      if (!onbV.length) { onbHost.innerHTML = '<p class="card-sub">버전을 선택하세요</p>'; }
-      else {
-        const sum = labels.map(l => base.reduce((a, v) => a + ((v.steps.find(s => s.key === l.key) || {}).n || 0), 0));
-        const top = sum[0] || 1;
-        onbHost.innerHTML = '';
-        labels.forEach((l, i) => {
-          const p = 100 * sum[i] / top;
-          const step = i > 0 && sum[i - 1] ? Math.round(100 * (sum[i - 1] - sum[i]) / sum[i - 1]) : null;
-          const big = step != null && step >= 20;
-          const bar = el('div', 'obar' + (big ? ' obar-hot' : ''));
-          bar.innerHTML =
-            `<div class="obar-lab">${esc(l.label)}</div>` +
-            `<div class="obar-track"><div class="obar-fill" style="width:${Math.max(p, 1)}%"></div></div>` +
-            `<div class="obar-n num">${num(sum[i])}${step != null && step > 0 ? ` <span class="drop">▼${step}%</span>` : ''}</div>`;
-          onbHost.appendChild(bar);
-        });
-      }
-    }
-    // ② 단계 × 버전 테이블 (행=단계, 열=선택 버전, 셀=도달 유저 + %)
+    // 단계 × 버전 테이블 (행=단계, 열=선택 버전, 셀=도달 유저 + %) — 셀 색이 도달률(드롭)을 표현
     const t = $('#ig-onbv-table');
     if (t) {
       if (!onbV.length) { t.innerHTML = '<tr><td class="vt-empty">버전을 선택하세요</td></tr>'; }
