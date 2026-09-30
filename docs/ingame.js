@@ -18,12 +18,11 @@
   // ── 셀 표시 모드(숫자/퍼센트) — 표마다 개별 토글 ──────────
   // 토글 호스트 id ↔ 모드 키 매핑. 각 표가 자기 키의 모드만 사용(독립 동작).
   const MODE_TOGGLES = [
-    { host: 'ig-vmode-bv', key: 'bv' },       // 버전비교: 구간 도달율(ig-versions-funnel)
-    { host: 'ig-vmode', key: 'onb' },         // 온보딩 퍼널(ig-onbv-table)
+    { host: 'ig-vmode', key: 'onb' },         // 스텝×버전 도달(ig-onbv-table)
     { host: 'ig-vmode-reach', key: 'reach' }, // 추월% 도달 생존(ig-reachv)
   ];
   let _data = null;                 // 마지막 로드 데이터(토글 재그림용)
-  const _cellModes = { bv: 'num', onb: 'num', reach: 'num' };  // 키별 'num' | 'pct'
+  const _cellModes = { onb: 'num', reach: 'num' };  // 키별 'num' | 'pct'
   const cellText = (n, pct, mode) => mode === 'pct'
     ? (pct != null ? pct + '%' : '—')
     : num(n);
@@ -42,8 +41,6 @@
     if (!_data) return;
     buildAllToggles();
     drawVV(_data);
-    const rows = (_data.by_version || []).filter(r => r.conv_retire_to_rebirth != null);
-    renderFunnelTable(rows, _data.stage_labels || []);
   }
 
   // ── 뷰 토글 ────────────────────────────────────────────────
@@ -69,8 +66,8 @@
     if (!d || !d.rebirth_funnel) { $('#ig-empty').hidden = false; return; }
     const up = $('#updated'); if (up && d.updated) { up.textContent = '데이터 기준 ' + d.updated; up.title = 'BigQuery 수집 시각(매일 11:20 KST 자동). 페이지 배포 시각과 다를 수 있음'; }
     _data = d;
-    renderKpi(d); renderFunnel(d); renderEntry(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
-    renderReachCurve(d); renderRetentionCohort(d);
+    renderKpi(d); renderFunnel(d); renderVersions(d); renderPacing(d);
+    renderRetentionCohort(d);
     renderCityKpi(d); renderCityFunnel(d); renderCityDeci(d); renderCityPacing(d);
     renderVersionViews(d);
     buildAllToggles();
@@ -180,59 +177,6 @@
     }
   }
 
-  // ── 은퇴→진입 세부 퍼널 (0%→0.1% 세분) ────────────────────
-  function renderEntry(d) {
-    const host = $('#ig-entry'); if (!host) return;
-    const rows = d.entry_funnel || [];
-    if (!rows.length) { host.innerHTML = '<p class="card-sub">데이터 없음</p>'; return; }
-    host.innerHTML = '';
-    // 모수 설명: 이 퍼널의 하위단계(첫후원·신분2~4)는 진단 릴리스(diag_start)부터만 계측 →
-    // 은퇴 기준을 진단창으로 스코프. 위 퍼널(전체기간)과 모수가 다른 이유를 명시.
-    const sub = $('#ig-entry-sub');
-    if (sub) {
-      const ds = d.diag_start || '진단 릴리스';
-      const lifeRet = (d.rebirth_funnel || []).find(x => x.stage === '은퇴');
-      const cmp = lifeRet ? ` · 위 퍼널 은퇴(${num(lifeRet.users)})는 전체기간이라 모수가 다름` : '';
-      sub.innerHTML = `세부단계(후원·신분)는 <b>${esc(ds)} 진단 릴리스부터 계측</b> → 은퇴도 그 이후로 스코프${cmp}`;
-    }
-    const top = rows[0].users || 1;
-    // 최대 드롭 구간 찾기(붉게)
-    let worstI = -1, worstD = -1;
-    for (let i = 1; i < rows.length; i++) {
-      const dr = rows[i - 1].users ? (rows[i - 1].users - rows[i].users) / rows[i - 1].users : 0;
-      if (dr > worstD) { worstD = dr; worstI = i; }
-    }
-    rows.forEach((r, i) => {
-      const pctTop = top ? (100 * r.users / top) : 0;
-      const drop = i > 0 && rows[i - 1].users ? Math.round(100 * (rows[i - 1].users - r.users) / rows[i - 1].users) : null;
-      const hot = i === worstI;
-      const wrap = el('div', 'fbar');
-      wrap.innerHTML =
-        `<div class="fbar-head"><span>${esc(r.stage)}</span>` +
-        `<span class="num">${num(r.users)} · ${pctTop.toFixed(0)}%` +
-        (drop != null && drop > 0 ? ` <span class="drop">▼${drop}%${hot ? ' ⚠' : ''}</span>` : '') + `</span></div>` +
-        `<div class="fbar-track"><div class="fbar-fill${hot ? ' fbar-fill-hot' : ''}" style="width:${Math.max(pctTop, 1.5)}%"></div></div>`;
-      host.appendChild(wrap);
-    });
-    if (worstI > 0) {
-      host.appendChild(el('p', 'chart-note',
-        `최대 이탈: <b class="drop">${esc(rows[worstI - 1].stage)} → ${esc(rows[worstI].stage)} (▼${Math.round(worstD * 100)}%)</b> — 여기가 진짜 벽`));
-    }
-  }
-
-  // ── 추월% 도달 생존곡선(통합) — %별 도달 유저 수(매끄러운 하강, 최고점분포 아님) ──
-  function renderReachCurve(d) {
-    const host = $('#ig-reach-curve'); if (!host) return; host.innerHTML = '';
-    const c = (d.reach_curve || []).filter(x => x.pct <= 100);
-    if (c.length < 2) { host.innerHTML = '<p class="card-sub">데이터 없음</p>'; return; }
-    host.innerHTML = lineChart(c.map(x => ({ x: x.pct, y: x.users })), { xlab: '추월%', ylab: '도달 유저' });
-    const s0 = c.find(x => x.pct === 0), s1 = c.find(x => x.pct === 1), s10 = c.find(x => x.pct === 10);
-    const parts = [];
-    if (s0 && s1) parts.push(`0%→1% 진입 <b>${(100 * s1.users / (s0.users || 1)).toFixed(0)}%</b>(첫 벽)`);
-    if (s0 && s10) parts.push(`10%+ 도달 <b>${(100 * s10.users / (s0.users || 1)).toFixed(1)}%</b>`);
-    host.appendChild(el('p', 'chart-note', `%별 "그 지점까지 간 유저 수"(단조 하강). ` + parts.join(' · ')));
-  }
-
   // ── 2부(도시) 뷰 — 진입 퍼널 · 초반 이탈곡선 · 진행 페이싱 ──────────────
   function renderCityKpi(d) {
     const host = $('#ig-city-kpi'); if (!host) return; host.innerHTML = '';
@@ -297,77 +241,13 @@
 
   const vshort = v => String(v).replace(/^1\.0\s*\(v?/i, 'v').replace(/\)$/, '');
 
-  // ── 버전 비교: A/B 비교 + 표 ─────────────────────
+  // ── 버전 비교: 표 ─────────────────────
   function renderVersions(d) {
     const rows = (d.by_version || []).filter(r => r.conv_retire_to_rebirth != null);
-    const viz = $('#ig-versions-viz');
-    if (!rows.length) { if (viz) viz.innerHTML = '<p class="card-sub">버전 데이터 없음</p>'; renderVersionTable([]); return; }
-
-    // A/B 선택 비교
-    let html = '';
-    const opt = (sel) => rows.map((r, i) =>
-      `<option value="${i}"${i === sel ? ' selected' : ''}>${esc(vshort(r.version))} · ${r.cohort_age_days}일</option>`).join('');
-    const bIdx = rows.length > 1 ? 1 : 0;
-    html += '<div class="vcmp">' +
-      '<div class="vcmp-pick">' +
-      `<label>A <select id="vcmp-a">${opt(0)}</select></label>` +
-      `<span class="vcmp-vs">vs</span>` +
-      `<label>B <select id="vcmp-b">${opt(bIdx)}</select></label>` +
-      '</div><div id="vcmp-out"></div></div>';
-    viz.innerHTML = html;
-
-    const a = $('#vcmp-a'), b = $('#vcmp-b');
-    const upd = () => renderCompare(rows[+a.value], rows[+b.value]);
-    a.addEventListener('change', upd); b.addEventListener('change', upd);
-    upd();
     renderVersionTable(rows);
-    renderFunnelTable(rows, d.stage_labels || []);
   }
 
   // 구간 도달율 히트맵(넓은 표, 좌우 스크롤, 첫 열 고정)
-  function renderFunnelTable(rows, labels) {
-    const host = $('#ig-versions-funnel'); if (!host) return;
-    if (!rows.length || !labels.length) { host.innerHTML = '<tr><td class="vt-empty">데이터 없음</td></tr>'; return; }
-    const cell = pct => `hsl(${Math.round(1.2 * pct)},62%,${(93 - pct * 0.1).toFixed(0)}%)`;
-    let h = '<thead><tr><th class="stick">버전</th><th>나이</th>' +
-      labels.map(l => `<th>${esc(l.label)}</th>`).join('') + '</tr></thead><tbody>';
-    rows.forEach(r => {
-      const by = {}; (r.stages || []).forEach(s => by[s.key] = s);
-      h += `<tr><td class="stick vt-ver">${esc(vshort(r.version))}</td>` +
-        `<td class="num vt-age">${r.cohort_age_days != null ? r.cohort_age_days + '일' : '—'}</td>` +
-        labels.map(l => {
-          const s = by[l.key]; if (!s) return '<td class="num">—</td>';
-          if (classNA(l.key, r.version)) return `<td class="num cell-na" title="v${CLASS_INSTR_VER}부터 신분 계측 — 이전 버전은 과소집계">—</td>`;
-          return `<td class="num fcell" style="background:${cell(s.pct)}" title="${esc(l.label)}: ${num(s.n)}명 · ${s.pct}%">${cellText(s.n, s.pct, _cellModes.bv)}</td>`;
-        }).join('') + '</tr>';
-    });
-    host.innerHTML = h + '</tbody>';
-  }
-
-  // A vs B head-to-head
-  function renderCompare(A, B) {
-    const out = $('#vcmp-out'); if (!out) return;
-    const metric = (lab, av, bv, unit, higher = true) => {
-      const d = (av != null && bv != null) ? +(av - bv).toFixed(1) : null;
-      const good = d == null ? '' : ((higher ? d > 0 : d < 0) ? 'up' : (d === 0 ? '' : 'down'));
-      const ds = d == null ? '' : `<span class="delta ${good}">${d > 0 ? '+' : ''}${d}${unit === '%' ? '%p' : unit}</span>`;
-      return `<div class="cmp-row"><div class="cmp-lab">${lab}</div>` +
-        `<div class="cmp-a num">${av != null ? av + unit : '—'}</div>` +
-        `<div class="cmp-d">${ds}</div>` +
-        `<div class="cmp-b num">${bv != null ? bv + unit : '—'}</div></div>`;
-    };
-    const ageWarn = (A.cohort_age_days != null && B.cohort_age_days != null &&
-      Math.abs(A.cohort_age_days - B.cohort_age_days) >= 3)
-      ? `<p class="chart-note">⚠️ 코호트 나이차 ${Math.abs(+(A.cohort_age_days - B.cohort_age_days).toFixed(1))}일 — 은퇴→환생 차이는 성숙도 영향 포함(참고만). 신규→은퇴는 나이 영향 적음.</p>` : '';
-    out.innerHTML =
-      `<div class="cmp-head"><div></div><div class="cmp-a">${esc(vshort(A.version))}<span class="cmp-age">${A.cohort_age_days}일·${num(A.users)}명</span></div><div class="cmp-d">Δ</div><div class="cmp-b">${esc(vshort(B.version))}<span class="cmp-age">${B.cohort_age_days}일·${num(B.users)}명</span></div></div>` +
-      metric('신규→은퇴', A.conv_new_to_retire, B.conv_new_to_retire, '%') +
-      metric('은퇴→환생', A.conv_retire_to_rebirth, B.conv_retire_to_rebirth, '%') +
-      metric('은퇴 유저', A.retired, B.retired, '', true) +
-      metric('첫환생 유저', A.rebirthed, B.rebirthed, '', true) +
-      ageWarn;
-  }
-
   function renderVersionTable(rows) {
     const host = $('#ig-versions'); if (!host) return;
     if (!rows.length) { host.innerHTML = '<tr><td class="vt-empty">버전 데이터 없음</td></tr>'; return; }
@@ -402,21 +282,10 @@
     host.appendChild(tile('WAU', num(k.wau || 0), '주간 활성 (최근 7일)'));
     host.appendChild(tile('신규 (7일)', num(k.new_7d || 0), '최근 7일 첫 설치'));
     host.appendChild(tile('누적 유저', num(k.cumulative || 0), '전체 설치'));
+    host.appendChild(tile('추월 1% 돌파', pctT(k.reach1, k.reach1_base), `은퇴 후 1%+ 도달 · 최대 누수 · 모수 ${num(k.reach1_base || 0)}`));
     host.appendChild(tile('D1 리텐션', pctT(k.d1, k.d1_base), `설치 다음날 복귀 · 모수 ${num(k.d1_base || 0)}`));
     host.appendChild(tile('D7 리텐션', pctT(k.d7, k.d7_base), `설치 7일뒤 복귀 · 모수 ${num(k.d7_base || 0)}`));
     host.appendChild(tile('D30 리텐션', pctT(k.d30, k.d30_base), `설치 30일뒤 복귀 · 모수 ${num(k.d30_base || 0)}`));
-  }
-
-  // ── 리텐션 곡선 D1~D30 — 설치일 대비 n일 뒤 복귀율 ──────────────
-  function renderRetention(d) {
-    const host = $('#ig-retention'); if (!host) return; host.innerHTML = '';
-    const c = (d.retention_curve || []).filter(x => x.pct != null);
-    if (c.length < 2) { host.innerHTML = '<p class="card-sub">데이터 없음(코호트 관측기간 부족)</p>'; return; }
-    host.innerHTML = lineChart(c.map(x => ({ x: x.day, y: x.pct })), { xlab: 'D+n (일)', ylab: '복귀율 %' });
-    const g = n => (c.find(x => x.day === n) || {}).pct;
-    const parts = [];
-    [1, 7, 14, 30].forEach(n => { const v = g(n); if (v != null) parts.push(`D${n} ${v}%`); });
-    host.appendChild(el('p', 'chart-note', parts.join(' · ') + ' · 설치일 대비 정확히 n일 뒤 하루라도 접속한 비율'));
   }
 
   // ── 코호트 리텐션 삼각(설치일 × Day n 히트맵) ─────────────
@@ -529,41 +398,6 @@
       `<text x="${w - pad}" y="${h - 6}" class="lc-ax" text-anchor="end">${esc(String(xmax) + xlab)}</text>` +
       `<text x="${pad}" y="14" class="lc-ax">${esc(ylab)} ${num(ymax)}</text>` +
       `</svg>`;
-  }
-
-  // ── deci 이탈곡선 ─────────────────────────────────────────
-  function renderDeci(d) {
-    const host = $('#ig-deci'); host.innerHTML = '';
-    const c = d.deci_curve || [];
-    if (!c.length) { host.innerHTML = '<p class="card-sub">데이터 없음(진단이벤트 landing 대기)</p>'; return; }
-    let worst = null;
-    c.forEach(x => { if (x.step_drop_pct != null && (!worst || x.step_drop_pct > worst.step_drop_pct)) worst = x; });
-    host.innerHTML = lineChart(c.map(x => ({ x: x.deci, y: x.users })), { mark: worst ? worst.deci : -1, xlab: '', ylab: '유저' });
-    if (worst) {
-      host.appendChild(el('p', 'chart-note',
-        `최대 절벽: <b>${worst.pct}%</b> 지점에서 <b class="drop">−${worst.step_drop_pct}%</b>` +
-        (worst.median_hours != null ? ` · 도달 중앙값 ${worst.median_hours}h` : '') +
-        (worst.median_class != null ? ` · 신분 ${worst.median_class}` : '')));
-    }
-  }
-
-  // ── 온보딩 퍼널(막대) ─────────────────────────────────────
-  function renderOnb(d) {
-    const host = $('#ig-onb'); host.innerHTML = '';
-    const rows = d.onboarding_funnel || [];
-    if (!rows.length) { host.innerHTML = '<p class="card-sub">데이터 없음</p>'; return; }
-    const top = rows[0].users || 1;
-    rows.forEach((r, i) => {
-      const p = 100 * r.users / top;
-      const step = i > 0 && rows[i - 1].users ? Math.round(100 * (rows[i - 1].users - r.users) / rows[i - 1].users) : null;
-      const big = step != null && step >= 20;
-      const bar = el('div', 'obar' + (big ? ' obar-hot' : ''));
-      bar.innerHTML =
-        `<div class="obar-lab">${esc(r.step)}</div>` +
-        `<div class="obar-track"><div class="obar-fill" style="width:${Math.max(p, 1)}%"></div></div>` +
-        `<div class="obar-n num">${num(r.users)}${step != null && step > 0 ? ` <span class="drop">▼${step}%</span>` : ''}</div>`;
-      host.appendChild(bar);
-    });
   }
 
   // ── 페이싱: 구간당 소요시간(시간/%) 막대 + 표본 N게이팅 ────────

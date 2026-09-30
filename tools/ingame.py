@@ -162,102 +162,6 @@ def main() -> None:
         {"stage": "첫환생", "users": r["rebirthed"]},
     ]
 
-    # ── 0~3.2% deci 이탈곡선 (진단이벤트 기간) ────────────────────────
-    deci = q(f"""
-      WITH d AS (
-        SELECT
-          (SELECT value.int_value FROM UNNEST(event_params) WHERE key='deci') AS deci,
-          user_pseudo_id,
-          MIN((SELECT value.int_value FROM UNNEST(event_params) WHERE key='secs_since_install')) AS secs,
-          MAX((SELECT value.int_value FROM UNNEST(event_params) WHERE key='class')) AS class
-        FROM {TABLE}
-        WHERE event_name='progress_deci' AND {suffix_daily(f"_TABLE_SUFFIX >= '{DIAG_START}'")}
-        GROUP BY deci, user_pseudo_id
-      ),
-      agg AS (
-        SELECT deci,
-          COUNT(DISTINCT user_pseudo_id) AS users,
-          APPROX_QUANTILES(secs,2)[OFFSET(1)] AS median_secs,
-          APPROX_QUANTILES(class,2)[OFFSET(1)] AS median_class
-        FROM d WHERE deci BETWEEN 1 AND 32 GROUP BY deci
-      )
-      SELECT deci, users, median_secs, median_class FROM agg ORDER BY deci
-    """)
-    # ★모수 = 은퇴(game_sale) 유저 = 추월(신분등반) 0% 시작점. deci는 0.1% 크로싱만 찍혀
-    #   0%→0.1% 이탈이 안 보이던 문제 → deci=0(은퇴수)을 baseline으로 넣어 첫 드롭까지 드러낸다.
-    base = q(f"""
-      SELECT COUNT(DISTINCT user_pseudo_id) AS n FROM {TABLE}
-      WHERE event_name='onb_step'
-        AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='game_sale'
-        AND {suffix_daily(f"_TABLE_SUFFIX >= '{DIAG_START}'")}
-    """)[0]["n"] or 0
-    series = [{"deci": 0, "pct": 0.0, "users": int(base), "median_secs": 0, "median_class": None}]
-    for x in deci:
-        series.append({"deci": int(x["deci"]), "pct": round(int(x["deci"]) / 10.0, 1),
-                       "users": int(x["users"]), "median_secs": x["median_secs"], "median_class": x["median_class"]})
-    start = int(base) or (series[1]["users"] if len(series) > 1 else 1) or 1
-    out["deci_baseline"] = int(base)
-    out["deci_curve"] = []
-    prev = None
-    for s in series:
-        drop = (round(100 * (prev - s["users"]) / prev, 1) if (prev and prev > 0) else None)
-        out["deci_curve"].append({
-            "deci": s["deci"], "pct": s["pct"], "users": s["users"],
-            "pct_of_start": round(100 * s["users"] / start, 1),
-            "step_drop_pct": drop,
-            "median_hours": (round(int(s["median_secs"]) / 3600.0, 1) if s["median_secs"] else None),
-            "median_class": (int(s["median_class"]) if s["median_class"] is not None else None),
-        })
-        prev = s["users"]
-
-    # ── 은퇴→진입 세부 퍼널 (0%→0.1% 구간을 class_up·first_donate로 세분) ──────
-    # 은퇴자의 73% 이탈이 0%→0.1%에 몰려 있어, 그 안을 후원·신분2/3/4로 쪼갠다.
-    ef = q(f"""
-      WITH u AS (
-        SELECT user_pseudo_id,
-          MAX(IF(event_name='onb_step' AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='game_sale',1,0))    AS retired,
-          MAX(IF(event_name='onb_step' AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='first_donate',1,0)) AS donated,
-          MAX(IF(event_name='class_up' AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='level')>=2,1,0)) AS c2,
-          MAX(IF(event_name='class_up' AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='level')>=3,1,0)) AS c3,
-          MAX(IF(event_name='class_up' AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='level')>=4,1,0)) AS c4,
-          MAX(IF(event_name='progress_deci',1,0)) AS d1
-        FROM {TABLE}
-        WHERE {suffix_daily(f"_TABLE_SUFFIX >= '{DIAG_START}'")}
-        GROUP BY user_pseudo_id
-      )
-      SELECT SUM(retired) AS retired,
-        SUM(IF(retired=1 AND donated=1,1,0)) AS donated,
-        SUM(IF(retired=1 AND c2=1,1,0)) AS c2,
-        SUM(IF(retired=1 AND c3=1,1,0)) AS c3,
-        SUM(IF(retired=1 AND c4=1,1,0)) AS c4,
-        SUM(IF(retired=1 AND d1=1,1,0)) AS d1
-      FROM u WHERE retired=1
-    """)[0]
-    ef = {k: int(v or 0) for k, v in ef.items()}
-    out["entry_funnel"] = [
-        {"stage": "은퇴", "users": ef["retired"]},
-        {"stage": "첫 후원", "users": ef["donated"]},
-        {"stage": "신분2", "users": ef["c2"]},
-        {"stage": "신분3", "users": ef["c3"]},
-        {"stage": "신분4", "users": ef["c4"]},
-        {"stage": "추월 0.1%", "users": ef["d1"]},
-    ]
-
-    # ── 온보딩 퍼널 (20스텝, distinct users) ──────────────────────────
-    onb = q(f"""
-      SELECT
-        (SELECT value.int_value FROM UNNEST(event_params) WHERE key='step_idx') AS idx,
-        (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')  AS step,
-        COUNT(DISTINCT user_pseudo_id) AS users
-      FROM {TABLE}
-      WHERE event_name='onb_step'
-        AND {suffix_daily(f"_TABLE_SUFFIX BETWEEN '{win_start}' AND '{end_s}'")}
-      GROUP BY idx, step HAVING idx IS NOT NULL ORDER BY idx
-    """)
-    out["onboarding_funnel"] = [
-        {"idx": int(x["idx"]), "step": x["step"], "users": int(x["users"])} for x in onb
-    ]
-
     # ── 페이싱 커브: %별 도달 소요시간 중앙값 ─────────────────────────
     pacing = q(f"""
       WITH p AS (
@@ -430,16 +334,11 @@ def main() -> None:
         "versions": [total_entry] + [{"version": v, "users": vtot[v],
                       "dist": {str(b): vdist[v].get(b, 0) for b in range(0, CAP + 2)}} for v in keep],
     }
-    # ── 도달 생존곡선(통합) — %별 "그 %까지 도달한 유저 수" (max분포 누적합; 추월%는 단조라 정확) ──
-    # 최고점 분포와 달리 매끄러운 하강곡선. survival(p)=Σ dist[b≥p]. survival(0)=전체.
-    cum = 0
-    surv: list = []
-    for p in range(CAP + 1, -1, -1):
-        cum += all_dist.get(p, 0)
-        surv.append({"pct": p, "users": cum,
-                     "pct_of_all": (round(100 * cum / all_users, 1) if all_users else 0.0)})
-    surv.reverse()   # 0→101 오름차순
-    out["reach_curve"] = surv
+    # ── 추월 1% 돌파율 → KPI 타일 (은퇴 후 최대 누수 지점) ──
+    # 1%+ 도달 유저 = 전체 - 0%(추월0)에 머문 유저. all_dist[0]=maxpct 0인 유저.
+    reach1 = all_users - all_dist.get(0, 0)
+    out["kpi"]["reach1"] = (round(100 * reach1 / all_users, 1) if all_users else None)
+    out["kpi"]["reach1_base"] = all_users
 
     # ══ 2부(도시) — 진입 퍼널 · 초반 이탈곡선 · 진행 페이싱 ════════════════════
     # city_* 계측(v916+). 진입→첫액션 퍼널=city_enter/city_onb_step/city_complete,
@@ -529,7 +428,7 @@ def main() -> None:
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
     print(f"wrote {OUT}: retired={r['retired']} rebirth={r['rebirthed']} "
-          f"deci_rows={len(out['deci_curve'])} onb={len(out['onboarding_funnel'])} "
+          f"reach1={out['kpi'].get('reach1')}% "
           f"pacing={len(out['pacing'])} versions={len(out['by_version'])} "
           f"onb_versions={len(out['onb_versions'])} reach_versions={len(out['reach_versions']['versions'])} "
           f"city_entered={ce} city_complete={out['city_kpi']['completed']} city_deci={len(out['city_deci_curve'])} "
