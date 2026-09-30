@@ -415,14 +415,13 @@
   function renderKpi(d) {
     const host = $('#ig-kpi'); host.innerHTML = '';
     const k = d.kpi || {};
-    const f = d.rebirth_funnel || [];
-    const retired = (f.find(x => x.stage === '은퇴') || {}).users || 0;
-    const reborn = (f.find(x => x.stage === '첫환생') || {}).users || 0;
-    const conv = retired ? (100 * reborn / retired).toFixed(1) + '%' : '—';
-    host.appendChild(tile('신규 유저', num(k.new_users_win || 0), `최근 ${d.window_days}일`));
-    host.appendChild(tile('활성 유저', num(k.active_users_win || 0), `최근 ${d.window_days}일`));
-    host.appendChild(tile('은퇴 → 첫환생', conv, `${num(reborn)} / ${num(retired)}`));
-    host.appendChild(tile('데이터 최신', d.last_table || '—', '일별 테이블'));
+    const pctT = (v, base) => v != null ? v + '%' : (base ? '0%' : '—');
+    host.appendChild(tile('DAU', num(k.dau || 0), `일간 활성 (${d.last_table || '최신'})`));
+    host.appendChild(tile('WAU', num(k.wau || 0), '주간 활성 (최근 7일)'));
+    host.appendChild(tile('신규 (7일)', num(k.new_7d || 0), '최근 7일 첫 설치'));
+    host.appendChild(tile('누적 유저', num(k.cumulative || 0), '전체 설치'));
+    host.appendChild(tile('D1 리텐션', pctT(k.d1, k.d1_base), `설치 다음날 복귀 · 모수 ${num(k.d1_base || 0)}`));
+    host.appendChild(tile('D7 리텐션', pctT(k.d7, k.d7_base), `설치 7일뒤 복귀 · 모수 ${num(k.d7_base || 0)}`));
   }
 
   // ── 은퇴→환생 퍼널 + 원인 3분할 ───────────────────────────

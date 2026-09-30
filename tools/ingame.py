@@ -48,19 +48,49 @@ def main() -> None:
     out: dict = {"updated": datetime.now(KST).strftime("%Y-%m-%d %H:%M") + " KST", "window_days": WINDOW_DAYS,
                  "diag_start": f"{DIAG_START[:4]}-{DIAG_START[4:6]}-{DIAG_START[6:]}"}
 
-    # ── KPI: 신규(7d)·활성(7d)·마지막 테이블 ───────────────────────────
-    kpi = q(f"""
+    # ── KPI: DAU·WAU·신규(7일)·누적·D1/D7 리텐션 ───────────────────────
+    # (기존 '신규/활성 45일'은 게임 나이와 겹쳐 신규≈활성≈전체로 오해 유발 → 실질 지표로 교체)
+    last_t = q(f"SELECT MAX(_TABLE_SUFFIX) AS t FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'")[0]["t"]
+    out["last_table"] = last_t
+    _last = datetime.strptime(last_t, "%Y%m%d").date()
+    d7 = (_last - timedelta(days=6)).strftime("%Y%m%d")     # 최근 7일(마지막일 포함)
+    k = q(f"""
       SELECT
-        COUNT(DISTINCT IF(event_name='first_open', user_pseudo_id, NULL)) AS new_users_win,
-        COUNT(DISTINCT user_pseudo_id) AS active_users_win
+        COUNT(DISTINCT IF(_TABLE_SUFFIX='{last_t}', user_pseudo_id, NULL)) AS dau,
+        COUNT(DISTINCT user_pseudo_id) AS wau,
+        COUNT(DISTINCT IF(event_name='first_open', user_pseudo_id, NULL)) AS new_7d
       FROM {TABLE}
-      WHERE {suffix_daily(f"_TABLE_SUFFIX BETWEEN '{win_start}' AND '{end_s}'")}
+      WHERE {suffix_daily(f"_TABLE_SUFFIX BETWEEN '{d7}' AND '{last_t}'")}
     """)[0]
-    out["kpi"] = {k: int(v or 0) for k, v in kpi.items()}
-    out["last_table"] = q(
-        f"SELECT MAX(_TABLE_SUFFIX) AS t FROM {TABLE} "
-        f"WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'"
-    )[0]["t"]
+    cum = q(f"SELECT COUNT(DISTINCT user_pseudo_id) AS n FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'")[0]["n"]
+    # D1/D7 리텐션 — 설치일(d0) 대비 d0+1 / d0+7 복귀. 분모=관측 가능한 코호트(마지막 테이블일 기준).
+    ld = _last.isoformat()
+    ret = q(f"""
+      WITH inst AS (
+        SELECT user_pseudo_id, MIN(PARSE_DATE('%Y%m%d', _TABLE_SUFFIX)) AS d0
+        FROM {TABLE} WHERE event_name='first_open' AND _TABLE_SUFFIX NOT LIKE 'intraday%'
+        GROUP BY user_pseudo_id
+      ),
+      act AS (
+        SELECT DISTINCT user_pseudo_id, PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS d
+        FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
+      )
+      SELECT
+        COUNTIF(i.d0 <= DATE_SUB(DATE '{ld}', INTERVAL 1 DAY)) AS d1_base,
+        COUNTIF(i.d0 <= DATE_SUB(DATE '{ld}', INTERVAL 1 DAY) AND a1.user_pseudo_id IS NOT NULL) AS d1_ret,
+        COUNTIF(i.d0 <= DATE_SUB(DATE '{ld}', INTERVAL 7 DAY)) AS d7_base,
+        COUNTIF(i.d0 <= DATE_SUB(DATE '{ld}', INTERVAL 7 DAY) AND a7.user_pseudo_id IS NOT NULL) AS d7_ret
+      FROM inst i
+      LEFT JOIN act a1 ON a1.user_pseudo_id=i.user_pseudo_id AND a1.d=DATE_ADD(i.d0, INTERVAL 1 DAY)
+      LEFT JOIN act a7 ON a7.user_pseudo_id=i.user_pseudo_id AND a7.d=DATE_ADD(i.d0, INTERVAL 7 DAY)
+    """)[0]
+    def _rp(a, b): return round(100 * int(a or 0) / int(b), 1) if int(b or 0) else None
+    out["kpi"] = {
+        "dau": int(k["dau"] or 0), "wau": int(k["wau"] or 0),
+        "new_7d": int(k["new_7d"] or 0), "cumulative": int(cum or 0),
+        "d1": _rp(ret["d1_ret"], ret["d1_base"]), "d1_base": int(ret["d1_base"] or 0),
+        "d7": _rp(ret["d7_ret"], ret["d7_base"]), "d7_base": int(ret["d7_base"] or 0),
+    }
 
     # ── 은퇴→자격→화면→첫환생 퍼널 (진단이벤트 기간) ──────────────────
     fr = q(f"""
