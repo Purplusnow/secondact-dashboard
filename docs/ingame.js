@@ -66,7 +66,7 @@
     if (!d || !d.rebirth_funnel) { $('#ig-empty').hidden = false; return; }
     const up = $('#updated'); if (up && d.updated) { up.textContent = '데이터 기준 ' + d.updated; up.title = 'BigQuery 수집 시각(매일 11:20 KST 자동). 페이지 배포 시각과 다를 수 있음'; }
     _data = d;
-    renderKpi(d); renderFunnel(d); renderVersions(d); renderPacing(d);
+    renderKpi(d); renderMonetization(d); renderFunnel(d); renderVersions(d); renderPacing(d);
     renderRetentionCohort(d); renderProgressHeatmap(d);
     renderCityKpi(d); renderCityFunnel(d); renderCityDeci(d); renderCityPacing(d);
     renderVersionViews(d);
@@ -266,6 +266,39 @@
     host.appendChild(tile('D1 리텐션', pctT(k.d1, k.d1_base), `설치 다음날 복귀 · 모수 ${num(k.d1_base || 0)}`));
     host.appendChild(tile('D7 리텐션', pctT(k.d7, k.d7_base), `설치 7일뒤 복귀 · 모수 ${num(k.d7_base || 0)}`));
     host.appendChild(tile('D30 리텐션', pctT(k.d30, k.d30_base), `설치 30일뒤 복귀 · 모수 ${num(k.d30_base || 0)}`));
+  }
+
+  // ── 수익 지표 (전체 타일 + 국가별 표) ──────────────────────────
+  function renderMonetization(d) {
+    const host = $('#ig-mon'); if (!host) return; host.innerHTML = '';
+    const m = d.monetization; if (!m || !m.overall) { host.innerHTML = '<p class="card-sub">데이터 없음</p>'; return; }
+    const o = m.overall;
+    const usd = v => v == null ? '—' : '$' + (v >= 1000 ? num(v) : v.toFixed(2));
+    const usd4 = v => v == null ? '—' : '$' + v.toFixed(v < 10 ? 3 : 2);
+    const pct = v => v == null ? '—' : v + '%';
+    const tiles = el('section', 'tiles');
+    tiles.appendChild(tile('총매출', usd(o.total_revenue), `IAP ${usd(o.revenue)} + 광고 ${usd(o.ad_revenue)} · 전기간`));
+    tiles.appendChild(tile('결제자수', num(o.payers || 0), `결제 ${num(o.txns || 0)}건 · 건당 ${usd4(o.avg_txn)}`));
+    tiles.appendChild(tile('결제율', pct(o.pay_rate), `결제자 / 전체유저 ${num(o.users || 0)}`));
+    tiles.appendChild(tile('ARPPU', usd4(o.arppu), '결제자당 매출(IAP)'));
+    tiles.appendChild(tile('ARPU / LTV', usd4(o.arpu), '유저당 누적 총매출(현재까지)'));
+    tiles.appendChild(tile('ARPDAU', usd4(o.arpdau), `일활성당 매출(최근 ${d.window_days || 45}일 평균) · IAP ${usd4(o.iap_arpdau)}·광고 ${usd4(o.ad_arpdau)}`));
+    host.appendChild(tiles);
+    // 국가별 표
+    const rows = m.by_country || [];
+    if (!rows.length) return;
+    let h = '<thead><tr><th>국가</th><th>유저</th><th>결제자</th><th>결제율</th><th>매출(IAP)</th><th>ARPPU</th><th>ARPU</th></tr></thead><tbody>';
+    rows.forEach(r => {
+      h += `<tr><td class="vt-ver">${esc(r.country)}</td><td class="num">${num(r.users)}</td>` +
+        `<td class="num">${num(r.payers)}</td><td class="num">${pct(r.pay_rate)}</td>` +
+        `<td class="num">${usd(r.revenue)}</td><td class="num">${usd4(r.arppu)}</td><td class="num">${usd4(r.arpu)}</td></tr>`;
+    });
+    const tbl = el('table', 'vtable', h + '</tbody>');
+    const sc = el('div', 'table-scroll'); sc.appendChild(tbl);
+    const cap = el('p', 'card-sub'); cap.style.margin = '14px 0 6px';
+    cap.textContent = '국가별 (매출 상위 20 · 전기간 · USD)';
+    host.appendChild(cap); host.appendChild(sc);
+    host.appendChild(el('p', 'chart-note', 'IAP 매출은 GA4 purchase(event_value_in_usd 자동환산) · 광고매출은 ad_impression value · 결제율=결제자/전체유저 · LTV=현재까지 누적 ARPU(코호트 LTV 아님)'));
   }
 
   // ── 코호트 리텐션 삼각(설치일 × Day n 히트맵) ─────────────
