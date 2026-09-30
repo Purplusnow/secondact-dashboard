@@ -450,10 +450,12 @@
     });
     const sub = $('#ig-funnel-sub');
     if (sub) {
+      const st = (rows.find(x => x.stage === '새게임') || {}).users || 0;
       const ret = (rows.find(x => x.stage === '은퇴') || {}).users || 0;
       const reb = (rows.find(x => x.stage === '첫환생') || {}).users || 0;
-      const conv = ret ? Math.round(100 * reb / ret) : 0;
-      sub.textContent = `은퇴한 유저 중 ${conv}%만 첫 환생 — ${100 - conv}%는 환생 단계서 이탈 · ${(d.diag_start || '2026-09-23')}~${(d.last_table || '')} 기준`;
+      const r1 = st ? Math.round(100 * ret / st) : 0;   // 시작→은퇴
+      const r2 = ret ? Math.round(100 * reb / ret) : 0; // 은퇴→첫환생
+      sub.textContent = `시작 중 ${r1}%만 은퇴 도달 · 은퇴자 중 ${r2}%만 첫 환생 · ${(d.diag_start || '2026-09-23')}~${(d.last_table || '')} 기준`;
     }
     const rz = d.rebirth_reasons || {};
     const total = (rz.slow_climb || 0) + (rz.discoverability || 0) + (rz.reset_shock || 0);

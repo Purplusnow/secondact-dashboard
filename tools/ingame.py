@@ -92,33 +92,21 @@ def main() -> None:
         "d7": _rp(ret["d7_ret"], ret["d7_base"]), "d7_base": int(ret["d7_base"] or 0),
     }
 
-    # ── 은퇴→자격→화면→첫환생 퍼널 (진단이벤트 기간) ──────────────────
+    # ── 새게임→은퇴→첫환생 퍼널 (진단이벤트 기간, 신뢰 가능한 onb_step만) ──────────────────
+    # 은퇴 이전 모수(새게임=전체 시작)를 함께 보여 은퇴/환생을 맥락 속에서 읽는다.
+    # ⚠ 구 중간2단계(rebirth_available/screen_view)는 과소기록으로 퍼널 역전이라 제외(원인분할도 제거).
+    def _stp(v): return f"(SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='{v}'"
     fr = q(f"""
-      WITH u AS (
-        SELECT user_pseudo_id,
-          MAX(IF(event_name='onb_step' AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='game_sale',1,0))     AS retired,
-          MAX(IF(event_name='rebirth_available',1,0))                                                                                   AS avail,
-          MAX(IF(event_name='rebirth_screen_view',1,0))                                                                                 AS screen,
-          MAX(IF(event_name='onb_step' AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='first_rebirth',1,0)) AS rebirthed
-        FROM {TABLE}
-        WHERE {suffix_daily(f"_TABLE_SUFFIX >= '{DIAG_START}'")}
-        GROUP BY user_pseudo_id
-      )
       SELECT
-        SUM(retired) AS retired,
-        SUM(IF(retired=1 AND avail=1,1,0)) AS eligible,
-        SUM(IF(retired=1 AND screen=1,1,0)) AS opened,
-        SUM(IF(retired=1 AND rebirthed=1,1,0)) AS rebirthed,
-        SUM(IF(retired=1 AND rebirthed=0 AND avail=0,1,0)) AS reason_slow_climb,
-        SUM(IF(retired=1 AND rebirthed=0 AND avail=1 AND screen=0,1,0)) AS reason_discoverability,
-        SUM(IF(retired=1 AND rebirthed=0 AND screen=1,1,0)) AS reason_reset_shock
-      FROM u WHERE retired=1
+        COUNT(DISTINCT IF(event_name='onb_step' AND {_stp('new_game')}, user_pseudo_id, NULL)) AS started,
+        COUNT(DISTINCT IF(event_name='onb_step' AND {_stp('game_sale')}, user_pseudo_id, NULL)) AS retired,
+        COUNT(DISTINCT IF(event_name='onb_step' AND {_stp('first_rebirth')}, user_pseudo_id, NULL)) AS rebirthed
+      FROM {TABLE}
+      WHERE {suffix_daily(f"_TABLE_SUFFIX >= '{DIAG_START}'")}
     """)[0]
     r = {k: int(v or 0) for k, v in fr.items()}
-    # ⚠ 중간 2단계(환생자격=rebirth_available, 화면방문=rebirth_screen_view)는 이벤트가 과소기록돼
-    #   첫환생보다 작게 잡힘(퍼널 역전) → 신뢰 불가라 제외. 원인분할도 이 깨진 플래그 파생이라 제거.
-    #   은퇴(game_sale)·첫환생(first_rebirth)은 onb_step이라 신뢰 가능 → 이 2단계 전환만 표시.
     out["rebirth_funnel"] = [
+        {"stage": "새게임", "users": r["started"]},
         {"stage": "은퇴", "users": r["retired"]},
         {"stage": "첫환생", "users": r["rebirthed"]},
     ]
