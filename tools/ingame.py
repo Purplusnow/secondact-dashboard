@@ -230,6 +230,29 @@ def main() -> None:
             COALESCE((SELECT value.double_value FROM UNNEST(event_params) WHERE key='value'), 0.0), 0.0)) AS ad_rev
       FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
     """)[0]
+    # [임시 진단] purchase 원자료 통화별 분해 — Action 로그(stdout)로 출력, 원인 파악 후 제거.
+    try:
+        _vexpr = "(SELECT COALESCE(value.double_value, CAST(value.int_value AS FLOAT64), SAFE_CAST(value.string_value AS FLOAT64)) FROM UNNEST(event_params) WHERE key='value')"
+        diag = q(f"""
+          SELECT
+            (SELECT value.string_value FROM UNNEST(event_params) WHERE key='currency') AS cur,
+            COUNT(*) AS ev,
+            COUNT(DISTINCT (SELECT value.string_value FROM UNNEST(event_params) WHERE key='transaction_id')) AS tx,
+            COUNT(DISTINCT user_pseudo_id) AS users,
+            ROUND(SUM({_vexpr}), 1) AS raw_sum,
+            ROUND(MIN({_vexpr}), 2) AS raw_min,
+            ROUND(APPROX_QUANTILES({_vexpr}, 2)[OFFSET(1)], 2) AS raw_med,
+            ROUND(MAX({_vexpr}), 2) AS raw_max,
+            ROUND(SUM(event_value_in_usd), 1) AS usd_sum
+          FROM {TABLE} WHERE event_name='purchase' AND _TABLE_SUFFIX NOT LIKE 'intraday%'
+          GROUP BY cur ORDER BY usd_sum DESC
+        """)
+        print("[PURCHASE-DIAG] cur | ev tx users | raw(sum/min/med/max) | usd_sum")
+        for x in diag:
+            print(f"[PURCHASE-DIAG] {x['cur']} | ev={x['ev']} tx={x['tx']} u={x['users']} | "
+                  f"raw sum={x['raw_sum']} min={x['raw_min']} med={x['raw_med']} max={x['raw_max']} | usd={x['usd_sum']}")
+    except Exception as e:
+        print("[PURCHASE-DIAG] ERR", repr(e))
     payers = int(mon["payers"] or 0)
     rev = float(mon["rev"] or 0.0)
     ad_rev = float(mon["ad_rev"] or 0.0)
