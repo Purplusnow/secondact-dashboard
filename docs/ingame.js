@@ -253,14 +253,17 @@
     if (!rows.length) { host.innerHTML = '<tr><td class="vt-empty">버전 데이터 없음</td></tr>'; return; }
     const best = Math.max(...rows.map(r => r.conv_retire_to_rebirth), 0);
     let html = '<thead><tr><th>버전</th><th>유저</th><th>은퇴</th><th>첫환생</th>' +
-      '<th>신규→은퇴</th><th>은퇴→환생</th><th>나이</th></tr></thead><tbody>';
+      '<th>신규→은퇴</th><th>은퇴→환생</th><th>신규→환생</th><th>나이</th></tr></thead><tbody>';
     rows.forEach(r => {
       const c = r.conv_retire_to_rebirth;
       const hot = c === best && rows.length > 1 ? ' class="vt-best"' : '';
+      // 신규→환생 = 전체 여정 전환(첫환생/유저). 두 전환의 곱, 최종 성과 지표.
+      const n2r = r.users ? +(100 * r.rebirthed / r.users).toFixed(1) : null;
       html += `<tr><td class="vt-ver">${esc(vshort(r.version))}</td><td class="num">${num(r.users)}</td>` +
         `<td class="num">${num(r.retired)}</td><td class="num">${num(r.rebirthed)}</td>` +
         `<td class="num">${r.conv_new_to_retire != null ? r.conv_new_to_retire + '%' : '—'}</td>` +
         `<td class="num"${hot}>${c != null ? c + '%' : '—'}</td>` +
+        `<td class="num">${n2r != null ? n2r + '%' : '—'}</td>` +
         `<td class="num vt-age">${r.cohort_age_days != null ? r.cohort_age_days + '일' : '—'}</td></tr>`;
     });
     host.innerHTML = html + '</tbody>';
