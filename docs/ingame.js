@@ -15,24 +15,32 @@
   const isClassKey = k => /^class\d/.test(k);
   const classNA = (key, version) => isClassKey(key) && vcode(version) < CLASS_INSTR_VER;
 
-  // ── 셀 표시 모드(숫자/퍼센트) — 버전 히트맵 뷰 공용 토글 ──────────
+  // ── 셀 표시 모드(숫자/퍼센트) — 표마다 개별 토글 ──────────
+  // 토글 호스트 id ↔ 모드 키 매핑. 각 표가 자기 키의 모드만 사용(독립 동작).
+  const MODE_TOGGLES = [
+    { host: 'ig-vmode-bv', key: 'bv' },       // 버전비교: 구간 도달율(ig-versions-funnel)
+    { host: 'ig-vmode', key: 'onb' },         // 온보딩 퍼널(ig-onbv-table)
+    { host: 'ig-vmode-reach', key: 'reach' }, // 추월% 도달 생존(ig-reachv)
+  ];
   let _data = null;                 // 마지막 로드 데이터(토글 재그림용)
-  let _cellMode = 'num';            // 'num' | 'pct'
-  const cellText = (n, pct) => _cellMode === 'pct'
+  const _cellModes = { bv: 'num', onb: 'num', reach: 'num' };  // 키별 'num' | 'pct'
+  const cellText = (n, pct, mode) => mode === 'pct'
     ? (pct != null ? pct + '%' : '—')
     : num(n);
-  function buildModeToggle(hostId) {
+  function buildModeToggle(hostId, key) {
     const host = $('#' + hostId); if (!host) return;
+    const m = _cellModes[key];
     host.innerHTML =
-      `<button class="mchip${_cellMode === 'num' ? ' on' : ''}" data-m="num">숫자</button>` +
-      `<button class="mchip${_cellMode === 'pct' ? ' on' : ''}" data-m="pct">%</button>`;
+      `<button class="mchip${m === 'num' ? ' on' : ''}" data-m="num">숫자</button>` +
+      `<button class="mchip${m === 'pct' ? ' on' : ''}" data-m="pct">%</button>`;
     host.querySelectorAll('.mchip').forEach(b => b.addEventListener('click', () => {
-      _cellMode = b.getAttribute('data-m'); redrawAll();
+      _cellModes[key] = b.getAttribute('data-m'); redrawAll();
     }));
   }
+  function buildAllToggles() { MODE_TOGGLES.forEach(t => buildModeToggle(t.host, t.key)); }
   function redrawAll() {
     if (!_data) return;
-    buildModeToggle('ig-vmode'); buildModeToggle('ig-vmode-bv');
+    buildAllToggles();
     drawVV(_data);
     const rows = (_data.by_version || []).filter(r => r.conv_retire_to_rebirth != null);
     renderFunnelTable(rows, _data.stage_labels || []);
@@ -65,7 +73,7 @@
     renderReachCurve(d);
     renderCityKpi(d); renderCityFunnel(d); renderCityDeci(d); renderCityPacing(d);
     renderVersionViews(d);
-    buildModeToggle('ig-vmode'); buildModeToggle('ig-vmode-bv');
+    buildAllToggles();
   }
 
   // ── 버전 선택(체크박스) 뷰: 온보딩 퍼널 + 단계×버전 + 추월% 도달분포 ──
@@ -130,7 +138,7 @@
             onbV.map(v => {
               const s = v.steps.find(x => x.key === l.key); if (!s) return '<td class="num">—</td>';
               if (classNA(l.key, v.version)) return `<td class="num cell-na" title="v${CLASS_INSTR_VER}부터 신분 계측 — 이전 버전은 과소집계">—</td>`;
-              return `<td class="num fcell" style="background:${cellCol(s.pct)}" title="${num(s.n)}명 · ${s.pct}%">${cellText(s.n, s.pct)}</td>`;
+              return `<td class="num fcell" style="background:${cellCol(s.pct)}" title="${num(s.n)}명 · ${s.pct}%">${cellText(s.n, s.pct, _cellModes.onb)}</td>`;
             }).join('') + '</tr>';
         });
         t.innerHTML = h + '</tbody>';
@@ -161,7 +169,7 @@
               const n = surv[v.version][b] || 0;
               const pct = v.users ? Math.round(1000 * n / v.users) / 10 : 0;   // 그 버전 전체 대비 도달율
               const sh = 96 - Math.round(46 * n / colMax[v.version]);
-              return `<td class="num fcell" style="background:hsl(214,70%,${sh}%)" title="${num(n)}명 · ${pct}% 도달">${n ? cellText(n, pct) : '·'}</td>`;
+              return `<td class="num fcell" style="background:hsl(214,70%,${sh}%)" title="${num(n)}명 · ${pct}% 도달">${n ? cellText(n, pct, _cellModes.reach) : '·'}</td>`;
             }).join('') + '</tr>';
         });
         rv.innerHTML = h + '</tbody>';
@@ -322,7 +330,7 @@
         labels.map(l => {
           const s = by[l.key]; if (!s) return '<td class="num">—</td>';
           if (classNA(l.key, r.version)) return `<td class="num cell-na" title="v${CLASS_INSTR_VER}부터 신분 계측 — 이전 버전은 과소집계">—</td>`;
-          return `<td class="num fcell" style="background:${cell(s.pct)}" title="${esc(l.label)}: ${num(s.n)}명 · ${s.pct}%">${cellText(s.n, s.pct)}</td>`;
+          return `<td class="num fcell" style="background:${cell(s.pct)}" title="${esc(l.label)}: ${num(s.n)}명 · ${s.pct}%">${cellText(s.n, s.pct, _cellModes.bv)}</td>`;
         }).join('') + '</tr>';
     });
     host.innerHTML = h + '</tbody>';
