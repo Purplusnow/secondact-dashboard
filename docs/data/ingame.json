@@ -56,7 +56,7 @@
       "users": 728,
       "pct_of_start": 41.1,
       "step_drop_pct": 13.1,
-      "median_hours": 11.6,
+      "median_hours": 12.1,
       "median_class": 3
     },
     {
@@ -65,7 +65,7 @@
       "users": 660,
       "pct_of_start": 37.2,
       "step_drop_pct": 9.3,
-      "median_hours": 17.3,
+      "median_hours": 17.4,
       "median_class": 4
     },
     {
@@ -74,7 +74,7 @@
       "users": 638,
       "pct_of_start": 36.0,
       "step_drop_pct": 3.3,
-      "median_hours": 18.9,
+      "median_hours": 19.2,
       "median_class": 4
     },
     {
@@ -101,7 +101,7 @@
       "users": 613,
       "pct_of_start": 34.6,
       "step_drop_pct": 0.0,
-      "median_hours": 22.4,
+      "median_hours": 22.7,
       "median_class": 5
     },
     {
@@ -110,7 +110,7 @@
       "users": 591,
       "pct_of_start": 33.4,
       "step_drop_pct": 3.6,
-      "median_hours": 24.5,
+      "median_hours": 24.4,
       "median_class": 5
     },
     {
@@ -128,7 +128,7 @@
       "users": 591,
       "pct_of_start": 33.4,
       "step_drop_pct": 0.0,
-      "median_hours": 24.7,
+      "median_hours": 24.4,
       "median_class": 5
     },
     {
@@ -137,7 +137,7 @@
       "users": 591,
       "pct_of_start": 33.4,
       "step_drop_pct": 0.0,
-      "median_hours": 24.7,
+      "median_hours": 24.4,
       "median_class": 5
     },
     {
@@ -155,7 +155,7 @@
       "users": 588,
       "pct_of_start": 33.2,
       "step_drop_pct": 0.0,
-      "median_hours": 30.0,
+      "median_hours": 29.4,
       "median_class": 6
     },
     {
@@ -173,7 +173,7 @@
       "users": 588,
       "pct_of_start": 33.2,
       "step_drop_pct": 0.0,
-      "median_hours": 30.3,
+      "median_hours": 29.9,
       "median_class": 6
     },
     {
@@ -182,7 +182,7 @@
       "users": 577,
       "pct_of_start": 32.6,
       "step_drop_pct": 1.9,
-      "median_hours": 33.3,
+      "median_hours": 32.7,
       "median_class": 6
     },
     {
@@ -191,7 +191,7 @@
       "users": 577,
       "pct_of_start": 32.6,
       "step_drop_pct": 0.0,
-      "median_hours": 32.5,
+      "median_hours": 33.3,
       "median_class": 6
     },
     {
@@ -200,7 +200,7 @@
       "users": 577,
       "pct_of_start": 32.6,
       "step_drop_pct": 0.0,
-      "median_hours": 32.8,
+      "median_hours": 33.3,
       "median_class": 6
     },
     {
@@ -218,7 +218,7 @@
       "users": 577,
       "pct_of_start": 32.6,
       "step_drop_pct": 0.0,
-      "median_hours": 33.3,
+      "median_hours": 32.2,
       "median_class": 6
     },
     {
@@ -227,7 +227,7 @@
       "users": 577,
       "pct_of_start": 32.6,
       "step_drop_pct": 0.0,
-      "median_hours": 33.3,
+      "median_hours": 33.0,
       "median_class": 6
     },
     {
@@ -236,7 +236,7 @@
       "users": 577,
       "pct_of_start": 32.6,
       "step_drop_pct": 0.0,
-      "median_hours": 32.4,
+      "median_hours": 33.4,
       "median_class": 6
     }
   ],
@@ -274,13 +274,13 @@
     },
     {
       "idx": 2,
-      "step": "intro_beat_8",
-      "users": 13816
+      "step": "intro_beat_9",
+      "users": 13806
     },
     {
       "idx": 2,
-      "step": "intro_beat_9",
-      "users": 13806
+      "step": "intro_beat_4",
+      "users": 13853
     },
     {
       "idx": 2,
@@ -294,18 +294,8 @@
     },
     {
       "idx": 2,
-      "step": "intro_beat_5",
-      "users": 13847
-    },
-    {
-      "idx": 2,
-      "step": "intro_done",
-      "users": 14130
-    },
-    {
-      "idx": 2,
-      "step": "intro_beat_7",
-      "users": 13825
+      "step": "intro_shown",
+      "users": 14433
     },
     {
       "idx": 2,
@@ -314,18 +304,28 @@
     },
     {
       "idx": 2,
-      "step": "intro_shown",
-      "users": 14433
+      "step": "intro_beat_7",
+      "users": 13825
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_8",
+      "users": 13816
+    },
+    {
+      "idx": 2,
+      "step": "intro_done",
+      "users": 14130
+    },
+    {
+      "idx": 2,
+      "step": "intro_beat_5",
+      "users": 13847
     },
     {
       "idx": 2,
       "step": "intro_beat_1",
       "users": 13940
-    },
-    {
-      "idx": 2,
-      "step": "intro_beat_4",
-      "users": 13853
     },
     {
       "idx": 3,
@@ -422,102 +422,102 @@
     {
       "pct": 1,
       "users": 4822,
-      "median_hours": 21.7
+      "median_hours": 21.6
     },
     {
       "pct": 2,
       "users": 4512,
-      "median_hours": 25.1
+      "median_hours": 24.4
     },
     {
       "pct": 3,
       "users": 4315,
-      "median_hours": 28.8
+      "median_hours": 28.6
     },
     {
       "pct": 4,
       "users": 2907,
-      "median_hours": 49.7
+      "median_hours": 49.4
     },
     {
       "pct": 5,
       "users": 2794,
-      "median_hours": 54.9
+      "median_hours": 53.1
     },
     {
       "pct": 6,
       "users": 2714,
-      "median_hours": 57.7
+      "median_hours": 58.8
     },
     {
       "pct": 7,
       "users": 1983,
-      "median_hours": 78.2
+      "median_hours": 77.8
     },
     {
       "pct": 8,
       "users": 1921,
-      "median_hours": 81.8
+      "median_hours": 82.8
     },
     {
       "pct": 9,
       "users": 1889,
-      "median_hours": 83.3
+      "median_hours": 83.8
     },
     {
       "pct": 10,
       "users": 1499,
-      "median_hours": 102.8
+      "median_hours": 101.4
     },
     {
       "pct": 11,
       "users": 1433,
-      "median_hours": 106.6
+      "median_hours": 105.7
     },
     {
       "pct": 12,
       "users": 1408,
-      "median_hours": 109.3
+      "median_hours": 109.7
     },
     {
       "pct": 13,
       "users": 1198,
-      "median_hours": 119.8
+      "median_hours": 119.2
     },
     {
       "pct": 14,
       "users": 1109,
-      "median_hours": 123.6
+      "median_hours": 126.4
     },
     {
       "pct": 15,
       "users": 1101,
-      "median_hours": 125.6
+      "median_hours": 124.1
     },
     {
       "pct": 16,
       "users": 1087,
-      "median_hours": 127.3
+      "median_hours": 128.1
     },
     {
       "pct": 17,
       "users": 863,
-      "median_hours": 144.3
+      "median_hours": 145.0
     },
     {
       "pct": 18,
       "users": 850,
-      "median_hours": 146.0
+      "median_hours": 146.2
     },
     {
       "pct": 19,
       "users": 841,
-      "median_hours": 146.9
+      "median_hours": 147.4
     },
     {
       "pct": 20,
       "users": 719,
-      "median_hours": 166.1
+      "median_hours": 165.7
     },
     {
       "pct": 21,
@@ -527,7 +527,7 @@
     {
       "pct": 22,
       "users": 692,
-      "median_hours": 168.0
+      "median_hours": 167.4
     },
     {
       "pct": 23,
@@ -537,12 +537,12 @@
     {
       "pct": 24,
       "users": 590,
-      "median_hours": 187.2
+      "median_hours": 186.6
     },
     {
       "pct": 25,
       "users": 585,
-      "median_hours": 187.1
+      "median_hours": 188.6
     },
     {
       "pct": 26,
@@ -557,22 +557,22 @@
     {
       "pct": 28,
       "users": 490,
-      "median_hours": 193.2
+      "median_hours": 193.4
     },
     {
       "pct": 29,
       "users": 481,
-      "median_hours": 193.2
+      "median_hours": 194.5
     },
     {
       "pct": 30,
       "users": 413,
-      "median_hours": 205.0
+      "median_hours": 205.4
     },
     {
       "pct": 31,
       "users": 411,
-      "median_hours": 207.1
+      "median_hours": 207.5
     },
     {
       "pct": 32,
@@ -582,7 +582,7 @@
     {
       "pct": 33,
       "users": 342,
-      "median_hours": 214.2
+      "median_hours": 214.3
     },
     {
       "pct": 34,
@@ -592,12 +592,12 @@
     {
       "pct": 35,
       "users": 336,
-      "median_hours": 215.8
+      "median_hours": 215.2
     },
     {
       "pct": 36,
       "users": 300,
-      "median_hours": 228.9
+      "median_hours": 229.6
     },
     {
       "pct": 37,
@@ -607,22 +607,22 @@
     {
       "pct": 38,
       "users": 291,
-      "median_hours": 229.6
+      "median_hours": 230.0
     },
     {
       "pct": 39,
       "users": 249,
-      "median_hours": 237.9
+      "median_hours": 238.7
     },
     {
       "pct": 40,
       "users": 243,
-      "median_hours": 237.6
+      "median_hours": 237.7
     },
     {
       "pct": 41,
       "users": 239,
-      "median_hours": 237.6
+      "median_hours": 237.8
     },
     {
       "pct": 42,
@@ -647,27 +647,27 @@
     {
       "pct": 46,
       "users": 193,
-      "median_hours": 252.8
+      "median_hours": 252.7
     },
     {
       "pct": 47,
       "users": 191,
-      "median_hours": 252.8
+      "median_hours": 252.7
     },
     {
       "pct": 48,
       "users": 190,
-      "median_hours": 252.7
+      "median_hours": 252.8
     },
     {
       "pct": 49,
       "users": 177,
-      "median_hours": 265.2
+      "median_hours": 265.7
     },
     {
       "pct": 50,
       "users": 177,
-      "median_hours": 265.8
+      "median_hours": 267.9
     },
     {
       "pct": 51,
@@ -677,12 +677,12 @@
     {
       "pct": 52,
       "users": 163,
-      "median_hours": 272.6
+      "median_hours": 275.4
     },
     {
       "pct": 53,
       "users": 160,
-      "median_hours": 273.3
+      "median_hours": 279.5
     },
     {
       "pct": 54,
@@ -692,12 +692,12 @@
     {
       "pct": 55,
       "users": 150,
-      "median_hours": 282.3
+      "median_hours": 283.4
     },
     {
       "pct": 56,
       "users": 144,
-      "median_hours": 278.7
+      "median_hours": 283.6
     },
     {
       "pct": 57,
@@ -707,7 +707,7 @@
     {
       "pct": 58,
       "users": 144,
-      "median_hours": 283.6
+      "median_hours": 281.5
     },
     {
       "pct": 59,
@@ -1869,115 +1869,115 @@
     },
     {
       "version": "1.0 (v749)",
-      "users": 782,
-      "cohort_age_days": 13.7,
-      "new_game": 758,
-      "retired": 495,
-      "rebirthed": 257,
+      "users": 781,
+      "cohort_age_days": 13.8,
+      "new_game": 757,
+      "retired": 494,
+      "rebirthed": 256,
       "conv_new_to_retire": 65.3,
-      "conv_retire_to_rebirth": 51.9,
+      "conv_retire_to_rebirth": 51.8,
       "stages": [
         {
           "key": "new_game",
           "label": "새게임",
-          "n": 758,
+          "n": 757,
           "pct": 100.0
         },
         {
           "key": "intro_done",
           "label": "인트로",
-          "n": 743,
+          "n": 742,
           "pct": 98.0
         },
         {
           "key": "dev_concept",
           "label": "기획",
-          "n": 720,
+          "n": 719,
           "pct": 95.0
         },
         {
           "key": "dev_design",
           "label": "디자인",
-          "n": 688,
+          "n": 687,
           "pct": 90.8
         },
         {
           "key": "dev_prototype",
           "label": "프로토",
-          "n": 651,
+          "n": 650,
           "pct": 85.9
         },
         {
           "key": "dev_alpha",
           "label": "알파",
-          "n": 624,
+          "n": 623,
           "pct": 82.3
         },
         {
           "key": "dev_beta",
           "label": "베타",
-          "n": 610,
-          "pct": 80.5
+          "n": 609,
+          "pct": 80.4
         },
         {
           "key": "dev_launch",
           "label": "출시",
-          "n": 600,
-          "pct": 79.2
+          "n": 599,
+          "pct": 79.1
         },
         {
           "key": "first_ops",
           "label": "첫운영",
-          "n": 590,
+          "n": 589,
           "pct": 77.8
         },
         {
           "key": "property_1",
           "label": "부동산1",
-          "n": 604,
+          "n": 603,
           "pct": 79.7
         },
         {
           "key": "property_2",
           "label": "부동산2",
-          "n": 548,
+          "n": 547,
           "pct": 72.3
         },
         {
           "key": "property_3",
           "label": "부동산3",
-          "n": 525,
-          "pct": 69.3
+          "n": 524,
+          "pct": 69.2
         },
         {
           "key": "property_4",
           "label": "부동산4",
-          "n": 515,
+          "n": 514,
           "pct": 67.9
         },
         {
           "key": "property_5",
           "label": "부동산5",
-          "n": 509,
-          "pct": 67.2
+          "n": 508,
+          "pct": 67.1
         },
         {
           "key": "game_sale",
           "label": "은퇴",
-          "n": 495,
+          "n": 494,
           "pct": 65.3
         },
         {
           "key": "first_manager",
           "label": "첫매니저",
-          "n": 372,
-          "pct": 49.1
+          "n": 371,
+          "pct": 49.0
         },
         {
           "key": "first_donate",
           "label": "첫후원",
-          "n": 485,
-          "pct": 64.0
+          "n": 484,
+          "pct": 63.9
         },
         {
           "key": "class2",
@@ -1995,7 +1995,7 @@
           "key": "class4",
           "label": "신분4",
           "n": 67,
-          "pct": 8.8
+          "pct": 8.9
         },
         {
           "key": "class5",
@@ -2018,133 +2018,133 @@
         {
           "key": "first_settle",
           "label": "첫정산",
-          "n": 697,
-          "pct": 92.0
+          "n": 696,
+          "pct": 91.9
         },
         {
           "key": "first_finance",
           "label": "첫금융",
-          "n": 440,
+          "n": 439,
           "pct": 58.0
         },
         {
           "key": "first_rebirth",
           "label": "첫환생",
-          "n": 257,
-          "pct": 33.9
+          "n": 256,
+          "pct": 33.8
         }
       ]
     },
     {
       "version": "1.0 (v748)",
-      "users": 2225,
+      "users": 2226,
       "cohort_age_days": 14.9,
-      "new_game": 2162,
-      "retired": 1370,
-      "rebirthed": 609,
+      "new_game": 2163,
+      "retired": 1371,
+      "rebirthed": 610,
       "conv_new_to_retire": 63.4,
       "conv_retire_to_rebirth": 44.5,
       "stages": [
         {
           "key": "new_game",
           "label": "새게임",
-          "n": 2162,
+          "n": 2163,
           "pct": 100.0
         },
         {
           "key": "intro_done",
           "label": "인트로",
-          "n": 2106,
+          "n": 2107,
           "pct": 97.4
         },
         {
           "key": "dev_concept",
           "label": "기획",
-          "n": 2059,
+          "n": 2060,
           "pct": 95.2
         },
         {
           "key": "dev_design",
           "label": "디자인",
-          "n": 1957,
+          "n": 1958,
           "pct": 90.5
         },
         {
           "key": "dev_prototype",
           "label": "프로토",
-          "n": 1836,
+          "n": 1837,
           "pct": 84.9
         },
         {
           "key": "dev_alpha",
           "label": "알파",
-          "n": 1746,
+          "n": 1747,
           "pct": 80.8
         },
         {
           "key": "dev_beta",
           "label": "베타",
-          "n": 1687,
+          "n": 1688,
           "pct": 78.0
         },
         {
           "key": "dev_launch",
           "label": "출시",
-          "n": 1648,
+          "n": 1649,
           "pct": 76.2
         },
         {
           "key": "first_ops",
           "label": "첫운영",
-          "n": 1618,
+          "n": 1619,
           "pct": 74.8
         },
         {
           "key": "property_1",
           "label": "부동산1",
-          "n": 1647,
+          "n": 1648,
           "pct": 76.2
         },
         {
           "key": "property_2",
           "label": "부동산2",
-          "n": 1485,
+          "n": 1486,
           "pct": 68.7
         },
         {
           "key": "property_3",
           "label": "부동산3",
-          "n": 1429,
+          "n": 1430,
           "pct": 66.1
         },
         {
           "key": "property_4",
           "label": "부동산4",
-          "n": 1405,
+          "n": 1406,
           "pct": 65.0
         },
         {
           "key": "property_5",
           "label": "부동산5",
-          "n": 1383,
+          "n": 1384,
           "pct": 64.0
         },
         {
           "key": "game_sale",
           "label": "은퇴",
-          "n": 1370,
+          "n": 1371,
           "pct": 63.4
         },
         {
           "key": "first_manager",
           "label": "첫매니저",
-          "n": 999,
+          "n": 1000,
           "pct": 46.2
         },
         {
           "key": "first_donate",
           "label": "첫후원",
-          "n": 1356,
+          "n": 1357,
           "pct": 62.7
         },
         {
@@ -2169,7 +2169,7 @@
           "key": "class5",
           "label": "신분5",
           "n": 133,
-          "pct": 6.2
+          "pct": 6.1
         },
         {
           "key": "class6",
@@ -2186,19 +2186,19 @@
         {
           "key": "first_settle",
           "label": "첫정산",
-          "n": 1973,
+          "n": 1974,
           "pct": 91.3
         },
         {
           "key": "first_finance",
           "label": "첫금융",
-          "n": 1117,
+          "n": 1118,
           "pct": 51.7
         },
         {
           "key": "first_rebirth",
           "label": "첫환생",
-          "n": 609,
+          "n": 610,
           "pct": 28.2
         }
       ]
@@ -2206,7 +2206,7 @@
     {
       "version": "1.0 (v746)",
       "users": 497,
-      "cohort_age_days": 16.2,
+      "cohort_age_days": 16.3,
       "new_game": 485,
       "retired": 297,
       "rebirthed": 116,
@@ -2374,7 +2374,7 @@
     {
       "version": "1.0 (v710)",
       "users": 751,
-      "cohort_age_days": 17.9,
+      "cohort_age_days": 18.0,
       "new_game": 726,
       "retired": 468,
       "rebirthed": 193,
@@ -3047,164 +3047,164 @@
   "onb_versions": [
     {
       "version": "통합",
-      "users": 15101,
-      "new_game": 29316,
+      "users": 15100,
+      "new_game": 14657,
       "steps": [
         {
           "key": "new_game",
           "label": "새게임",
-          "n": 29316,
+          "n": 14657,
           "pct": 100.0
         },
         {
           "key": "intro_done",
           "label": "인트로",
-          "n": 14089,
-          "pct": 48.1
+          "n": 14088,
+          "pct": 96.1
         },
         {
           "key": "dev_concept",
           "label": "기획",
           "n": 13654,
-          "pct": 46.6
+          "pct": 93.2
         },
         {
           "key": "dev_design",
           "label": "디자인",
           "n": 13056,
-          "pct": 44.5
+          "pct": 89.1
         },
         {
           "key": "dev_prototype",
           "label": "프로토",
           "n": 12275,
-          "pct": 41.9
+          "pct": 83.7
         },
         {
           "key": "dev_alpha",
           "label": "알파",
           "n": 11643,
-          "pct": 39.7
+          "pct": 79.4
         },
         {
           "key": "dev_beta",
           "label": "베타",
           "n": 11280,
-          "pct": 38.5
+          "pct": 77.0
         },
         {
           "key": "dev_launch",
           "label": "출시",
           "n": 11094,
-          "pct": 37.8
+          "pct": 75.7
         },
         {
           "key": "first_ops",
           "label": "첫운영",
           "n": 10868,
-          "pct": 37.1
+          "pct": 74.1
         },
         {
           "key": "property_1",
           "label": "부동산1",
-          "n": 11113,
-          "pct": 37.9
+          "n": 11112,
+          "pct": 75.8
         },
         {
           "key": "property_2",
           "label": "부동산2",
-          "n": 10072,
-          "pct": 34.4
+          "n": 10071,
+          "pct": 68.7
         },
         {
           "key": "property_3",
           "label": "부동산3",
-          "n": 9726,
-          "pct": 33.2
+          "n": 9725,
+          "pct": 66.4
         },
         {
           "key": "property_4",
           "label": "부동산4",
-          "n": 9525,
-          "pct": 32.5
+          "n": 9524,
+          "pct": 65.0
         },
         {
           "key": "property_5",
           "label": "부동산5",
-          "n": 9392,
-          "pct": 32.0
+          "n": 9391,
+          "pct": 64.1
         },
         {
           "key": "game_sale",
           "label": "은퇴",
           "n": 9252,
-          "pct": 31.6
+          "pct": 63.1
         },
         {
           "key": "first_manager",
           "label": "첫매니저",
-          "n": 6843,
-          "pct": 23.3
+          "n": 6842,
+          "pct": 46.7
         },
         {
           "key": "first_donate",
           "label": "첫후원",
-          "n": 9119,
-          "pct": 31.1
+          "n": 9118,
+          "pct": 62.2
         },
         {
           "key": "class2",
           "label": "신분2",
           "n": 2330,
-          "pct": 7.9
+          "pct": 15.9
         },
         {
           "key": "class3",
           "label": "신분3",
           "n": 2165,
-          "pct": 7.4
+          "pct": 14.8
         },
         {
           "key": "class4",
           "label": "신분4",
           "n": 1864,
-          "pct": 6.4
+          "pct": 12.7
         },
         {
           "key": "class5",
           "label": "신분5",
           "n": 1707,
-          "pct": 5.8
+          "pct": 11.6
         },
         {
           "key": "class6",
           "label": "신분6",
           "n": 1582,
-          "pct": 5.4
+          "pct": 10.8
         },
         {
           "key": "class7",
           "label": "신분7",
           "n": 1482,
-          "pct": 5.1
+          "pct": 10.1
         },
         {
           "key": "first_settle",
           "label": "첫정산",
-          "n": 13089,
-          "pct": 44.6
+          "n": 13088,
+          "pct": 89.3
         },
         {
           "key": "first_finance",
           "label": "첫금융",
-          "n": 7816,
-          "pct": 26.7
+          "n": 7815,
+          "pct": 53.3
         },
         {
           "key": "first_rebirth",
           "label": "첫환생",
-          "n": 4212,
-          "pct": 14.4
+          "n": 4211,
+          "pct": 28.7
         }
       ]
     },
@@ -4188,110 +4188,110 @@
     },
     {
       "version": "1.0 (v748)",
-      "users": 2220,
-      "new_game": 2157,
+      "users": 2221,
+      "new_game": 2158,
       "steps": [
         {
           "key": "new_game",
           "label": "새게임",
-          "n": 2157,
+          "n": 2158,
           "pct": 100.0
         },
         {
           "key": "intro_done",
           "label": "인트로",
-          "n": 2101,
+          "n": 2102,
           "pct": 97.4
         },
         {
           "key": "dev_concept",
           "label": "기획",
-          "n": 2054,
+          "n": 2055,
           "pct": 95.2
         },
         {
           "key": "dev_design",
           "label": "디자인",
-          "n": 1952,
+          "n": 1953,
           "pct": 90.5
         },
         {
           "key": "dev_prototype",
           "label": "프로토",
-          "n": 1831,
+          "n": 1832,
           "pct": 84.9
         },
         {
           "key": "dev_alpha",
           "label": "알파",
-          "n": 1741,
+          "n": 1742,
           "pct": 80.7
         },
         {
           "key": "dev_beta",
           "label": "베타",
-          "n": 1682,
+          "n": 1683,
           "pct": 78.0
         },
         {
           "key": "dev_launch",
           "label": "출시",
-          "n": 1643,
+          "n": 1644,
           "pct": 76.2
         },
         {
           "key": "first_ops",
           "label": "첫운영",
-          "n": 1613,
+          "n": 1614,
           "pct": 74.8
         },
         {
           "key": "property_1",
           "label": "부동산1",
-          "n": 1642,
+          "n": 1643,
           "pct": 76.1
         },
         {
           "key": "property_2",
           "label": "부동산2",
-          "n": 1480,
+          "n": 1481,
           "pct": 68.6
         },
         {
           "key": "property_3",
           "label": "부동산3",
-          "n": 1424,
+          "n": 1425,
           "pct": 66.0
         },
         {
           "key": "property_4",
           "label": "부동산4",
-          "n": 1400,
+          "n": 1401,
           "pct": 64.9
         },
         {
           "key": "property_5",
           "label": "부동산5",
-          "n": 1378,
+          "n": 1379,
           "pct": 63.9
         },
         {
           "key": "game_sale",
           "label": "은퇴",
-          "n": 1365,
+          "n": 1366,
           "pct": 63.3
         },
         {
           "key": "first_manager",
           "label": "첫매니저",
-          "n": 994,
+          "n": 995,
           "pct": 46.1
         },
         {
           "key": "first_donate",
           "label": "첫후원",
-          "n": 1351,
-          "pct": 62.6
+          "n": 1352,
+          "pct": 62.7
         },
         {
           "key": "class2",
@@ -4332,13 +4332,13 @@
         {
           "key": "first_settle",
           "label": "첫정산",
-          "n": 1968,
+          "n": 1969,
           "pct": 91.2
         },
         {
           "key": "first_finance",
           "label": "첫금융",
-          "n": 1113,
+          "n": 1114,
           "pct": 51.6
         },
         {
@@ -4351,110 +4351,110 @@
     },
     {
       "version": "1.0 (v746)",
-      "users": 502,
-      "new_game": 490,
+      "users": 501,
+      "new_game": 489,
       "steps": [
         {
           "key": "new_game",
           "label": "새게임",
-          "n": 490,
+          "n": 489,
           "pct": 100.0
         },
         {
           "key": "intro_done",
           "label": "인트로",
-          "n": 477,
+          "n": 476,
           "pct": 97.3
         },
         {
           "key": "dev_concept",
           "label": "기획",
-          "n": 465,
+          "n": 464,
           "pct": 94.9
         },
         {
           "key": "dev_design",
           "label": "디자인",
-          "n": 447,
+          "n": 446,
           "pct": 91.2
         },
         {
           "key": "dev_prototype",
           "label": "프로토",
-          "n": 416,
+          "n": 415,
           "pct": 84.9
         },
         {
           "key": "dev_alpha",
           "label": "알파",
-          "n": 387,
-          "pct": 79.0
+          "n": 386,
+          "pct": 78.9
         },
         {
           "key": "dev_beta",
           "label": "베타",
-          "n": 375,
+          "n": 374,
           "pct": 76.5
         },
         {
           "key": "dev_launch",
           "label": "출시",
-          "n": 372,
+          "n": 371,
           "pct": 75.9
         },
         {
           "key": "first_ops",
           "label": "첫운영",
-          "n": 364,
-          "pct": 74.3
+          "n": 363,
+          "pct": 74.2
         },
         {
           "key": "property_1",
           "label": "부동산1",
-          "n": 370,
+          "n": 369,
           "pct": 75.5
         },
         {
           "key": "property_2",
           "label": "부동산2",
-          "n": 325,
+          "n": 324,
           "pct": 66.3
         },
         {
           "key": "property_3",
           "label": "부동산3",
-          "n": 313,
-          "pct": 63.9
+          "n": 312,
+          "pct": 63.8
         },
         {
           "key": "property_4",
           "label": "부동산4",
-          "n": 308,
-          "pct": 62.9
+          "n": 307,
+          "pct": 62.8
         },
         {
           "key": "property_5",
           "label": "부동산5",
-          "n": 304,
+          "n": 303,
           "pct": 62.0
         },
         {
           "key": "game_sale",
           "label": "은퇴",
-          "n": 302,
+          "n": 301,
           "pct": 61.6
         },
         {
           "key": "first_manager",
           "label": "첫매니저",
-          "n": 207,
-          "pct": 42.2
+          "n": 206,
+          "pct": 42.1
         },
         {
           "key": "first_donate",
           "label": "첫후원",
-          "n": 295,
-          "pct": 60.2
+          "n": 294,
+          "pct": 60.1
         },
         {
           "key": "class2",
@@ -4495,14 +4495,14 @@
         {
           "key": "first_settle",
           "label": "첫정산",
-          "n": 443,
+          "n": 442,
           "pct": 90.4
         },
         {
           "key": "first_finance",
           "label": "첫금융",
-          "n": 254,
-          "pct": 51.8
+          "n": 253,
+          "pct": 51.7
         },
         {
           "key": "first_rebirth",
@@ -4840,110 +4840,110 @@
     },
     {
       "version": "1.0 (v704)",
-      "users": 71,
-      "new_game": 69,
+      "users": 70,
+      "new_game": 68,
       "steps": [
         {
           "key": "new_game",
           "label": "새게임",
-          "n": 69,
+          "n": 68,
           "pct": 100.0
         },
         {
           "key": "intro_done",
           "label": "인트로",
-          "n": 55,
-          "pct": 79.7
+          "n": 54,
+          "pct": 79.4
         },
         {
           "key": "dev_concept",
           "label": "기획",
           "n": 53,
-          "pct": 76.8
+          "pct": 77.9
         },
         {
           "key": "dev_design",
           "label": "디자인",
           "n": 48,
-          "pct": 69.6
+          "pct": 70.6
         },
         {
           "key": "dev_prototype",
           "label": "프로토",
           "n": 45,
-          "pct": 65.2
+          "pct": 66.2
         },
         {
           "key": "dev_alpha",
           "label": "알파",
           "n": 43,
-          "pct": 62.3
+          "pct": 63.2
         },
         {
           "key": "dev_beta",
           "label": "베타",
           "n": 43,
-          "pct": 62.3
+          "pct": 63.2
         },
         {
           "key": "dev_launch",
           "label": "출시",
           "n": 42,
-          "pct": 60.9
+          "pct": 61.8
         },
         {
           "key": "first_ops",
           "label": "첫운영",
           "n": 41,
-          "pct": 59.4
+          "pct": 60.3
         },
         {
           "key": "property_1",
           "label": "부동산1",
-          "n": 43,
-          "pct": 62.3
+          "n": 42,
+          "pct": 61.8
         },
         {
           "key": "property_2",
           "label": "부동산2",
-          "n": 39,
-          "pct": 56.5
+          "n": 38,
+          "pct": 55.9
         },
         {
           "key": "property_3",
           "label": "부동산3",
-          "n": 36,
-          "pct": 52.2
+          "n": 35,
+          "pct": 51.5
         },
         {
           "key": "property_4",
           "label": "부동산4",
-          "n": 36,
-          "pct": 52.2
+          "n": 35,
+          "pct": 51.5
         },
         {
           "key": "property_5",
           "label": "부동산5",
-          "n": 36,
-          "pct": 52.2
+          "n": 35,
+          "pct": 51.5
         },
         {
           "key": "game_sale",
           "label": "은퇴",
           "n": 35,
-          "pct": 50.7
+          "pct": 51.5
         },
         {
           "key": "first_manager",
           "label": "첫매니저",
-          "n": 25,
-          "pct": 36.2
+          "n": 24,
+          "pct": 35.3
         },
         {
           "key": "first_donate",
           "label": "첫후원",
-          "n": 35,
-          "pct": 50.7
+          "n": 34,
+          "pct": 50.0
         },
         {
           "key": "class2",
@@ -4984,20 +4984,20 @@
         {
           "key": "first_settle",
           "label": "첫정산",
-          "n": 48,
-          "pct": 69.6
+          "n": 47,
+          "pct": 69.1
         },
         {
           "key": "first_finance",
           "label": "첫금융",
-          "n": 29,
-          "pct": 42.0
+          "n": 28,
+          "pct": 41.2
         },
         {
           "key": "first_rebirth",
           "label": "첫환생",
-          "n": 15,
-          "pct": 21.7
+          "n": 14,
+          "pct": 20.6
         }
       ]
     },
@@ -7391,7 +7391,7 @@
       },
       {
         "version": "1.0 (v818)",
-        "users": 1196,
+        "users": 1194,
         "dist": {
           "0": 755,
           "1": 26,
@@ -7399,7 +7399,7 @@
           "3": 143,
           "4": 12,
           "5": 3,
-          "6": 77,
+          "6": 76,
           "7": 5,
           "8": 4,
           "9": 45,
@@ -7409,7 +7409,7 @@
           "13": 6,
           "14": 1,
           "15": 0,
-          "16": 22,
+          "16": 21,
           "17": 0,
           "18": 2,
           "19": 8,
@@ -7499,15 +7499,15 @@
       },
       {
         "version": "1.0 (v769)",
-        "users": 2035,
+        "users": 2036,
         "dist": {
           "0": 1305,
           "1": 42,
-          "2": 27,
+          "2": 26,
           "3": 208,
           "4": 19,
           "5": 10,
-          "6": 106,
+          "6": 107,
           "7": 8,
           "8": 3,
           "9": 71,
@@ -7517,7 +7517,7 @@
           "13": 14,
           "14": 3,
           "15": 5,
-          "16": 39,
+          "16": 40,
           "17": 4,
           "18": 1,
           "19": 20,
@@ -7607,18 +7607,18 @@
       },
       {
         "version": "1.0 (v750)",
-        "users": 1407,
+        "users": 1415,
         "dist": {
-          "0": 911,
-          "1": 42,
-          "2": 19,
-          "3": 133,
+          "0": 912,
+          "1": 43,
+          "2": 20,
+          "3": 134,
           "4": 2,
           "5": 10,
           "6": 68,
           "7": 7,
           "8": 5,
-          "9": 43,
+          "9": 46,
           "10": 8,
           "11": 3,
           "12": 21,
@@ -7641,7 +7641,7 @@
           "29": 11,
           "30": 0,
           "31": 0,
-          "32": 8,
+          "32": 9,
           "33": 1,
           "34": 1,
           "35": 4,
@@ -7715,18 +7715,18 @@
       },
       {
         "version": "1.0 (v749)",
-        "users": 788,
+        "users": 782,
         "dist": {
-          "0": 492,
-          "1": 16,
+          "0": 491,
+          "1": 15,
           "2": 8,
-          "3": 84,
+          "3": 83,
           "4": 8,
           "5": 5,
-          "6": 39,
+          "6": 40,
           "7": 3,
           "8": 4,
-          "9": 28,
+          "9": 25,
           "10": 3,
           "11": 2,
           "12": 11,
@@ -7749,7 +7749,7 @@
           "29": 9,
           "30": 0,
           "31": 1,
-          "32": 4,
+          "32": 3,
           "33": 0,
           "34": 0,
           "35": 2,
@@ -7823,7 +7823,7 @@
       },
       {
         "version": "1.0 (v748)",
-        "users": 2225,
+        "users": 2224,
         "dist": {
           "0": 1516,
           "1": 39,
@@ -7831,7 +7831,7 @@
           "3": 213,
           "4": 12,
           "5": 11,
-          "6": 110,
+          "6": 109,
           "7": 8,
           "8": 4,
           "9": 61,
@@ -8147,7 +8147,7 @@
       },
       {
         "version": "1.0 (v709)",
-        "users": 151,
+        "users": 154,
         "dist": {
           "0": 89,
           "1": 1,
@@ -8155,7 +8155,7 @@
           "3": 16,
           "4": 1,
           "5": 0,
-          "6": 11,
+          "6": 12,
           "7": 0,
           "8": 1,
           "9": 1,
@@ -8165,12 +8165,12 @@
           "13": 1,
           "14": 0,
           "15": 0,
-          "16": 1,
+          "16": 2,
           "17": 0,
           "18": 1,
           "19": 2,
           "20": 0,
-          "21": 1,
+          "21": 2,
           "22": 1,
           "23": 1,
           "24": 1,
@@ -8363,7 +8363,7 @@
       },
       {
         "version": "1.0 (v703)",
-        "users": 184,
+        "users": 181,
         "dist": {
           "0": 110,
           "1": 5,
@@ -8371,7 +8371,7 @@
           "3": 23,
           "4": 1,
           "5": 2,
-          "6": 6,
+          "6": 5,
           "7": 0,
           "8": 0,
           "9": 4,
@@ -8381,12 +8381,12 @@
           "13": 1,
           "14": 0,
           "15": 1,
-          "16": 6,
+          "16": 5,
           "17": 0,
           "18": 0,
           "19": 1,
           "20": 0,
-          "21": 1,
+          "21": 0,
           "22": 3,
           "23": 1,
           "24": 1,
@@ -8579,22 +8579,22 @@
       },
       {
         "version": "1.0 (v689)",
-        "users": 776,
+        "users": 791,
         "dist": {
           "0": 471,
           "1": 15,
           "2": 5,
           "3": 83,
           "4": 10,
-          "5": 4,
-          "6": 40,
+          "5": 5,
+          "6": 42,
           "7": 6,
           "8": 3,
-          "9": 16,
+          "9": 17,
           "10": 8,
           "11": 2,
-          "12": 17,
-          "13": 3,
+          "12": 19,
+          "13": 4,
           "14": 1,
           "15": 1,
           "16": 15,
@@ -8603,14 +8603,14 @@
           "19": 10,
           "20": 2,
           "21": 0,
-          "22": 6,
+          "22": 8,
           "23": 3,
           "24": 0,
           "25": 8,
           "26": 0,
           "27": 0,
           "28": 2,
-          "29": 4,
+          "29": 5,
           "30": 0,
           "31": 0,
           "32": 3,
@@ -8618,8 +8618,8 @@
           "34": 0,
           "35": 4,
           "36": 0,
-          "37": 0,
-          "38": 4,
+          "37": 1,
+          "38": 5,
           "39": 0,
           "40": 0,
           "41": 3,
@@ -8636,7 +8636,7 @@
           "52": 0,
           "53": 0,
           "54": 0,
-          "55": 0,
+          "55": 1,
           "56": 0,
           "57": 0,
           "58": 1,
@@ -8645,7 +8645,7 @@
           "61": 0,
           "62": 0,
           "63": 0,
-          "64": 1,
+          "64": 2,
           "65": 0,
           "66": 0,
           "67": 3,
@@ -8658,7 +8658,7 @@
           "74": 0,
           "75": 0,
           "76": 0,
-          "77": 2,
+          "77": 3,
           "78": 0,
           "79": 0,
           "80": 1,
@@ -8687,38 +8687,38 @@
       },
       {
         "version": "1.0 (v669)",
-        "users": 615,
+        "users": 607,
         "dist": {
-          "0": 419,
+          "0": 420,
           "1": 21,
           "2": 7,
           "3": 42,
           "4": 1,
-          "5": 2,
-          "6": 30,
-          "7": 1,
+          "5": 1,
+          "6": 28,
+          "7": 2,
           "8": 3,
-          "9": 14,
+          "9": 13,
           "10": 0,
           "11": 0,
-          "12": 6,
-          "13": 4,
+          "12": 4,
+          "13": 3,
           "14": 0,
           "15": 0,
-          "16": 9,
+          "16": 8,
           "17": 0,
           "18": 1,
           "19": 5,
           "20": 0,
           "21": 0,
-          "22": 7,
+          "22": 8,
           "23": 0,
           "24": 0,
           "25": 2,
           "26": 1,
           "27": 0,
           "28": 0,
-          "29": 3,
+          "29": 2,
           "30": 0,
           "31": 0,
           "32": 2,
@@ -8726,8 +8726,8 @@
           "34": 0,
           "35": 3,
           "36": 1,
-          "37": 1,
-          "38": 4,
+          "37": 0,
+          "38": 3,
           "39": 0,
           "40": 0,
           "41": 0,
@@ -8740,20 +8740,20 @@
           "48": 3,
           "49": 0,
           "50": 0,
-          "51": 1,
+          "51": 2,
           "52": 1,
           "53": 0,
           "54": 0,
-          "55": 1,
+          "55": 0,
           "56": 0,
           "57": 0,
-          "58": 3,
+          "58": 4,
           "59": 0,
           "60": 0,
           "61": 1,
           "62": 0,
           "63": 0,
-          "64": 1,
+          "64": 0,
           "65": 0,
           "66": 0,
           "67": 0,
@@ -8766,7 +8766,7 @@
           "74": 1,
           "75": 0,
           "76": 0,
-          "77": 2,
+          "77": 1,
           "78": 0,
           "79": 0,
           "80": 0,
@@ -8789,22 +8789,22 @@
           "97": 0,
           "98": 0,
           "99": 0,
-          "100": 5,
+          "100": 6,
           "101": 0
         }
       },
       {
         "version": "1.0 (v642)",
-        "users": 695,
+        "users": 688,
         "dist": {
-          "0": 439,
+          "0": 438,
           "1": 13,
           "2": 5,
           "3": 71,
           "4": 4,
           "5": 6,
           "6": 35,
-          "7": 3,
+          "7": 2,
           "8": 1,
           "9": 10,
           "10": 7,
@@ -8813,13 +8813,13 @@
           "13": 7,
           "14": 0,
           "15": 1,
-          "16": 15,
+          "16": 16,
           "17": 2,
           "18": 0,
           "19": 8,
           "20": 1,
           "21": 0,
-          "22": 5,
+          "22": 2,
           "23": 0,
           "24": 0,
           "25": 4,
@@ -8848,14 +8848,14 @@
           "48": 1,
           "49": 0,
           "50": 0,
-          "51": 2,
+          "51": 1,
           "52": 0,
           "53": 1,
           "54": 0,
           "55": 0,
           "56": 0,
           "57": 0,
-          "58": 1,
+          "58": 0,
           "59": 0,
           "60": 0,
           "61": 1,
@@ -8897,7 +8897,7 @@
           "97": 0,
           "98": 0,
           "99": 0,
-          "100": 9,
+          "100": 8,
           "101": 0
         }
       },
