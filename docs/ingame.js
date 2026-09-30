@@ -67,7 +67,7 @@
     const up = $('#updated'); if (up && d.updated) { up.textContent = '데이터 기준 ' + d.updated; up.title = 'BigQuery 수집 시각(매일 11:20 KST 자동). 페이지 배포 시각과 다를 수 있음'; }
     _data = d;
     renderKpi(d); renderFunnel(d); renderVersions(d); renderPacing(d);
-    renderRetentionCohort(d);
+    renderRetentionCohort(d); renderProgressHeatmap(d);
     renderCityKpi(d); renderCityFunnel(d); renderCityDeci(d); renderCityPacing(d);
     renderVersionViews(d);
     buildAllToggles();
@@ -378,6 +378,52 @@
       `<text x="${w - pad}" y="${h - 6}" class="lc-ax" text-anchor="end">${esc(String(xmax) + xlab)}</text>` +
       `<text x="${pad}" y="14" class="lc-ax">${esc(ylab)} ${num(ymax)}</text>` +
       `</svg>`;
+  }
+
+  // ── 진행 분포 히트맵 (날짜 × 추월% 프론티어, 밀도=진하기) ────────
+  function renderProgressHeatmap(d) {
+    const host = $('#ig-progress-heatmap'); if (!host) return; host.innerHTML = '';
+    const H = d.progress_heatmap;
+    if (!H || !H.dates || !H.dates.length || !H.cells || !H.cells.length) {
+      host.innerHTML = '<p class="card-sub">데이터 없음(progress_pct landing 대기)</p>'; return;
+    }
+    const BK = H.bucket, dates = H.dates, nRows = Math.round(100 / BK);
+    const dIdx = {}; dates.forEach((s, i) => dIdx[s] = i);
+    let maxN = 1;
+    H.cells.forEach(c => { if (c.n > maxN) maxN = c.n; });
+    // 밀도색: 로그스케일 t → 옅은 남색→진한 남색(겹칠수록 진함).
+    const col = n => { const t = Math.log(n + 1) / Math.log(maxN + 1); return `hsl(222,72%,${(94 - 64 * t).toFixed(0)}%)`; };
+    const w = 680, h = 320, padL = 40, padR = 12, padT = 10, padB = 56;
+    const plotW = w - padL - padR, plotH = h - padT - padB;
+    const cw = plotW / dates.length, ch = plotH / nRows;
+    let rects = '';
+    H.cells.forEach(c => {
+      const xi = dIdx[c.date]; if (xi == null) return;
+      const row = nRows - 1 - Math.floor(c.bucket / BK);   // 높은 %가 위
+      const x = padL + xi * cw, y = padT + row * ch;
+      rects += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(cw + 0.6).toFixed(1)}" height="${(ch + 0.6).toFixed(1)}" fill="${col(c.n)}"><title>${esc(c.date)} · ${c.bucket}~${c.bucket + BK}% · ${c.n}명</title></rect>`;
+    });
+    // y축 라벨(0/25/50/75/100%)
+    let yax = '';
+    [0, 25, 50, 75, 100].forEach(p => {
+      const yy = padT + (1 - p / 100) * plotH;
+      yax += `<text x="${padL - 6}" y="${(yy + 4).toFixed(1)}" text-anchor="end" class="lc-ax">${p}%</text>`;
+    });
+    // x축 날짜(최대 7개 균등, MM-DD)
+    let xax = '';
+    const step = Math.max(1, Math.ceil(dates.length / 7));
+    for (let i = 0; i < dates.length; i += step) {
+      const x = padL + (i + 0.5) * cw;
+      xax += `<text x="${x.toFixed(1)}" y="${h - padB + 16}" text-anchor="end" class="lc-ax" transform="rotate(-45 ${x.toFixed(1)} ${h - padB + 16})">${esc(dates[i].slice(5))}</text>`;
+    }
+    host.innerHTML = `<svg class="lc" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" role="img">` +
+      rects + yax + xax +
+      `<text x="${padL}" y="${h - 6}" class="lc-ax">날짜(MM-DD) →</text>` +
+      `</svg>`;
+    // 밀도 범례
+    const leg = el('div', 'chart-note');
+    leg.innerHTML = `세로=그날 도달한 추월% · 셀 진할수록 그 지점 유저 많음(최대 ${maxN}명) · <b>progress_pct(1%↑ 크로싱) 기준이라 1% 미돌파는 제외</b> · 무리가 날짜따라 위로 오르면 진행 개선`;
+    host.appendChild(leg);
   }
 
   // ── 페이싱: 구간당 소요시간(시간/%) 막대 + 표본 N게이팅 ────────

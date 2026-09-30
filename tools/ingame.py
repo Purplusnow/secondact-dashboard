@@ -184,6 +184,39 @@ def main() -> None:
         "median_hours": (round(int(x["median_secs"]) / 3600.0, 1) if x["median_secs"] is not None else None),
     } for x in pacing]
 
+    # ── 진행 분포 히트맵 (날짜 × 추월% 프론티어) ────────────────────────
+    # 그날 progress_pct(1% 크로싱)를 찍은 유저별 '그날 최고 도달%'를 5%버킷으로 묶어
+    # (날짜, 버킷)당 distinct 유저수 집계. 셀 진하기=유저수 → 진행 무리가 날짜따라 어디로 움직이나.
+    # ⚠ progress_pct는 크로싱만 찍혀 1%미만(미돌파 69%)은 안 잡힘 — '전진 중인 유저의 프론티어' 분포.
+    PROG_BUCKET = 5
+    prog = q(f"""
+      WITH u AS (
+        SELECT _TABLE_SUFFIX AS d, user_pseudo_id AS uid,
+          MAX((SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct')) AS mp
+        FROM {TABLE}
+        WHERE event_name='progress_pct'
+          AND {suffix_daily(f"_TABLE_SUFFIX BETWEEN '{win_start}' AND '{end_s}'")}
+        GROUP BY d, uid
+      )
+      SELECT d, CAST(FLOOR(LEAST(mp,100)/{PROG_BUCKET})*{PROG_BUCKET} AS INT64) AS bucket,
+        COUNT(DISTINCT uid) AS n
+      FROM u WHERE mp BETWEEN 1 AND 100 GROUP BY d, bucket ORDER BY d, bucket
+    """)
+    # 날짜 목록(연속) — 데이터 없는 날도 빈 칼럼으로 보이게 win_start~end 전체.
+    _dstart = datetime.strptime(win_start, "%Y%m%d").date()
+    _dend = datetime.strptime(end_s, "%Y%m%d").date()
+    _dates = []
+    _dd = _dstart
+    while _dd <= _dend:
+        _dates.append(_dd.strftime("%Y-%m-%d"))
+        _dd += timedelta(days=1)
+    out["progress_heatmap"] = {
+        "bucket": PROG_BUCKET,
+        "dates": _dates,
+        "cells": [{"date": f"{x['d'][:4]}-{x['d'][4:6]}-{x['d'][6:]}",
+                   "bucket": int(x["bucket"]), "n": int(x["n"])} for x in prog],
+    }
+
     # ── 버전별 비교 (첫 등장 버전 코호트) — 20단계 구간 도달율 ──────────
     # 유저를 '처음 나타난 app_version'으로 묶고, 각 온보딩 단계 도달수를 전부 집계.
     # ⚠️ 최신 버전 코호트는 어려서(cohort_age 작음) 뒷단계 도달율이 낮게 보이는 게 정상 → age 병기.
