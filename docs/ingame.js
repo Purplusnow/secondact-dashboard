@@ -136,7 +136,7 @@
         t.innerHTML = h + '</tbody>';
       }
     }
-    // ③ 최대 추월% 도달 분포 × 버전 (행=버킷, 열=선택 버전, 셀=유저)
+    // ③ 추월% 도달 생존 × 버전 (행=%, 열=버전, 셀="그 % 이상 도달한 유저" — 위→아래 단조 하강)
     const rv = $('#ig-reachv');
     if (rv) {
       const R = d.reach_versions || { buckets: [], versions: [], cap: 20 };
@@ -144,19 +144,24 @@
       if (!rverV.length || !(R.buckets || []).length) { rv.innerHTML = '<tr><td class="vt-empty">데이터 없음</td></tr>'; }
       else {
         const cap = R.cap != null ? R.cap : 20;
-        // 각 버전 열 최댓값으로 셀 음영 정규화
-        const colMax = {};
-        rverV.forEach(v => { colMax[v.version] = Math.max(1, ...R.buckets.map(b => v.dist[String(b)] || 0)); });
+        // 각 버전 열: 최고점 분포(dist)를 위(높은 %)에서부터 누적 → survival(≥b). %가 오를수록 숫자는 줄기만 함.
+        const surv = {}, colMax = {};
+        rverV.forEach(v => {
+          const s = {}; let acc = 0;
+          for (let b = R.buckets.length - 1; b >= 0; b--) { acc += (v.dist[String(b)] || 0); s[b] = acc; }
+          surv[v.version] = s;
+          colMax[v.version] = Math.max(1, s[0] || 0);   // survival(≥0)=전체
+        });
         let h = '<thead><tr><th class="stick">추월%</th>' +
           rverV.map(v => `<th>${esc(vshort(v.version))}<span class="vt-u">${num(v.users)}</span></th>`).join('') + '</tr></thead><tbody>';
-        R.buckets.forEach(b => {
-          const lab = b > cap ? (cap + 1) + '+' : String(b);
-          h += `<tr><td class="stick vt-ver">${lab}%</td>` +
+        R.buckets.forEach((b, i) => {
+          const lab = b > cap ? (cap + 1) + '+' : (b + '%');
+          h += `<tr><td class="stick vt-ver">${lab}</td>` +
             rverV.map(v => {
-              const n = v.dist[String(b)] || 0;
-              const pct = v.users ? Math.round(1000 * n / v.users) / 10 : 0;
+              const n = surv[v.version][b] || 0;
+              const pct = v.users ? Math.round(1000 * n / v.users) / 10 : 0;   // 그 버전 전체 대비 도달율
               const sh = 96 - Math.round(46 * n / colMax[v.version]);
-              return `<td class="num fcell" style="background:hsl(214,70%,${sh}%)" title="${num(n)}명 · ${pct}%">${n ? cellText(n, pct) : '·'}</td>`;
+              return `<td class="num fcell" style="background:hsl(214,70%,${sh}%)" title="${num(n)}명 · ${pct}% 도달">${n ? cellText(n, pct) : '·'}</td>`;
             }).join('') + '</tr>';
         });
         rv.innerHTML = h + '</tbody>';
