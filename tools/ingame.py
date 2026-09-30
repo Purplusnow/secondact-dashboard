@@ -340,12 +340,98 @@ def main() -> None:
                       "dist": {str(b): vdist[v].get(b, 0) for b in range(0, CAP + 2)}} for v in keep],
     }
 
+    # ══ 2부(도시) — 진입 퍼널 · 초반 이탈곡선 · 진행 페이싱 ════════════════════
+    # city_* 계측(v916+). 진입→첫액션 퍼널=city_enter/city_onb_step/city_complete,
+    # 초반 이탈곡선=city_progress_deci(완성도 0.1%×50), 페이싱=city_progress_pct.
+    def _p_str(k: str) -> str:
+        return f"(SELECT value.string_value FROM UNNEST(event_params) WHERE key='{k}')"
+    def _p_int(k: str) -> str:
+        return f"(SELECT value.int_value FROM UNNEST(event_params) WHERE key='{k}')"
+    cu = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id,
+          MAX(IF(event_name='city_enter',1,0)) AS entered,
+          MAX(IF(event_name='city_onb_step' AND {_p_str('step')}='first_conquer',1,0)) AS s_conquer,
+          MAX(IF(event_name='city_onb_step' AND {_p_str('step')}='first_upgrade',1,0)) AS s_upgrade,
+          MAX(IF(event_name='city_onb_step' AND {_p_str('step')}='first_rent',1,0)) AS s_rent,
+          MAX(IF(event_name='city_onb_step' AND {_p_str('step')}='first_event',1,0)) AS s_event,
+          MAX(IF(event_name='city_complete',1,0)) AS completed
+        FROM {TABLE}
+        WHERE {suffix_daily(f"_TABLE_SUFFIX >= '{DIAG_START}'")}
+        GROUP BY user_pseudo_id
+      )
+      SELECT SUM(entered) AS entered, SUM(s_conquer) AS s_conquer, SUM(s_upgrade) AS s_upgrade,
+             SUM(s_rent) AS s_rent, SUM(s_event) AS s_event, SUM(completed) AS completed
+      FROM u WHERE entered=1
+    """)[0]
+    ce = int(cu["entered"] or 0)
+    out["city_kpi"] = {
+        "entered": ce,
+        "completed": int(cu["completed"] or 0),
+        "completion_pct": (round(100 * int(cu["completed"] or 0) / ce, 1) if ce else None),
+    }
+    out["city_entry_funnel"] = [
+        {"stage": "도시 진입", "users": ce},
+        {"stage": "첫 인수", "users": int(cu["s_conquer"] or 0)},
+        {"stage": "첫 업그레이드", "users": int(cu["s_upgrade"] or 0)},
+        {"stage": "첫 월세 수금", "users": int(cu["s_rent"] or 0)},
+        {"stage": "첫 라이브이벤트", "users": int(cu["s_event"] or 0)},
+        {"stage": "도시 완성(엔딩)", "users": int(cu["completed"] or 0)},
+    ]
+    # 초반 이탈곡선(완성도 0.1%×50) — baseline=city_enter 유저.
+    cdeci = q(f"""
+      SELECT deci, COUNT(DISTINCT user_pseudo_id) AS users,
+             APPROX_QUANTILES(days,2)[OFFSET(1)] AS median_days
+      FROM (
+        SELECT {_p_int('deci')} AS deci, user_pseudo_id,
+               MIN({_p_int('days_since_enter')}) AS days
+        FROM {TABLE}
+        WHERE event_name='city_progress_deci' AND {suffix_daily(f"_TABLE_SUFFIX >= '{DIAG_START}'")}
+        GROUP BY deci, user_pseudo_id
+      )
+      WHERE deci BETWEEN 1 AND 50 GROUP BY deci ORDER BY deci
+    """)
+    cseries = [{"deci": 0, "pct": 0.0, "users": ce, "median_days": 0}]
+    for x in cdeci:
+        cseries.append({"deci": int(x["deci"]), "pct": round(int(x["deci"]) / 10.0, 1),
+                        "users": int(x["users"]), "median_days": x["median_days"]})
+    cstart = ce or (cseries[1]["users"] if len(cseries) > 1 else 1) or 1
+    out["city_deci_baseline"] = ce
+    out["city_deci_curve"] = []
+    cprev = None
+    for s in cseries:
+        drop = (round(100 * (cprev - s["users"]) / cprev, 1) if (cprev and cprev > 0) else None)
+        out["city_deci_curve"].append({
+            "deci": s["deci"], "pct": s["pct"], "users": s["users"],
+            "pct_of_start": round(100 * s["users"] / cstart, 1),
+            "step_drop_pct": drop,
+            "median_days": (int(s["median_days"]) if s["median_days"] is not None else None),
+        })
+        cprev = s["users"]
+    # 진행 페이싱(완성도 %) — 도달 유저 + 중위 경과일.
+    cpace = q(f"""
+      SELECT pct, COUNT(DISTINCT user_pseudo_id) AS users,
+             APPROX_QUANTILES(days,2)[OFFSET(1)] AS median_days
+      FROM (
+        SELECT {_p_int('pct')} AS pct, user_pseudo_id, MIN({_p_int('days_since_enter')}) AS days
+        FROM {TABLE}
+        WHERE event_name='city_progress_pct' AND {suffix_daily(f"_TABLE_SUFFIX >= '{DIAG_START}'")}
+        GROUP BY pct, user_pseudo_id
+      )
+      GROUP BY pct ORDER BY pct
+    """)
+    out["city_pacing"] = [{
+        "pct": int(x["pct"]), "users": int(x["users"]),
+        "median_days": (int(x["median_days"]) if x["median_days"] is not None else None),
+    } for x in cpace]
+
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
     print(f"wrote {OUT}: retired={r['retired']} rebirth={r['rebirthed']} "
           f"deci_rows={len(out['deci_curve'])} onb={len(out['onboarding_funnel'])} "
           f"pacing={len(out['pacing'])} versions={len(out['by_version'])} "
           f"onb_versions={len(out['onb_versions'])} reach_versions={len(out['reach_versions']['versions'])} "
+          f"city_entered={ce} city_complete={out['city_kpi']['completed']} city_deci={len(out['city_deci_curve'])} "
           f"last_table={out['last_table']}")
 
 

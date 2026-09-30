@@ -62,6 +62,7 @@
     const up = $('#updated'); if (up && d.updated) up.textContent = '갱신 ' + d.updated;
     _data = d;
     renderKpi(d); renderFunnel(d); renderEntry(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
+    renderCityKpi(d); renderCityFunnel(d); renderCityDeci(d); renderCityPacing(d);
     renderVersionViews(d);
     buildModeToggle('ig-vmode'); buildModeToggle('ig-vmode-bv');
   }
@@ -191,6 +192,68 @@
       host.appendChild(el('p', 'chart-note',
         `최대 이탈: <b class="drop">${esc(rows[worstI - 1].stage)} → ${esc(rows[worstI].stage)} (▼${Math.round(worstD * 100)}%)</b> — 여기가 진짜 벽`));
     }
+  }
+
+  // ── 2부(도시) 뷰 — 진입 퍼널 · 초반 이탈곡선 · 진행 페이싱 ──────────────
+  function renderCityKpi(d) {
+    const host = $('#ig-city-kpi'); if (!host) return; host.innerHTML = '';
+    const k = d.city_kpi || {};
+    host.appendChild(tile('도시 진입', num(k.entered || 0), '2부 도달 유저'));
+    host.appendChild(tile('도시 완성(엔딩)', num(k.completed || 0), '100% 완성'));
+    host.appendChild(tile('완주율', (k.completion_pct != null ? k.completion_pct + '%' : '—'), '진입 대비 완성'));
+  }
+
+  function renderCityFunnel(d) {
+    const host = $('#ig-city-funnel'); if (!host) return;
+    const rows = d.city_entry_funnel || [];
+    if (!rows.length || !(rows[0].users)) { host.innerHTML = '<p class="card-sub">데이터 없음(2부 계측 출시·landing 대기)</p>'; return; }
+    host.innerHTML = '';
+    const top = rows[0].users || 1;
+    let worstI = -1, worstD = -1;
+    for (let i = 1; i < rows.length; i++) {
+      const dr = rows[i - 1].users ? (rows[i - 1].users - rows[i].users) / rows[i - 1].users : 0;
+      if (dr > worstD) { worstD = dr; worstI = i; }
+    }
+    rows.forEach((r, i) => {
+      const pctTop = top ? (100 * r.users / top) : 0;
+      const drop = i > 0 && rows[i - 1].users ? Math.round(100 * (rows[i - 1].users - r.users) / rows[i - 1].users) : null;
+      const hot = i === worstI;
+      const wrap = el('div', 'fbar');
+      wrap.innerHTML =
+        `<div class="fbar-head"><span>${esc(r.stage)}</span>` +
+        `<span class="num">${num(r.users)} · ${pctTop.toFixed(0)}%` +
+        (drop != null && drop > 0 ? ` <span class="drop">▼${drop}%${hot ? ' ⚠' : ''}</span>` : '') + `</span></div>` +
+        `<div class="fbar-track"><div class="fbar-fill${hot ? ' fbar-fill-hot' : ''}" style="width:${Math.max(pctTop, 1.5)}%"></div></div>`;
+      host.appendChild(wrap);
+    });
+    if (worstI > 0) {
+      host.appendChild(el('p', 'chart-note',
+        `최대 이탈: <b class="drop">${esc(rows[worstI - 1].stage)} → ${esc(rows[worstI].stage)} (▼${Math.round(worstD * 100)}%)</b> — 2부 초반 벽`));
+    }
+  }
+
+  function renderCityDeci(d) {
+    const host = $('#ig-city-deci'); if (!host) return; host.innerHTML = '';
+    const c = d.city_deci_curve || [];
+    if (c.length < 2) { host.innerHTML = '<p class="card-sub">데이터 없음(2부 계측 출시·landing 대기)</p>'; return; }
+    let worst = null;
+    c.forEach(x => { if (x.step_drop_pct != null && (!worst || x.step_drop_pct > worst.step_drop_pct)) worst = x; });
+    host.innerHTML = lineChart(c.map(x => ({ x: x.deci, y: x.users })), { mark: worst ? worst.deci : -1, xlab: '완성도(0.1%)', ylab: '유저' });
+    if (worst) {
+      host.appendChild(el('p', 'chart-note',
+        `최대 절벽: <b>${worst.pct}%</b> 지점 <b class="drop">−${worst.step_drop_pct}%</b>` +
+        (worst.median_days != null ? ` · 도달 중앙값 ${worst.median_days}일` : '')));
+    }
+  }
+
+  function renderCityPacing(d) {
+    const host = $('#ig-city-pacing'); if (!host) return; host.innerHTML = '';
+    const p = (d.city_pacing || []).filter(x => x.median_days != null).sort((a, b) => a.pct - b.pct);
+    if (p.length < 2) { host.innerHTML = '<p class="card-sub">데이터 없음(2부 계측 출시·landing 대기)</p>'; return; }
+    host.innerHTML = lineChart(p.map(x => ({ x: x.pct, y: x.median_days })), { xlab: '완성도(%)', ylab: '경과일(중앙값)' });
+    const last = p[p.length - 1];
+    host.appendChild(el('p', 'chart-note',
+      `완성도 %별 진입 후 경과일(중앙값). 최고 ${last.pct}% · ${last.median_days}일 · 캘린더라 대기·수면 포함`));
   }
 
   const MATURE_D = 7;  // 이 나이(일) 미만 코호트 = 미성숙(전환율 착시)
