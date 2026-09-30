@@ -308,7 +308,7 @@ def main() -> None:
 
     # ── (전체기간) 버전별 '최대 추월%' 도달 분포 ──────────────────────────
     # progress_pct(pct=정수 추월%)의 유저별 최대값 분포. 미도달(1% 미만)=0 버킷.
-    # 버킷 0~20 개별 + 21+ 묶음. 첫 등장 버전 코호트.
+    # 버킷 0~100 개별(추월% 전 구간) + 100+ 묶음(엔딩 초과분·이론상 없음). 첫 등장 버전 코호트.
     reach = q(f"""
       WITH u AS (
         SELECT user_pseudo_id,
@@ -324,7 +324,7 @@ def main() -> None:
       GROUP BY version, maxpct
     """)
     from collections import defaultdict
-    CAP = 20  # 0~20 개별, 그 이상은 CAP+1(=21, "21+")로 묶음
+    CAP = 100  # 0~100 개별(추월% 전 구간 표시), 그 이상은 CAP+1(=101, 이론상 없음)
     vtot: dict = defaultdict(int)
     vdist: dict = defaultdict(lambda: defaultdict(int))
     for x in reach:
