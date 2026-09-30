@@ -67,7 +67,7 @@
       d = await res.json();
     } catch (e) { $('#ig-empty').hidden = false; return; }
     if (!d || !d.rebirth_funnel) { $('#ig-empty').hidden = false; return; }
-    const up = $('#updated'); if (up && d.updated) up.textContent = '갱신 ' + d.updated;
+    const up = $('#updated'); if (up && d.updated) { up.textContent = '데이터 기준 ' + d.updated; up.title = 'BigQuery 수집 시각(매일 11:20 KST 자동). 페이지 배포 시각과 다를 수 있음'; }
     _data = d;
     renderKpi(d); renderFunnel(d); renderEntry(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
     renderReachCurve(d); renderRetentionCohort(d);
