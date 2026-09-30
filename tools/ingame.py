@@ -97,6 +97,40 @@ def main() -> None:
             "day": nd, "ret": rr, "base": base,
             "pct": (round(100 * rr / base, 1) if base else None),
         })
+    # 코호트 리텐션 삼각 — 설치일(d0) 행 × Day1..DayN 열. 셀=그 코호트 중 정확히 n일 뒤 복귀 비율.
+    # d0+n > last(아직 안 지난 날)은 관측불가 → null. 최근 COHORT_DAYS일치 코호트 × Day1..COHORT_N.
+    COHORT_N = 14
+    cohq = q(f"""
+      SELECT d0, off, COUNT(DISTINCT uid) AS ret FROM (
+        SELECT i.user_pseudo_id AS uid, i.d0 AS d0, DATE_DIFF(a.d, PARSE_DATE('%Y%m%d', i.d0), DAY) AS off
+        FROM (
+          SELECT user_pseudo_id, MIN(_TABLE_SUFFIX) AS d0
+          FROM {TABLE} WHERE event_name='first_open' AND _TABLE_SUFFIX NOT LIKE 'intraday%'
+          GROUP BY user_pseudo_id
+        ) i
+        JOIN (
+          SELECT DISTINCT user_pseudo_id, PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS d
+          FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
+        ) a ON a.user_pseudo_id = i.user_pseudo_id
+      ) WHERE off BETWEEN 1 AND {COHORT_N} GROUP BY d0, off
+    """)
+    coh_ret: dict = {}
+    for x in cohq:
+        coh_ret[(x["d0"], int(x["off"]))] = int(x["ret"] or 0)
+    inst_by = {x["d0"]: int(x["n"]) for x in inst_hist}
+    out["retention_cohort"] = {"n": COHORT_N, "rows": []}
+    for d0s in sorted(inst_by.keys()):
+        d0 = datetime.strptime(d0s, "%Y%m%d").date()
+        nu = inst_by[d0s]
+        days = []
+        for nd in range(1, COHORT_N + 1):
+            if d0 + timedelta(days=nd) > _last or nu == 0:
+                days.append(None)  # 아직 관측 불가 / 코호트 없음
+            else:
+                days.append(round(100 * coh_ret.get((d0s, nd), 0) / nu, 1))
+        out["retention_cohort"]["rows"].append({
+            "date": d0.strftime("%Y-%m-%d"), "new": nu, "days": days,
+        })
     def _dget(nd):
         row = out["retention_curve"][nd - 1]
         return row["pct"], row["base"]

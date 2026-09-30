@@ -70,7 +70,7 @@
     const up = $('#updated'); if (up && d.updated) up.textContent = '갱신 ' + d.updated;
     _data = d;
     renderKpi(d); renderFunnel(d); renderEntry(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
-    renderReachCurve(d); renderRetention(d);
+    renderReachCurve(d); renderRetention(d); renderRetentionCohort(d);
     renderCityKpi(d); renderCityFunnel(d); renderCityDeci(d); renderCityPacing(d);
     renderVersionViews(d);
     buildAllToggles();
@@ -435,6 +435,40 @@
     const parts = [];
     [1, 7, 14, 30].forEach(n => { const v = g(n); if (v != null) parts.push(`D${n} ${v}%`); });
     host.appendChild(el('p', 'chart-note', parts.join(' · ') + ' · 설치일 대비 정확히 n일 뒤 하루라도 접속한 비율'));
+  }
+
+  // ── 코호트 리텐션 삼각(설치일 × Day n 히트맵) ─────────────
+  function renderRetentionCohort(d) {
+    const host = $('#ig-retention-cohort'); if (!host) return; host.innerHTML = '';
+    const c = d.retention_cohort;
+    if (!c || !c.rows || !c.rows.length) { host.innerHTML = '<p class="card-sub">데이터 없음</p>'; return; }
+    const N = c.n;
+    // 리텐션 히트맵: 0%→옅은 노랑, 높을수록 주황→빨강(50%에서 포화). null=관측불가(회색).
+    const heat = p => {
+      if (p == null) return 'transparent';
+      const t = Math.min(p / 50, 1);
+      const hue = 55 - 55 * t;           // 노랑(55)→빨강(0)
+      const lig = 90 - 42 * t;           // 옅음→진함
+      return `hsl(${hue.toFixed(0)},95%,${lig.toFixed(0)}%)`;
+    };
+    let h = '<thead><tr><th class="stick">설치일</th><th>신규</th>';
+    for (let n = 1; n <= N; n++) h += `<th>D${n}</th>`;
+    h += '</tr></thead><tbody>';
+    // 최신 코호트가 위로 오도록 역순
+    c.rows.slice().reverse().forEach(r => {
+      h += `<tr><td class="stick vt-ver">${esc(r.date)}</td><td class="num">${num(r.new)}</td>`;
+      r.days.forEach(p => {
+        if (p == null) { h += '<td class="num coh-na">·</td>'; return; }
+        const lg = 90 - 42 * Math.min(p / 50, 1);
+        h += `<td class="num fcell" style="background:${heat(p)};color:${lg < 55 ? '#fff' : '#333'}">${p}%</td>`;
+      });
+      h += '</tr>';
+    });
+    h += '</tbody>';
+    const tbl = el('table', 'vftable coh-table', h);
+    const scroll = el('div', 'table-scroll'); scroll.appendChild(tbl);
+    host.appendChild(scroll);
+    host.appendChild(el('p', 'chart-note', `설치일 코호트 × Day1~D${N} 복귀율 · 셀=그 코호트 중 정확히 n일 뒤 접속 비율 · 회색(·)=아직 관측 불가 · 최신 설치일이 위`));
   }
 
   // ── 은퇴→환생 퍼널 + 원인 3분할 ───────────────────────────
