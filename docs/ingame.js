@@ -106,10 +106,13 @@
     const onbV = (d.onb_versions || []).filter(v => _vvSel.has(v.version));
     const labels = d.stage_labels || [];
     // ① 온보딩 퍼널(선택 합계) — 단계별 도달 유저 합 + 완료율/이탈률
+    // ⚠ '통합'은 개별 버전의 합이라 합산에서 제외(같이 더하면 이중합산). 통합만 선택했으면 통합을 사용.
+    const real = onbV.filter(v => v.version !== '통합');
+    const base = real.length ? real : onbV;
     const onbHost = $('#ig-onbv'); if (onbHost) {
       if (!onbV.length) { onbHost.innerHTML = '<p class="card-sub">버전을 선택하세요</p>'; }
       else {
-        const sum = labels.map(l => onbV.reduce((a, v) => a + ((v.steps.find(s => s.key === l.key) || {}).n || 0), 0));
+        const sum = labels.map(l => base.reduce((a, v) => a + ((v.steps.find(s => s.key === l.key) || {}).n || 0), 0));
         const top = sum[0] || 1;
         onbHost.innerHTML = '';
         labels.forEach((l, i) => {
