@@ -70,7 +70,7 @@
     const up = $('#updated'); if (up && d.updated) up.textContent = '갱신 ' + d.updated;
     _data = d;
     renderKpi(d); renderFunnel(d); renderEntry(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
-    renderReachCurve(d); renderRetention(d); renderRetentionCohort(d);
+    renderReachCurve(d); renderRetentionCohort(d);
     renderCityKpi(d); renderCityFunnel(d); renderCityDeci(d); renderCityPacing(d);
     renderVersionViews(d);
     buildAllToggles();
