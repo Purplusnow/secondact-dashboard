@@ -63,38 +63,55 @@ def main() -> None:
       WHERE {suffix_daily(f"_TABLE_SUFFIX BETWEEN '{d7}' AND '{last_t}'")}
     """)[0]
     cum = q(f"SELECT COUNT(DISTINCT user_pseudo_id) AS n FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'")[0]["n"]
-    # D1/D7 리텐션 — 설치일(d0) 대비 d0+1 / d0+7 복귀. 분모=관측 가능한 코호트(마지막 테이블일 기준).
-    ld = _last.isoformat()
-    ret = q(f"""
-      WITH inst AS (
-        SELECT user_pseudo_id, MIN(PARSE_DATE('%Y%m%d', _TABLE_SUFFIX)) AS d0
+    # 리텐션 곡선 D1~D30 — 설치일(d0) 대비 정확히 n일 뒤 복귀. 분모(base[n])=마지막 테이블일 기준 n일 관측
+    # 가능한 코호트(d0 ≤ last-n). 복귀자는 정의상 d0+n ≤ last라 모두 관측가능(별도 필터 불필요).
+    inst_hist = q(f"""
+      SELECT d0, COUNT(*) AS n FROM (
+        SELECT user_pseudo_id, MIN(_TABLE_SUFFIX) AS d0
         FROM {TABLE} WHERE event_name='first_open' AND _TABLE_SUFFIX NOT LIKE 'intraday%'
         GROUP BY user_pseudo_id
-      ),
-      act AS (
-        SELECT DISTINCT user_pseudo_id, PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS d
-        FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
-      )
-      SELECT
-        COUNTIF(i.d0 <= DATE_SUB(DATE '{ld}', INTERVAL 1 DAY)) AS d1_base,
-        COUNTIF(i.d0 <= DATE_SUB(DATE '{ld}', INTERVAL 1 DAY) AND a1.user_pseudo_id IS NOT NULL) AS d1_ret,
-        COUNTIF(i.d0 <= DATE_SUB(DATE '{ld}', INTERVAL 7 DAY)) AS d7_base,
-        COUNTIF(i.d0 <= DATE_SUB(DATE '{ld}', INTERVAL 7 DAY) AND a7.user_pseudo_id IS NOT NULL) AS d7_ret
-      FROM inst i
-      LEFT JOIN act a1 ON a1.user_pseudo_id=i.user_pseudo_id AND a1.d=DATE_ADD(i.d0, INTERVAL 1 DAY)
-      LEFT JOIN act a7 ON a7.user_pseudo_id=i.user_pseudo_id AND a7.d=DATE_ADD(i.d0, INTERVAL 7 DAY)
-    """)[0]
-    def _rp(a, b): return round(100 * int(a or 0) / int(b), 1) if int(b or 0) else None
+      ) GROUP BY d0
+    """)
+    retq = q(f"""
+      SELECT off, COUNT(DISTINCT uid) AS ret FROM (
+        SELECT i.user_pseudo_id AS uid, DATE_DIFF(a.d, i.d0, DAY) AS off
+        FROM (
+          SELECT user_pseudo_id, MIN(PARSE_DATE('%Y%m%d', _TABLE_SUFFIX)) AS d0
+          FROM {TABLE} WHERE event_name='first_open' AND _TABLE_SUFFIX NOT LIKE 'intraday%'
+          GROUP BY user_pseudo_id
+        ) i
+        JOIN (
+          SELECT DISTINCT user_pseudo_id, PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS d
+          FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
+        ) a ON a.user_pseudo_id = i.user_pseudo_id
+      ) WHERE off BETWEEN 1 AND 30 GROUP BY off
+    """)
+    ret_by = {int(x["off"]): int(x["ret"] or 0) for x in retq}
+    insts = [(datetime.strptime(x["d0"], "%Y%m%d").date(), int(x["n"])) for x in inst_hist]
+    out["retention_curve"] = []
+    for nd in range(1, 31):
+        cutoff = _last - timedelta(days=nd)
+        base = sum(c for d0, c in insts if d0 <= cutoff)
+        rr = ret_by.get(nd, 0)
+        out["retention_curve"].append({
+            "day": nd, "ret": rr, "base": base,
+            "pct": (round(100 * rr / base, 1) if base else None),
+        })
+    def _dget(nd):
+        row = out["retention_curve"][nd - 1]
+        return row["pct"], row["base"]
+    d1p, d1b = _dget(1); d7p, d7b = _dget(7); d30p, d30b = _dget(30)
     out["kpi"] = {
         "dau": int(k["dau"] or 0), "wau": int(k["wau"] or 0),
         "new_7d": int(k["new_7d"] or 0), "cumulative": int(cum or 0),
-        "d1": _rp(ret["d1_ret"], ret["d1_base"]), "d1_base": int(ret["d1_base"] or 0),
-        "d7": _rp(ret["d7_ret"], ret["d7_base"]), "d7_base": int(ret["d7_base"] or 0),
+        "d1": d1p, "d1_base": d1b, "d7": d7p, "d7_base": d7b, "d30": d30p, "d30_base": d30b,
     }
 
     # ── 새게임→은퇴→첫환생 퍼널 (진단이벤트 기간, 신뢰 가능한 onb_step만) ──────────────────
     # 은퇴 이전 모수(새게임=전체 시작)를 함께 보여 은퇴/환생을 맥락 속에서 읽는다.
     # ⚠ 구 중간2단계(rebirth_available/screen_view)는 과소기록으로 퍼널 역전이라 제외(원인분할도 제거).
+    # ⚠ onb_step은 계정당 1회 생애이벤트라 '창'으로 자르면 코호트가 섞여(창 전 은퇴 + 창 내 환생) 퍼널이
+    #   역전됨. 전체기간(lifetime)으로 세야 new_game ⊇ 은퇴 ⊇ 첫환생 단조가 성립.
     def _stp(v): return f"(SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='{v}'"
     fr = q(f"""
       SELECT
@@ -102,7 +119,7 @@ def main() -> None:
         COUNT(DISTINCT IF(event_name='onb_step' AND {_stp('game_sale')}, user_pseudo_id, NULL)) AS retired,
         COUNT(DISTINCT IF(event_name='onb_step' AND {_stp('first_rebirth')}, user_pseudo_id, NULL)) AS rebirthed
       FROM {TABLE}
-      WHERE {suffix_daily(f"_TABLE_SUFFIX >= '{DIAG_START}'")}
+      WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
     """)[0]
     r = {k: int(v or 0) for k, v in fr.items()}
     out["rebirth_funnel"] = [

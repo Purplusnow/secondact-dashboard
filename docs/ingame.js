@@ -70,7 +70,7 @@
     const up = $('#updated'); if (up && d.updated) up.textContent = '갱신 ' + d.updated;
     _data = d;
     renderKpi(d); renderFunnel(d); renderEntry(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
-    renderReachCurve(d);
+    renderReachCurve(d); renderRetention(d);
     renderCityKpi(d); renderCityFunnel(d); renderCityDeci(d); renderCityPacing(d);
     renderVersionViews(d);
     buildAllToggles();
@@ -422,6 +422,19 @@
     host.appendChild(tile('누적 유저', num(k.cumulative || 0), '전체 설치'));
     host.appendChild(tile('D1 리텐션', pctT(k.d1, k.d1_base), `설치 다음날 복귀 · 모수 ${num(k.d1_base || 0)}`));
     host.appendChild(tile('D7 리텐션', pctT(k.d7, k.d7_base), `설치 7일뒤 복귀 · 모수 ${num(k.d7_base || 0)}`));
+    host.appendChild(tile('D30 리텐션', pctT(k.d30, k.d30_base), `설치 30일뒤 복귀 · 모수 ${num(k.d30_base || 0)}`));
+  }
+
+  // ── 리텐션 곡선 D1~D30 — 설치일 대비 n일 뒤 복귀율 ──────────────
+  function renderRetention(d) {
+    const host = $('#ig-retention'); if (!host) return; host.innerHTML = '';
+    const c = (d.retention_curve || []).filter(x => x.pct != null);
+    if (c.length < 2) { host.innerHTML = '<p class="card-sub">데이터 없음(코호트 관측기간 부족)</p>'; return; }
+    host.innerHTML = lineChart(c.map(x => ({ x: x.day, y: x.pct })), { xlab: 'D+n (일)', ylab: '복귀율 %' });
+    const g = n => (c.find(x => x.day === n) || {}).pct;
+    const parts = [];
+    [1, 7, 14, 30].forEach(n => { const v = g(n); if (v != null) parts.push(`D${n} ${v}%`); });
+    host.appendChild(el('p', 'chart-note', parts.join(' · ') + ' · 설치일 대비 정확히 n일 뒤 하루라도 접속한 비율'));
   }
 
   // ── 은퇴→환생 퍼널 + 원인 3분할 ───────────────────────────
@@ -455,7 +468,7 @@
       const reb = (rows.find(x => x.stage === '첫환생') || {}).users || 0;
       const r1 = st ? Math.round(100 * ret / st) : 0;   // 시작→은퇴
       const r2 = ret ? Math.round(100 * reb / ret) : 0; // 은퇴→첫환생
-      sub.textContent = `시작 중 ${r1}%만 은퇴 도달 · 은퇴자 중 ${r2}%만 첫 환생 · ${(d.diag_start || '2026-09-23')}~${(d.last_table || '')} 기준`;
+      sub.textContent = `시작 중 ${r1}%만 은퇴 도달 · 은퇴자 중 ${r2}%만 첫 환생 · 전체기간 누적`;
     }
     const rz = d.rebirth_reasons || {};
     const total = (rz.slow_climb || 0) + (rz.discoverability || 0) + (rz.reset_shock || 0);
