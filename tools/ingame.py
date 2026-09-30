@@ -11,7 +11,9 @@ value.int_value 로 정상 존재 → 여기서 직접 읽는다.
 """
 import json
 import os
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
+
+KST = timezone(timedelta(hours=9))   # 수집 스케줄이 KST라 갱신 표기도 KST로
 
 from google.cloud import bigquery
 
@@ -43,7 +45,7 @@ def main() -> None:
     win_start = (end - timedelta(days=WINDOW_DAYS)).strftime("%Y%m%d")
     end_s = end.strftime("%Y%m%d")
 
-    out: dict = {"updated": date.today().isoformat(), "window_days": WINDOW_DAYS,
+    out: dict = {"updated": datetime.now(KST).strftime("%Y-%m-%d %H:%M") + " KST", "window_days": WINDOW_DAYS,
                  "diag_start": f"{DIAG_START[:4]}-{DIAG_START[4:6]}-{DIAG_START[6:]}"}
 
     # ── KPI: 신규(7d)·활성(7d)·마지막 테이블 ───────────────────────────
