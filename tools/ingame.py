@@ -362,6 +362,16 @@ def main() -> None:
         "versions": [total_entry] + [{"version": v, "users": vtot[v],
                       "dist": {str(b): vdist[v].get(b, 0) for b in range(0, CAP + 2)}} for v in keep],
     }
+    # ── 도달 생존곡선(통합) — %별 "그 %까지 도달한 유저 수" (max분포 누적합; 추월%는 단조라 정확) ──
+    # 최고점 분포와 달리 매끄러운 하강곡선. survival(p)=Σ dist[b≥p]. survival(0)=전체.
+    cum = 0
+    surv: list = []
+    for p in range(CAP + 1, -1, -1):
+        cum += all_dist.get(p, 0)
+        surv.append({"pct": p, "users": cum,
+                     "pct_of_all": (round(100 * cum / all_users, 1) if all_users else 0.0)})
+    surv.reverse()   # 0→101 오름차순
+    out["reach_curve"] = surv
 
     # ══ 2부(도시) — 진입 퍼널 · 초반 이탈곡선 · 진행 페이싱 ════════════════════
     # city_* 계측(v916+). 진입→첫액션 퍼널=city_enter/city_onb_step/city_complete,

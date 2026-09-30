@@ -62,6 +62,7 @@
     const up = $('#updated'); if (up && d.updated) up.textContent = '갱신 ' + d.updated;
     _data = d;
     renderKpi(d); renderFunnel(d); renderEntry(d); renderVersions(d); renderDeci(d); renderOnb(d); renderPacing(d);
+    renderReachCurve(d);
     renderCityKpi(d); renderCityFunnel(d); renderCityDeci(d); renderCityPacing(d);
     renderVersionViews(d);
     buildModeToggle('ig-vmode'); buildModeToggle('ig-vmode-bv');
@@ -192,6 +193,19 @@
       host.appendChild(el('p', 'chart-note',
         `최대 이탈: <b class="drop">${esc(rows[worstI - 1].stage)} → ${esc(rows[worstI].stage)} (▼${Math.round(worstD * 100)}%)</b> — 여기가 진짜 벽`));
     }
+  }
+
+  // ── 추월% 도달 생존곡선(통합) — %별 도달 유저 수(매끄러운 하강, 최고점분포 아님) ──
+  function renderReachCurve(d) {
+    const host = $('#ig-reach-curve'); if (!host) return; host.innerHTML = '';
+    const c = (d.reach_curve || []).filter(x => x.pct <= 100);
+    if (c.length < 2) { host.innerHTML = '<p class="card-sub">데이터 없음</p>'; return; }
+    host.innerHTML = lineChart(c.map(x => ({ x: x.pct, y: x.users })), { xlab: '추월%', ylab: '도달 유저' });
+    const s0 = c.find(x => x.pct === 0), s1 = c.find(x => x.pct === 1), s10 = c.find(x => x.pct === 10);
+    const parts = [];
+    if (s0 && s1) parts.push(`0%→1% 진입 <b>${(100 * s1.users / (s0.users || 1)).toFixed(0)}%</b>(첫 벽)`);
+    if (s0 && s10) parts.push(`10%+ 도달 <b>${(100 * s10.users / (s0.users || 1)).toFixed(1)}%</b>`);
+    host.appendChild(el('p', 'chart-note', `%별 "그 지점까지 간 유저 수"(단조 하강). ` + parts.join(' · ')));
   }
 
   // ── 2부(도시) 뷰 — 진입 퍼널 · 초반 이탈곡선 · 진행 페이싱 ──────────────
