@@ -305,6 +305,19 @@ def main() -> None:
             "new_game": int(x["s_new_game"] or 0),
             "steps": steps_from(x, ng),
         })
+    # "전체" = 전 버전(업데이트한 사람 포함) 합산 온보딩 퍼널. 맨 앞에 → 체크박스로 선택 가능하고
+    # reach '전체' 컬럼도 이 버전키로 필터를 통과한다. (버전별과 나란히 '통합 한 장' 보기)
+    if ver_onb:
+        totx: dict = {}
+        for x in ver_onb:
+            totx["s_new_game"] = totx.get("s_new_game", 0) + int(x["s_new_game"] or 0)
+            for _k, _l, col in ORDER:
+                totx[col] = totx.get(col, 0) + int(x[col] or 0)
+        ng_all = totx.get("s_new_game", 0) or 1
+        out["onb_versions"].insert(0, {
+            "version": "통합", "users": sum(int(x["users"]) for x in ver_onb),
+            "new_game": totx["s_new_game"], "steps": steps_from(totx, ng_all),
+        })
 
     # ── (전체기간) 버전별 '최대 추월%' 도달 분포 ──────────────────────────
     # progress_pct(pct=정수 추월%)의 유저별 최대값 분포. 미도달(1% 미만)=0 버킷.
@@ -333,10 +346,20 @@ def main() -> None:
         vtot[v] += int(x["users"])
         vdist[v][b] += int(x["users"])
     keep = sorted([v for v in vtot if vtot[v] >= 30], reverse=True)
+    # "전체" = 전 버전(업데이트한 사람 포함) 유저를 1회씩 합산한 통합 분포. 버전별 옆에 한 컬럼으로.
+    all_dist: dict = defaultdict(int)
+    all_users = 0
+    for v in vtot:               # keep 필터 없이 모든 버전 합산 = 진짜 전체
+        all_users += vtot[v]
+        for b, n in vdist[v].items():
+            all_dist[b] += n
+    total_entry = {"version": "통합", "users": all_users,
+                   "dist": {str(b): all_dist.get(b, 0) for b in range(0, CAP + 2)}}
     out["reach_versions"] = {
-        "buckets": list(range(0, CAP + 2)),  # 0..21 (21 = 21+)
+        "buckets": list(range(0, CAP + 2)),
         "cap": CAP,
-        "versions": [{"version": v, "users": vtot[v],
+        # "전체"를 맨 앞에 → 버전별과 나란히 비교. (합산은 keep 무관 전 버전 포함)
+        "versions": [total_entry] + [{"version": v, "users": vtot[v],
                       "dist": {str(b): vdist[v].get(b, 0) for b in range(0, CAP + 2)}} for v in keep],
     }
 
