@@ -295,20 +295,16 @@
       `완성도 %별 진입 후 경과일(중앙값). 최고 ${last.pct}% · ${last.median_days}일 · 캘린더라 대기·수면 포함`));
   }
 
-  const MATURE_D = 7;  // 이 나이(일) 미만 코호트 = 미성숙(전환율 착시)
   const vshort = v => String(v).replace(/^1\.0\s*\(v?/i, 'v').replace(/\)$/, '');
 
-  // ── 버전 비교: 산점도 + A/B 비교 + 표 ─────────────────────
+  // ── 버전 비교: A/B 비교 + 표 ─────────────────────
   function renderVersions(d) {
     const rows = (d.by_version || []).filter(r => r.conv_retire_to_rebirth != null);
     const viz = $('#ig-versions-viz');
     if (!rows.length) { if (viz) viz.innerHTML = '<p class="card-sub">버전 데이터 없음</p>'; renderVersionTable([]); return; }
 
-    // ① 산점도(전환% vs 나이)
-    let html = '<div class="vscatter-wrap"><div class="vhint">전환% vs 코호트나이 — 우상향이 자연(나이↑=전환↑). <b>추세 위로 튄 점 = 진짜 개선</b></div>' +
-      scatterConvAge(rows) + '</div>';
-
-    // ② A/B 선택 비교
+    // A/B 선택 비교
+    let html = '';
     const opt = (sel) => rows.map((r, i) =>
       `<option value="${i}"${i === sel ? ' selected' : ''}>${esc(vshort(r.version))} · ${r.cohort_age_days}일</option>`).join('');
     const bIdx = rows.length > 1 ? 1 : 0;
@@ -346,29 +342,6 @@
         }).join('') + '</tr>';
     });
     host.innerHTML = h + '</tbody>';
-  }
-
-  // 산점도(SVG): x=나이, y=은퇴→환생%. 미성숙=주황, 성숙=파랑.
-  function scatterConvAge(rows) {
-    const w = 640, h = 210, pad = 34;
-    const ages = rows.map(r => r.cohort_age_days || 0), cs = rows.map(r => r.conv_retire_to_rebirth);
-    const axmax = Math.max(...ages, 1), cymax = Math.max(...cs, 1) * 1.15;
-    const X = a => pad + (a / axmax) * (w - pad * 2);
-    const Y = c => h - pad - (c / cymax) * (h - pad * 2);
-    let dots = '';
-    rows.forEach(r => {
-      const young = (r.cohort_age_days || 0) < MATURE_D;
-      const col = young ? '#e0a020' : '#4b74e2';
-      dots += `<circle cx="${X(r.cohort_age_days).toFixed(1)}" cy="${Y(r.conv_retire_to_rebirth).toFixed(1)}" r="5" fill="${col}" fill-opacity=".85"/>` +
-        `<text x="${X(r.cohort_age_days).toFixed(1)}" y="${(Y(r.conv_retire_to_rebirth) - 9).toFixed(1)}" class="lc-ax" text-anchor="middle">${esc(vshort(r.version))}</text>`;
-    });
-    return `<svg class="lc vscatter" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img">` +
-      `<line x1="${pad}" y1="${h - pad}" x2="${w - pad}" y2="${h - pad}" stroke="var(--axis)" stroke-width="1"/>` +
-      `<line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h - pad}" stroke="var(--axis)" stroke-width="1"/>` +
-      dots +
-      `<text x="${w - pad}" y="${h - pad + 16}" class="lc-ax" text-anchor="end">나이 ${axmax}일 →</text>` +
-      `<text x="${pad}" y="${pad - 8}" class="lc-ax">↑ 은퇴→환생 ${Math.round(cymax)}%</text>` +
-      `</svg>`;
   }
 
   // A vs B head-to-head
