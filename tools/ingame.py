@@ -308,15 +308,16 @@ def main() -> None:
     # "전체" = 전 버전(업데이트한 사람 포함) 합산 온보딩 퍼널. 맨 앞에 → 체크박스로 선택 가능하고
     # reach '전체' 컬럼도 이 버전키로 필터를 통과한다. (버전별과 나란히 '통합 한 장' 보기)
     if ver_onb:
+        # ⚠ s_new_game은 ORDER(new_game 단계)에 이미 포함 → 여기서 따로 더하면 분모 이중합산(=%가 반토막)됨.
+        # ORDER 루프로만 합산한다.
         totx: dict = {}
         for x in ver_onb:
-            totx["s_new_game"] = totx.get("s_new_game", 0) + int(x["s_new_game"] or 0)
             for _k, _l, col in ORDER:
                 totx[col] = totx.get(col, 0) + int(x[col] or 0)
         ng_all = totx.get("s_new_game", 0) or 1
         out["onb_versions"].insert(0, {
             "version": "통합", "users": sum(int(x["users"]) for x in ver_onb),
-            "new_game": totx["s_new_game"], "steps": steps_from(totx, ng_all),
+            "new_game": totx.get("s_new_game", 0), "steps": steps_from(totx, ng_all),
         })
 
     # ── (전체기간) 버전별 '최대 추월%' 도달 분포 ──────────────────────────
