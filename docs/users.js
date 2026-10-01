@@ -14,6 +14,12 @@
   let idx = null, stages = [], spineN = 0, dayAt = 0, tbody = null, shown = 0;
   let loaded = false, busy = false;
 
+  /* 끝까지 내리면 알아서 다음 날짜를 붙인다. 다만 무한정 자동으로 쌓지는 않는다 —
+     한 줄이 DOM 노드 31개라 1.5만 명을 다 붙이면 50만 개가 되고 브라우저가 멈춘다.
+     이만큼까지만 자동이고, 그 뒤로는 버튼을 눌러야 더 간다(누르면 그만큼 다시 열린다). */
+  const AUTO_STEP = 3000;
+  let autoUntil = AUTO_STEP;
+
   const prev = window.__viewShown;
   window.__viewShown = view => {
     if (typeof prev === 'function') prev(view);
@@ -46,7 +52,17 @@
     });
     tbody = t.createTBody();
 
-    $('#us-more').addEventListener('click', loadNext);
+    const btn = $('#us-more');
+    btn.addEventListener('click', () => { autoUntil = shown + AUTO_STEP; loadNext(); });
+
+    // 버튼 자체를 감시 대상으로 쓴다 — 목록 끝에 늘 붙어 있어서 따로 표식을 둘 필요가 없다.
+    // rootMargin 으로 화면에 닿기 300px 전에 미리 당긴다(스크롤이 끊기지 않게).
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(es => {
+        if (es.some(e => e.isIntersecting) && shown < autoUntil) loadNext();
+      }, { rootMargin: '300px' }).observe(btn);
+    }
+
     await loadNext();
   }
 
@@ -78,9 +94,12 @@
     btn.disabled = false;
     if (dayAt >= idx.days.length) {
       btn.hidden = true;
+      $('#us-shown').textContent += ' · 전부 불러왔습니다';
     } else {
       const next = idx.days[dayAt];
-      btn.textContent = `더 보기 — ${next.date} (${num(next.n)}명)`;
+      btn.textContent = shown < autoUntil
+        ? `더 보기 — ${next.date} (${num(next.n)}명)`
+        : `더 보기 — ${next.date} (${num(next.n)}명) · 자동 로딩은 ${num(AUTO_STEP)}줄마다 멈춥니다`;
     }
   }
 
