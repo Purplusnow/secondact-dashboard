@@ -1,242 +1,599 @@
 {
- "updated": "2026-10-01 17:01 KST",
+ "updated": "2026-10-01 17:16 KST",
+ "stage_labels": [
+  {
+   "key": "new_game",
+   "label": "새게임"
+  },
+  {
+   "key": "intro_done",
+   "label": "인트로"
+  },
+  {
+   "key": "dev_concept",
+   "label": "기획"
+  },
+  {
+   "key": "dev_design",
+   "label": "디자인"
+  },
+  {
+   "key": "dev_prototype",
+   "label": "프로토"
+  },
+  {
+   "key": "dev_alpha",
+   "label": "알파"
+  },
+  {
+   "key": "dev_beta",
+   "label": "베타"
+  },
+  {
+   "key": "dev_launch",
+   "label": "출시"
+  },
+  {
+   "key": "first_ops",
+   "label": "첫운영"
+  },
+  {
+   "key": "property_1",
+   "label": "부동산1"
+  },
+  {
+   "key": "property_2",
+   "label": "부동산2"
+  },
+  {
+   "key": "property_3",
+   "label": "부동산3"
+  },
+  {
+   "key": "property_4",
+   "label": "부동산4"
+  },
+  {
+   "key": "property_5",
+   "label": "부동산5"
+  },
+  {
+   "key": "game_sale",
+   "label": "은퇴"
+  },
+  {
+   "key": "first_manager",
+   "label": "첫매니저"
+  },
+  {
+   "key": "first_donate",
+   "label": "첫후원"
+  },
+  {
+   "key": "class2",
+   "label": "신분2"
+  },
+  {
+   "key": "class3",
+   "label": "신분3"
+  },
+  {
+   "key": "class4",
+   "label": "신분4"
+  },
+  {
+   "key": "class5",
+   "label": "신분5"
+  },
+  {
+   "key": "class6",
+   "label": "신분6"
+  },
+  {
+   "key": "class7",
+   "label": "신분7"
+  },
+  {
+   "key": "first_settle",
+   "label": "첫정산"
+  },
+  {
+   "key": "first_finance",
+   "label": "첫금융"
+  },
+  {
+   "key": "first_rebirth",
+   "label": "첫환생"
+  }
+ ],
  "tables": [
   {
    "d": "20261001",
-   "users": 104,
-   "events": 1362
+   "users": 178,
+   "events": 3201
   }
  ],
  "summary": {
-  "users": 104,
-  "events": 1362,
-  "new_users": 5,
+  "users": 178,
+  "new_users": 8,
   "purchases": 0,
   "exceptions": 0,
-  "first_at": "2026-10-01 07:40",
-  "last_at": "2026-10-01 17:02"
+  "first_at": "2026-10-01 00:14",
+  "last_at": "2026-10-01 17:16"
  },
- "hourly": [
+ "users": [
   {
-   "h": "10-01 07",
-   "users": 1,
-   "events": 10
+   "uid": "5fe54f",
+   "joined": "17:07",
+   "last_seen": "17:08",
+   "mins": 0,
+   "events": 16,
+   "ver": "1.0 (v823)",
+   "country": "India",
+   "reached": [
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "far": 1,
+   "far_label": "인트로"
   },
   {
-   "h": "10-01 10",
-   "users": 2,
-   "events": 7
+   "uid": "b1b064",
+   "joined": "17:05",
+   "last_seen": "17:06",
+   "mins": 0,
+   "events": 11,
+   "ver": "1.0 (v823)",
+   "country": "India",
+   "reached": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "far": 0,
+   "far_label": "새게임"
   },
   {
-   "h": "10-01 12",
-   "users": 1,
-   "events": 24
+   "uid": "020a78",
+   "joined": "17:03",
+   "last_seen": "17:07",
+   "mins": 4,
+   "events": 20,
+   "ver": "1.0 (v823)",
+   "country": "Indonesia",
+   "reached": [
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "far": 23,
+   "far_label": "첫정산"
   },
   {
-   "h": "10-01 13",
-   "users": 2,
-   "events": 31
+   "uid": "001c2b",
+   "joined": "16:59",
+   "last_seen": "16:59",
+   "mins": 0,
+   "events": 6,
+   "ver": "1.0 (v823)",
+   "country": "Indonesia",
+   "reached": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "far": 0,
+   "far_label": "새게임"
   },
   {
-   "h": "10-01 14",
-   "users": 2,
-   "events": 45
+   "uid": "b2ecf1",
+   "joined": "16:52",
+   "last_seen": "16:52",
+   "mins": 0,
+   "events": 16,
+   "ver": "1.0 (v823)",
+   "country": "Vietnam",
+   "reached": [
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "far": 1,
+   "far_label": "인트로"
   },
   {
-   "h": "10-01 15",
-   "users": 18,
-   "events": 160
+   "uid": "80cf6b",
+   "joined": "16:51",
+   "last_seen": "16:56",
+   "mins": 4,
+   "events": 42,
+   "ver": "1.0 (v823)",
+   "country": "France",
+   "reached": [
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "far": 23,
+   "far_label": "첫정산"
   },
   {
-   "h": "10-01 16",
-   "users": 86,
-   "events": 1030
+   "uid": "487621",
+   "joined": "16:46",
+   "last_seen": "16:50",
+   "mins": 3,
+   "events": 28,
+   "ver": "1.0 (v823)",
+   "country": "Türkiye",
+   "reached": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "far": 23,
+   "far_label": "첫정산"
   },
   {
-   "h": "10-01 17",
-   "users": 8,
-   "events": 55
+   "uid": "be4cec",
+   "joined": "16:44",
+   "last_seen": "16:45",
+   "mins": 0,
+   "events": 8,
+   "ver": "1.0 (v823)",
+   "country": "Malaysia",
+   "reached": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "far": 1,
+   "far_label": "인트로"
   }
  ],
- "events": [
+ "funnel": [
   {
-   "name": "screen_view",
-   "n": 708,
-   "users": 99
-  },
-  {
-   "name": "onb_step",
-   "n": 240,
-   "users": 63
-  },
-  {
-   "name": "user_engagement",
-   "n": 106,
-   "users": 70
-  },
-  {
-   "name": "mon_offline_claim",
-   "n": 85,
-   "users": 64
-  },
-  {
-   "name": "session_start",
-   "n": 66,
-   "users": 62
-  },
-  {
-   "name": "progress_pct",
-   "n": 27,
-   "users": 17
-  },
-  {
-   "name": "codex_open",
-   "n": 22,
-   "users": 16
-  },
-  {
-   "name": "roadmap_goal",
-   "n": 21,
-   "users": 6
-  },
-  {
-   "name": "rebirth_screen_view",
-   "n": 17,
-   "users": 14
-  },
-  {
-   "name": "ad_impression",
-   "n": 13,
-   "users": 13
-  },
-  {
-   "name": "ad_reward",
-   "n": 13,
-   "users": 13
-  },
-  {
-   "name": "prog_rebirth",
-   "n": 11,
-   "users": 11
-  },
-  {
-   "name": "class_up",
-   "n": 9,
-   "users": 7
-  },
-  {
-   "name": "spend_virtual_currency",
+   "key": "new_game",
+   "label": "새게임",
    "n": 5,
-   "users": 5
+   "pct": 62.5
   },
   {
-   "name": "first_open",
+   "key": "intro_done",
+   "label": "인트로",
    "n": 5,
-   "users": 5
+   "pct": 62.5
   },
   {
-   "name": "progress_deci",
-   "n": 5,
-   "users": 3
-  },
-  {
-   "name": "firebase_campaign",
-   "n": 4,
-   "users": 4
-  },
-  {
-   "name": "rebirth_available",
-   "n": 3,
-   "users": 3
-  },
-  {
-   "name": "purchase_failed",
+   "key": "dev_concept",
+   "label": "기획",
    "n": 2,
-   "users": 1
+   "pct": 25.0
+  },
+  {
+   "key": "dev_design",
+   "label": "디자인",
+   "n": 3,
+   "pct": 37.5
+  },
+  {
+   "key": "dev_prototype",
+   "label": "프로토",
+   "n": 3,
+   "pct": 37.5
+  },
+  {
+   "key": "dev_alpha",
+   "label": "알파",
+   "n": 2,
+   "pct": 25.0
+  },
+  {
+   "key": "dev_beta",
+   "label": "베타",
+   "n": 3,
+   "pct": 37.5
+  },
+  {
+   "key": "dev_launch",
+   "label": "출시",
+   "n": 2,
+   "pct": 25.0
+  },
+  {
+   "key": "first_ops",
+   "label": "첫운영",
+   "n": 1,
+   "pct": 12.5
+  },
+  {
+   "key": "property_1",
+   "label": "부동산1",
+   "n": 1,
+   "pct": 12.5
+  },
+  {
+   "key": "property_2",
+   "label": "부동산2",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "property_3",
+   "label": "부동산3",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "property_4",
+   "label": "부동산4",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "property_5",
+   "label": "부동산5",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "game_sale",
+   "label": "은퇴",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "first_manager",
+   "label": "첫매니저",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "first_donate",
+   "label": "첫후원",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "class2",
+   "label": "신분2",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "class3",
+   "label": "신분3",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "class4",
+   "label": "신분4",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "class5",
+   "label": "신분5",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "class6",
+   "label": "신분6",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "class7",
+   "label": "신분7",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "first_settle",
+   "label": "첫정산",
+   "n": 3,
+   "pct": 37.5
+  },
+  {
+   "key": "first_finance",
+   "label": "첫금융",
+   "n": 0,
+   "pct": 0.0
+  },
+  {
+   "key": "first_rebirth",
+   "label": "첫환생",
+   "n": 0,
+   "pct": 0.0
   }
  ],
- "versions": [
-  {
-   "v": "1.0 (v823)",
-   "users": 89,
-   "events": 1208
-  },
-  {
-   "v": "1.0 (v769)",
-   "users": 5,
-   "events": 69
-  },
-  {
-   "v": "1.0 (v819)",
-   "users": 5,
-   "events": 58
-  },
-  {
-   "v": "1.0 (v818)",
-   "users": 3,
-   "events": 21
-  },
-  {
-   "v": "1.0 (v928)",
-   "users": 1,
-   "events": 1
-  },
-  {
-   "v": "1.0 (v749)",
-   "users": 1,
-   "events": 5
-  }
- ],
- "countries": [
-  {
-   "c": "India",
-   "users": 18
-  },
-  {
-   "c": "Vietnam",
-   "users": 14
-  },
-  {
-   "c": "Türkiye",
-   "users": 9
-  },
-  {
-   "c": "Indonesia",
-   "users": 9
-  },
-  {
-   "c": "France",
-   "users": 9
-  },
-  {
-   "c": "Taiwan",
-   "users": 6
-  },
-  {
-   "c": "Germany",
-   "users": 5
-  },
-  {
-   "c": "Italy",
-   "users": 4
-  },
-  {
-   "c": "Thailand",
-   "users": 4
-  },
-  {
-   "c": "South Korea",
-   "users": 3
-  },
-  {
-   "c": "Brazil",
-   "users": 3
-  },
-  {
-   "c": "Spain",
-   "users": 3
-  }
- ],
+ "cohort_n": 8,
  "scan_mb": 0.0,
- "scan_note": "이번 실행 스캔 0.0MB. 매시간(24회/일)이면 월 0.0GB — 무료 구간은 월 1,024GB."
+ "scan_note": "이번 실행 스캔 0.0MB. 매시간(24회/일)이면 월 0.00GB — 무료 구간은 월 1,024GB."
 }
