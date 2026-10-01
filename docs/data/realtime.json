@@ -1,0 +1,242 @@
+{
+ "updated": "2026-10-01 17:01 KST",
+ "tables": [
+  {
+   "d": "20261001",
+   "users": 104,
+   "events": 1362
+  }
+ ],
+ "summary": {
+  "users": 104,
+  "events": 1362,
+  "new_users": 5,
+  "purchases": 0,
+  "exceptions": 0,
+  "first_at": "2026-10-01 07:40",
+  "last_at": "2026-10-01 17:02"
+ },
+ "hourly": [
+  {
+   "h": "10-01 07",
+   "users": 1,
+   "events": 10
+  },
+  {
+   "h": "10-01 10",
+   "users": 2,
+   "events": 7
+  },
+  {
+   "h": "10-01 12",
+   "users": 1,
+   "events": 24
+  },
+  {
+   "h": "10-01 13",
+   "users": 2,
+   "events": 31
+  },
+  {
+   "h": "10-01 14",
+   "users": 2,
+   "events": 45
+  },
+  {
+   "h": "10-01 15",
+   "users": 18,
+   "events": 160
+  },
+  {
+   "h": "10-01 16",
+   "users": 86,
+   "events": 1030
+  },
+  {
+   "h": "10-01 17",
+   "users": 8,
+   "events": 55
+  }
+ ],
+ "events": [
+  {
+   "name": "screen_view",
+   "n": 708,
+   "users": 99
+  },
+  {
+   "name": "onb_step",
+   "n": 240,
+   "users": 63
+  },
+  {
+   "name": "user_engagement",
+   "n": 106,
+   "users": 70
+  },
+  {
+   "name": "mon_offline_claim",
+   "n": 85,
+   "users": 64
+  },
+  {
+   "name": "session_start",
+   "n": 66,
+   "users": 62
+  },
+  {
+   "name": "progress_pct",
+   "n": 27,
+   "users": 17
+  },
+  {
+   "name": "codex_open",
+   "n": 22,
+   "users": 16
+  },
+  {
+   "name": "roadmap_goal",
+   "n": 21,
+   "users": 6
+  },
+  {
+   "name": "rebirth_screen_view",
+   "n": 17,
+   "users": 14
+  },
+  {
+   "name": "ad_impression",
+   "n": 13,
+   "users": 13
+  },
+  {
+   "name": "ad_reward",
+   "n": 13,
+   "users": 13
+  },
+  {
+   "name": "prog_rebirth",
+   "n": 11,
+   "users": 11
+  },
+  {
+   "name": "class_up",
+   "n": 9,
+   "users": 7
+  },
+  {
+   "name": "spend_virtual_currency",
+   "n": 5,
+   "users": 5
+  },
+  {
+   "name": "first_open",
+   "n": 5,
+   "users": 5
+  },
+  {
+   "name": "progress_deci",
+   "n": 5,
+   "users": 3
+  },
+  {
+   "name": "firebase_campaign",
+   "n": 4,
+   "users": 4
+  },
+  {
+   "name": "rebirth_available",
+   "n": 3,
+   "users": 3
+  },
+  {
+   "name": "purchase_failed",
+   "n": 2,
+   "users": 1
+  }
+ ],
+ "versions": [
+  {
+   "v": "1.0 (v823)",
+   "users": 89,
+   "events": 1208
+  },
+  {
+   "v": "1.0 (v769)",
+   "users": 5,
+   "events": 69
+  },
+  {
+   "v": "1.0 (v819)",
+   "users": 5,
+   "events": 58
+  },
+  {
+   "v": "1.0 (v818)",
+   "users": 3,
+   "events": 21
+  },
+  {
+   "v": "1.0 (v928)",
+   "users": 1,
+   "events": 1
+  },
+  {
+   "v": "1.0 (v749)",
+   "users": 1,
+   "events": 5
+  }
+ ],
+ "countries": [
+  {
+   "c": "India",
+   "users": 18
+  },
+  {
+   "c": "Vietnam",
+   "users": 14
+  },
+  {
+   "c": "Türkiye",
+   "users": 9
+  },
+  {
+   "c": "Indonesia",
+   "users": 9
+  },
+  {
+   "c": "France",
+   "users": 9
+  },
+  {
+   "c": "Taiwan",
+   "users": 6
+  },
+  {
+   "c": "Germany",
+   "users": 5
+  },
+  {
+   "c": "Italy",
+   "users": 4
+  },
+  {
+   "c": "Thailand",
+   "users": 4
+  },
+  {
+   "c": "South Korea",
+   "users": 3
+  },
+  {
+   "c": "Brazil",
+   "users": 3
+  },
+  {
+   "c": "Spain",
+   "users": 3
+  }
+ ],
+ "scan_mb": 0.0,
+ "scan_note": "이번 실행 스캔 0.0MB. 매시간(24회/일)이면 월 0.0GB — 무료 구간은 월 1,024GB."
+}
