@@ -483,3 +483,9 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .pg i { display: block; height: 100%; background: #2a78d6; border-radius: 2px; }
 .pg-val { margin-left: 7px; font-variant-numeric: tabular-nums; }
 .pg-val.dim { color: var(--ink-3); }
+
+/* 추월% 50%+ — 로그 눈금이라 길이만으로는 경계가 안 읽힌다. 색이 그 선을 대신한다.
+   --good(짙은 녹색)을 쓴다. 옆 진행 스트립의 '독립 단계' 녹색(#1baf7a)과는 톤이 달라
+   나란히 놓여도 서로 다른 뜻으로 읽힌다. */
+.pg-cell.is-hi .pg i { background: var(--good); }
+.pg-cell.is-hi .pg-val { color: var(--good); font-weight: 600; }

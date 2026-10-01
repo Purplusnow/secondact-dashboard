@@ -29,9 +29,12 @@ window.UserRow = (() => {
      선형으로 그리면 거의 모든 막대가 보이지 않는 선이 된다.
        0.1% → 왼쪽 끝 · 1% → 1/3 · 10% → 2/3 · 100% → 오른쪽 끝
      세로로 쌓였을 때 자릿수가 바뀌는 지점이 일정한 간격으로 보이는 게 스캔에 유리하다. */
+  const HI = 50;   // 여기를 넘으면 색이 바뀐다 — 로그 눈금이라 길이만으로는 경계가 안 읽힌다
+
   function progCell(td, v) {
     const p = +v || 0;
-    td.className = 'pg-cell';
+    const hi = p >= HI;
+    td.className = 'pg-cell' + (hi ? ' is-hi' : '');
     const track = document.createElement('span');
     track.className = 'pg';
     if (p > 0) {
@@ -44,7 +47,8 @@ window.UserRow = (() => {
     txt.className = 'pg-val' + (p ? '' : ' dim');
     txt.textContent = progText(p);
     td.append(track, txt);
-    td.title = '추월% — 막대는 로그 눈금입니다(0.1 · 1 · 10 · 100%가 고른 간격).';
+    td.title = `추월% — 막대는 로그 눈금입니다(0.1 · 1 · 10 · 100%가 고른 간격).`
+      + `\n${HI}% 이상은 녹색입니다.`;
     return td;
   }
 
