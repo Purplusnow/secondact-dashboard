@@ -265,16 +265,17 @@
 <main class="wrap" id="view-users" hidden>
 
   <p class="rt-warn">
-    <b>출시 이후 가입자 전부</b>를 실시간 뷰와 같은 모양으로 한 명씩 보여줍니다.
-    하루 단위 <b>확정 데이터</b>라 하루에 한 번 갱신되고, <b>오늘 몫은 없습니다</b> — 오늘은 실시간 뷰가 맡습니다.
-    각 줄은 <b>가입 당일</b>에 어디까지 갔는지입니다. 다음 날 이어서 논 몫은 안 들어갑니다.
+    <b>출시 이후 가입자 전부</b>를 한 명씩 보여줍니다. 각 줄의 값은 <b>지금까지의 누적</b>입니다 —
+    추월%는 그 사람이 지금껏 도달한 최고치이고, 체류·접속일도 전 기간 합계입니다.
+    목록이 가입일로 묶여 있을 뿐 가입 당일 기록이 아닙니다.
+    <b>확정 데이터</b>라 하루에 한 번 갱신되고 <b>오늘 몫은 아직 없습니다</b> — 오늘은 실시간 뷰가 맡습니다.
   </p>
 
   <p class="rt-meta" id="us-meta"></p>
 
   <section class="card">
     <div class="card-head"><h2>가입자</h2>
-      <p class="card-sub">최근 날짜부터. 칸에 올리면 단계 이름이 나옵니다. 진한 파랑은 기록이 남은 칸,
+      <p class="card-sub">최근 가입일부터. 칸에 올리면 단계 이름이 나옵니다. 진한 파랑은 기록이 남은 칸,
         <b>옅은 파랑</b>은 뒤 단계로 보아 지나갔다고 본 칸, 끝에 떨어진 <b>녹색</b>은 독립 단계입니다.</p>
       <p class="card-sub" id="us-shown"></p></div>
     <div class="table-scroll"><table class="ledger rt-users" id="us-users"></table></div>
@@ -291,6 +292,6 @@
 <script src="ingame.js?v=1e2db85a"></script>
 <script src="userrow.js?v=abc7336f"></script>
 <script src="realtime.js?v=e9446932"></script>
-<script src="users.js?v=e6dd4bf6"></script>
+<script src="users.js?v=6a2bb740"></script>
 </body>
 </html>
