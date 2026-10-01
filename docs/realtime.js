@@ -129,6 +129,15 @@
     }
   }
 
+  /* 분 단위 시간. 10분 밑에서는 소수 한 자리를 남긴다 — 초반 유저는 대부분 1분 미만이라
+     정수로 끊으면 "30초 하고 나감"과 "아예 안 함"이 똑같이 0분이 된다. */
+  function dur(m) {
+    const v = +m || 0;
+    if (v >= 60) return `${Math.floor(v / 60)}시간 ${Math.round(v % 60)}분`;
+    if (v >= 10) return `${Math.round(v)}분`;
+    return `${v.toFixed(1)}분`;
+  }
+
   function tiles(rows) {
     const host = $('#rt-tiles');
     host.textContent = '';
@@ -203,7 +212,7 @@
 
     const hr = t.createTHead().insertRow();
     // 도달 단계·버전은 뺐다 — 도달 지점은 진행 막대가 이미 말하고, 버전은 지금 한 종류뿐이다.
-    ['유저', '가입', '마지막', '머문시간', '진행', '국가'].forEach((h, i) => {
+    ['유저', '가입', '마지막', '체류', '진행', '국가'].forEach((h, i) => {
       const th = document.createElement('th');
       if (i === 1) th.className = 'date';
       th.textContent = h;
@@ -250,7 +259,12 @@
       c(u.tag || '—', 'uid');
       c(u.joined, 'date');
       c(u.last_seen);
-      c(u.mins >= 60 ? `${Math.floor(u.mins / 60)}시간 ${u.mins % 60}분` : `${u.mins}분`);
+      // 체류 = engagement_time_msec 합(화면을 보고 있던 시간).
+      // 첫~마지막 간격은 앱을 꺼도 흐르므로 체류가 아니다 — 참고로 툴팁에만 남긴다.
+      const stay = c(dur(u.mins));
+      stay.title = `첫~마지막 ${dur(u.span)}`
+        + (u.sessions > 1 ? ` · 세션 ${u.sessions}회(다시 들어옴)` : '')
+        + `\n체류는 화면을 보고 있던 시간입니다 — 앱을 꺼 둔 동안은 빠집니다.`;
 
       const strip = tr.insertCell();
       strip.className = 'rt-strip';
