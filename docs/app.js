@@ -27,12 +27,6 @@ const won = n => Math.round(n).toLocaleString('ko-KR') + '원';
 const num = n => Math.round(n).toLocaleString('ko-KR');
 const trim = v => (v >= 100 ? Math.round(v) : v.toFixed(1).replace(/\.0$/, '')).toString();
 
-/* 환율 전용 — VND(0.052원)처럼 1 미만인 통화가 있어 유효숫자로 끊는다 */
-const rateStr = v =>
-  v >= 100 ? Math.round(v).toLocaleString('ko-KR')
-  : v >= 1 ? v.toFixed(2).replace(/\.?0+$/, '')
-  : v.toPrecision(3).replace(/0+$/, '').replace(/\.$/, '');
-
 function short(n) {
   const s = n < 0 ? '-' : '';
   const a = Math.abs(n);
@@ -251,7 +245,9 @@ function derive(raw) {
         const g = (+amt) * rate;
         gross += g;
         taxed += g / (1 + taxOf(c));      /* 표시가에 포함된 부가세를 먼저 뺀다 */
-        bd.push({ cur: c, amt: +amt, rate, src, on });
+        /* 건마다 '이 결제가 결국 얼마가 됐나'를 들고 다닌다 — 원장 툴팁이 건별 최종수입만
+           보여주므로(환율·세율은 안 보여준다) 합이 칸 금액과 맞으려면 여기서 쪼개 둬야 한다 */
+        bd.push({ cur: c, amt: +amt, rate, src, on, krw: g, afterTax: g / (1 + taxOf(c)) });
       }
       const feeOn = feeKeys.has(s.key) && gross > 0;
       const krw = feeOn ? taxed * (1 - store_fee) : gross;
@@ -626,30 +622,17 @@ function showTip(tip, host, px, rowsHtml, dateText, opts = {}) {
 }
 const hideTip = tip => tip.classList.remove('is-on');
 
-/* 결제 원통화 → 원화 → 수수료까지, 표시 금액이 어떻게 나왔는지 다 보여준다.
-   원장 칸에만 쓴다 — 차트 툴팁은 환산된 원화 금액만 보여준다.
-
-   건당 줄을 바꾼다. 한 줄로 이으면 통화가 서너 개만 돼도 어디서 끊어 읽어야 할지
-   알 수 없다(브라우저 기본 툴팁은 제 맘대로 접는다). 합계·수수료도 각자 줄을 준다. */
+/* 원장 칸의 내역 — 결제 건마다 한 줄, '원통화 금액 → 손에 쥔 원화'만 적는다.
+   환율·세율·수수료율은 뺐다. 매번 같은 값이라 읽을 게 없고, 네 줄짜리 툴팁을
+   열두 줄로 불려 정작 궁금한 '이 건이 얼마였나'를 가렸다. 환산 규칙은 페이지 하단에 있다.
+   줄 합은 칸 금액과 맞는다(수수료 체크 상태도 그대로 따른다). */
 function fxText(r, key) {
   const b = r.fx[key];
   if (!b) return '';
-
-  const bits = b.parts.map(p => p.cur === 'KRW'
-    ? `KRW ${p.amt.toLocaleString('ko-KR')}`
-    : `${p.cur} ${p.amt.toLocaleString('ko-KR')} × ${rateStr(p.rate)}원` +
-      (p.src === 'fallback' ? ' (고정)' : p.src === 'carry' ? ` (${p.on} 고시)` :
-       p.src === 'unknown' ? ' (환율 없음)' : ''));
-
-  const lines = bits.slice();
-  const converted = b.parts.length > 1 || b.parts[0].cur !== 'KRW';
-  if (converted) lines.push(`= ${won(b.gross)}`);
-  if (b.fee) {
-    const taxShare = b.gross > 0 ? 1 - b.taxed / b.gross : 0;
-    lines.push(`→ 세금 ${pct(taxShare)} · 수수료 ${pct(state.cfg.store_fee)} 떼고 ` +
-               `${won(b.taxed * (1 - state.cfg.store_fee))}`);
-  }
-  return lines.join('\n');
+  const net = p => b.fee ? p.afterTax * (1 - state.cfg.store_fee) : p.krw;
+  return b.parts
+    .map(p => `${p.cur} ${p.amt.toLocaleString('ko-KR')} → ${won(net(p))}`)
+    .join('\n');
 }
 
 /* ── 일별 ────────────────────────────────────────
