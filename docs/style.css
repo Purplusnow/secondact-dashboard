@@ -467,3 +467,7 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 /* 가입자 목록 '더 보기' — 표 아래 가운데. 한 번에 다 그리면 1만 줄에서 브라우저가 멈춘다 */
 .rt-more { display: block; margin: 12px auto 2px; }
 .rt-users td.dim { color: var(--ink-3); }
+
+/* 전체 가입자 — 날짜가 바뀌는 줄에만 윗선을 줘서 하루 묶음이 눈에 보이게 */
+.rt-users tr.us-daytop td { border-top: 1px solid var(--hair); }
+#us-users td.date:first-child { color: var(--ink-3); font-size: 11.5px; }

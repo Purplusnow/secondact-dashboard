@@ -1,0 +1,60 @@
+# 전체 가입자 목록 수집 — BigQuery(GA4 확정 일별 테이블) → docs/data/users/YYYY-MM-DD.json
+#
+# 하루 한 번이면 된다. 확정 테이블만 읽고 '어제까지'만 받는다 — 오늘 몫은 실시간 뷰가 맡는다.
+# 이미 받은 날짜는 index.json 을 보고 건너뛰므로, 늦게 확정된 날만 따라잡는다.
+#
+# 하루치 파일은 한 번 쓰고 다시 안 바뀐다. 한 파일에 다 담으면 매일 2MB를 통째로 다시
+# 커밋하게 돼서 리포가 연 수백 MB씩 불어나는데, 쪼개 두면 히스토리가 쌓이지 않는다.
+name: users
+
+on:
+  schedule:
+    - cron: '30 13 * * *'         # 22:30 KST — ingame 보강 돌고 난 뒤
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: users
+  cancel-in-progress: false
+
+jobs:
+  users:
+    runs-on: ubuntu-latest
+    env:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 의존성
+        if: env.GCP_SA_KEY != ''
+        run: pip install --quiet google-cloud-bigquery
+
+      - name: 서비스계정 키 파일화
+        if: env.GCP_SA_KEY != ''
+        run: |
+          printf '%s' "$GCP_SA_KEY" > "$RUNNER_TEMP/sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+
+      - name: 가입자 수집
+        if: env.GCP_SA_KEY != ''
+        working-directory: tools
+        run: python3 users.py
+
+      - name: 커밋
+        if: env.GCP_SA_KEY != ''
+        run: |
+          git config user.name  "secondact-bot"
+          git config user.email "34591718+Purplusnow@users.noreply.github.com"
+          git add docs/data/users
+          if git diff --cached --quiet -- docs/data/users; then
+            echo "새로 받은 날짜 없음 — 커밋 생략"
+            exit 0
+          fi
+          git commit -m "가입자 수집: $(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') KST"
+          git push

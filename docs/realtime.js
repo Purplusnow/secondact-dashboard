@@ -129,14 +129,7 @@
     }
   }
 
-  /* 분 단위 시간. 10분 밑에서는 소수 한 자리를 남긴다 — 초반 유저는 대부분 1분 미만이라
-     정수로 끊으면 "30초 하고 나감"과 "아예 안 함"이 똑같이 0분이 된다. */
-  function dur(m) {
-    const v = +m || 0;
-    if (v >= 60) return `${Math.floor(v / 60)}시간 ${Math.round(v % 60)}분`;
-    if (v >= 10) return `${Math.round(v)}분`;
-    return `${v.toFixed(1)}분`;
-  }
+  const { dur, progText, fillStrip, spineLen } = window.UserRow;
 
   function tiles(rows) {
     const host = $('#rt-tiles');
@@ -203,10 +196,7 @@
 
   function table(d) {
     const stages = d.stage_labels || [];
-    const labels = stages.map(x => x.label);
-    // 곁가지는 목록 꼬리에 모여 있다 — 첫 곁가지 인덱스가 곧 척추의 길이다
-    const spineN = stages.findIndex(x => x.kind === 'side') < 0
-      ? stages.length : stages.findIndex(x => x.kind === 'side');
+    const spineN = spineLen(stages);
     const t = $('#rt-users');
     t.textContent = '';
 
@@ -266,27 +256,10 @@
         + (u.sessions > 1 ? ` · 세션 ${u.sessions}회(다시 들어옴)` : '')
         + `\n체류는 화면을 보고 있던 시간입니다 — 앱을 꺼 둔 동안은 빠집니다.`;
 
-      // 추월%. 0 은 '진행 없음'이 아니라 '0.1% 미만'이다 — 가장 고운 눈금(deci 1)이 0.1%라
-      // 그 아래는 애초에 못 잰다. 첫날 유저는 거의 다 여기 깔려 있어서 흐리게 둔다.
-      const pv = +u.prog || 0;
-      const pc = c(pv ? (pv < 10 ? pv.toFixed(1) : Math.round(pv)) + '%' : '<0.1%');
-      if (!pv) pc.className = 'dim';
+      const pc = c(progText(u.prog));
+      if (!(+u.prog)) pc.className = 'dim';
 
-      const strip = tr.insertCell();
-      strip.className = 'rt-strip';
-      (u.reached || []).forEach((v, i) => {
-        const side = (stages[i] || {}).kind === 'side';
-        // 척추에서 far 아래인데 기록이 없는 칸 = '안 갔다'가 아니라 '기록이 없다'.
-        // 계측이 현재값만 찍는 칸(부동산N)이거나 intraday 유실이다 — 옅게 채워 구분해 둔다.
-        const implied = !v && !side && i < spineN && i <= u.far;
-        const cell = document.createElement('i');
-        cell.className = (v ? (side ? 'on side' : 'on') : implied ? 'imp' : '');
-        cell.title = `${i + 1}. ${labels[i] || ''} — `
-          + (v ? '도달' : implied ? '도달(기록 없음 — 뒤 단계로 추정)' : '미도달')
-          + (side ? ' · 독립 단계' : '');
-        if (side && (i === 0 || (stages[i - 1] || {}).kind !== 'side')) cell.classList.add('gap');
-        strip.appendChild(cell);
-      });
+      fillStrip(tr.insertCell(), u.reached || [], stages, u.far, spineN);
 
       c(u.country || '—');
     }
