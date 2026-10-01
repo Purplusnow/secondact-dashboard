@@ -22,6 +22,32 @@ window.UserRow = (() => {
     return (p < 10 ? p.toFixed(1) : Math.round(p)) + '%';
   }
 
+  /* 추월% 칸 — 숫자 옆에 막대를 같이 둔다. 숫자만 있으면 빠르게 스크롤하면서
+     '몇 % 넘은 사람'을 골라낼 수가 없다. 길이가 일정한 자리에 있어야 눈이 훑는다.
+
+     눈금은 로그다. 값이 0.1%부터 100%까지 세 자릿수에 걸쳐 있고 그중 대부분이 1% 아래라,
+     선형으로 그리면 거의 모든 막대가 보이지 않는 선이 된다.
+       0.1% → 왼쪽 끝 · 1% → 1/3 · 10% → 2/3 · 100% → 오른쪽 끝
+     세로로 쌓였을 때 자릿수가 바뀌는 지점이 일정한 간격으로 보이는 게 스캔에 유리하다. */
+  function progCell(td, v) {
+    const p = +v || 0;
+    td.className = 'pg-cell';
+    const track = document.createElement('span');
+    track.className = 'pg';
+    if (p > 0) {
+      const fill = document.createElement('i');
+      // 0.1% 도 눈에 걸리도록 최소 폭을 준다 — 0 과 '아주 작음'은 구분돼야 한다
+      fill.style.width = Math.max(5, Math.min(100, (Math.log10(p) + 1) / 3 * 100)) + '%';
+      track.appendChild(fill);
+    }
+    const txt = document.createElement('span');
+    txt.className = 'pg-val' + (p ? '' : ' dim');
+    txt.textContent = progText(p);
+    td.append(track, txt);
+    td.title = '추월% — 막대는 로그 눈금입니다(0.1 · 1 · 10 · 100%가 고른 간격).';
+    return td;
+  }
+
   /* 비트마스크 → 단계별 0/1 배열. 전체 뷰는 한 명이 25칸 배열을 들고 다니면 용량이 커져서
      정수 하나로 접어 보낸다(216바이트 → 130바이트). 실시간 뷰는 배열 그대로 쓴다. */
   const unpack = (mask, n) => Array.from({ length: n }, (_, i) => (mask >> i) & 1);
@@ -51,5 +77,5 @@ window.UserRow = (() => {
     });
   }
 
-  return { dur, progText, unpack, spineLen, fillStrip };
+  return { dur, progText, progCell, unpack, spineLen, fillStrip };
 })();

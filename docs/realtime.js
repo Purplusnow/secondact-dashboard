@@ -129,7 +129,7 @@
     }
   }
 
-  const { dur, progText, fillStrip, spineLen } = window.UserRow;
+  const { dur, progCell, fillStrip, spineLen } = window.UserRow;
 
   function tiles(rows) {
     const host = $('#rt-tiles');
@@ -256,8 +256,7 @@
         + (u.sessions > 1 ? ` · 세션 ${u.sessions}회(다시 들어옴)` : '')
         + `\n체류는 화면을 보고 있던 시간입니다 — 앱을 꺼 둔 동안은 빠집니다.`;
 
-      const pc = c(progText(u.prog));
-      if (!(+u.prog)) pc.className = 'dim';
+      progCell(tr.insertCell(), u.prog);
 
       fillStrip(tr.insertCell(), u.reached || [], stages, u.far, spineN);
 

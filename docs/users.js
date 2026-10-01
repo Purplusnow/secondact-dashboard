@@ -9,7 +9,7 @@
 (() => {
   const $ = s => document.querySelector(s);
   const num = n => Math.round(n || 0).toLocaleString('ko-KR');
-  const { dur, progText, unpack, spineLen, fillStrip } = window.UserRow;
+  const { dur, progCell, unpack, spineLen, fillStrip } = window.UserRow;
 
   let idx = null, stages = [], spineN = 0, dayAt = 0, tbody = null, shown = 0;
   let loaded = false, busy = false;
@@ -120,8 +120,7 @@
       + (u.n > 1 ? ` · 세션 ${u.n}회(다시 들어옴)` : '')
       + `\n체류는 화면을 보고 있던 시간입니다 — 앱을 꺼 둔 동안은 빠집니다.`;
 
-    const pc = c(progText(u.p));
-    if (!(+u.p)) pc.className = 'dim';
+    progCell(tr.insertCell(), u.p);
 
     fillStrip(tr.insertCell(), unpack(u.r || 0, stages.length), stages, u.f, spineN);
 
