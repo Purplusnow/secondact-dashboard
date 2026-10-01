@@ -82,13 +82,28 @@
       if (side && (i === 0 || rows[i - 1].kind !== 'side')) row.classList.add('side-top');
 
       const lab = document.createElement('span'); lab.className = 'fn-label'; lab.textContent = r.label;
+      // 막대는 기록분과 추론분을 나눠 그린다 — 채운 만큼이 옅게 보여야 숫자를 의심할 수 있다
+      const imp = Math.max(0, r.n - (r.rec != null ? r.rec : r.n));
       const track = document.createElement('span'); track.className = 'fn-track';
       const fill = document.createElement('i');
-      fill.style.width = (n ? 100 * r.n / n : 0) + '%';
+      fill.style.width = (n ? 100 * (r.n - imp) / n : 0) + '%';
       track.appendChild(fill);
+      if (imp) {
+        const ghost = document.createElement('i');
+        ghost.className = 'imp';
+        ghost.style.width = (n ? 100 * imp / n : 0) + '%';
+        track.appendChild(ghost);
+      }
       const val = document.createElement('span');
       val.className = 'fn-val';
       val.textContent = `${r.n}명 · ${r.pct}%`;
+      if (imp) {
+        const g = document.createElement('b');
+        g.className = 'fn-imp';
+        g.textContent = ` (추정 ${imp})`;
+        g.title = `기록이 남은 건 ${r.n - imp}명. ${imp}명은 뒤 단계를 밟은 걸로 보아 채운 값입니다.`;
+        val.appendChild(g);
+      }
       const dr = document.createElement('span');
       dr.className = 'fn-drop' + (drop >= 30 ? ' is-big' : '');
       dr.textContent = prev && drop > 0 ? `-${drop}%` : '';

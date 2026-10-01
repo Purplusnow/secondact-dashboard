@@ -140,7 +140,7 @@ def main() -> None:
       LIMIT {MAX_USERS}
     """)
 
-    users, funnel, stay60 = [], [0] * len(ORDER), 0
+    users, funnel, rec, stay60 = [], [0] * len(ORDER), [0] * len(ORDER), 0
     for r in rows:
         reached = [int(r.get(col) or 0) for _, _, col in ORDER]
         stay60 += 1 if r.get("s_" + EXTRA[0][0]) else 0
@@ -155,8 +155,13 @@ def main() -> None:
         #      개발 6단계는 반대로 while 루프가 넘긴 단계마다 쏘므로 이런 구멍이 안 생긴다.
         #  (2) intraday 후처리 전 유실.
         # 어느 쪽이든 'far 까지는 갔다'는 참이라 채워 세는 게 맞다. 날것은 users[].reached 에 남는다.
+        # ⚠ 채운 건 측정이 아니라 추론이다. 추론분이 몇 명인지 반드시 같이 내보낸다(n - rec) —
+        #   한 칸의 계측이 통째로 죽어도 채우기가 덮어버리면 영영 모르게 되기 때문이다.
         for i in range(len(ORDER)):
-            if reached[i] or (i < len(_SPINE) and i <= far):
+            if reached[i]:
+                funnel[i] += 1
+                rec[i] += 1
+            elif i < len(_SPINE) and i <= far:
                 funnel[i] += 1
         users.append({
             "tag": r["tag"], "joined": r["joined"], "last_seen": r["last_seen"],
@@ -169,7 +174,7 @@ def main() -> None:
     n = len(users)
     out["users"] = users
     out["stay60"] = stay60
-    out["funnel"] = [{"key": k, "label": lab, "n": funnel[i],
+    out["funnel"] = [{"key": k, "label": lab, "n": funnel[i], "rec": rec[i],
                       "pct": round(100 * funnel[i] / n, 1) if n else 0,
                       "kind": "side" if k in SIDE else "spine"}
                      for i, (k, lab, _) in enumerate(ORDER)]
