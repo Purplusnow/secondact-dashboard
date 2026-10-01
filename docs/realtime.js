@@ -214,12 +214,37 @@
     const users = d.users || [];
     if (!users.length) {
       const td = tb.insertRow().insertCell();
-      td.colSpan = 6; td.textContent = '오늘 가입자가 없습니다';
+      td.colSpan = 6; td.textContent = '최근 24시간 안에 가입자가 없습니다';
       return;
     }
 
-    for (const u of users) {
-      const tr = tb.insertRow();
+    /* 줄마다 진행 스트립 25칸이 붙어서 한 줄이 DOM 노드 31개다. 1만 명이면 31만 개가 되고
+       그 정도면 첫 렌더가 몇 초씩 걸리고 스크롤도 끊긴다. 한 번에 다 그리지 않고 끊어 그린다 —
+       어차피 위에서부터 몇십 줄 보는 화면이라 나머지는 필요할 때 붙이면 된다. */
+    const CHUNK = 300;
+    let drawn = 0;
+
+    const more = document.createElement('button');
+    more.type = 'button';
+    more.className = 'tab rt-more';
+
+    const draw = () => {
+      const frag = document.createDocumentFragment();
+      for (const u of users.slice(drawn, drawn + CHUNK)) row(frag, u);
+      tb.appendChild(frag);
+      drawn += CHUNK;
+      if (drawn >= users.length) {
+        more.remove();
+      } else {
+        more.textContent = `더 보기 — ${users.length - drawn}명 남음`;
+        t.after(more);
+      }
+    };
+    more.addEventListener('click', draw);
+
+    function row(into, u) {
+      const tr = document.createElement('tr');
+      into.appendChild(tr);
       const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
       // 줄을 가리키는 꼬리표(해시 6자). 같은 사람은 늘 같은 값이라 새로고침해도 줄을 짚을 수 있다.
       c(u.tag || '—', 'uid');
@@ -245,5 +270,7 @@
 
       c(u.country || '—');
     }
+
+    draw();
   }
 })();

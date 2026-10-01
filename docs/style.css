@@ -463,3 +463,6 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 /* 리워드 광고 표 — 가입자 표처럼 촘촘하게, 지점 이름만 왼쪽 정렬 */
 .rt-ads th, .rt-ads td { padding: 5px 12px; font-size: 12.5px; }
 #rt-ads-tiles { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 14px; }
+
+/* 가입자 목록 '더 보기' — 표 아래 가운데. 한 번에 다 그리면 1만 줄에서 브라우저가 멈춘다 */
+.rt-more { display: block; margin: 12px auto 2px; }

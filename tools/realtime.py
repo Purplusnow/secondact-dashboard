@@ -28,7 +28,8 @@ TABLE = f"`{PROJECT}.{DATASET}.events_*`"
 INTRADAY_ANY = "_TABLE_SUFFIX LIKE 'intraday%'"
 INTRADAY = INTRADAY_ANY   # main() 에서 최신 테이블 하루로 교체한다
 OUT = os.path.join(os.path.dirname(__file__), "..", "docs", "data", "realtime.json")
-MAX_USERS = 1000         # 화면에 줄 세울 최대 인원(최근 가입 순). 쿼리 스캔량과는 무관 — 자르기만 한다.
+# 가입자 목록은 최근 24시간 전부를 담는다(인원 상한 없음). 하루 1만 명이면 JSON 2MB 쯤인데
+# 전송은 gzip 으로 400KB 라 괜찮다 — 문제는 화면 쪽이라 realtime.js 가 나눠 그린다.
 
 # ⚠ 퍼널 정의는 tools/ingame.py 의 STAGES / CLASS_STAGES 와 **같아야 한다**.
 #   두 뷰가 다른 퍼널을 말하면 비교 자체가 불가능해진다. 한쪽을 고치면 반드시 양쪽을 고칠 것.
@@ -150,6 +151,19 @@ def main() -> None:
     out["tables"] = [t for t in out["tables"] if t["d"] == day]
     out["day"] = day
 
+    # 가입자 목록만 '최근 24시간'으로 본다(타일·퍼널·광고는 그대로 오늘 하루).
+    # 새벽에는 '오늘'이 몇 시간뿐이라 목록이 거의 비는데, 목록은 한 명씩 들여다보는 화면이라
+    # 자정에 리셋되면 못 쓴다. 어제치는 테이블이 확정됐으면 events_YYYYMMDD, 아직이면
+    # events_intraday_YYYYMMDD 에 있다 — 날짜마다 하나만 골라야 중복되지 않는다.
+    yday = (datetime.strptime(day, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
+    have = {r["s"] for r in q(f"""
+      SELECT DISTINCT _TABLE_SUFFIX AS s FROM {TABLE}
+      WHERE _TABLE_SUFFIX IN ('{yday}', 'intraday_{yday}')
+    """)}
+    win = [f"intraday_{day}"] + ([yday] if yday in have else
+                                 [f"intraday_{yday}"] if f"intraday_{yday}" in have else [])
+    WINDOW = "_TABLE_SUFFIX IN (" + ", ".join(f"'{x}'" for x in win) + ")"
+
     out["summary"] = q(f"""
       SELECT
         COUNT(DISTINCT user_pseudo_id) AS users,
@@ -172,7 +186,7 @@ def main() -> None:
         f"MAX(IF(event_name='class_up' AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='level')>={lv},1,0)) AS c{lv}"
         for lv, _ in CLASS_STAGES)
 
-    # 오늘 '처음 연' 사람만 — 판정은 first_open 이벤트로 한다.
+    # 최근 24시간에 '처음 연' 사람 — 판정은 first_open 이벤트로 한다.
     # user_first_touch_timestamp 로 바꿔 봤다가 되돌렸다: intraday 는 후처리 전이라 유저 범위
     # 필드가 아직 안 채워져 있고, 실측에서 그 기준이 54명(= 스트리밍에 오늘 처음 잡힌 사람)으로
     # 부풀었다. 같은 시각 first_open 기준은 13명. 54 쪽은 '설치'가 아니라 '스트리밍 첫 등장'이다.
@@ -183,6 +197,7 @@ def main() -> None:
     rows = q(f"""
       SELECT ANY_VALUE(SUBSTR(TO_HEX(MD5(user_pseudo_id)), 1, 6)) AS tag,
         FORMAT_TIMESTAMP('%H:%M', TIMESTAMP_MICROS(MIN(event_timestamp)), 'Asia/Seoul') AS joined,
+        FORMAT_TIMESTAMP('%Y%m%d', TIMESTAMP_MICROS(MIN(event_timestamp)), 'Asia/Seoul') AS joined_day,
         FORMAT_TIMESTAMP('%H:%M', TIMESTAMP_MICROS(MAX(event_timestamp)), 'Asia/Seoul') AS last_seen,
         TIMESTAMP_DIFF(TIMESTAMP_MICROS(MAX(event_timestamp)),
                        TIMESTAMP_MICROS(MIN(event_timestamp)), MINUTE) AS mins,
@@ -191,11 +206,12 @@ def main() -> None:
         ANY_VALUE(geo.country) AS country,
         COUNTIF(event_name='first_open') AS fo,
         {flags}
-      FROM {TABLE} WHERE {INTRADAY}
+      FROM {TABLE}
+      WHERE {WINDOW}
+        AND TIMESTAMP_MICROS(event_timestamp) >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR)
       GROUP BY user_pseudo_id
       HAVING COUNTIF(event_name='first_open') > 0
       ORDER BY MIN(event_timestamp) DESC
-      LIMIT {MAX_USERS}
     """)
 
     users, funnel, rec, stay60 = [], [0] * len(ORDER), [0] * len(ORDER), 0
@@ -222,7 +238,12 @@ def main() -> None:
             elif i < len(_SPINE) and i <= far:
                 funnel[i] += 1
         users.append({
-            "tag": r["tag"], "joined": r["joined"], "last_seen": r["last_seen"],
+            # 창이 자정을 걸치므로 어제 들어온 줄에는 날짜를 붙인다 — 05:55 가 오늘인지 어제인지
+            # 구분이 안 되면 목록 순서가 거꾸로 보인다.
+            "tag": r["tag"],
+            "joined": (r["joined"] if r["joined_day"] == day
+                       else f"{r['joined_day'][4:6]}/{r['joined_day'][6:8]} {r['joined']}"),
+            "last_seen": r["last_seen"],
             "mins": int(r["mins"] or 0), "events": int(r["events"] or 0),
             "ver": r["ver"], "country": r["country"],
             "reached": reached, "far": far,
