@@ -96,8 +96,11 @@ def main() -> None:
         for lv, _ in CLASS_STAGES)
 
     # 오늘 '처음 연' 사람만. first_open 이 intraday 안에 있어야 당일 가입자다.
+    # tag = 가명 ID 를 한 번 더 해시한 6자. 원본 ID 는 BigQuery 밖으로 안 나간다(리포가 공개라서).
+    # 한 사람은 늘 같은 tag 라 새로고침 사이에 "아까 그 줄"을 짚을 수 있고,
+    # 더 캐야 하면 BigQuery 에서 같은 식으로 해시해 맞춰보면 된다.
     rows = q(f"""
-      SELECT user_pseudo_id AS uid,
+      SELECT ANY_VALUE(SUBSTR(TO_HEX(MD5(user_pseudo_id)), 1, 6)) AS tag,
         FORMAT_TIMESTAMP('%H:%M', TIMESTAMP_MICROS(MIN(event_timestamp)), 'Asia/Seoul') AS joined,
         FORMAT_TIMESTAMP('%H:%M', TIMESTAMP_MICROS(MAX(event_timestamp)), 'Asia/Seoul') AS last_seen,
         TIMESTAMP_DIFF(TIMESTAMP_MICROS(MAX(event_timestamp)),
@@ -107,7 +110,7 @@ def main() -> None:
         ANY_VALUE(geo.country) AS country,
         {flags}
       FROM {TABLE} WHERE {INTRADAY}
-      GROUP BY uid
+      GROUP BY user_pseudo_id
       HAVING COUNTIF(event_name='first_open') > 0
       ORDER BY MIN(event_timestamp) DESC
       LIMIT {MAX_USERS}
@@ -122,7 +125,7 @@ def main() -> None:
             if v:
                 funnel[i] += 1
         users.append({
-            "uid": r["uid"][-6:], "joined": r["joined"], "last_seen": r["last_seen"],
+            "tag": r["tag"], "joined": r["joined"], "last_seen": r["last_seen"],
             "mins": int(r["mins"] or 0), "events": int(r["events"] or 0),
             "ver": r["ver"], "country": r["country"],
             "reached": reached, "far": far,

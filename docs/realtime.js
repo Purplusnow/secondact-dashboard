@@ -93,9 +93,9 @@
     t.textContent = '';
 
     const hr = t.createTHead().insertRow();
-    ['가입', '마지막', '머문시간', '도달 단계', '진행', '버전', '국가'].forEach((h, i) => {
+    ['유저', '가입', '마지막', '머문시간', '도달 단계', '진행', '버전', '국가'].forEach((h, i) => {
       const th = document.createElement('th');
-      if (!i) th.className = 'date';
+      if (i === 1) th.className = 'date';
       th.textContent = h;
       hr.appendChild(th);
     });
@@ -104,13 +104,15 @@
     const users = d.users || [];
     if (!users.length) {
       const td = tb.insertRow().insertCell();
-      td.colSpan = 7; td.textContent = '오늘 가입자가 없습니다';
+      td.colSpan = 8; td.textContent = '오늘 가입자가 없습니다';
       return;
     }
 
     for (const u of users) {
       const tr = tb.insertRow();
       const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
+      // 줄을 가리키는 꼬리표(해시 6자). 같은 사람은 늘 같은 값이라 새로고침해도 줄을 짚을 수 있다.
+      c(u.tag || '—', 'uid');
       c(u.joined, 'date');
       c(u.last_seen);
       c(u.mins >= 60 ? `${Math.floor(u.mins / 60)}시간 ${u.mins % 60}분` : `${u.mins}분`);
