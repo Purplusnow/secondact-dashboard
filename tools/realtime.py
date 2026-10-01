@@ -41,6 +41,8 @@ def q(sql: str) -> list[dict]:
     _billed += job.total_bytes_billed or 0
     return rows
 
+# FORMAT_TIMESTAMP(fmt, <여기>) 자리에만 끼우는 조각. 집계함수 안에 넣으면
+# 타임존 인자가 그 함수로 딸려 들어가므로 그 경우엔 풀어 써야 한다.
 KST_TS = "TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul'"
 
 
@@ -66,8 +68,8 @@ def main() -> None:
         COUNT(DISTINCT IF(event_name='first_open', user_pseudo_id, NULL)) AS new_users,
         COUNTIF(event_name='purchase') AS purchases,
         COUNTIF(event_name='app_exception') AS exceptions,
-        FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', MIN({KST_TS})) AS first_at,
-        FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', MAX({KST_TS})) AS last_at
+        FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', MIN(TIMESTAMP_MICROS(event_timestamp)), 'Asia/Seoul') AS first_at,
+        FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', MAX(TIMESTAMP_MICROS(event_timestamp)), 'Asia/Seoul') AS last_at
       FROM {TABLE} WHERE {INTRADAY}
     """)[0]
 
