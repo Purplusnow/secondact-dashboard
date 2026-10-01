@@ -27,13 +27,19 @@ MAX_USERS = 300          # 화면에 줄 세울 최대 인원(최근 가입 순)
 
 # ⚠ 퍼널 정의는 tools/ingame.py 의 STAGES / CLASS_STAGES 와 **같아야 한다**.
 #   두 뷰가 다른 퍼널을 말하면 비교 자체가 불가능해진다. 한쪽을 고치면 반드시 양쪽을 고칠 것.
+# ⚠ 표시 순서는 게임의 step_idx(1~20)와 한 군데가 다르다 — first_settle(idx 18)을 인트로 뒤로 끌어올린다.
+#   근거: SecondActLife2/scripts/autoload/analytics.gd 의 _on_settle() 이 조건 없이 _onb(18) 을 찍는다.
+#   즉 '첫 월정산'은 개발 중 첫 월말이면 누구나 밟는 초반 이벤트이지 후반 게이트가 아니다.
+#   step_idx 자리에 두면 신분2~7(0%) 뒤에 수십 % 막대가 솟아 퍼널이 읽히지 않는다.
+#   출시 이후의 진짜 정산 게이트는 first_ops(idx 9, _launched 조건부)가 따로 맡는다.
 STAGES = [
-    ("new_game", "새게임"), ("intro_done", "인트로"), ("dev_concept", "기획"),
+    ("new_game", "새게임"), ("intro_done", "인트로"), ("first_settle", "첫정산"),
+    ("dev_concept", "기획"),
     ("dev_design", "디자인"), ("dev_prototype", "프로토"), ("dev_alpha", "알파"),
     ("dev_beta", "베타"), ("dev_launch", "출시"), ("first_ops", "첫운영"),
     ("property_1", "부동산1"), ("property_2", "부동산2"), ("property_3", "부동산3"),
     ("property_4", "부동산4"), ("property_5", "부동산5"), ("game_sale", "은퇴"),
-    ("first_manager", "첫매니저"), ("first_donate", "첫후원"), ("first_settle", "첫정산"),
+    ("first_manager", "첫매니저"), ("first_donate", "첫후원"),
     ("first_finance", "첫금융"), ("first_rebirth", "첫환생"),
 ]
 CLASS_STAGES = [(2, "신분2"), (3, "신분3"), (4, "신분4"), (5, "신분5"), (6, "신분6"), (7, "신분7")]
