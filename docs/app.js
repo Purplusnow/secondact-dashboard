@@ -770,7 +770,9 @@ function drawDaily(rows) {
     if (v <= 0) return;
     const t = short(v);
     const half = textW(t) / 2 + 3;
-    const x1 = x(i) - half, x2 = x(i) + half;
+    /* 끝단 클립 방지: 라벨 중심을 차트 안쪽으로 당긴다(막대 중심과 어긋나도 숫자가 보이게). */
+    const cx = Math.max(ML + half, Math.min(w - MR - half, x(i)));
+    const x1 = cx - half, x2 = cx + half;
     const base = dir > 0 ? zeroY - sc(v) - 7 : zeroY + sc(v) + 14;
     const side = dir > 0 ? placed.up : placed.down;
 
@@ -780,10 +782,11 @@ function drawDaily(rows) {
     if (hits(y)) { skipped++; return; }
 
     side.push({ x1, x2, y });
-    svg.appendChild(el('text', { class: 'bar-label', x: x(i), y }, t));
+    svg.appendChild(el('text', { class: 'bar-label', x: cx, y }, t));
   };
 
-  rows.forEach((r, i) => { put(i, caps[i][0], +1); put(i, caps[i][1], -1); });
+  /* 최신(오른쪽)부터 자리 배정 — 겹쳐 생략될 땐 최근 데이터가 우선 보이게. */
+  for (let i = rows.length - 1; i >= 0; i--) { put(i, caps[i][0], +1); put(i, caps[i][1], -1); }
 
   if (skipped) {
     document.getElementById('daily-sub').textContent +=
