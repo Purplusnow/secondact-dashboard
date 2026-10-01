@@ -1,14 +1,13 @@
-/* 실시간(스트리밍) 뷰 — docs/data/realtime.json 만 읽는다.
+/* 실시간 뷰 — docs/data/realtime.json 만 읽는다.
  *
- * 인게임 뷰(완결 일별)와 데이터도 로직도 완전히 분리돼 있다. 두 값을 합치거나 비교하는
- * 코드는 여기에도 저기에도 없어야 한다 — intraday 는 '하루가 덜 찬' 값이라 섞는 순간 거짓이 된다.
+ * 보여주는 것은 하나다: 오늘 처음 앱을 연 사람들이 퍼널 어디까지 갔는가.
+ * 인게임 뷰(완결 일별)와 데이터·로직이 완전히 분리돼 있고, 두 수치를 합치는 코드는 없다.
  */
 (() => {
   const $ = s => document.querySelector(s);
   const num = n => Math.round(n || 0).toLocaleString('ko-KR');
   let loaded = false;
 
-  /* ingame.js 의 show() 가 뷰 전환 때 불러준다 */
   window.__viewShown = view => {
     if (view === 'realtime' && !loaded) { loaded = true; load(); }
   };
@@ -20,7 +19,6 @@
       if (!res.ok) throw new Error(res.status);
       d = await res.json();
     } catch { $('#rt-empty').hidden = false; return; }
-
     if (!d || !(d.tables || []).length) { $('#rt-empty').hidden = false; return; }
 
     const s = d.summary || {};
@@ -29,18 +27,18 @@
       (s.first_at ? `  ·  데이터 범위 ${s.first_at} ~ ${s.last_at} (KST)` : '') +
       (d.scan_mb != null ? `  ·  스캔 ${d.scan_mb}MB` : '');
 
+    const users = d.users || [];
+    const stuck = users.filter(u => u.far <= 1).length;   // 인트로도 못 넘긴 사람
     tiles([
-      ['접속 유저', num(s.users), '스트리밍 켠 뒤 누적'],
-      ['이벤트', num(s.events), ''],
-      ['신규 설치', num(s.new_users), 'first_open'],
-      ['결제', num(s.purchases), 'purchase 이벤트'],
+      ['오늘 가입', num(d.cohort_n), '처음 앱을 연 사람'],
+      ['인트로 전 이탈', num(stuck), d.cohort_n ? `${Math.round(100 * stuck / d.cohort_n)}%` : '', stuck > 0],
+      ['활동 유저', num(s.users), '가입자 포함 전체'],
+      ['결제', num(s.purchases), ''],
       ['예외', num(s.exceptions), 'app_exception', (s.exceptions || 0) > 0],
     ]);
 
-    hourly(d.hourly || []);
-    table('#rt-events', ['이벤트', '건수', '유저'], (d.events || []).map(r => [r.name, num(r.n), num(r.users)]));
-    table('#rt-versions', ['버전', '유저', '이벤트'], (d.versions || []).map(r => [r.v, num(r.users), num(r.events)]));
-    table('#rt-countries', ['국가', '유저'], (d.countries || []).map(r => [r.c, num(r.users)]));
+    funnel(d.funnel || [], d.cohort_n || 0);
+    table(d);
   }
 
   function tiles(rows) {
@@ -58,69 +56,78 @@
     }
   }
 
-  function table(sel, head, rows) {
-    const t = $(sel);
+  /* 퍼널은 26단계라 세로 막대로는 라벨이 안 읽힌다 — 가로 막대 목록이 맞다.
+     직전 단계 대비 낙폭을 같이 적어서 '어디서 막혔나'가 눈에 바로 띄게 한다. */
+  function funnel(rows, n) {
+    const host = $('#rt-funnel');
+    host.textContent = '';
+    if (!rows.length || !n) { host.innerHTML = '<div class="no-data">오늘 가입자가 없습니다</div>'; return; }
+
+    rows.forEach((r, i) => {
+      const prev = i ? rows[i - 1].n : r.n;
+      const drop = prev ? Math.round(100 * (prev - r.n) / prev) : 0;
+
+      const row = document.createElement('div');
+      row.className = 'fn-row';
+
+      const lab = document.createElement('span'); lab.className = 'fn-label'; lab.textContent = r.label;
+      const track = document.createElement('span'); track.className = 'fn-track';
+      const fill = document.createElement('i');
+      fill.style.width = (n ? 100 * r.n / n : 0) + '%';
+      track.appendChild(fill);
+      const val = document.createElement('span');
+      val.className = 'fn-val';
+      val.textContent = `${r.n}명 · ${r.pct}%`;
+      const dr = document.createElement('span');
+      dr.className = 'fn-drop' + (drop >= 30 ? ' is-big' : '');
+      dr.textContent = i && drop > 0 ? `-${drop}%` : '';
+
+      row.append(lab, track, val, dr);
+      host.appendChild(row);
+    });
+  }
+
+  function table(d) {
+    const labels = (d.stage_labels || []).map(x => x.label);
+    const t = $('#rt-users');
     t.textContent = '';
+
     const hr = t.createTHead().insertRow();
-    head.forEach((h, i) => {
+    ['가입', '마지막', '머문시간', '도달 단계', '진행', '버전', '국가'].forEach((h, i) => {
       const th = document.createElement('th');
       if (!i) th.className = 'date';
       th.textContent = h;
       hr.appendChild(th);
     });
+
     const tb = t.createTBody();
-    if (!rows.length) {
+    const users = d.users || [];
+    if (!users.length) {
       const td = tb.insertRow().insertCell();
-      td.colSpan = head.length; td.textContent = '없음';
+      td.colSpan = 7; td.textContent = '오늘 가입자가 없습니다';
       return;
     }
-    rows.forEach(r => {
+
+    for (const u of users) {
       const tr = tb.insertRow();
-      r.forEach((c, i) => { const td = tr.insertCell(); if (!i) td.className = 'date'; td.textContent = c; });
-    });
-  }
+      const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
+      c(u.joined, 'date');
+      c(u.last_seen);
+      c(u.mins >= 60 ? `${Math.floor(u.mins / 60)}시간 ${u.mins % 60}분` : `${u.mins}분`);
+      const far = c(u.far_label);
+      if (u.far <= 1) far.className = 'neg';
 
-  /* 막대는 인게임·매출 뷰와 같은 규격을 따른다 — 데이터 끝만 둥글게, 그리드는 실선 헤어라인 */
-  function hourly(rows) {
-    const host = $('#rt-hourly');
-    host.textContent = '';
-    if (!rows.length) { host.innerHTML = '<div class="no-data">데이터 없음</div>'; return; }
+      const strip = tr.insertCell();
+      strip.className = 'rt-strip';
+      (u.reached || []).forEach((v, i) => {
+        const cell = document.createElement('i');
+        cell.className = v ? 'on' : '';
+        cell.title = `${i + 1}. ${labels[i] || ''} — ${v ? '도달' : '미도달'}`;
+        strip.appendChild(cell);
+      });
 
-    const NS = 'http://www.w3.org/2000/svg';
-    const el = (tag, a) => { const n = document.createElementNS(NS, tag);
-      for (const k in a) if (a[k] != null) n.setAttribute(k, a[k]); return n; };
-
-    const H = 220, ML = 54, MR = 12, MT = 18, MB = 34;
-    const w = Math.max(host.clientWidth || 640, 300);
-    const svg = el('svg', { viewBox: `0 0 ${w} ${H}`, style: `height:${H}px` });
-    host.appendChild(svg);
-
-    const iw = w - ML - MR, ih = H - MT - MB;
-    const cap = Math.max(1, ...rows.map(r => r.events));
-    const band = iw / rows.length, bw = Math.max(3, Math.min(26, band * 0.6));
-    const x = i => ML + band * (i + 0.5);
-    const y = v => MT + ih * (1 - v / cap);
-
-    [0, 0.5, 1].forEach(f => {
-      const v = cap * f;
-      svg.appendChild(el('line', { class: 'g-line', x1: ML, x2: w - MR, y1: y(v), y2: y(v) }));
-      const lb = el('text', { class: 'g-label', x: ML - 8, y: y(v) + 4, 'text-anchor': 'end' });
-      lb.textContent = num(v);
-      svg.appendChild(lb);
-    });
-    rows.forEach((r, i) => {
-      const h = Math.max(1, ih - (y(r.events) - MT));
-      svg.appendChild(el('rect', { x: x(i) - bw / 2, y: y(r.events), width: bw, height: h,
-        fill: '#2a78d6', rx: 3 }));
-      const t = el('title'); t.textContent = `${r.h}시  유저 ${num(r.users)} · 이벤트 ${num(r.events)}`;
-      svg.lastChild.appendChild(t);
-    });
-    const step = Math.max(1, Math.ceil(rows.length / 10));
-    rows.forEach((r, i) => {
-      if (i % step && i !== rows.length - 1) return;
-      const tx = el('text', { class: 'x-label', x: x(i), y: H - 10 });
-      tx.textContent = r.h.slice(-2) + '시';
-      svg.appendChild(tx);
-    });
+      c(u.ver || '—');
+      c(u.country || '—');
+    }
   }
 })();

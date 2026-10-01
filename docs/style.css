@@ -394,3 +394,38 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 }
 .rt-warn b { font-weight: 620; }
 .rt-meta { margin: 0 0 16px; font-size: 12px; color: var(--ink-3); }
+
+/* 퍼널 — 26단계라 세로 막대로는 라벨이 안 읽힌다. 가로 목록이 맞다. */
+.fn-row { display: flex; align-items: center; gap: 10px; padding: 3px 0; }
+.fn-label {
+  width: 66px; flex: none; text-align: right;
+  font-size: 12.5px; color: var(--ink-2);
+}
+.fn-track {
+  flex: 1; height: 16px; border-radius: 3px;
+  background: var(--grid); overflow: hidden; min-width: 60px;
+}
+.fn-track i { display: block; height: 100%; background: #2a78d6; border-radius: 3px; }
+.fn-val {
+  width: 92px; flex: none; font-size: 12px; color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.fn-drop {
+  width: 46px; flex: none; font-size: 11.5px; color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.fn-drop.is-big { color: var(--bad); font-weight: 600; }
+
+/* 가입자별 진행 스트립 — 26칸, 채워진 칸이 도달한 단계 */
+.rt-users td.rt-strip { padding: 6px 11px; white-space: nowrap; }
+.rt-strip i {
+  display: inline-block; width: 7px; height: 14px; margin-right: 1px;
+  background: var(--grid); border-radius: 1px; cursor: help;
+}
+.rt-strip i.on { background: #2a78d6; }
+
+@media (max-width: 620px) {
+  .fn-label { width: 54px; font-size: 11.5px; }
+  .fn-val { width: 76px; font-size: 11px; }
+  .fn-drop { width: 38px; }
+}

@@ -7,7 +7,7 @@
 <meta name="description" content="일별 광고매출·인앱매출·마케팅비를 누적으로 추적하는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=586b24db">
+<link rel="stylesheet" href="style.css?v=f87f35d4">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -199,10 +199,9 @@
 <main class="wrap" id="view-realtime" hidden>
 
   <p class="rt-warn">
-    이 뷰는 <b>GA4 스트리밍(intraday)</b> 데이터만 봅니다. 후처리 전이라 일부 속성이 비거나
-    나중에 값이 달라지고, 무엇보다 <b>하루가 덜 찬 값</b>입니다.
-    <b>인게임 뷰의 완결 수치와 비교하거나 합산하지 마세요.</b>
-    쓰임새는 배포 직후 확인입니다 — 이벤트가 찍히는지, 새 버전이 퍼지는지, 크래시가 터지는지.
+    <b>오늘 처음 앱을 연 사람들</b>이 퍼널 어디까지 갔는지만 봅니다.
+    GA4 <b>스트리밍(intraday)</b> 데이터라 후처리 전이고 <b>스트리밍을 켠 시점부터</b>만 쌓입니다 —
+    인게임 뷰의 완결 수치와 비교하거나 합산하지 마세요. 집계된 이탈률은 인게임 뷰가 맡습니다.
   </p>
 
   <p class="rt-meta" id="rt-meta"></p>
@@ -210,26 +209,15 @@
   <section class="tiles" id="rt-tiles"></section>
 
   <section class="card">
-    <div class="card-head"><h2>시간대별</h2>
-      <p class="card-sub">KST 시각별 접속 유저와 이벤트 수. 배포 직후 뚝 끊기는 구간이 있는지 봅니다.</p></div>
-    <div class="chart" id="rt-hourly"></div>
+    <div class="card-head"><h2>오늘 가입자 코호트 — 단계별 도달</h2>
+      <p class="card-sub">오늘 가입한 사람 중 몇 명이 각 단계를 통과했는지. 뚝 떨어지는 칸이 막힌 지점입니다.</p></div>
+    <div class="chart" id="rt-funnel"></div>
   </section>
 
   <section class="card">
-    <div class="card-head"><h2>이벤트</h2>
-      <p class="card-sub">새로 넣은 이벤트가 실제로 찍히는지 확인하는 표입니다.</p></div>
-    <div class="table-scroll"><table class="ledger" id="rt-events"></table></div>
-  </section>
-
-  <section class="card">
-    <div class="card-head"><h2>앱 버전</h2>
-      <p class="card-sub">새 빌드가 퍼지는 속도와 구버전 잔존량.</p></div>
-    <div class="table-scroll"><table class="ledger" id="rt-versions"></table></div>
-  </section>
-
-  <section class="card">
-    <div class="card-head"><h2>국가</h2></div>
-    <div class="table-scroll"><table class="ledger" id="rt-countries"></table></div>
+    <div class="card-head"><h2>가입자별 진행</h2>
+      <p class="card-sub">최근 가입 순. 막대가 각자 멈춘 지점이고, 칸에 올리면 단계 이름이 나옵니다.</p></div>
+    <div class="table-scroll"><table class="ledger rt-users" id="rt-users"></table></div>
   </section>
 
   <section class="empty" id="rt-empty" hidden>
@@ -256,6 +244,6 @@
 
 <script src="app.js?v=2d80f1a9"></script>
 <script src="ingame.js?v=d881c6c8"></script>
-<script src="realtime.js?v=7e7e1419"></script>
+<script src="realtime.js?v=3b9962cb"></script>
 </body>
 </html>
