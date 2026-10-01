@@ -1,0 +1,290 @@
+{
+ "days": [
+  {
+   "date": "2026-09-30",
+   "n": 380
+  },
+  {
+   "date": "2026-09-29",
+   "n": 376
+  },
+  {
+   "date": "2026-09-28",
+   "n": 421
+  },
+  {
+   "date": "2026-09-27",
+   "n": 384
+  },
+  {
+   "date": "2026-09-26",
+   "n": 322
+  },
+  {
+   "date": "2026-09-25",
+   "n": 339
+  },
+  {
+   "date": "2026-09-24",
+   "n": 368
+  },
+  {
+   "date": "2026-09-23",
+   "n": 707
+  },
+  {
+   "date": "2026-09-22",
+   "n": 748
+  },
+  {
+   "date": "2026-09-21",
+   "n": 739
+  },
+  {
+   "date": "2026-09-20",
+   "n": 804
+  },
+  {
+   "date": "2026-09-19",
+   "n": 799
+  },
+  {
+   "date": "2026-09-18",
+   "n": 787
+  },
+  {
+   "date": "2026-09-17",
+   "n": 794
+  },
+  {
+   "date": "2026-09-16",
+   "n": 1028
+  },
+  {
+   "date": "2026-09-15",
+   "n": 1258
+  },
+  {
+   "date": "2026-09-14",
+   "n": 521
+  },
+  {
+   "date": "2026-09-13",
+   "n": 445
+  },
+  {
+   "date": "2026-09-12",
+   "n": 273
+  },
+  {
+   "date": "2026-09-11",
+   "n": 109
+  },
+  {
+   "date": "2026-09-10",
+   "n": 335
+  },
+  {
+   "date": "2026-09-09",
+   "n": 379
+  },
+  {
+   "date": "2026-09-08",
+   "n": 325
+  },
+  {
+   "date": "2026-09-07",
+   "n": 573
+  },
+  {
+   "date": "2026-09-06",
+   "n": 410
+  },
+  {
+   "date": "2026-09-05",
+   "n": 343
+  },
+  {
+   "date": "2026-09-04",
+   "n": 410
+  },
+  {
+   "date": "2026-09-03",
+   "n": 341
+  },
+  {
+   "date": "2026-09-02",
+   "n": 252
+  },
+  {
+   "date": "2026-09-01",
+   "n": 84
+  },
+  {
+   "date": "2026-08-31",
+   "n": 117
+  },
+  {
+   "date": "2026-08-30",
+   "n": 96
+  },
+  {
+   "date": "2026-08-29",
+   "n": 65
+  },
+  {
+   "date": "2026-08-28",
+   "n": 29
+  },
+  {
+   "date": "2026-08-27",
+   "n": 119
+  },
+  {
+   "date": "2026-08-26",
+   "n": 47
+  },
+  {
+   "date": "2026-08-25",
+   "n": 74
+  },
+  {
+   "date": "2026-08-24",
+   "n": 66
+  },
+  {
+   "date": "2026-08-23",
+   "n": 146
+  }
+ ],
+ "stage_labels": [
+  {
+   "key": "new_game",
+   "label": "새게임",
+   "kind": "spine"
+  },
+  {
+   "key": "intro_done",
+   "label": "인트로",
+   "kind": "spine"
+  },
+  {
+   "key": "dev_concept",
+   "label": "기획",
+   "kind": "spine"
+  },
+  {
+   "key": "dev_design",
+   "label": "디자인",
+   "kind": "spine"
+  },
+  {
+   "key": "dev_prototype",
+   "label": "프로토",
+   "kind": "spine"
+  },
+  {
+   "key": "dev_alpha",
+   "label": "알파",
+   "kind": "spine"
+  },
+  {
+   "key": "dev_beta",
+   "label": "베타",
+   "kind": "spine"
+  },
+  {
+   "key": "dev_launch",
+   "label": "출시",
+   "kind": "spine"
+  },
+  {
+   "key": "first_ops",
+   "label": "첫운영",
+   "kind": "spine"
+  },
+  {
+   "key": "property_1",
+   "label": "부동산1",
+   "kind": "spine"
+  },
+  {
+   "key": "property_2",
+   "label": "부동산2",
+   "kind": "spine"
+  },
+  {
+   "key": "property_3",
+   "label": "부동산3",
+   "kind": "spine"
+  },
+  {
+   "key": "property_4",
+   "label": "부동산4",
+   "kind": "spine"
+  },
+  {
+   "key": "property_5",
+   "label": "부동산5",
+   "kind": "spine"
+  },
+  {
+   "key": "game_sale",
+   "label": "은퇴",
+   "kind": "spine"
+  },
+  {
+   "key": "first_donate",
+   "label": "첫후원",
+   "kind": "spine"
+  },
+  {
+   "key": "class2",
+   "label": "신분2",
+   "kind": "spine"
+  },
+  {
+   "key": "class3",
+   "label": "신분3",
+   "kind": "spine"
+  },
+  {
+   "key": "class4",
+   "label": "신분4",
+   "kind": "spine"
+  },
+  {
+   "key": "class5",
+   "label": "신분5",
+   "kind": "spine"
+  },
+  {
+   "key": "class6",
+   "label": "신분6",
+   "kind": "spine"
+  },
+  {
+   "key": "class7",
+   "label": "신분7",
+   "kind": "spine"
+  },
+  {
+   "key": "first_rebirth",
+   "label": "첫환생",
+   "kind": "spine"
+  },
+  {
+   "key": "first_manager",
+   "label": "첫매니저",
+   "kind": "side"
+  },
+  {
+   "key": "first_finance",
+   "label": "첫금융",
+   "kind": "side"
+  }
+ ],
+ "total": 15813,
+ "updated": "2026-10-02 06:44 KST",
+ "scan_mb": 1514.0
+}
