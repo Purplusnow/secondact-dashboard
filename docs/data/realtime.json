@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-01 18:35 KST",
+ "updated": "2026-10-01 18:46 KST",
  "stage_labels": [
   {
    "key": "new_game",
@@ -130,14 +130,14 @@
  "tables": [
   {
    "d": "20261001",
-   "users": 392,
-   "events": 11699
+   "users": 421,
+   "events": 12853
   }
  ],
  "summary": {
-  "users": 392,
-  "new_users": 22,
-  "first_touch_today": 73,
+  "users": 422,
+  "new_users": 25,
+  "first_touch_today": 77,
   "purchases": 0,
   "exceptions": 0,
   "first_at": "2026-10-01 00:14",
@@ -145,13 +145,51 @@
  },
  "users": [
   {
-   "tag": "3bac93",
-   "joined": "18:27",
-   "last_seen": "18:27",
+   "tag": "649e2b",
+   "joined": "18:44",
+   "last_seen": "18:44",
+   "mins": 0,
+   "events": 13,
+   "ver": "1.0 (v823)",
+   "country": "India",
+   "reached": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "far": 0,
+   "far_label": "새게임"
+  },
+  {
+   "tag": "676d40",
+   "joined": "18:43",
+   "last_seen": "18:43",
    "mins": 0,
    "events": 16,
    "ver": "1.0 (v823)",
-   "country": "Thailand",
+   "country": "Indonesia",
    "reached": [
     1,
     1,
@@ -181,6 +219,82 @@
    ],
    "far": 1,
    "far_label": "인트로"
+  },
+  {
+   "tag": "81534b",
+   "joined": "18:40",
+   "last_seen": "18:41",
+   "mins": 0,
+   "events": 13,
+   "ver": "1.0 (v823)",
+   "country": "Vietnam",
+   "reached": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "far": 0,
+   "far_label": "새게임"
+  },
+  {
+   "tag": "3bac93",
+   "joined": "18:27",
+   "last_seen": "18:43",
+   "mins": 15,
+   "events": 215,
+   "ver": "1.0 (v823)",
+   "country": "Thailand",
+   "reached": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1
+   ],
+   "far": 17,
+   "far_label": "신분3"
   },
   {
    "tag": "e0a521",
@@ -981,150 +1095,150 @@
    "far_label": "신분3"
   }
  ],
- "stay60": 14,
+ "stay60": 15,
  "funnel": [
   {
    "key": "new_game",
    "label": "새게임",
-   "n": 21,
-   "rec": 17,
-   "pct": 95.5,
+   "n": 24,
+   "rec": 20,
+   "pct": 96.0,
    "kind": "spine"
   },
   {
    "key": "intro_done",
    "label": "인트로",
-   "n": 17,
-   "rec": 15,
-   "pct": 77.3,
+   "n": 18,
+   "rec": 16,
+   "pct": 72.0,
    "kind": "spine"
   },
   {
    "key": "dev_concept",
    "label": "기획",
-   "n": 16,
-   "rec": 14,
-   "pct": 72.7,
+   "n": 17,
+   "rec": 15,
+   "pct": 68.0,
    "kind": "spine"
   },
   {
    "key": "dev_design",
    "label": "디자인",
-   "n": 16,
-   "rec": 15,
-   "pct": 72.7,
+   "n": 17,
+   "rec": 16,
+   "pct": 68.0,
    "kind": "spine"
   },
   {
    "key": "dev_prototype",
    "label": "프로토",
-   "n": 15,
-   "rec": 14,
-   "pct": 68.2,
+   "n": 16,
+   "rec": 15,
+   "pct": 64.0,
    "kind": "spine"
   },
   {
    "key": "dev_alpha",
    "label": "알파",
-   "n": 15,
-   "rec": 14,
-   "pct": 68.2,
+   "n": 16,
+   "rec": 15,
+   "pct": 64.0,
    "kind": "spine"
   },
   {
    "key": "dev_beta",
    "label": "베타",
-   "n": 14,
-   "rec": 14,
-   "pct": 63.6,
+   "n": 15,
+   "rec": 15,
+   "pct": 60.0,
    "kind": "spine"
   },
   {
    "key": "dev_launch",
    "label": "출시",
-   "n": 13,
-   "rec": 13,
-   "pct": 59.1,
+   "n": 14,
+   "rec": 14,
+   "pct": 56.0,
    "kind": "spine"
   },
   {
    "key": "first_ops",
    "label": "첫운영",
-   "n": 13,
-   "rec": 10,
-   "pct": 59.1,
+   "n": 14,
+   "rec": 11,
+   "pct": 56.0,
    "kind": "spine"
   },
   {
    "key": "property_1",
    "label": "부동산1",
-   "n": 12,
-   "rec": 10,
-   "pct": 54.5,
+   "n": 13,
+   "rec": 11,
+   "pct": 52.0,
    "kind": "spine"
   },
   {
    "key": "property_2",
    "label": "부동산2",
-   "n": 10,
-   "rec": 8,
-   "pct": 45.5,
+   "n": 11,
+   "rec": 9,
+   "pct": 44.0,
    "kind": "spine"
   },
   {
    "key": "property_3",
    "label": "부동산3",
-   "n": 10,
-   "rec": 9,
-   "pct": 45.5,
+   "n": 11,
+   "rec": 10,
+   "pct": 44.0,
    "kind": "spine"
   },
   {
    "key": "property_4",
    "label": "부동산4",
-   "n": 10,
-   "rec": 9,
-   "pct": 45.5,
+   "n": 11,
+   "rec": 10,
+   "pct": 44.0,
    "kind": "spine"
   },
   {
    "key": "property_5",
    "label": "부동산5",
-   "n": 9,
-   "rec": 9,
-   "pct": 40.9,
+   "n": 10,
+   "rec": 10,
+   "pct": 40.0,
    "kind": "spine"
   },
   {
    "key": "game_sale",
    "label": "은퇴",
-   "n": 9,
-   "rec": 9,
-   "pct": 40.9,
+   "n": 10,
+   "rec": 10,
+   "pct": 40.0,
    "kind": "spine"
   },
   {
    "key": "first_donate",
    "label": "첫후원",
-   "n": 9,
-   "rec": 9,
-   "pct": 40.9,
+   "n": 10,
+   "rec": 10,
+   "pct": 40.0,
    "kind": "spine"
   },
   {
    "key": "class2",
    "label": "신분2",
-   "n": 9,
-   "rec": 9,
-   "pct": 40.9,
+   "n": 10,
+   "rec": 10,
+   "pct": 40.0,
    "kind": "spine"
   },
   {
    "key": "class3",
    "label": "신분3",
-   "n": 8,
-   "rec": 8,
-   "pct": 36.4,
+   "n": 9,
+   "rec": 9,
+   "pct": 36.0,
    "kind": "spine"
   },
   {
@@ -1132,7 +1246,7 @@
    "label": "신분4",
    "n": 2,
    "rec": 2,
-   "pct": 9.1,
+   "pct": 8.0,
    "kind": "spine"
   },
   {
@@ -1140,7 +1254,7 @@
    "label": "신분5",
    "n": 2,
    "rec": 2,
-   "pct": 9.1,
+   "pct": 8.0,
    "kind": "spine"
   },
   {
@@ -1148,7 +1262,7 @@
    "label": "신분6",
    "n": 1,
    "rec": 1,
-   "pct": 4.5,
+   "pct": 4.0,
    "kind": "spine"
   },
   {
@@ -1156,7 +1270,7 @@
    "label": "신분7",
    "n": 1,
    "rec": 1,
-   "pct": 4.5,
+   "pct": 4.0,
    "kind": "spine"
   },
   {
@@ -1164,7 +1278,7 @@
    "label": "첫환생",
    "n": 1,
    "rec": 1,
-   "pct": 4.5,
+   "pct": 4.0,
    "kind": "spine"
   },
   {
@@ -1172,19 +1286,19 @@
    "label": "첫매니저",
    "n": 4,
    "rec": 4,
-   "pct": 18.2,
+   "pct": 16.0,
    "kind": "side"
   },
   {
    "key": "first_finance",
    "label": "첫금융",
-   "n": 6,
-   "rec": 6,
-   "pct": 27.3,
+   "n": 7,
+   "rec": 7,
+   "pct": 28.0,
    "kind": "side"
   }
  ],
- "cohort_n": 22,
+ "cohort_n": 25,
  "scan_mb": 30.0,
  "scan_note": "이번 실행 스캔 30.0MB. 매시간(24회/일)이면 월 21.09GB — 무료 구간은 월 1,024GB."
 }
