@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-01 19:15 KST",
+ "updated": "2026-10-01 19:19 KST",
  "stage_labels": [
   {
    "key": "new_game",
@@ -130,14 +130,14 @@
  "tables": [
   {
    "d": "20261001",
-   "users": 494,
-   "events": 15532
+   "users": 502,
+   "events": 15816
   }
  ],
  "summary": {
-  "users": 494,
+  "users": 502,
   "new_users": 30,
-  "first_touch_today": 90,
+  "first_touch_today": 92,
   "purchases": 0,
   "exceptions": 0,
   "first_at": "2026-10-01 00:14",
@@ -1489,6 +1489,64 @@
   }
  ],
  "cohort_n": 30,
- "scan_mb": 30.0,
- "scan_note": "이번 실행 스캔 30.0MB. 매시간(24회/일)이면 월 21.09GB — 무료 구간은 월 1,024GB."
+ "ads": {
+  "total": 219,
+  "by_result": [
+   {
+    "result": "earned",
+    "n": 193
+   },
+   {
+    "result": "dismissed",
+    "n": 4
+   },
+   {
+    "result": "no_ad",
+    "n": 22
+   },
+   {
+    "result": "failed",
+    "n": 0
+   }
+  ],
+  "finish_pct": 98.0,
+  "supply_pct": 10.0,
+  "viewers": 74,
+  "by_placement": [
+   {
+    "placement": "offline",
+    "earned": 97,
+    "dismissed": 1,
+    "no_ad": 9,
+    "failed": 0,
+    "total": 107
+   },
+   {
+    "placement": "boost",
+    "earned": 68,
+    "dismissed": 3,
+    "no_ad": 9,
+    "failed": 0,
+    "total": 80
+   },
+   {
+    "placement": "gem_ad",
+    "earned": 27,
+    "dismissed": 0,
+    "no_ad": 4,
+    "failed": 0,
+    "total": 31
+   },
+   {
+    "placement": "repair",
+    "earned": 1,
+    "dismissed": 0,
+    "no_ad": 0,
+    "failed": 0,
+    "total": 1
+   }
+  ]
+ },
+ "scan_mb": 40.0,
+ "scan_note": "이번 실행 스캔 40.0MB. 매시간(24회/일)이면 월 28.12GB — 무료 구간은 월 1,024GB."
 }
