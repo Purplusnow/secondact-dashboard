@@ -67,12 +67,20 @@
     host.textContent = '';
     if (!rows.length || !n) { host.innerHTML = '<div class="no-data">오늘 가입자가 없습니다</div>'; return; }
 
+    // 낙폭은 '척추' 칸끼리만 잰다. 곁가지(첫매니저·첫금융)는 앞칸이 뒷칸을 함의하지 않아서
+    // 직전 칸과 비교하면 숫자가 거짓말을 한다 — 건너뛰고 직전 척추와 잇는다.
+    let lastSpine = null;
     rows.forEach((r, i) => {
-      const prev = i ? rows[i - 1].n : r.n;
-      const drop = prev ? Math.round(100 * (prev - r.n) / prev) : 0;
+      const side = r.kind === 'side';
+      const prev = side ? null : lastSpine;
+      const drop = prev && prev.n ? Math.round(100 * (prev.n - r.n) / prev.n) : 0;
+      if (!side) lastSpine = r;
 
       const row = document.createElement('div');
-      row.className = 'fn-row';
+      row.className = 'fn-row' + (side ? ' is-side' : '');
+      // 곁가지 덩어리의 위아래로만 한 칸 띄운다 — 척추의 흐름이 눈으로 이어지게
+      if (side && (i === 0 || rows[i - 1].kind !== 'side')) row.classList.add('side-top');
+      if (side && (i === rows.length - 1 || rows[i + 1].kind !== 'side')) row.classList.add('side-bot');
 
       const lab = document.createElement('span'); lab.className = 'fn-label'; lab.textContent = r.label;
       const track = document.createElement('span'); track.className = 'fn-track';
@@ -84,7 +92,7 @@
       val.textContent = `${r.n}명 · ${r.pct}%`;
       const dr = document.createElement('span');
       dr.className = 'fn-drop' + (drop >= 30 ? ' is-big' : '');
-      dr.textContent = i && drop > 0 ? `-${drop}%` : '';
+      dr.textContent = prev && drop > 0 ? `-${drop}%` : '';
 
       row.append(lab, track, val, dr);
       host.appendChild(row);

@@ -406,6 +406,18 @@ a { color: #2a78d6; text-underline-offset: 2px; }
   background: var(--grid); overflow: hidden; min-width: 60px;
 }
 .fn-track i { display: block; height: 100%; background: #2a78d6; border-radius: 3px; }
+
+/* 독립 단계(첫매니저·첫금융) — 퍼널의 일부가 아니라 곁가지라 색을 빼고 덩어리째 띄운다.
+   같은 파랑으로 두면 "여기서 70% 빠졌다"로 읽히는데, 앞칸과 인과가 없어 그건 거짓말이다. */
+.fn-row.is-side .fn-label { color: var(--ink-3); }
+.fn-row.is-side .fn-track i { background: #9aa7b6; }
+.fn-row.is-side .fn-val { color: var(--ink-3); }
+.fn-row.side-top { margin-top: 9px; }
+.fn-row.side-bot { margin-bottom: 9px; }
+.fn-side-key {
+  display: inline-block; padding: 0 6px; border-radius: 3px;
+  background: #9aa7b6; color: #fff; font-weight: 600;
+}
 .fn-val {
   width: 92px; flex: none; font-size: 12px; color: var(--ink-2);
   font-variant-numeric: tabular-nums;

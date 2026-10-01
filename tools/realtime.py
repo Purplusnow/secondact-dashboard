@@ -47,6 +47,14 @@ CLASS_STAGES = [(2, "신분2"), (3, "신분3"), (4, "신분4"), (5, "신분5"), 
 # 퍼널 밖에서 따로 세는 플래그 — 단계가 아니라 '얼마나 버텼나'를 재는 값.
 EXTRA = [("first_settle", "stay60")]
 
+# 곁가지 — 앞단계가 뒷단계를 함의하지 않는 칸. 나머지는 척추(앞을 밟아야 뒤가 온다).
+#   척추 근거: 개발 6단계는 _check_dev_milestones 의 while 루프가 넘긴 단계마다 순서대로 쏘고,
+#   부동산1~5 는 holding_count, 신분2~7 은 class_level 사다리라 건너뛸 수 없다.
+#   곁가지 근거: 첫매니저는 슬롯·비용만 맞으면 아무 때나 사고(unlock_class 는 가격 앵커로만 쓴다),
+#   첫금융도 금융상품을 사는 순간 찍힌다. 둘 다 '어디까지 갔나'와 인과가 없어서
+#   직전 칸 대비 낙폭을 재면 거짓말이 된다 → 낙폭 계산에서 빼고 색·간격으로 분리해 그린다.
+SIDE = {"first_manager", "first_finance"}
+
 # 표시 순서 — 첫후원 뒤에 신분2~7을 끼운다(ingame.py 의 ORDER 와 동일).
 ORDER = []
 for _k, _lab in STAGES:
@@ -149,7 +157,8 @@ def main() -> None:
     out["users"] = users
     out["stay60"] = stay60
     out["funnel"] = [{"key": k, "label": lab, "n": funnel[i],
-                      "pct": round(100 * funnel[i] / n, 1) if n else 0}
+                      "pct": round(100 * funnel[i] / n, 1) if n else 0,
+                      "kind": "side" if k in SIDE else "spine"}
                      for i, (k, lab, _) in enumerate(ORDER)]
     out["cohort_n"] = n
     save(out)
