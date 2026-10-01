@@ -42,7 +42,63 @@
     ]);
 
     funnel(d.funnel || [], d.cohort_n || 0);
+    ads(d.ads);
     table(d);
+  }
+
+  /* 리워드 광고 — 결과 네 갈래(ads.gd rewarded_result)를 지점별로 펼친다.
+     완주율과 공급 실패율은 원인이 달라서(유저 행동 vs 인벤토리) 한 숫자로 합치면 안 된다. */
+  const AD_RES = [['earned', '완주'], ['dismissed', '중간이탈'], ['no_ad', '광고없음'], ['failed', '표시실패']];
+  const AD_PLACE = {
+    repair: '수리', offline: '방치보상', boost: '수익부스트', gem_ad: '보석광고',
+    city_repair: '도시 수리', city_boost: '도시 부스트',
+  };
+
+  function ads(a) {
+    const card = $('#rt-ads-card');
+    if (!a || !a.total) { card.hidden = true; return; }
+    card.hidden = false;
+
+    const host = $('#rt-ads-tiles');
+    host.textContent = '';
+    const put = (label, value, sub, warn) => {
+      const el = document.createElement('div');
+      el.className = 'tile';
+      const l = document.createElement('div'); l.className = 'tile-label'; l.textContent = label;
+      const v = document.createElement('div'); v.className = 'tile-value num'; v.textContent = value;
+      if (warn) v.style.color = 'var(--bad)';
+      const b = document.createElement('div'); b.className = 'tile-sub'; b.textContent = sub;
+      el.append(l, v, b);
+      host.appendChild(el);
+    };
+    const got = (k) => (a.by_result.find(x => x.result === k) || {}).n || 0;
+    put('광고 요청', num(a.total), '보상 광고를 띄우려 한 횟수');
+    put('완주', num(got('earned')), a.finish_pct != null ? `뜬 광고의 ${a.finish_pct}%` : '');
+    put('공급 실패', num(got('no_ad') + got('failed')),
+      a.supply_pct != null ? `요청의 ${a.supply_pct}%` : '', (a.supply_pct || 0) >= 20);
+    put('시청 유저', num(a.viewers), '한 번이라도 본 사람');
+
+    const t = $('#rt-ads');
+    t.textContent = '';
+    const hr = t.createTHead().insertRow();
+    ['지점', ...AD_RES.map(x => x[1]), '합계'].forEach((h, i) => {
+      const th = document.createElement('th');
+      if (!i) th.className = 'date';
+      th.textContent = h;
+      hr.appendChild(th);
+    });
+    const tb = t.createTBody();
+    for (const row of a.by_placement || []) {
+      const tr = tb.insertRow();
+      const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
+      c(AD_PLACE[row.placement] || row.placement, 'date');
+      for (const [k] of AD_RES) {
+        const cell = c(row[k] ? num(row[k]) : '—');
+        // 공급 쪽 실패는 매출이 그대로 증발하는 칸이라 눈에 띄게 둔다
+        if ((k === 'no_ad' || k === 'failed') && row[k]) cell.className = 'neg';
+      }
+      c(num(row.total), 'sum');
+    }
   }
 
   function tiles(rows) {

@@ -459,3 +459,7 @@ a { color: #2a78d6; text-underline-offset: 2px; }
   .fn-drop { width: 38px; }
   .rt-users td.uid { font-size: 11px; }
 }
+
+/* 리워드 광고 표 — 가입자 표처럼 촘촘하게, 지점 이름만 왼쪽 정렬 */
+.rt-ads th, .rt-ads td { padding: 5px 12px; font-size: 12.5px; }
+#rt-ads-tiles { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 14px; }

@@ -179,6 +179,47 @@ def main() -> None:
                       "kind": "side" if k in SIDE else "spine"}
                      for i, (k, lab, _) in enumerate(ORDER)]
     out["cohort_n"] = n
+
+    # ── 리워드 광고 ────────────────────────────────────────────────
+    # ads.gd 가 결과를 네 갈래로 쏜다(rewarded_result): earned/dismissed/failed/no_ad.
+    #   earned    = 완주 → 보상 지급
+    #   dismissed = 유저가 중간에 닫음        → '유저 쪽' 마찰
+    #   no_ad     = 띄울 광고가 없음          → '공급' 문제. 보상은 못 주고 매출도 0
+    #   failed    = 표시 실패(무상 지급)      → 공급·SDK 문제. 보상만 나가고 매출 0
+    # 공급 실패(no_ad+failed)는 매출이 그대로 증발하는 구간이라 완주율과 따로 봐야 한다.
+    ad_rows = q(f"""
+      SELECT
+        (SELECT value.string_value FROM UNNEST(event_params) WHERE key='placement') AS placement,
+        (SELECT value.string_value FROM UNNEST(event_params) WHERE key='result') AS result,
+        COUNT(*) AS n,
+        COUNT(DISTINCT user_pseudo_id) AS users
+      FROM {TABLE} WHERE {INTRADAY} AND event_name='ad_impression'
+      GROUP BY placement, result
+    """)
+    RESULTS = ["earned", "dismissed", "no_ad", "failed"]
+    by_res = {k: 0 for k in RESULTS}
+    by_pl: dict[str, dict] = {}
+    for r in ad_rows:
+        res = r["result"] or "?"
+        pl = r["placement"] or "(미지정)"
+        by_res[res] = by_res.get(res, 0) + int(r["n"] or 0)
+        slot = by_pl.setdefault(pl, {k: 0 for k in RESULTS} | {"total": 0})
+        slot[res] = slot.get(res, 0) + int(r["n"] or 0)
+        slot["total"] += int(r["n"] or 0)
+    total = sum(by_res.values())
+    shown = by_res["earned"] + by_res["dismissed"]     # 실제로 화면에 뜬 것만
+    supply_bad = by_res["no_ad"] + by_res["failed"]
+    out["ads"] = {
+        "total": total,
+        "by_result": [{"result": k, "n": by_res.get(k, 0)} for k in RESULTS],
+        # 완주율은 '뜬 광고' 기준 — no_ad 를 분모에 넣으면 유저 행동과 공급 문제가 섞인다.
+        "finish_pct": round(100 * by_res["earned"] / shown, 1) if shown else None,
+        "supply_pct": round(100 * supply_bad / total, 1) if total else None,
+        "viewers": max((int(r["users"] or 0) for r in ad_rows), default=0),
+        "by_placement": sorted(
+            ({"placement": p, **v} for p, v in by_pl.items()),
+            key=lambda x: -x["total"]),
+    }
     save(out)
 
 

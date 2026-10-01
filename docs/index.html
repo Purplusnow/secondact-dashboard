@@ -7,7 +7,7 @@
 <meta name="description" content="일별 광고매출·인앱매출·마케팅비를 누적으로 추적하는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=a739d3ef">
+<link rel="stylesheet" href="style.css?v=fded0ace">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -218,6 +218,15 @@
     <div class="chart" id="rt-funnel"></div>
   </section>
 
+  <section class="card" id="rt-ads-card" hidden>
+    <div class="card-head"><h2>리워드 광고</h2>
+      <p class="card-sub" id="rt-ads-sub">오늘 전체 유저 기준(가입자만이 아닙니다).
+        <b>완주율</b>은 화면에 뜬 광고만 분모로 삼습니다 — 띄울 광고가 없던 건(<code>no_ad</code>)
+        유저 행동이 아니라 공급 문제라 따로 셉니다.</p></div>
+    <section class="tiles" id="rt-ads-tiles"></section>
+    <div class="table-scroll"><table class="ledger rt-ads" id="rt-ads"></table></div>
+  </section>
+
   <section class="card">
     <div class="card-head"><h2>가입자별 진행</h2>
       <p class="card-sub">최근 가입 순. 막대가 각자 멈춘 지점이고, 칸에 올리면 단계 이름이 나옵니다.
@@ -250,6 +259,6 @@
 
 <script src="app.js?v=2d80f1a9"></script>
 <script src="ingame.js?v=d881c6c8"></script>
-<script src="realtime.js?v=016d59e3"></script>
+<script src="realtime.js?v=41b9b883"></script>
 </body>
 </html>
