@@ -47,6 +47,13 @@ jobs:
         if: env.GCP_SA_KEY != ''
         run: python3 tools/realtime.py
 
+      # 인앱매출은 Play Console 이 주문 목록 API 를 안 줘서 손으로 넣고 있었다.
+      # 게임이 GA4 표준 purchase(value·currency)를 쏘므로 그쪽으로 받는다 — 같은 자격증명으로
+      # 이미 돌고 있는 이 잡에 얹는 게 제일 싸다. 손으로 넣은 날은 건드리지 않는다.
+      - name: 인앱매출 수집
+        if: env.GCP_SA_KEY != ''
+        run: python3 tools/iap.py
+
       - name: 커밋
         if: env.GCP_SA_KEY != ''
         run: |
@@ -54,8 +61,8 @@ jobs:
           # 그래서 먼저 add 하고 스테이지와 비교한다.
           git config user.name  "secondact-bot"
           git config user.email "34591718+Purplusnow@users.noreply.github.com"
-          git add docs/data/realtime.json
-          if git diff --cached --quiet -- docs/data/realtime.json; then
+          git add docs/data/realtime.json docs/data/daily.json
+          if git diff --cached --quiet -- docs/data/realtime.json docs/data/daily.json; then
             echo "변경 없음 — 커밋 생략"
             exit 0
           fi

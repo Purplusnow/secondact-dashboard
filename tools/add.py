@@ -114,6 +114,10 @@ def main() -> int:
         rows.append(row)
 
     row.update(given)
+    if "iap" in given:
+        # 손으로 넣은 날은 자동수집(tools/iap.py)이 못 덮는다 — Play Console 을 보고
+        # 환불·취소·테스트를 걸러낸 값이라 GA4 총액보다 언제나 정확하다.
+        row["iap_src"] = "manual"
     if a.note is not None:
         row["note"] = a.note
 
