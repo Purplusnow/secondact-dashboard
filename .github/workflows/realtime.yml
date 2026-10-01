@@ -50,12 +50,14 @@ jobs:
       - name: 커밋
         if: env.GCP_SA_KEY != ''
         run: |
-          if git diff --quiet -- docs/data/realtime.json; then
-            echo "변경 없음 — 커밋 생략"
-            exit 0
-          fi
+          # git diff 는 '추적되지 않는 파일'을 못 본다 — 최초 생성 때 변경 없음으로 오판한다.
+          # 그래서 먼저 add 하고 스테이지와 비교한다.
           git config user.name  "secondact-bot"
           git config user.email "34591718+Purplusnow@users.noreply.github.com"
           git add docs/data/realtime.json
+          if git diff --cached --quiet -- docs/data/realtime.json; then
+            echo "변경 없음 — 커밋 생략"
+            exit 0
+          fi
           git commit -m "실시간 수집: $(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') KST"
           git push
