@@ -245,13 +245,18 @@ def main() -> None:
         f"MAX(IF(event_name='class_up' AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='level')>={lv},1,0)) AS c{lv}"
         for lv, _ in CLASS_STAGES)
     sum_sql += ", " + ", ".join(f"SUM(c{lv}) AS c{lv}" for lv, _ in CLASS_STAGES)
-    # 표시 순서(라벨 + 각 버전 steps 조립 공용): 첫후원 뒤 신분2~7.
-    ORDER = []
+    # 표시 순서(라벨 + 각 버전 steps 조립 공용): 척추(첫후원 뒤 신분2~7) 뒤에 곁가지를 붙인다.
+    # 곁가지 = 앞칸이 뒷칸을 함의하지 않는 칸. 첫매니저는 슬롯·비용만 맞으면 아무 때나 사고
+    # (unlock_class 는 코인가 앵커로만 쓴다), 첫금융도 상품을 사는 순간 찍힌다. 척추 사이에
+    # 끼워 두면 "여기서 몇 % 빠졌다"는 시선이 끊긴다. realtime.py 의 SIDE 와 같아야 한다.
+    SIDE = {"first_manager", "first_finance"}
+    ORDER, _side_rows = [], []
     for k, lab in STAGES:
-        ORDER.append((k, lab, "s_" + k))
+        (_side_rows if k in SIDE else ORDER).append((k, lab, "s_" + k))
         if k == "first_donate":
             for lv, clab in CLASS_STAGES:
                 ORDER.append((f"class{lv}", clab, f"c{lv}"))
+    ORDER += _side_rows
 
     def steps_from(x: dict, ng: int) -> list:
         res = []
@@ -276,7 +281,8 @@ def main() -> None:
       GROUP BY version HAVING COUNT(*) >= 50
       ORDER BY version DESC LIMIT 12
     """)
-    out["stage_labels"] = [{"key": k, "label": lab} for k, lab, _ in ORDER]
+    out["stage_labels"] = [{"key": k, "label": lab,
+                            "kind": "side" if k in SIDE else "spine"} for k, lab, _ in ORDER]
     out["by_version"] = []
     for x in ver:
         ng = int(x["s_new_game"] or 0) or 1

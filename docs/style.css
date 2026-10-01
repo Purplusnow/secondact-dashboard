@@ -407,16 +407,16 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 }
 .fn-track i { display: block; height: 100%; background: #2a78d6; border-radius: 3px; }
 
-/* 독립 단계(첫매니저·첫금융) — 퍼널의 일부가 아니라 곁가지라 색을 빼고 덩어리째 띄운다.
-   같은 파랑으로 두면 "여기서 70% 빠졌다"로 읽히는데, 앞칸과 인과가 없어 그건 거짓말이다. */
-.fn-row.is-side .fn-label { color: var(--ink-3); }
-.fn-row.is-side .fn-track i { background: #9aa7b6; }
-.fn-row.is-side .fn-val { color: var(--ink-3); }
-.fn-row.side-top { margin-top: 9px; }
-.fn-row.side-bot { margin-bottom: 9px; }
+/* 독립 단계(첫매니저·첫금융) — 퍼널의 일부가 아니라 곁가지라 목록 꼬리에 모아 녹색으로 뺀다.
+   같은 파랑으로 줄 세우면 "여기서 70% 빠졌다"로 읽히는데, 앞칸과 인과가 없어 그건 거짓말이다.
+   녹색은 config.json 의 인앱 계열색(#1baf7a)과 같은 값 — 보드 안에서 쓰던 팔레트를 벗어나지 않는다. */
+.fn-row.is-side .fn-track i { background: #1baf7a; }
+.fn-row.side-top {
+  margin-top: 14px; padding-top: 11px; border-top: 1px dashed var(--hair);
+}
 .fn-side-key {
   display: inline-block; padding: 0 6px; border-radius: 3px;
-  background: #9aa7b6; color: #fff; font-weight: 600;
+  background: #1baf7a; color: #fff; font-weight: 600;
 }
 .fn-val {
   width: 92px; flex: none; font-size: 12px; color: var(--ink-2);
@@ -440,6 +440,9 @@ a { color: #2a78d6; text-underline-offset: 2px; }
   background: var(--grid); border-radius: 1px; cursor: help; vertical-align: middle;
 }
 .rt-strip i.on { background: #2a78d6; }
+.rt-strip i.on.side { background: #1baf7a; }           /* 독립 단계 — 퍼널 막대와 같은 녹색 */
+.rt-strip i.imp { background: #b9d2ef; }               /* 기록은 없지만 뒤 단계로 보아 지나간 칸 */
+.rt-strip i.gap { margin-left: 9px; }                  /* 척추와 곁가지 사이를 띄운다 */
 
 /* 가입자 꼬리표 — 읽는 값이 아니라 줄을 가리키는 표식이라 본문보다 한 단 약하게 */
 .rt-users td.uid {

@@ -52,16 +52,18 @@ EXTRA = [("first_settle", "stay60")]
 #   부동산1~5 는 holding_count, 신분2~7 은 class_level 사다리라 건너뛸 수 없다.
 #   곁가지 근거: 첫매니저는 슬롯·비용만 맞으면 아무 때나 사고(unlock_class 는 가격 앵커로만 쓴다),
 #   첫금융도 금융상품을 사는 순간 찍힌다. 둘 다 '어디까지 갔나'와 인과가 없어서
-#   직전 칸 대비 낙폭을 재면 거짓말이 된다 → 낙폭 계산에서 빼고 색·간격으로 분리해 그린다.
+#   직전 칸 대비 낙폭을 재면 거짓말이 된다 → 척추 줄 사이에 끼우지 않고 뒤로 모아 따로 그린다.
 SIDE = {"first_manager", "first_finance"}
 
-# 표시 순서 — 첫후원 뒤에 신분2~7을 끼운다(ingame.py 의 ORDER 와 동일).
-ORDER = []
+# 표시 순서 — 척추(첫후원 뒤에 신분2~7 삽입) 전부를 세운 뒤 곁가지를 맨 뒤에 붙인다.
+# 척추 사이에 곁가지가 끼면 "여기서 몇 % 빠졌다"는 시선이 끊긴다. 뒤로 몰면 줄이 끊기지 않는다.
+_SPINE, _SIDE_ROWS = [], []
 for _k, _lab in STAGES:
-    ORDER.append((_k, _lab, "s_" + _k))
+    (_SIDE_ROWS if _k in SIDE else _SPINE).append((_k, _lab, "s_" + _k))
     if _k == "first_donate":
         for _lv, _clab in CLASS_STAGES:
-            ORDER.append((f"class{_lv}", _clab, f"c{_lv}"))
+            _SPINE.append((f"class{_lv}", _clab, f"c{_lv}"))
+ORDER = _SPINE + _SIDE_ROWS
 
 client = bigquery.Client(project=PROJECT, location=LOCATION)
 _billed = 0
@@ -77,7 +79,9 @@ def q(sql: str) -> list[dict]:
 
 def main() -> None:
     out = {"updated": datetime.now(KST).strftime("%Y-%m-%d %H:%M") + " KST",
-           "stage_labels": [{"key": k, "label": lab} for k, lab, _ in ORDER]}
+           "stage_labels": [{"key": k, "label": lab,
+                             "kind": "side" if k in SIDE else "spine"}
+                            for k, lab, _ in ORDER]}
 
     out["tables"] = q(f"""
       SELECT REPLACE(_TABLE_SUFFIX, 'intraday_', '') AS d,
@@ -141,9 +145,18 @@ def main() -> None:
         reached = [int(r.get(col) or 0) for _, _, col in ORDER]
         stay60 += 1 if r.get("s_" + EXTRA[0][0]) else 0
         # 마지막으로 '도달한' 단계. 중간을 건너뛴 기록이 있어도 가장 멀리 간 지점을 쓴다.
-        far = max([i for i, v in enumerate(reached) if v], default=-1)
-        for i, v in enumerate(reached):
-            if v:
+        # 곁가지(목록 꼬리)는 제외 — 매니저 하나 샀다고 '멀리 갔다'가 되면 안 된다.
+        far = max([i for i, v in enumerate(reached) if v and i < len(_SPINE)], default=-1)
+        # 척추는 앞을 밟아야 뒤가 오므로 far 까지 앞칸을 채워서 센다.
+        # 비어 있는 앞칸은 '안 밟았다'가 아니라 '기록이 없다'이고, 원인은 둘이다:
+        #  (1) 계측이 '현재값'만 찍는 칸 — analytics.gd _on_owned() 은 holding_count 를 그대로 보고
+        #      _onb(9+n) 을 찍는다. 세이브를 복원해 3채로 시작하면 부동산3만 찍히고 1·2 는 영영 안 찍힌다
+        #      (tick_vacancy 가 매 정산마다 owned_changed 를 쏘므로 첫 정산에서 바로 발생).
+        #      개발 6단계는 반대로 while 루프가 넘긴 단계마다 쏘므로 이런 구멍이 안 생긴다.
+        #  (2) intraday 후처리 전 유실.
+        # 어느 쪽이든 'far 까지는 갔다'는 참이라 채워 세는 게 맞다. 날것은 users[].reached 에 남는다.
+        for i in range(len(ORDER)):
+            if reached[i] or (i < len(_SPINE) and i <= far):
                 funnel[i] += 1
         users.append({
             "tag": r["tag"], "joined": r["joined"], "last_seen": r["last_seen"],

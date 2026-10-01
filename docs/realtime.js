@@ -78,9 +78,8 @@
 
       const row = document.createElement('div');
       row.className = 'fn-row' + (side ? ' is-side' : '');
-      // 곁가지 덩어리의 위아래로만 한 칸 띄운다 — 척추의 흐름이 눈으로 이어지게
+      // 곁가지는 목록 꼬리에 모여 있다 — 척추와 만나는 첫 줄에만 경계선을 준다
       if (side && (i === 0 || rows[i - 1].kind !== 'side')) row.classList.add('side-top');
-      if (side && (i === rows.length - 1 || rows[i + 1].kind !== 'side')) row.classList.add('side-bot');
 
       const lab = document.createElement('span'); lab.className = 'fn-label'; lab.textContent = r.label;
       const track = document.createElement('span'); track.className = 'fn-track';
@@ -100,7 +99,11 @@
   }
 
   function table(d) {
-    const labels = (d.stage_labels || []).map(x => x.label);
+    const stages = d.stage_labels || [];
+    const labels = stages.map(x => x.label);
+    // 곁가지는 목록 꼬리에 모여 있다 — 첫 곁가지 인덱스가 곧 척추의 길이다
+    const spineN = stages.findIndex(x => x.kind === 'side') < 0
+      ? stages.length : stages.findIndex(x => x.kind === 'side');
     const t = $('#rt-users');
     t.textContent = '';
 
@@ -133,9 +136,16 @@
       const strip = tr.insertCell();
       strip.className = 'rt-strip';
       (u.reached || []).forEach((v, i) => {
+        const side = (stages[i] || {}).kind === 'side';
+        // 척추에서 far 아래인데 기록이 없는 칸 = '안 갔다'가 아니라 '기록이 없다'.
+        // 계측이 현재값만 찍는 칸(부동산N)이거나 intraday 유실이다 — 옅게 채워 구분해 둔다.
+        const implied = !v && !side && i < spineN && i <= u.far;
         const cell = document.createElement('i');
-        cell.className = v ? 'on' : '';
-        cell.title = `${i + 1}. ${labels[i] || ''} — ${v ? '도달' : '미도달'}`;
+        cell.className = (v ? (side ? 'on side' : 'on') : implied ? 'imp' : '');
+        cell.title = `${i + 1}. ${labels[i] || ''} — `
+          + (v ? '도달' : implied ? '도달(기록 없음 — 뒤 단계로 추정)' : '미도달')
+          + (side ? ' · 독립 단계' : '');
+        if (side && (i === 0 || (stages[i - 1] || {}).kind !== 'side')) cell.classList.add('gap');
         strip.appendChild(cell);
       });
 
