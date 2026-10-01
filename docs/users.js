@@ -99,6 +99,15 @@
 
     busy = false;
     btn.disabled = false;
+
+    // IntersectionObserver 는 '걸쳤다/벗어났다'가 바뀔 때만 부른다. 방금 붙인 하루가 짧아서
+    // 버튼이 계속 화면 안에 있으면 상태가 안 바뀌어 두 번 다시 안 불린다 — 거기서 멈춘다.
+    // 그래서 붙인 뒤 직접 한 번 더 확인한다.
+    if (shown < autoUntil && dayAt < idx.days.length
+        && btn.getBoundingClientRect().top < window.innerHeight + 300) {
+      requestAnimationFrame(loadNext);
+    }
+
     if (dayAt >= idx.days.length) {
       btn.hidden = true;
       $('#us-shown').textContent += ' · 전부 불러왔습니다';

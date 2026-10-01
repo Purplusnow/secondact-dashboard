@@ -51,9 +51,13 @@ def fetch_all() -> list[dict]:
     """
     return rt.q(f"""
       SELECT ANY_VALUE(SUBSTR(TO_HEX(MD5(user_pseudo_id)), 1, 6)) AS tag,
-        FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_MICROS(MIN(user_first_touch_timestamp)),
+        -- 가입 시점은 '우리가 처음 본 때'로 잡는다. user_first_touch_timestamp 는 기기 시계에서
+        -- 오므로 시계가 틀어진 기기가 2007-11-05 · 2023-09-07 · 2026-11-14(미래) 같은 날짜를
+        -- 만들어 낸다(실측 8명). 그러면 쓰레기 코호트 파일이 생기고, 미래 날짜는 목록 맨 앞까지
+        -- 차지한다. MIN(event_timestamp) 는 실시간 뷰가 쓰는 기준과도 같다.
+        FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_MICROS(MIN(event_timestamp)),
                          'Asia/Seoul') AS joined_day,
-        FORMAT_TIMESTAMP('%H:%M', TIMESTAMP_MICROS(MIN(user_first_touch_timestamp)),
+        FORMAT_TIMESTAMP('%H:%M', TIMESTAMP_MICROS(MIN(event_timestamp)),
                          'Asia/Seoul') AS joined_at,
         FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_MICROS(MAX(event_timestamp)),
                          'Asia/Seoul') AS last_day,
