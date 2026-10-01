@@ -212,6 +212,13 @@ def main() -> None:
         ANY_VALUE(app_info.version) AS ver,
         ANY_VALUE(geo.country) AS country,
         COUNTIF(event_name='first_open') AS fo,
+        -- 추월% 두 눈금. progress_pct 는 정수 1~100, progress_deci 는 0.1% 단위 1~32
+        -- (32 = 3.2% = 첫 환생 경계). 초반엔 정수 pct 가 한참 0 에 머물러서 deci 가 아니면
+        -- '얼마나 왔나'가 안 보인다. 둘 중 큰 쪽이 그 유저의 진행률이다.
+        MAX(IF(event_name='progress_pct',
+               (SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct'), 0)) AS pct,
+        MAX(IF(event_name='progress_deci',
+               (SELECT value.int_value FROM UNNEST(event_params) WHERE key='deci'), 0)) AS deci,
         {flags}
       FROM {TABLE}
       WHERE {WINDOW}
@@ -254,6 +261,8 @@ def main() -> None:
             "mins": round(float(r["eng_ms"] or 0) / 60000.0, 1),   # 체류(분)
             "span": int(r["span_min"] or 0),                        # 첫~마지막 간격(분)
             "sessions": int(r["sessions"] or 0),
+            # 0 이면 '진행 없음'이 아니라 '0.1% 미만' — deci 1 이 가장 고운 눈금이라 그 아래는 못 잰다.
+            "prog": max(float(r["pct"] or 0), int(r["deci"] or 0) / 10.0),
             "events": int(r["events"] or 0),
             "ver": r["ver"], "country": r["country"],
             "reached": reached, "far": far,

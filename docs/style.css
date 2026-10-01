@@ -466,3 +466,4 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 
 /* 가입자 목록 '더 보기' — 표 아래 가운데. 한 번에 다 그리면 1만 줄에서 브라우저가 멈춘다 */
 .rt-more { display: block; margin: 12px auto 2px; }
+.rt-users td.dim { color: var(--ink-3); }
