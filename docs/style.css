@@ -406,8 +406,6 @@ a { color: #2a78d6; text-underline-offset: 2px; }
   background: var(--grid); overflow: hidden; min-width: 60px;
 }
 .fn-track i { height: 100%; background: #2a78d6; }
-/* 추론으로 채운 몫 — 측정된 몫 뒤에 옅게 이어 붙여 '어디까지가 실측인지'를 눈에 남긴다 */
-.fn-track i.imp { background: #b9d2ef; }
 .fn-imp { color: var(--ink-3); font-weight: 500; }
 
 /* 독립 단계(첫매니저·첫금융) — 퍼널의 일부가 아니라 곁가지라 목록 꼬리에 모아 녹색으로 뺀다.
@@ -421,9 +419,11 @@ a { color: #2a78d6; text-underline-offset: 2px; }
   display: inline-block; padding: 0 6px; border-radius: 3px;
   background: #1baf7a; color: #fff; font-weight: 600;
 }
+/* "24명 · 96.0% (추정 4)" 가 한 줄에 다 들어가야 한다 — 줄이 꺾이면 막대 간격이 들쭉날쭉해진다.
+   넓힌 만큼은 막대가 양보한다(track 이 flex:1 이라 자동). */
 .fn-val {
-  width: 92px; flex: none; font-size: 12px; color: var(--ink-2);
-  font-variant-numeric: tabular-nums;
+  width: 158px; flex: none; font-size: 12px; color: var(--ink-2);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
 }
 .fn-drop {
   width: 46px; flex: none; font-size: 11.5px; color: var(--ink-3);
@@ -455,7 +455,7 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 
 @media (max-width: 620px) {
   .fn-label { width: 54px; font-size: 11.5px; }
-  .fn-val { width: 76px; font-size: 11px; }
+  .fn-val { width: 132px; font-size: 11px; }
   .fn-drop { width: 38px; }
   .rt-users td.uid { font-size: 11px; }
 }
