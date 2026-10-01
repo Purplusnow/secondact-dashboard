@@ -626,8 +626,11 @@ function showTip(tip, host, px, rowsHtml, dateText, opts = {}) {
 }
 const hideTip = tip => tip.classList.remove('is-on');
 
-/* 결제 원통화 → 원화 → 수수료까지, 표시 금액이 어떻게 나왔는지 한 줄로 다 보여준다.
-   원장 칸에만 쓴다 — 차트 툴팁은 환산된 원화 금액만 보여준다. */
+/* 결제 원통화 → 원화 → 수수료까지, 표시 금액이 어떻게 나왔는지 다 보여준다.
+   원장 칸에만 쓴다 — 차트 툴팁은 환산된 원화 금액만 보여준다.
+
+   건당 줄을 바꾼다. 한 줄로 이으면 통화가 서너 개만 돼도 어디서 끊어 읽어야 할지
+   알 수 없다(브라우저 기본 툴팁은 제 맘대로 접는다). 합계·수수료도 각자 줄을 준다. */
 function fxText(r, key) {
   const b = r.fx[key];
   if (!b) return '';
@@ -638,15 +641,15 @@ function fxText(r, key) {
       (p.src === 'fallback' ? ' (고정)' : p.src === 'carry' ? ` (${p.on} 고시)` :
        p.src === 'unknown' ? ' (환율 없음)' : ''));
 
-  let out = bits.join(' · ');
+  const lines = bits.slice();
   const converted = b.parts.length > 1 || b.parts[0].cur !== 'KRW';
-  if (converted) out += ` = ${won(b.gross)}`;
+  if (converted) lines.push(`= ${won(b.gross)}`);
   if (b.fee) {
     const taxShare = b.gross > 0 ? 1 - b.taxed / b.gross : 0;
-    out += ` → 세금 ${pct(taxShare)} · 수수료 ${pct(state.cfg.store_fee)} 떼고 ` +
-           `${won(b.taxed * (1 - state.cfg.store_fee))}`;
+    lines.push(`→ 세금 ${pct(taxShare)} · 수수료 ${pct(state.cfg.store_fee)} 떼고 ` +
+               `${won(b.taxed * (1 - state.cfg.store_fee))}`);
   }
-  return out;
+  return lines.join('\n');
 }
 
 /* ── 일별 ────────────────────────────────────────
