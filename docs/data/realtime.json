@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-01 18:02 KST",
+ "updated": "2026-10-01 18:04 KST",
  "stage_labels": [
   {
    "key": "new_game",
@@ -130,18 +130,18 @@
  "tables": [
   {
    "d": "20261001",
-   "users": 309,
-   "events": 7695
+   "users": 315,
+   "events": 7969
   }
  ],
  "summary": {
-  "users": 309,
+  "users": 315,
   "new_users": 16,
   "first_touch_today": 60,
   "purchases": 0,
   "exceptions": 0,
   "first_at": "2026-10-01 00:14",
-  "last_at": "2026-10-01 18:03"
+  "last_at": "2026-10-01 18:04"
  },
  "users": [
   {
@@ -413,9 +413,9 @@
   {
    "tag": "2da73e",
    "joined": "17:07",
-   "last_seen": "17:45",
-   "mins": 38,
-   "events": 123,
+   "last_seen": "17:53",
+   "mins": 45,
+   "events": 141,
    "ver": "1.0 (v823)",
    "country": "India",
    "reached": [
@@ -759,6 +759,7 @@
    "key": "new_game",
    "label": "새게임",
    "n": 15,
+   "rec": 12,
    "pct": 93.8,
    "kind": "spine"
   },
@@ -766,6 +767,7 @@
    "key": "intro_done",
    "label": "인트로",
    "n": 12,
+   "rec": 10,
    "pct": 75.0,
    "kind": "spine"
   },
@@ -773,6 +775,7 @@
    "key": "dev_concept",
    "label": "기획",
    "n": 10,
+   "rec": 8,
    "pct": 62.5,
    "kind": "spine"
   },
@@ -780,6 +783,7 @@
    "key": "dev_design",
    "label": "디자인",
    "n": 10,
+   "rec": 9,
    "pct": 62.5,
    "kind": "spine"
   },
@@ -787,6 +791,7 @@
    "key": "dev_prototype",
    "label": "프로토",
    "n": 10,
+   "rec": 9,
    "pct": 62.5,
    "kind": "spine"
   },
@@ -794,6 +799,7 @@
    "key": "dev_alpha",
    "label": "알파",
    "n": 10,
+   "rec": 9,
    "pct": 62.5,
    "kind": "spine"
   },
@@ -801,6 +807,7 @@
    "key": "dev_beta",
    "label": "베타",
    "n": 10,
+   "rec": 10,
    "pct": 62.5,
    "kind": "spine"
   },
@@ -808,6 +815,7 @@
    "key": "dev_launch",
    "label": "출시",
    "n": 8,
+   "rec": 8,
    "pct": 50.0,
    "kind": "spine"
   },
@@ -815,6 +823,7 @@
    "key": "first_ops",
    "label": "첫운영",
    "n": 8,
+   "rec": 6,
    "pct": 50.0,
    "kind": "spine"
   },
@@ -822,6 +831,7 @@
    "key": "property_1",
    "label": "부동산1",
    "n": 8,
+   "rec": 6,
    "pct": 50.0,
    "kind": "spine"
   },
@@ -829,6 +839,7 @@
    "key": "property_2",
    "label": "부동산2",
    "n": 8,
+   "rec": 6,
    "pct": 50.0,
    "kind": "spine"
   },
@@ -836,6 +847,7 @@
    "key": "property_3",
    "label": "부동산3",
    "n": 8,
+   "rec": 7,
    "pct": 50.0,
    "kind": "spine"
   },
@@ -843,6 +855,7 @@
    "key": "property_4",
    "label": "부동산4",
    "n": 8,
+   "rec": 7,
    "pct": 50.0,
    "kind": "spine"
   },
@@ -850,6 +863,7 @@
    "key": "property_5",
    "label": "부동산5",
    "n": 6,
+   "rec": 6,
    "pct": 37.5,
    "kind": "spine"
   },
@@ -857,6 +871,7 @@
    "key": "game_sale",
    "label": "은퇴",
    "n": 5,
+   "rec": 5,
    "pct": 31.2,
    "kind": "spine"
   },
@@ -864,6 +879,7 @@
    "key": "first_donate",
    "label": "첫후원",
    "n": 5,
+   "rec": 5,
    "pct": 31.2,
    "kind": "spine"
   },
@@ -871,6 +887,7 @@
    "key": "class2",
    "label": "신분2",
    "n": 5,
+   "rec": 5,
    "pct": 31.2,
    "kind": "spine"
   },
@@ -878,6 +895,7 @@
    "key": "class3",
    "label": "신분3",
    "n": 4,
+   "rec": 4,
    "pct": 25.0,
    "kind": "spine"
   },
@@ -885,6 +903,7 @@
    "key": "class4",
    "label": "신분4",
    "n": 0,
+   "rec": 0,
    "pct": 0.0,
    "kind": "spine"
   },
@@ -892,6 +911,7 @@
    "key": "class5",
    "label": "신분5",
    "n": 0,
+   "rec": 0,
    "pct": 0.0,
    "kind": "spine"
   },
@@ -899,6 +919,7 @@
    "key": "class6",
    "label": "신분6",
    "n": 0,
+   "rec": 0,
    "pct": 0.0,
    "kind": "spine"
   },
@@ -906,6 +927,7 @@
    "key": "class7",
    "label": "신분7",
    "n": 0,
+   "rec": 0,
    "pct": 0.0,
    "kind": "spine"
   },
@@ -913,6 +935,7 @@
    "key": "first_rebirth",
    "label": "첫환생",
    "n": 0,
+   "rec": 0,
    "pct": 0.0,
    "kind": "spine"
   },
@@ -920,6 +943,7 @@
    "key": "first_manager",
    "label": "첫매니저",
    "n": 2,
+   "rec": 2,
    "pct": 12.5,
    "kind": "side"
   },
@@ -927,6 +951,7 @@
    "key": "first_finance",
    "label": "첫금융",
    "n": 4,
+   "rec": 4,
    "pct": 25.0,
    "kind": "side"
   }
