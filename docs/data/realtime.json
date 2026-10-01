@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-01 17:16 KST",
+ "updated": "2026-10-01 17:23 KST",
  "stage_labels": [
   {
    "key": "new_game",
@@ -8,6 +8,10 @@
   {
    "key": "intro_done",
    "label": "인트로"
+  },
+  {
+   "key": "first_settle",
+   "label": "첫정산"
   },
   {
    "key": "dev_concept",
@@ -94,10 +98,6 @@
    "label": "신분7"
   },
   {
-   "key": "first_settle",
-   "label": "첫정산"
-  },
-  {
    "key": "first_finance",
    "label": "첫금융"
   },
@@ -109,19 +109,97 @@
  "tables": [
   {
    "d": "20261001",
-   "users": 178,
-   "events": 3201
+   "users": 209,
+   "events": 4177
   }
  ],
  "summary": {
-  "users": 178,
-  "new_users": 8,
+  "users": 209,
+  "new_users": 11,
   "purchases": 0,
   "exceptions": 0,
   "first_at": "2026-10-01 00:14",
-  "last_at": "2026-10-01 17:16"
+  "last_at": "2026-10-01 17:23"
  },
  "users": [
+  {
+   "uid": "4b20d7",
+   "joined": "17:19",
+   "last_seen": "17:21",
+   "mins": 1,
+   "events": 17,
+   "ver": "1.0 (v823)",
+   "country": "Argentina",
+   "reached": [
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "far": 2,
+   "far_label": "첫정산"
+  },
+  {
+   "uid": "6d7954",
+   "joined": "17:09",
+   "last_seen": "17:10",
+   "mins": 0,
+   "events": 11,
+   "ver": "1.0 (v823)",
+   "country": "South Korea",
+   "reached": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "far": 0,
+   "far_label": "새게임"
+  },
   {
    "uid": "5fe54f",
    "joined": "17:07",
@@ -211,6 +289,7 @@
    "reached": [
     0,
     0,
+    1,
     0,
     1,
     1,
@@ -232,12 +311,11 @@
     0,
     0,
     0,
-    1,
     0,
     0
    ],
-   "far": 23,
-   "far_label": "첫정산"
+   "far": 7,
+   "far_label": "베타"
   },
   {
    "uid": "001c2b",
@@ -336,25 +414,25 @@
     1,
     1,
     1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
     1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
     0,
     0
    ],
-   "far": 23,
-   "far_label": "첫정산"
+   "far": 10,
+   "far_label": "부동산1"
   },
   {
    "uid": "487621",
@@ -370,6 +448,7 @@
     1,
     1,
     1,
+    1,
     0,
     1,
     1,
@@ -388,12 +467,11 @@
     0,
     0,
     0,
-    1,
     0,
     0
    ],
-   "far": 23,
-   "far_label": "첫정산"
+   "far": 8,
+   "far_label": "출시"
   },
   {
    "uid": "be4cec",
@@ -433,122 +511,167 @@
    ],
    "far": 1,
    "far_label": "인트로"
+  },
+  {
+   "uid": "623a62",
+   "joined": "16:38",
+   "last_seen": "17:19",
+   "mins": 41,
+   "events": 201,
+   "ver": "1.0 (v823)",
+   "country": "India",
+   "reached": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+   ],
+   "far": 24,
+   "far_label": "첫금융"
   }
  ],
  "funnel": [
   {
    "key": "new_game",
    "label": "새게임",
-   "n": 5,
-   "pct": 62.5
+   "n": 8,
+   "pct": 72.7
   },
   {
    "key": "intro_done",
    "label": "인트로",
+   "n": 7,
+   "pct": 63.6
+  },
+  {
+   "key": "first_settle",
+   "label": "첫정산",
    "n": 5,
-   "pct": 62.5
+   "pct": 45.5
   },
   {
    "key": "dev_concept",
    "label": "기획",
-   "n": 2,
-   "pct": 25.0
+   "n": 3,
+   "pct": 27.3
   },
   {
    "key": "dev_design",
    "label": "디자인",
-   "n": 3,
-   "pct": 37.5
+   "n": 4,
+   "pct": 36.4
   },
   {
    "key": "dev_prototype",
    "label": "프로토",
-   "n": 3,
-   "pct": 37.5
+   "n": 4,
+   "pct": 36.4
   },
   {
    "key": "dev_alpha",
    "label": "알파",
-   "n": 2,
-   "pct": 25.0
+   "n": 3,
+   "pct": 27.3
   },
   {
    "key": "dev_beta",
    "label": "베타",
-   "n": 3,
-   "pct": 37.5
+   "n": 4,
+   "pct": 36.4
   },
   {
    "key": "dev_launch",
    "label": "출시",
-   "n": 2,
-   "pct": 25.0
+   "n": 3,
+   "pct": 27.3
   },
   {
    "key": "first_ops",
    "label": "첫운영",
-   "n": 1,
-   "pct": 12.5
+   "n": 2,
+   "pct": 18.2
   },
   {
    "key": "property_1",
    "label": "부동산1",
-   "n": 1,
-   "pct": 12.5
+   "n": 2,
+   "pct": 18.2
   },
   {
    "key": "property_2",
    "label": "부동산2",
-   "n": 0,
-   "pct": 0.0
+   "n": 1,
+   "pct": 9.1
   },
   {
    "key": "property_3",
    "label": "부동산3",
-   "n": 0,
-   "pct": 0.0
+   "n": 1,
+   "pct": 9.1
   },
   {
    "key": "property_4",
    "label": "부동산4",
-   "n": 0,
-   "pct": 0.0
+   "n": 1,
+   "pct": 9.1
   },
   {
    "key": "property_5",
    "label": "부동산5",
-   "n": 0,
-   "pct": 0.0
+   "n": 1,
+   "pct": 9.1
   },
   {
    "key": "game_sale",
    "label": "은퇴",
-   "n": 0,
-   "pct": 0.0
+   "n": 1,
+   "pct": 9.1
   },
   {
    "key": "first_manager",
    "label": "첫매니저",
-   "n": 0,
-   "pct": 0.0
+   "n": 1,
+   "pct": 9.1
   },
   {
    "key": "first_donate",
    "label": "첫후원",
-   "n": 0,
-   "pct": 0.0
+   "n": 1,
+   "pct": 9.1
   },
   {
    "key": "class2",
    "label": "신분2",
-   "n": 0,
-   "pct": 0.0
+   "n": 1,
+   "pct": 9.1
   },
   {
    "key": "class3",
    "label": "신분3",
-   "n": 0,
-   "pct": 0.0
+   "n": 1,
+   "pct": 9.1
   },
   {
    "key": "class4",
@@ -575,16 +698,10 @@
    "pct": 0.0
   },
   {
-   "key": "first_settle",
-   "label": "첫정산",
-   "n": 3,
-   "pct": 37.5
-  },
-  {
    "key": "first_finance",
    "label": "첫금융",
-   "n": 0,
-   "pct": 0.0
+   "n": 1,
+   "pct": 9.1
   },
   {
    "key": "first_rebirth",
@@ -593,7 +710,7 @@
    "pct": 0.0
   }
  ],
- "cohort_n": 8,
+ "cohort_n": 11,
  "scan_mb": 0.0,
  "scan_note": "이번 실행 스캔 0.0MB. 매시간(24회/일)이면 월 0.00GB — 무료 구간은 월 1,024GB."
 }
