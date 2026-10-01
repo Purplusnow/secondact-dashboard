@@ -15,7 +15,9 @@
   async function load() {
     let d;
     try {
-      const res = await fetch('data/realtime.json', { cache: 'no-store' });
+      // no-store 는 브라우저 캐시만 건너뛴다 — Pages 앞단 CDN 은 600초를 쥐고 있어서
+      // 갓 올라온 수집본이 '실시간' 뷰에 몇 분 늦게 뜬다. 분 단위 쿼리로 URL 을 갈라 준다.
+      const res = await fetch(`data/realtime.json?t=${Math.floor(Date.now() / 60000)}`, { cache: 'no-store' });
       if (!res.ok) throw new Error(res.status);
       d = await res.json();
     } catch { $('#rt-empty').hidden = false; return; }
