@@ -200,7 +200,14 @@ def main() -> None:
         FORMAT_TIMESTAMP('%Y%m%d', TIMESTAMP_MICROS(MIN(event_timestamp)), 'Asia/Seoul') AS joined_day,
         FORMAT_TIMESTAMP('%H:%M', TIMESTAMP_MICROS(MAX(event_timestamp)), 'Asia/Seoul') AS last_seen,
         TIMESTAMP_DIFF(TIMESTAMP_MICROS(MAX(event_timestamp)),
-                       TIMESTAMP_MICROS(MIN(event_timestamp)), MINUTE) AS mins,
+                       TIMESTAMP_MICROS(MIN(event_timestamp)), MINUTE) AS span_min,
+        -- 실제 체류. MAX-MIN 은 '첫 이벤트와 마지막 이벤트 간격'이라 중간에 앱을 꺼도 계속 흐른다
+        -- (5분 하고 닫았다가 10시간 뒤 한 번 더 열면 10시간으로 잡힌다). GA4 SDK 가 이벤트마다
+        -- 붙이는 engagement_time_msec 을 더해야 '화면을 보고 있던 시간'이 된다.
+        SUM((SELECT value.int_value FROM UNNEST(event_params)
+             WHERE key='engagement_time_msec')) AS eng_ms,
+        COUNT(DISTINCT (SELECT value.int_value FROM UNNEST(event_params)
+                        WHERE key='ga_session_id')) AS sessions,
         COUNT(*) AS events,
         ANY_VALUE(app_info.version) AS ver,
         ANY_VALUE(geo.country) AS country,
@@ -244,7 +251,10 @@ def main() -> None:
             "joined": (r["joined"] if r["joined_day"] == day
                        else f"{r['joined_day'][4:6]}/{r['joined_day'][6:8]} {r['joined']}"),
             "last_seen": r["last_seen"],
-            "mins": int(r["mins"] or 0), "events": int(r["events"] or 0),
+            "mins": round(float(r["eng_ms"] or 0) / 60000.0, 1),   # 체류(분)
+            "span": int(r["span_min"] or 0),                        # 첫~마지막 간격(분)
+            "sessions": int(r["sessions"] or 0),
+            "events": int(r["events"] or 0),
             "ver": r["ver"], "country": r["country"],
             "reached": reached, "far": far,
             "far_label": ORDER[far][1] if far >= 0 else "—",
