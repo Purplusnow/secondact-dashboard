@@ -417,10 +417,12 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .fn-drop.is-big { color: var(--bad); font-weight: 600; }
 
 /* 가입자별 진행 스트립 — 26칸, 채워진 칸이 도달한 단계 */
-.rt-users td.rt-strip { padding: 6px 11px; white-space: nowrap; }
+/* 하루 수백~천 줄이 설 수 있는 표다 — 한 화면에 많이 들어오게 ledger 기본보다 눌러 둔다 */
+.rt-users th, .rt-users td { padding: 3px 12px; font-size: 12.5px; line-height: 1.45; }
+.rt-users td.rt-strip { padding: 2px 12px; white-space: nowrap; }
 .rt-strip i {
-  display: inline-block; width: 7px; height: 14px; margin-right: 1px;
-  background: var(--grid); border-radius: 1px; cursor: help;
+  display: inline-block; width: 7px; height: 12px; margin-right: 1px;
+  background: var(--grid); border-radius: 1px; cursor: help; vertical-align: middle;
 }
 .rt-strip i.on { background: #2a78d6; }
 

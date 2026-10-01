@@ -221,14 +221,13 @@ def main() -> None:
     # ── 버전별 비교 (첫 등장 버전 코호트) — 20단계 구간 도달율 ──────────
     # 유저를 '처음 나타난 app_version'으로 묶고, 각 온보딩 단계 도달수를 전부 집계.
     # ⚠️ 최신 버전 코호트는 어려서(cohort_age 작음) 뒷단계 도달율이 낮게 보이는 게 정상 → age 병기.
-    # ⚠ 표시 순서는 게임의 step_idx(1~20)와 한 군데가 다르다 — first_settle(idx 18)을 인트로 뒤로 끌어올린다.
-    #   근거: SecondActLife2/scripts/autoload/analytics.gd 의 _on_settle() 이 조건 없이 _onb(18) 을 찍는다.
-    #   즉 '첫 월정산'은 개발 중 첫 월말이면 누구나 밟는 초반 이벤트이지 후반 게이트가 아니다.
-    #   step_idx 자리에 두면 신분2~7(0%) 뒤에 수십 % 막대가 솟아 퍼널이 읽히지 않는다.
+    # ⚠ first_settle(step_idx 18, '첫정산')은 퍼널에서 뺐다 — 단계가 아니라 타이머다.
+    #   time_system.gd: day % 30 == 0 이면 month_settled 발화, config 의 real_seconds_per_day=2.0.
+    #   즉 게임 화면이 60초 떠 있으면 부동산·출시·자산과 무관하게 누구나 찍힌다(인트로 중에도 시계는 돈다).
+    #   퍼널 어디에 끼워도 앞뒤 단계와 인과가 없어 낙폭 해석이 깨진다.
     #   출시 이후의 진짜 정산 게이트는 first_ops(idx 9, _launched 조건부)가 따로 맡는다.
     STAGES = [
-        ("new_game", "새게임"), ("intro_done", "인트로"), ("first_settle", "첫정산"),
-    ("dev_concept", "기획"),
+        ("new_game", "새게임"), ("intro_done", "인트로"), ("dev_concept", "기획"),
         ("dev_design", "디자인"), ("dev_prototype", "프로토"), ("dev_alpha", "알파"),
         ("dev_beta", "베타"), ("dev_launch", "출시"), ("first_ops", "첫운영"),
         ("property_1", "부동산1"), ("property_2", "부동산2"), ("property_3", "부동산3"),

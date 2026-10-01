@@ -23,18 +23,18 @@ LOCATION = os.environ.get("BQ_LOCATION", "asia-northeast3")
 TABLE = f"`{PROJECT}.{DATASET}.events_*`"
 INTRADAY = "_TABLE_SUFFIX LIKE 'intraday%'"
 OUT = os.path.join(os.path.dirname(__file__), "..", "docs", "data", "realtime.json")
-MAX_USERS = 300          # 화면에 줄 세울 최대 인원(최근 가입 순)
+MAX_USERS = 1000         # 화면에 줄 세울 최대 인원(최근 가입 순). 쿼리 스캔량과는 무관 — 자르기만 한다.
 
 # ⚠ 퍼널 정의는 tools/ingame.py 의 STAGES / CLASS_STAGES 와 **같아야 한다**.
 #   두 뷰가 다른 퍼널을 말하면 비교 자체가 불가능해진다. 한쪽을 고치면 반드시 양쪽을 고칠 것.
-# ⚠ 표시 순서는 게임의 step_idx(1~20)와 한 군데가 다르다 — first_settle(idx 18)을 인트로 뒤로 끌어올린다.
-#   근거: SecondActLife2/scripts/autoload/analytics.gd 의 _on_settle() 이 조건 없이 _onb(18) 을 찍는다.
-#   즉 '첫 월정산'은 개발 중 첫 월말이면 누구나 밟는 초반 이벤트이지 후반 게이트가 아니다.
-#   step_idx 자리에 두면 신분2~7(0%) 뒤에 수십 % 막대가 솟아 퍼널이 읽히지 않는다.
+# ⚠ first_settle(step_idx 18, '첫정산')은 퍼널에서 뺐다 — 단계가 아니라 타이머다.
+#   time_system.gd: day % 30 == 0 이면 month_settled 발화, config 의 real_seconds_per_day=2.0.
+#   즉 게임 화면이 60초 떠 있으면 부동산·출시·자산과 무관하게 누구나 찍힌다(인트로 중에도 시계는 돈다).
+#   analytics.gd _on_settle() 은 조건 없이 _onb(18) 을 찍으므로 '진행'을 전혀 뜻하지 않는다.
+#   퍼널 어디에 끼워도 앞뒤 단계와 인과가 없어 낙폭 해석이 깨진다 → 아래 EXTRA 로 빼서 타일로만 쓴다.
 #   출시 이후의 진짜 정산 게이트는 first_ops(idx 9, _launched 조건부)가 따로 맡는다.
 STAGES = [
-    ("new_game", "새게임"), ("intro_done", "인트로"), ("first_settle", "첫정산"),
-    ("dev_concept", "기획"),
+    ("new_game", "새게임"), ("intro_done", "인트로"), ("dev_concept", "기획"),
     ("dev_design", "디자인"), ("dev_prototype", "프로토"), ("dev_alpha", "알파"),
     ("dev_beta", "베타"), ("dev_launch", "출시"), ("first_ops", "첫운영"),
     ("property_1", "부동산1"), ("property_2", "부동산2"), ("property_3", "부동산3"),
@@ -43,6 +43,9 @@ STAGES = [
     ("first_finance", "첫금융"), ("first_rebirth", "첫환생"),
 ]
 CLASS_STAGES = [(2, "신분2"), (3, "신분3"), (4, "신분4"), (5, "신분5"), (6, "신분6"), (7, "신분7")]
+
+# 퍼널 밖에서 따로 세는 플래그 — 단계가 아니라 '얼마나 버텼나'를 재는 값.
+EXTRA = [("first_settle", "stay60")]
 
 # 표시 순서 — 첫후원 뒤에 신분2~7을 끼운다(ingame.py 의 ORDER 와 동일).
 ORDER = []
@@ -80,7 +83,9 @@ def main() -> None:
     out["summary"] = q(f"""
       SELECT
         COUNT(DISTINCT user_pseudo_id) AS users,
-        COUNT(DISTINCT IF(event_name='first_open', user_pseudo_id, NULL)) AS new_users,
+        COUNT(DISTINCT IF(DATE(TIMESTAMP_MICROS(user_first_touch_timestamp), 'Asia/Seoul')
+                          = CURRENT_DATE('Asia/Seoul'), user_pseudo_id, NULL)) AS new_users,
+        COUNT(DISTINCT IF(event_name='first_open', user_pseudo_id, NULL)) AS first_open_users,
         COUNTIF(event_name='purchase') AS purchases,
         COUNTIF(event_name='app_exception') AS exceptions,
         FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', MIN(TIMESTAMP_MICROS(event_timestamp)), 'Asia/Seoul') AS first_at,
@@ -90,12 +95,15 @@ def main() -> None:
 
     flags = ",\n        ".join(
         f"MAX(IF(event_name='onb_step' AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')='{k}',1,0)) AS s_{k}"
-        for k, _ in STAGES)
+        for k, _ in STAGES + [(k, lab) for k, lab in EXTRA])
     flags += ",\n        " + ",\n        ".join(
         f"MAX(IF(event_name='class_up' AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='level')>={lv},1,0)) AS c{lv}"
         for lv, _ in CLASS_STAGES)
 
-    # 오늘 '처음 연' 사람만. first_open 이 intraday 안에 있어야 당일 가입자다.
+    # 오늘 '처음 연' 사람만. 판정 기준은 first_open 이벤트가 아니라 user_first_touch_timestamp 다 —
+    # first_open 은 첫 세션에 업로드 못 하면(오프라인·강제종료) 다음 세션에 밀려 올라와서,
+    # 어제 설치한 사람이 오늘 가입자로 섞인다. 그러면 "새게임은 없는데 뒷단계는 있는" 유령 줄이 생긴다.
+    # first_touch 는 유저 속성이라 밀리지 않는다.
     # tag = 가명 ID 를 한 번 더 해시한 6자. 원본 ID 는 BigQuery 밖으로 안 나간다(리포가 공개라서).
     # 한 사람은 늘 같은 tag 라 새로고침 사이에 "아까 그 줄"을 짚을 수 있고,
     # 더 캐야 하면 BigQuery 에서 같은 식으로 해시해 맞춰보면 된다.
@@ -108,17 +116,20 @@ def main() -> None:
         COUNT(*) AS events,
         ANY_VALUE(app_info.version) AS ver,
         ANY_VALUE(geo.country) AS country,
+        COUNTIF(event_name='first_open') AS fo,
         {flags}
       FROM {TABLE} WHERE {INTRADAY}
       GROUP BY user_pseudo_id
-      HAVING COUNTIF(event_name='first_open') > 0
+      HAVING DATE(TIMESTAMP_MICROS(MIN(user_first_touch_timestamp)), 'Asia/Seoul')
+             = CURRENT_DATE('Asia/Seoul')
       ORDER BY MIN(event_timestamp) DESC
       LIMIT {MAX_USERS}
     """)
 
-    users, funnel = [], [0] * len(ORDER)
+    users, funnel, stay60 = [], [0] * len(ORDER), 0
     for r in rows:
         reached = [int(r.get(col) or 0) for _, _, col in ORDER]
+        stay60 += 1 if r.get("s_" + EXTRA[0][0]) else 0
         # 마지막으로 '도달한' 단계. 중간을 건너뛴 기록이 있어도 가장 멀리 간 지점을 쓴다.
         far = max([i for i, v in enumerate(reached) if v], default=-1)
         for i, v in enumerate(reached):
@@ -134,6 +145,9 @@ def main() -> None:
 
     n = len(users)
     out["users"] = users
+    out["stay60"] = stay60
+    # 가입 판정이 first_open 하나였을 때의 숫자. 둘이 벌어지면 업로드가 밀린 게 섞였다는 뜻.
+    out["summary"]["first_open_rows"] = sum(1 for r in rows if r.get("fo"))
     out["funnel"] = [{"key": k, "label": lab, "n": funnel[i],
                       "pct": round(100 * funnel[i] / n, 1) if n else 0}
                      for i, (k, lab, _) in enumerate(ORDER)]

@@ -34,6 +34,8 @@
     tiles([
       ['오늘 가입', num(d.cohort_n), '처음 앱을 연 사람'],
       ['인트로 전 이탈', num(stuck), d.cohort_n ? `${Math.round(100 * stuck / d.cohort_n)}%` : '', stuck > 0],
+      // 60초 = 게임 시계로 한 달(2초/일 × 30일). 단계가 아니라 '첫 1분을 버텼나'다.
+      ['60초 체류', num(d.stay60), d.cohort_n ? `${Math.round(100 * (d.stay60 || 0) / d.cohort_n)}%` : ''],
       ['활동 유저', num(s.users), '가입자 포함 전체'],
       ['결제', num(s.purchases), ''],
       ['예외', num(s.exceptions), 'app_exception', (s.exceptions || 0) > 0],
@@ -95,7 +97,8 @@
     t.textContent = '';
 
     const hr = t.createTHead().insertRow();
-    ['유저', '가입', '마지막', '머문시간', '도달 단계', '진행', '버전', '국가'].forEach((h, i) => {
+    // 도달 단계·버전은 뺐다 — 도달 지점은 진행 막대가 이미 말하고, 버전은 지금 한 종류뿐이다.
+    ['유저', '가입', '마지막', '머문시간', '진행', '국가'].forEach((h, i) => {
       const th = document.createElement('th');
       if (i === 1) th.className = 'date';
       th.textContent = h;
@@ -106,7 +109,7 @@
     const users = d.users || [];
     if (!users.length) {
       const td = tb.insertRow().insertCell();
-      td.colSpan = 8; td.textContent = '오늘 가입자가 없습니다';
+      td.colSpan = 6; td.textContent = '오늘 가입자가 없습니다';
       return;
     }
 
@@ -118,8 +121,6 @@
       c(u.joined, 'date');
       c(u.last_seen);
       c(u.mins >= 60 ? `${Math.floor(u.mins / 60)}시간 ${u.mins % 60}분` : `${u.mins}분`);
-      const far = c(u.far_label);
-      if (u.far <= 1) far.className = 'neg';
 
       const strip = tr.insertCell();
       strip.className = 'rt-strip';
@@ -130,7 +131,6 @@
         strip.appendChild(cell);
       });
 
-      c(u.ver || '—');
       c(u.country || '—');
     }
   }
