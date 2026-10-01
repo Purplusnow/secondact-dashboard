@@ -190,13 +190,6 @@ def main() -> None:
         ANY_VALUE(app_info.version) AS ver,
         ANY_VALUE(geo.country) AS country,
         COUNTIF(event_name='first_open') AS fo,
-        -- 추월% 두 눈금. progress_pct 는 정수 1~100, progress_deci 는 0.1% 단위 1~32
-        -- (첫 환생 경계 3.2%까지). 초반엔 정수 pct 가 한참 0 에 머물러서 deci 가 아니면
-        -- '얼마나 왔나'가 안 보인다. 둘 중 큰 쪽을 그 유저의 진행률로 쓴다.
-        MAX(IF(event_name='progress_pct',
-               (SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct'), 0)) AS pct,
-        MAX(IF(event_name='progress_deci',
-               (SELECT value.int_value FROM UNNEST(event_params) WHERE key='deci'), 0)) AS deci,
         {flags}
       FROM {TABLE} WHERE {INTRADAY}
       GROUP BY user_pseudo_id
@@ -232,7 +225,6 @@ def main() -> None:
             "tag": r["tag"], "joined": r["joined"], "last_seen": r["last_seen"],
             "mins": int(r["mins"] or 0), "events": int(r["events"] or 0),
             "ver": r["ver"], "country": r["country"],
-            "prog": max(float(r["pct"] or 0), (int(r["deci"] or 0)) / 10.0),
             "reached": reached, "far": far,
             "far_label": ORDER[far][1] if far >= 0 else "—",
         })
@@ -245,21 +237,6 @@ def main() -> None:
                       "kind": "side" if k in SIDE else "spine"}
                      for i, (k, lab, _) in enumerate(ORDER)]
     out["cohort_n"] = n
-
-    # ── 추월% 진행 ─────────────────────────────────────────────
-    # 퍼널은 '어느 단계를 밟았나'만 말한다. 같은 단계 안에서 얼마나 멀리 갔는지는 추월%가 말한다.
-    # 임계값별 '이상 도달' 수로 낸다 — 구간별로 나누면 경계에서 숫자가 튀고 단조성도 깨진다.
-    # 눈금은 게임의 마디에 맞춘다: 3.2%는 첫 환생 경계(progress_deci 가 거기까지만 찍힌다).
-    progs = sorted((u["prog"] for u in users), reverse=True)
-    MARKS = [0.1, 0.5, 1, 2, 3.2, 5, 10, 25, 50, 100]
-    out["progress"] = {
-        "median": progs[len(progs) // 2] if progs else 0,
-        "max": progs[0] if progs else 0,
-        "zero": sum(1 for p in progs if p <= 0),
-        "marks": [{"at": m, "n": sum(1 for p in progs if p >= m),
-                   "pct": round(100 * sum(1 for p in progs if p >= m) / n, 1) if n else 0}
-                  for m in MARKS],
-    }
 
     # ── 리워드 광고 ────────────────────────────────────────────────
     # ads.gd 가 결과를 네 갈래로 쏜다(rewarded_result): earned/dismissed/failed/no_ad.

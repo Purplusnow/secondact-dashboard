@@ -42,7 +42,6 @@
     ]);
 
     funnel(d.funnel || [], d.cohort_n || 0);
-    progress(d.progress, d.cohort_n || 0);
     ads(d.ads);
     table(d);
   }
@@ -54,41 +53,6 @@
     repair: '수리', offline: '방치보상', boost: '수익부스트', gem_ad: '보석광고',
     city_repair: '도시 수리', city_boost: '도시 부스트',
   };
-
-  /* 추월%는 초반에 아주 느리게 움직인다 — 0.1%대에서 정수로 반올림하면 전부 0%가 된다.
-     10% 밑에서는 소수 한 자리를 남기고, 그 위로는 정수로 끊는다. */
-  const prog = v => !v ? '—' : (v < 10 ? v.toFixed(1) : Math.round(v)) + '%';
-
-  function progress(p, n) {
-    const card = $('#rt-prog-card');
-    if (!p || !n) { card.hidden = true; return; }
-    card.hidden = false;
-    $('#rt-prog-sub').textContent =
-      `중앙값 ${prog(p.median)} · 최고 ${prog(p.max)} · 아직 0%인 사람 ${p.zero}명`;
-
-    const host = $('#rt-prog');
-    host.textContent = '';
-    for (const m of p.marks) {
-      const row = document.createElement('div');
-      row.className = 'fn-row';
-      const lab = document.createElement('span');
-      lab.className = 'fn-label';
-      lab.textContent = '≥ ' + prog(m.at);
-      const track = document.createElement('span'); track.className = 'fn-track';
-      const fill = document.createElement('i');
-      fill.style.width = (n ? 100 * m.n / n : 0) + '%';
-      track.appendChild(fill);
-      const val = document.createElement('span');
-      val.className = 'fn-val';
-      val.textContent = `${m.n}명 · ${m.pct}%`;
-      const note = document.createElement('span');
-      note.className = 'fn-drop';
-      // 3.2%는 첫 환생 경계 — 눈금이 아니라 게임의 마디라서 표시해 둔다
-      note.textContent = m.at === 3.2 ? '환생' : '';
-      row.append(lab, track, val, note);
-      host.appendChild(row);
-    }
-  }
 
   function ads(a) {
     const card = $('#rt-ads-card');
@@ -239,7 +203,7 @@
 
     const hr = t.createTHead().insertRow();
     // 도달 단계·버전은 뺐다 — 도달 지점은 진행 막대가 이미 말하고, 버전은 지금 한 종류뿐이다.
-    ['유저', '가입', '마지막', '머문시간', '추월%', '진행', '국가'].forEach((h, i) => {
+    ['유저', '가입', '마지막', '머문시간', '진행', '국가'].forEach((h, i) => {
       const th = document.createElement('th');
       if (i === 1) th.className = 'date';
       th.textContent = h;
@@ -250,7 +214,7 @@
     const users = d.users || [];
     if (!users.length) {
       const td = tb.insertRow().insertCell();
-      td.colSpan = 7; td.textContent = '오늘 가입자가 없습니다';
+      td.colSpan = 6; td.textContent = '오늘 가입자가 없습니다';
       return;
     }
 
@@ -262,7 +226,6 @@
       c(u.joined, 'date');
       c(u.last_seen);
       c(u.mins >= 60 ? `${Math.floor(u.mins / 60)}시간 ${u.mins % 60}분` : `${u.mins}분`);
-      c(prog(u.prog));
 
       const strip = tr.insertCell();
       strip.className = 'rt-strip';
