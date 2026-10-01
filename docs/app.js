@@ -168,6 +168,15 @@ async function load() {
   renderFxNote();
 
   state.raw = daily;
+  // 수익 지표용: GA4 유저수(ingame.json) + 수동 결제자수(daily.json payers). 실패해도 매출 뷰는 정상.
+  state.payers = (data.payers != null && +data.payers > 0) ? +data.payers : null;
+  state.ig = null;
+  if (!demo) {
+    try {
+      const ig = await fetch('data/ingame.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : null);
+      if (ig && ig.kpi) state.ig = ig.kpi;
+    } catch {}
+  }
   try { state.applyFee = localStorage.getItem('applyFee') !== '0'; } catch {}
   const box = document.getElementById('fee-toggle');
   box.checked = state.applyFee;
@@ -276,6 +285,7 @@ function render() {
 
   renderHero(rows, last);
   renderTiles(rows, last);
+  renderMon(last);
 
   if (!rows.length) {
     ['chart-daily', 'chart-cum'].forEach(id =>
@@ -287,6 +297,49 @@ function render() {
   drawDaily(rows);
   drawCum(rows);
   renderLedger(rows);
+}
+
+/* 수익 지표 — 실매출(누적 순, 현재 수수료 기준) × GA4 유저수. 결제자수는 수동(daily.json payers).
+   ARPU/LTV=누적매출/누적유저, ARPDAU=최근7일 평균 일매출/DAU, ARPPU=누적매출/결제자, 결제율=결제자/유저. */
+function renderMon(lastAll) {
+  const card = document.getElementById('mon-card');
+  const host = document.getElementById('mon-tiles');
+  const note = document.getElementById('mon-note');
+  if (!card || !host) return;
+  const ig = state.ig;
+  // 누적 순매출(전 기간, 수수료 토글 반영) — 매출 계열만.
+  const cumRev = lastAll ? state.cfg.series.filter(s => s.type !== 'spend')
+    .reduce((a, s) => a + (lastAll.cum[s.key] || 0), 0) : 0;
+  const users = ig && ig.cumulative ? ig.cumulative : null;
+  const dau = ig && ig.dau ? ig.dau : null;
+  const payers = state.payers;
+  // 최근 7일 평균 일매출(전체 행 기준)
+  const recent = state.rows.slice(-7);
+  const avgDaily = recent.length ? recent.reduce((a, r) => a + r.rev, 0) / recent.length : 0;
+  card.hidden = false;
+  const feeTag = state.applyFee ? '수수료 뗀 뒤' : '수수료 전';
+  const wonv = v => (v == null ? '—' : won(v));
+  const tiles = [
+    { label: '누적 매출', value: wonv(cumRev), sub: `${feeTag} · IAP+광고 합` },
+    { label: 'ARPU', value: users ? wonv(cumRev / users) : '—', sub: users ? `누적매출 / 누적유저 ${short(users)}` : 'GA4 유저수 없음' },
+    { label: 'LTV (누적)', value: users ? wonv(cumRev / users) : '—', sub: '유저당 생애매출(현재까지=ARPU)' },
+    { label: 'ARPDAU', value: dau ? wonv(avgDaily / dau) : '—', sub: dau ? `최근7일 평균 일매출 / DAU ${short(dau)}` : 'GA4 DAU 없음' },
+    { label: 'ARPPU', value: payers ? wonv(cumRev / payers) : '—', sub: payers ? `누적매출 / 결제자 ${short(payers)}` : '결제자수 입력 필요' },
+    { label: '결제율', value: (payers && users) ? pct(payers / users) : '—', sub: (payers && users) ? `결제자 / 누적유저` : '결제자수 입력 필요' },
+  ];
+  host.textContent = '';
+  for (const t of tiles) {
+    const el = document.createElement('div'); el.className = 'tile';
+    const lab = document.createElement('div'); lab.className = 'tile-label'; lab.textContent = t.label;
+    const val = document.createElement('div'); val.className = 'tile-value num'; val.textContent = t.value;
+    const sub = document.createElement('div'); sub.className = 'tile-sub'; sub.textContent = t.sub;
+    el.append(lab, val, sub); host.appendChild(el);
+  }
+  if (note) {
+    note.innerHTML = payers
+      ? '유저수·DAU는 GA4(실측), 매출은 수동입력(Play Console). 결제자수는 <code>daily.json</code>의 <code>payers</code>(누적 구매자).'
+      : '⚠️ ARPPU·결제율은 <b>누적 결제자수</b>가 있어야 나옵니다 — <code>daily.json</code>에 <code>"payers": &lt;Play Console 구매자 수&gt;</code> 한 줄 추가(또는 알려주시면 넣어둡니다).';
+  }
 }
 
 function renderHero(rows, last) {
