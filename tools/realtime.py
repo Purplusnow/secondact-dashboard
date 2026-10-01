@@ -83,9 +83,11 @@ def main() -> None:
     out["summary"] = q(f"""
       SELECT
         COUNT(DISTINCT user_pseudo_id) AS users,
+        COUNT(DISTINCT IF(event_name='first_open', user_pseudo_id, NULL)) AS new_users,
+        -- 참고값: intraday 의 user_first_touch_timestamp 기준. 후처리 전이라 '스트리밍에 오늘 처음
+        -- 등장'까지 묶여 부풀어 오른다 — 가입 판정엔 안 쓰고 벌어지는 폭만 본다.
         COUNT(DISTINCT IF(DATE(TIMESTAMP_MICROS(user_first_touch_timestamp), 'Asia/Seoul')
-                          = CURRENT_DATE('Asia/Seoul'), user_pseudo_id, NULL)) AS new_users,
-        COUNT(DISTINCT IF(event_name='first_open', user_pseudo_id, NULL)) AS first_open_users,
+                          = CURRENT_DATE('Asia/Seoul'), user_pseudo_id, NULL)) AS first_touch_today,
         COUNTIF(event_name='purchase') AS purchases,
         COUNTIF(event_name='app_exception') AS exceptions,
         FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', MIN(TIMESTAMP_MICROS(event_timestamp)), 'Asia/Seoul') AS first_at,
@@ -100,10 +102,11 @@ def main() -> None:
         f"MAX(IF(event_name='class_up' AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='level')>={lv},1,0)) AS c{lv}"
         for lv, _ in CLASS_STAGES)
 
-    # 오늘 '처음 연' 사람만. 판정 기준은 first_open 이벤트가 아니라 user_first_touch_timestamp 다 —
-    # first_open 은 첫 세션에 업로드 못 하면(오프라인·강제종료) 다음 세션에 밀려 올라와서,
-    # 어제 설치한 사람이 오늘 가입자로 섞인다. 그러면 "새게임은 없는데 뒷단계는 있는" 유령 줄이 생긴다.
-    # first_touch 는 유저 속성이라 밀리지 않는다.
+    # 오늘 '처음 연' 사람만 — 판정은 first_open 이벤트로 한다.
+    # user_first_touch_timestamp 로 바꿔 봤다가 되돌렸다: intraday 는 후처리 전이라 유저 범위
+    # 필드가 아직 안 채워져 있고, 실측에서 그 기준이 54명(= 스트리밍에 오늘 처음 잡힌 사람)으로
+    # 부풀었다. 같은 시각 first_open 기준은 13명. 54 쪽은 '설치'가 아니라 '스트리밍 첫 등장'이다.
+    # 둘 다 summary 에 남겨 두니 벌어지면 눈에 보인다(new_users vs first_open_users).
     # tag = 가명 ID 를 한 번 더 해시한 6자. 원본 ID 는 BigQuery 밖으로 안 나간다(리포가 공개라서).
     # 한 사람은 늘 같은 tag 라 새로고침 사이에 "아까 그 줄"을 짚을 수 있고,
     # 더 캐야 하면 BigQuery 에서 같은 식으로 해시해 맞춰보면 된다.
@@ -120,8 +123,7 @@ def main() -> None:
         {flags}
       FROM {TABLE} WHERE {INTRADAY}
       GROUP BY user_pseudo_id
-      HAVING DATE(TIMESTAMP_MICROS(MIN(user_first_touch_timestamp)), 'Asia/Seoul')
-             = CURRENT_DATE('Asia/Seoul')
+      HAVING COUNTIF(event_name='first_open') > 0
       ORDER BY MIN(event_timestamp) DESC
       LIMIT {MAX_USERS}
     """)
@@ -146,8 +148,6 @@ def main() -> None:
     n = len(users)
     out["users"] = users
     out["stay60"] = stay60
-    # 가입 판정이 first_open 하나였을 때의 숫자. 둘이 벌어지면 업로드가 밀린 게 섞였다는 뜻.
-    out["summary"]["first_open_rows"] = sum(1 for r in rows if r.get("fo"))
     out["funnel"] = [{"key": k, "label": lab, "n": funnel[i],
                       "pct": round(100 * funnel[i] / n, 1) if n else 0}
                      for i, (k, lab, _) in enumerate(ORDER)]
