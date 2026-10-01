@@ -21,7 +21,12 @@ PROJECT = os.environ.get("BQ_PROJECT", "second-act-life")
 DATASET = os.environ.get("BQ_DATASET", "analytics_544010325")
 LOCATION = os.environ.get("BQ_LOCATION", "asia-northeast3")
 TABLE = f"`{PROJECT}.{DATASET}.events_*`"
-INTRADAY = "_TABLE_SUFFIX LIKE 'intraday%'"
+# 스트리밍 테이블을 훑는 범위. 기본은 '전부'지만, 실제 쿼리는 아래에서 '가장 최근 하루'로 좁힌다.
+# GA4 는 일별 테이블이 확정되기 전까지 어제치 events_intraday_* 를 그대로 남겨 둔다. 그래서
+# 아침에는 어제·오늘 두 장이 동시에 존재하고, LIKE 'intraday%' 로 받으면 이틀치가 합산된다
+# (실측: 10/02 05:10 수집에서 '오늘 가입'이 206명 — 10/01 분이 통째로 섞인 값이었다).
+INTRADAY_ANY = "_TABLE_SUFFIX LIKE 'intraday%'"
+INTRADAY = INTRADAY_ANY   # main() 에서 최신 테이블 하루로 교체한다
 OUT = os.path.join(os.path.dirname(__file__), "..", "docs", "data", "realtime.json")
 MAX_USERS = 1000         # 화면에 줄 세울 최대 인원(최근 가입 순). 쿼리 스캔량과는 무관 — 자르기만 한다.
 
@@ -86,11 +91,19 @@ def main() -> None:
     out["tables"] = q(f"""
       SELECT REPLACE(_TABLE_SUFFIX, 'intraday_', '') AS d,
              COUNT(DISTINCT user_pseudo_id) AS users, COUNT(*) AS events
-      FROM {TABLE} WHERE {INTRADAY} GROUP BY d ORDER BY d
+      FROM {TABLE} WHERE {INTRADAY_ANY} GROUP BY d ORDER BY d
     """)
     if not out["tables"]:
         save(out)
         return
+
+    # 가장 최근 하루만 본다 — 어제 테이블이 아직 안 지워졌어도 섞이지 않게.
+    # (자정 직후 오늘 테이블이 아직 없으면 자연히 어제가 잡힌다 — 빈 화면보다 낫다.)
+    global INTRADAY
+    day = max(t["d"] for t in out["tables"])
+    INTRADAY = f"_TABLE_SUFFIX = 'intraday_{day}'"
+    out["tables"] = [t for t in out["tables"] if t["d"] == day]
+    out["day"] = day
 
     out["summary"] = q(f"""
       SELECT
