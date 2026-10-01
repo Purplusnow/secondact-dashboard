@@ -417,6 +417,9 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .fn-drop.is-big { color: var(--bad); font-weight: 600; }
 
 /* 가입자별 진행 스트립 — 26칸, 채워진 칸이 도달한 단계 */
+/* 실시간은 타일이 6개다 — 180px 기준이면 5개에서 줄이 꺾여 하나만 덩그러니 남는다 */
+#rt-tiles { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+
 /* 하루 수백~천 줄이 설 수 있는 표다 — 한 화면에 많이 들어오게 ledger 기본보다 눌러 둔다 */
 .rt-users th, .rt-users td { padding: 3px 12px; font-size: 12.5px; line-height: 1.45; }
 .rt-users td.rt-strip { padding: 2px 12px; white-space: nowrap; }
