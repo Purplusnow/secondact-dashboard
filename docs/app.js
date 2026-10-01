@@ -762,36 +762,27 @@ function drawDaily(rows) {
    * 막대 높이가 제각각이라 "한 칸 걸러 엇갈리기" 같은 규칙으로는 겹침을 못 막는다
    * (이웃 막대 높이차가 엇갈림 폭과 비슷하면 오히려 같은 줄에 떨어진다).
    */
+  /* 생략하지 않는다 — 막대 폭에 맞춰 라벨 폰트를 균일 축소해 전부 표시한다(요청).
+   * 같은 방향(위/아래) 이웃 라벨만 가로로 겹칠 수 있으므로, 가장 넓은 라벨이 1밴드에
+   * 들어가도록 스케일을 잡으면 어느 이웃과도 안 겹친다. 최소 60%(≈6.3px)까지만 줄인다. */
   const caps = rows.map(r => [total(r, spec.up), total(r, spec.down)]);
-  const placed = { up: [], down: [] };
-  let skipped = 0;
+  const BASE_F = 10.5;
+  const widestLbl = Math.max(6, ...caps.flat().filter(v => v > 0).map(v => textW(short(v))));
+  const fscale = Math.max(0.6, Math.min(1, (band - 4) / widestLbl));
 
   const put = (i, v, dir) => {
     if (v <= 0) return;
     const t = short(v);
-    const half = textW(t) / 2 + 3;
-    /* 끝단 클립 방지: 라벨 중심을 차트 안쪽으로 당긴다(막대 중심과 어긋나도 숫자가 보이게). */
+    const half = (textW(t) * fscale) / 2 + 2;
+    /* 끝단 클립 방지: 라벨 중심을 차트 안쪽으로 당긴다. */
     const cx = Math.max(ML + half, Math.min(w - MR - half, x(i)));
-    const x1 = cx - half, x2 = cx + half;
-    const base = dir > 0 ? zeroY - sc(v) - 7 : zeroY + sc(v) + 14;
-    const side = dir > 0 ? placed.up : placed.down;
-
-    const hits = y => side.some(b => x2 > b.x1 && b.x2 > x1 && Math.abs(y - b.y) < 11);
-    let y = base;
-    if (hits(y)) y = base - dir * 13;        /* 바깥쪽으로 한 줄 */
-    if (hits(y)) { skipped++; return; }
-
-    side.push({ x1, x2, y });
-    svg.appendChild(el('text', { class: 'bar-label', x: cx, y }, t));
+    const y = dir > 0 ? zeroY - sc(v) - 6 : zeroY + sc(v) + 13;
+    const node = el('text', { class: 'bar-label', x: cx, y }, t);
+    if (fscale < 1) node.setAttribute('font-size', (BASE_F * fscale).toFixed(1));
+    svg.appendChild(node);
   };
 
-  /* 최신(오른쪽)부터 자리 배정 — 겹쳐 생략될 땐 최근 데이터가 우선 보이게. */
-  for (let i = rows.length - 1; i >= 0; i--) { put(i, caps[i][0], +1); put(i, caps[i][1], -1); }
-
-  if (skipped) {
-    document.getElementById('daily-sub').textContent +=
-      ` 막대가 좁아 숫자 ${skipped}개는 자리가 없어 생략했습니다 (값은 원장에 있습니다).`;
-  }
+  rows.forEach((r, i) => { put(i, caps[i][0], +1); put(i, caps[i][1], -1); });
 
   svg.appendChild(el('line', { class: 'g-zero', x1: ML, x2: w - MR, y1: zeroY, y2: zeroY }));
 
