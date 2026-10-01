@@ -385,3 +385,12 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 
 /* 진입 퍼널 최대드롭 강조 */
 .fbar-fill-hot { background: linear-gradient(90deg, #e2504b, #e87d79) !important; }
+
+/* ── 실시간 뷰 ────────────────────────────────────── */
+.rt-warn {
+  margin: 0 0 14px; padding: 12px 15px;
+  background: #fff6e0; border: 1px solid var(--hair); border-radius: var(--r);
+  font-size: 13px; color: #6b4a00; line-height: 1.7;
+}
+.rt-warn b { font-weight: 620; }
+.rt-meta { margin: 0 0 16px; font-size: 12px; color: var(--ink-3); }

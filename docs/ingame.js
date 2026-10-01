@@ -45,13 +45,14 @@
 
   // ── 뷰 토글 ────────────────────────────────────────────────
   let loaded = false;
+  /* 뷰가 셋 이상으로 늘어 일반화했다. 다른 뷰는 window.__viewShown 으로 전환을 전달받는다. */
+  const VIEWS = ['revenue', 'ingame', 'realtime'];
   function show(view) {
-    const ig = view === 'ingame';
-    $('#view-revenue').hidden = ig;
-    $('#view-ingame').hidden = !ig;
-    const db = $('#demo-banner'); if (ig && db) db.hidden = true;
+    VIEWS.forEach(v => { const el = $('#view-' + v); if (el) el.hidden = v !== view; });
+    const db = $('#demo-banner'); if (view !== 'revenue' && db) db.hidden = true;
     document.querySelectorAll('.vtab').forEach(b => b.classList.toggle('is-on', b.dataset.view === view));
-    if (ig && !loaded) { loaded = true; load(); }
+    if (view === 'ingame' && !loaded) { loaded = true; load(); }
+    if (typeof window.__viewShown === 'function') window.__viewShown(view);
   }
   document.querySelectorAll('.vtab').forEach(b => b.addEventListener('click', () => show(b.dataset.view)));
 

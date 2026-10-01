@@ -53,17 +53,6 @@ def main() -> None:
     last_t = q(f"SELECT MAX(_TABLE_SUFFIX) AS t FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'")[0]["t"]
     out["last_table"] = last_t
 
-    # ── 스트리밍(intraday) 현황 ────────────────────────────────────────
-    # 모든 기존 지표는 '완결된 일별 테이블'만 쓴다. intraday 는 후처리 전이라 속성이 비거나
-    # 나중에 달라지고, 무엇보다 '하루가 덜 찬' 값이라 리텐션·코호트에 섞으면 그대로 왜곡된다.
-    # 그래서 여기서는 진행중 현황만 따로 뽑아 두고, 완결 지표와는 절대 합치지 않는다.
-    out["intraday"] = q(f"""
-      SELECT REPLACE(_TABLE_SUFFIX, 'intraday_', '') AS d,
-             COUNT(DISTINCT user_pseudo_id) AS dau,
-             COUNT(*) AS events
-      FROM {TABLE} WHERE _TABLE_SUFFIX LIKE 'intraday%'
-      GROUP BY d ORDER BY d
-    """)
     _last = datetime.strptime(last_t, "%Y%m%d").date()
     d7 = (_last - timedelta(days=6)).strftime("%Y%m%d")     # 최근 7일(마지막일 포함)
     k = q(f"""

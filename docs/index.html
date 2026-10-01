@@ -7,7 +7,7 @@
 <meta name="description" content="일별 광고매출·인앱매출·마케팅비를 누적으로 추적하는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=98fc382f">
+<link rel="stylesheet" href="style.css?v=586b24db">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -23,6 +23,7 @@
 <nav class="viewnav">
   <button class="vtab is-on" data-view="revenue" type="button">매출</button>
   <button class="vtab" data-view="ingame" type="button">인게임</button>
+  <button class="vtab" data-view="realtime" type="button">실시간</button>
 </nav>
 
 <div class="demo-banner" id="demo-banner" hidden>
@@ -195,6 +196,49 @@
   </section>
 </main>
 
+<main class="wrap" id="view-realtime" hidden>
+
+  <p class="rt-warn">
+    이 뷰는 <b>GA4 스트리밍(intraday)</b> 데이터만 봅니다. 후처리 전이라 일부 속성이 비거나
+    나중에 값이 달라지고, 무엇보다 <b>하루가 덜 찬 값</b>입니다.
+    <b>인게임 뷰의 완결 수치와 비교하거나 합산하지 마세요.</b>
+    쓰임새는 배포 직후 확인입니다 — 이벤트가 찍히는지, 새 버전이 퍼지는지, 크래시가 터지는지.
+  </p>
+
+  <p class="rt-meta" id="rt-meta"></p>
+
+  <section class="tiles" id="rt-tiles"></section>
+
+  <section class="card">
+    <div class="card-head"><h2>시간대별</h2>
+      <p class="card-sub">KST 시각별 접속 유저와 이벤트 수. 배포 직후 뚝 끊기는 구간이 있는지 봅니다.</p></div>
+    <div class="chart" id="rt-hourly"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>이벤트</h2>
+      <p class="card-sub">새로 넣은 이벤트가 실제로 찍히는지 확인하는 표입니다.</p></div>
+    <div class="table-scroll"><table class="ledger" id="rt-events"></table></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>앱 버전</h2>
+      <p class="card-sub">새 빌드가 퍼지는 속도와 구버전 잔존량.</p></div>
+    <div class="table-scroll"><table class="ledger" id="rt-versions"></table></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>국가</h2></div>
+    <div class="table-scroll"><table class="ledger" id="rt-countries"></table></div>
+  </section>
+
+  <section class="empty" id="rt-empty" hidden>
+    <h2>실시간 데이터가 없습니다</h2>
+    <p>GA4 → BigQuery 링크에서 <b>스트리밍</b> 내보내기가 켜져 있어야 <code>events_intraday_*</code>
+       테이블이 생깁니다. 켠 <b>시점부터</b> 쌓이므로 과거는 소급되지 않습니다.</p>
+  </section>
+</main>
+
 <footer class="foot">
   <p class="sync-line" id="sync-line" hidden></p>
   <p>
@@ -210,7 +254,8 @@
   </p>
 </footer>
 
-<script src="app.js?v=2a3f7c54"></script>
-<script src="ingame.js?v=22"></script>
+<script src="app.js?v=2d80f1a9"></script>
+<script src="ingame.js?v=d881c6c8"></script>
+<script src="realtime.js?v=7e7e1419"></script>
 </body>
 </html>

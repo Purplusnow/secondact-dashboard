@@ -12,7 +12,7 @@ import sys
 
 DOCS = pathlib.Path(__file__).resolve().parent.parent / "docs"
 INDEX = DOCS / "index.html"
-ASSETS = ["app.js", "style.css"]
+ASSETS = ["app.js", "style.css", "ingame.js", "realtime.js"]
 
 
 def main() -> int:
