@@ -99,6 +99,34 @@
       }
       c(num(row.total), 'sum');
     }
+
+    // 국가별 — fill rate 는 지역마다 갈려서 전체 평균 하나로는 어디를 손볼지 안 보인다
+    const ct = $('#rt-ads-country');
+    ct.textContent = '';
+    const rows = a.by_country || [];
+    if (!rows.length) return;
+    const chr = ct.createTHead().insertRow();
+    ['국가', '요청', '완주', '완주율', '광고없음', '표시실패', '공급실패율', '유저'].forEach((h, i) => {
+      const th = document.createElement('th');
+      if (!i) th.className = 'date';
+      th.textContent = h;
+      chr.appendChild(th);
+    });
+    const ctb = ct.createTBody();
+    for (const r of rows) {
+      const tr = ctb.insertRow();
+      const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
+      c(r.country, 'date');
+      c(num(r.total));
+      c(num(r.earned));
+      c(r.finish_pct != null ? r.finish_pct + '%' : '—');
+      c(r.no_ad ? num(r.no_ad) : '—');
+      c(r.failed ? num(r.failed) : '—');
+      // 공급실패 20% 넘으면 붉게 — 그 시장에서 광고 매출이 1/5씩 증발하고 있다는 뜻
+      const sp = c(r.supply_pct != null ? r.supply_pct + '%' : '—');
+      if ((r.supply_pct || 0) >= 20) sp.className = 'neg';
+      c(num(r.users));
+    }
   }
 
   function tiles(rows) {

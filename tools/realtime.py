@@ -82,6 +82,51 @@ def q(sql: str) -> list[dict]:
     return rows
 
 
+def ad_country() -> list[dict]:
+    """광고 결과를 국가별로. fill rate 는 지역마다 크게 갈려서(eCPM 낮은 시장일수록 재고가 얇다)
+    전체 평균 하나로는 어디를 손봐야 할지 안 보인다. 완주율도 같이 본다 — 보상 매력도·
+    네트워크 사정이 지역마다 다르다.
+
+    표본이 적은 국가는 비율이 요동치므로 요청 10회 미만은 '기타'로 묶는다.
+    """
+    res = "(SELECT value.string_value FROM UNNEST(event_params) WHERE key='result')"
+    rows = q(f"""
+      SELECT geo.country AS country,
+        COUNT(*) AS total,
+        COUNTIF({res} = 'earned')    AS earned,
+        COUNTIF({res} = 'dismissed') AS dismissed,
+        COUNTIF({res} = 'no_ad')     AS no_ad,
+        COUNTIF({res} = 'failed')    AS failed,
+        COUNT(DISTINCT user_pseudo_id) AS users
+      FROM {TABLE} WHERE {INTRADAY} AND event_name='ad_impression'
+      GROUP BY country
+    """)
+    MIN_N = 10
+    out, rest = [], {"country": "기타(요청 10회 미만)", "total": 0, "earned": 0,
+                     "dismissed": 0, "no_ad": 0, "failed": 0, "users": 0, "lumped": 0}
+    for r in rows:
+        d = {k: int(r[k] or 0) for k in ("total", "earned", "dismissed", "no_ad", "failed", "users")}
+        if d["total"] < MIN_N:
+            for k in d:
+                rest[k] += d[k]
+            rest["lumped"] += 1
+            continue
+        out.append({"country": r["country"] or "(미상)", **d})
+
+    def rates(d: dict) -> dict:
+        shown = d["earned"] + d["dismissed"]
+        bad = d["no_ad"] + d["failed"]
+        d["finish_pct"] = round(100 * d["earned"] / shown, 1) if shown else None
+        d["supply_pct"] = round(100 * bad / d["total"], 1) if d["total"] else None
+        return d
+
+    out = [rates(d) for d in out]
+    out.sort(key=lambda d: -d["total"])
+    if rest["total"]:
+        out.append(rates(rest))
+    return out
+
+
 def main() -> None:
     out = {"updated": datetime.now(KST).strftime("%Y-%m-%d %H:%M") + " KST",
            "stage_labels": [{"key": k, "label": lab,
@@ -228,6 +273,7 @@ def main() -> None:
         # 완주율은 '뜬 광고' 기준 — no_ad 를 분모에 넣으면 유저 행동과 공급 문제가 섞인다.
         "finish_pct": round(100 * by_res["earned"] / shown, 1) if shown else None,
         "supply_pct": round(100 * supply_bad / total, 1) if total else None,
+        "by_country": ad_country(),
         "viewers": max((int(r["users"] or 0) for r in ad_rows), default=0),
         "by_placement": sorted(
             ({"placement": p, **v} for p, v in by_pl.items()),
