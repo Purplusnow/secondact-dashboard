@@ -88,7 +88,7 @@
       row.textContent = `${u.day}  ${u.tag}  `
         + u.kinds.map(k => k === 'clock_drift'
             ? `시계 +${u.drift_h}시간`
-            : `설치 1시간 내 ${u.early_pct}%`).join(' · ')
+            : `추월% 1초에 ${u.burst}칸 건너뜀`).join(' · ')
         + (u.max_pct ? `  (최고 ${u.max_pct}%)` : '');
       list.appendChild(row);
     }

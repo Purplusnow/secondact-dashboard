@@ -10,9 +10,16 @@
    방치보상이 '비운 시간'으로 계산되므로 그게 그대로 돈이 된다 —
    save_system.gd 는 온라인일 때만 서버 시각으로 캡을 걸고 비행기모드면 무캡 지급한다.
 
-2) 즉시 고진행(fast_progress)
-   설치 1시간 안에 추월 10% 이상. 정상 플레이로는 불가능하다 — 100% 달성자들도
-   18~37일이 걸렸다. 세이브를 바꿔 끼운 흔적이다(실측 e45d95: 설치 32분 만에 25%).
+2) 추월% 폭주(pct_burst)
+   progress_pct 가 같은 1초에 BURST_N 개 이상 몰려 찍힌다.
+
+   ⚠ 처음엔 '설치 1시간 안에 추월 10%'로 잡았다가 버렸다 — 오탐이었다. 초반 추월%는
+   원래 빠르게 오른다(정상 유저 b00b85 는 33분에 22%). 그 기준이면 빠른 정상 유저가
+   52명이나 걸렸다. 문제는 '빠른 것'이 아니라 '한 순간에 건너뛴 것'이다.
+
+   게임의 _progress_check 는 크로싱한 정수%마다 하나씩 쏜다. 정상 플레이면 몇 분에 걸쳐
+   하나씩 올라간다. 세이브를 바꿔 끼우면 analytics.json 의 _last_pct(0)와 게임 상태가
+   어긋나 따라잡기 루프가 한 번에 수십 개를 쏜다 — 실측 e45d95 는 1초에 25개였다.
    시계를 안 건드려도 잡히므로 1)과 독립이다.
 
 날짜별로 세어 둔다. 지금은 1.6만 명 중 3명이라 영향이 없지만, 중요한 건 '퍼지는지'다.
@@ -32,8 +39,7 @@ DAILY = "_TABLE_SUFFIX NOT LIKE 'intraday%'"
 
 WINDOW = 7          # '최근'의 기준(일)
 DRIFT_SEC = 3600    # 이만큼 넘게 벌어지면 시계를 건드린 것으로 본다
-FAST_SEC = 3600     # 설치 후 이 시간 안에
-FAST_PCT = 10       # 추월 이만큼 넘으면 비정상
+BURST_N = 10        # progress_pct 가 같은 1초에 이만큼 몰리면 건너뛴 것
 
 # 경고 단계 — 비율과 절대수 중 하나라도 넘으면 올라간다.
 # 비율만 보면 유입이 적은 날 한 명에 요동치고, 절대수만 보면 커진 뒤 둔감해진다.
@@ -50,6 +56,13 @@ def fetch() -> list[dict]:
                {secs} AS secs, {pct} AS pct
         FROM {rt.TABLE} WHERE {DAILY}
       ),
+      -- 같은 1초에 progress_pct 가 몇 개 몰렸나
+      b AS (
+        SELECT uid, MAX(c) AS burst FROM (
+          SELECT uid, DIV(ts, 1000000) AS sec, COUNT(*) AS c
+          FROM e WHERE ev = 'progress_pct' GROUP BY uid, sec
+        ) GROUP BY uid
+      ),
       u AS (
         SELECT uid,
           FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_MICROS(MIN(ts)), 'Asia/Seoul') AS first_day,
@@ -58,16 +71,14 @@ def fetch() -> list[dict]:
             - CAST((MAX(IF(secs IS NULL, NULL, ts)) - MIN(IF(secs IS NULL, NULL, ts))) / 1000000 AS INT64)
             AS drift,
           COUNTIF(secs IS NOT NULL) AS secs_n,
-          -- 설치 1시간 안에 찍힌 추월% 의 최고치
-          MAX(IF(ev = 'progress_pct' AND secs < {FAST_SEC}, pct, 0)) AS early_pct,
           MAX(IF(ev = 'progress_pct', pct, 0)) AS max_pct
         FROM e GROUP BY uid
       )
-      SELECT SUBSTR(TO_HEX(MD5(uid)), 1, 6) AS tag, first_day,
-             IFNULL(drift, 0) AS drift, IFNULL(early_pct, 0) AS early_pct,
+      SELECT SUBSTR(TO_HEX(MD5(u.uid)), 1, 6) AS tag, first_day,
+             IFNULL(drift, 0) AS drift, IFNULL(b.burst, 0) AS burst,
              IFNULL(max_pct, 0) AS max_pct
-      FROM u
-      WHERE (secs_n >= 5 AND drift > {DRIFT_SEC}) OR early_pct >= {FAST_PCT}
+      FROM u LEFT JOIN b USING (uid)
+      WHERE (secs_n >= 5 AND drift > {DRIFT_SEC}) OR b.burst >= {BURST_N}
       ORDER BY first_day DESC
     """)
 
@@ -93,11 +104,11 @@ def main() -> int:
         kinds = []
         if int(r["drift"] or 0) > DRIFT_SEC:
             kinds.append("clock_drift")
-        if int(r["early_pct"] or 0) >= FAST_PCT:
-            kinds.append("fast_progress")
+        if int(r["burst"] or 0) >= BURST_N:
+            kinds.append("pct_burst")
         u = {"tag": r["tag"], "day": r["first_day"], "kinds": kinds,
              "drift_h": round(int(r["drift"] or 0) / 3600, 1),
-             "early_pct": int(r["early_pct"] or 0), "max_pct": int(r["max_pct"] or 0)}
+             "burst": int(r["burst"] or 0), "max_pct": int(r["max_pct"] or 0)}
         users.append(u)
         d = daily.setdefault(r["first_day"], {"date": r["first_day"], "n": 0,
                                               "clock_drift": 0, "fast_progress": 0})
@@ -132,11 +143,11 @@ def main() -> int:
                      "방치보상이 '비운 시간'으로 계산되므로 그대로 돈이 됩니다.",
              "total": sum(1 for u in users if "clock_drift" in u["kinds"]),
              "recent": sum(1 for u in recent if "clock_drift" in u["kinds"])},
-            {"key": "fast_progress", "label": "즉시 고진행",
-             "desc": f"설치 {FAST_SEC // 60}분 안에 추월 {FAST_PCT}% 이상. 정상 플레이로는 "
-                     "불가능합니다(100% 달성자도 18~37일 걸립니다) — 세이브 교체 흔적입니다.",
-             "total": sum(1 for u in users if "fast_progress" in u["kinds"]),
-             "recent": sum(1 for u in recent if "fast_progress" in u["kinds"])},
+            {"key": "pct_burst", "label": "추월% 폭주",
+             "desc": f"추월%가 같은 1초에 {BURST_N}칸 이상 건너뜁니다. 정상 플레이면 몇 분에 "
+                     "걸쳐 하나씩 오릅니다 — 세이브를 바꿔 끼워 진행도가 어긋난 흔적입니다.",
+             "total": sum(1 for u in users if "pct_burst" in u["kinds"]),
+             "recent": sum(1 for u in recent if "pct_burst" in u["kinds"])},
         ],
         "daily": sorted(daily.values(), key=lambda d: d["date"], reverse=True),
         "users": users[:200],
