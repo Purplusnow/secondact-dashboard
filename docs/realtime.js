@@ -211,6 +211,9 @@
 
     const tb = t.createTBody();
     const users = d.users || [];
+    // 제목 옆에 인원을 적는다. 위 카드들은 '오늘(KST)' 기준이라 이 목록과 숫자가 다른데,
+    // 어느 쪽 숫자를 보고 있는지가 제목에 붙어 있어야 헷갈리지 않는다.
+    $('#rt-count').textContent = users.length ? `최근 24시간 ${num(users.length)}명` : '';
     if (!users.length) {
       const td = tb.insertRow().insertCell();
       td.colSpan = 7; td.textContent = '최근 24시간 안에 가입자가 없습니다';
