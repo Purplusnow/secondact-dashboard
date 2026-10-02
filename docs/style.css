@@ -470,7 +470,10 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 
 /* 전체 가입자 — 날짜가 바뀌는 줄에만 윗선을 줘서 하루 묶음이 눈에 보이게 */
 .rt-users tr.us-daytop td { border-top: 1px solid var(--hair); }
-#us-users td.date:first-child { color: var(--ink-3); font-size: 11.5px; }
+/* 날짜는 줄마다 찍히지만 읽을 값은 아니다 — 묶음의 첫 줄만 또렷하게, 나머지는 눌러 둔다.
+   그래야 세로로 훑을 때 날짜가 바뀌는 지점이 눈에 걸린다. */
+#us-users td.date:first-child { color: #c9c7c0; font-size: 11.5px; }
+#us-users tr.us-daytop td.date:first-child { color: var(--ink-2); }
 
 /* 추월% 칸 — 숫자 옆 막대. 빠르게 훑으며 '몇 % 넘은 사람'을 골라내려면 길이가 필요하다.
    막대가 늘 같은 자리(왼쪽)에서 시작해야 세로로 쌓였을 때 눈이 따라간다. */

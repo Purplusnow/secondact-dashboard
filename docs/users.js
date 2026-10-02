@@ -90,7 +90,9 @@
 
     dateKey = day.date;
     const frag = document.createDocumentFragment();
-    rows.forEach((u, i) => frag.appendChild(row(u, i === 0 ? day.date : '')));
+    // 날짜는 줄마다 다 찍는다. 첫 줄에만 찍으면 스크롤 중간에서 지금 보는 게 며칠인지
+    // 알 수 없고, 어차피 그 칸은 비어 있었다. 묶음 경계는 윗선(us-daytop)이 따로 말한다.
+    rows.forEach((u, i) => frag.appendChild(row(u, day.date, i === 0)));
     tbody.appendChild(frag);
     shown += rows.length;
 
@@ -121,9 +123,9 @@
 
   /* 압축 레코드(users.py) → 한 줄. 값은 전부 **지금까지의 누적**이다. 키가 한 글자인 건 용량 때문:
      t=tag j=가입시각 l=최근접속일 d=접속일수 m=체류합계분 p=최고추월% rb=환생 r=단계비트 f=far b=결제 c=국가 */
-  function row(u, dateLabel) {
+  function row(u, dateLabel, first) {
     const tr = document.createElement('tr');
-    if (dateLabel) tr.className = 'us-daytop';
+    if (first) tr.className = 'us-daytop';
     const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
 
     c(dateLabel, 'date');
