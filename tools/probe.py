@@ -23,12 +23,65 @@ KEYS = ["step", "step_idx", "pct", "deci", "level", "rebirth", "class", "stage",
         "overtake_pct", "beat", "beat_total", "engagement_time_msec"]
 
 
+def scan(day: str | None) -> int:
+    """시계 조작 탐지 — secs_since_install 이 벽시계보다 빨리 흐른 유저를 찾는다.
+
+    게임은 이벤트마다 secs_since_install(기기 시계로 잰 설치 후 경과)을 같이 보낸다.
+    GA4 의 event_timestamp 는 업로드 때 서버 기준으로 보정된다. 정상 플레이면 두 값의
+    증가폭이 같다(실측: 8bc9b8 은 7.03시간 대 7.02시간으로 일치).
+
+    기기 시계를 앞으로 돌리면 secs_since_install 만 뛴다. 방치보상이 '비운 시간'으로
+    계산되므로 그게 그대로 돈이 된다 — save_system.gd 는 온라인일 때만 서버 시각으로
+    캡을 걸고, 비행기모드면 무캡으로 지급한다(의도된 fail-open).
+
+    드리프트 = secs 증가폭 − 벽시계 증가폭. 양수로 크면 시계를 앞당긴 것이다.
+    """
+    where = (f"_TABLE_SUFFIX = '{day}'" if day else "_TABLE_SUFFIX NOT LIKE 'intraday%'")
+    rows = rt.q(f"""
+      WITH e AS (
+        SELECT user_pseudo_id AS uid, event_timestamp AS ts,
+          (SELECT value.int_value FROM UNNEST(event_params)
+           WHERE key='secs_since_install') AS secs
+        FROM {rt.TABLE}
+        WHERE {where}
+          AND (SELECT value.int_value FROM UNNEST(event_params)
+               WHERE key='secs_since_install') IS NOT NULL
+      )
+      SELECT SUBSTR(TO_HEX(MD5(uid)), 1, 6) AS tag,
+        COUNT(*) AS n,
+        (MAX(secs) - MIN(secs)) AS secs_span,
+        CAST((MAX(ts) - MIN(ts)) / 1000000 AS INT64) AS wall_span,
+        (MAX(secs) - MIN(secs)) - CAST((MAX(ts) - MIN(ts)) / 1000000 AS INT64) AS drift,
+        FORMAT_TIMESTAMP('%m-%d %H:%M', TIMESTAMP_MICROS(MIN(ts)), 'Asia/Seoul') AS first_at,
+        FORMAT_TIMESTAMP('%m-%d %H:%M', TIMESTAMP_MICROS(MAX(ts)), 'Asia/Seoul') AS last_at
+      FROM e
+      GROUP BY uid
+      HAVING n >= 5 AND drift > 3600
+      ORDER BY drift DESC
+      LIMIT 60
+    """)
+    if not rows:
+        print("시계가 앞당겨진 유저를 찾지 못했습니다(드리프트 1시간 초과 없음).")
+        return 0
+    print(f"=== 시계 드리프트 1시간 초과: {len(rows)}명 ===")
+    print(f"{'유저':<9}{'드리프트':>12}{'기기경과':>11}{'실경과':>10}{'건수':>6}  구간")
+    for r in rows:
+        d, se, wa = int(r["drift"]), int(r["secs_span"]), int(r["wall_span"])
+        print(f"{r['tag']:<9}{d/3600:>10.1f}h{se/3600:>10.1f}h{wa/3600:>9.1f}h"
+              f"{r['n']:>6}  {r['first_at']} ~ {r['last_at']}")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--tag", required=True, help="화면에 보이는 6자 유저 꼬리표")
+    ap.add_argument("--tag", default="", help="화면에 보이는 6자 유저 꼬리표")
     ap.add_argument("--day", help="YYYYMMDD. 주면 그 하루만 스캔")
     ap.add_argument("--limit", type=int, default=400, help="찍을 이벤트 줄 수")
+    ap.add_argument("--scan", action="store_true", help="tag 대신 시계조작 의심 유저를 훑는다")
     a = ap.parse_args()
+
+    if a.scan:
+        return scan(a.day)
 
     where = (f"_TABLE_SUFFIX = '{a.day}'" if a.day else "_TABLE_SUFFIX NOT LIKE 'intraday%'")
     tag = "".join(c for c in a.tag.lower() if c in "0123456789abcdef")[:6]
