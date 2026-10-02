@@ -512,3 +512,15 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 
 /* 표본이 작은 국가 줄 — 비율이 요동치므로 큰 시장과 같은 굵기로 보이면 안 된다 */
 .rt-ads tr.thin td { color: var(--ink-3); }
+
+/* 새로고침 — 갱신 시각 바로 왼쪽. 눈에 띄되 데이터와 경쟁하지 않게 테두리만 */
+.reload {
+  margin-left: auto; margin-right: 12px;
+  font-family: inherit; font-size: 12.5px; color: var(--ink-2);
+  background: transparent; border: 1px solid var(--hair);
+  border-radius: 7px; padding: 5px 11px; cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.reload:hover:not(:disabled) { background: var(--wash); color: var(--ink); }
+.reload:disabled { opacity: .55; cursor: default; }
+.reload + .updated { margin-left: 0; }
