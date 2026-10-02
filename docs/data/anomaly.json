@@ -1,11 +1,11 @@
 {
- "updated": "2026-10-02 09:38 KST",
+ "updated": "2026-10-03 03:36 KST",
  "level": "warn",
  "window_days": 7,
- "total": 30,
- "recent": 5,
- "recent_base": 2283,
- "recent_rate": 0.219,
+ "total": 31,
+ "recent": 6,
+ "recent_base": 2345,
+ "recent_rate": 0.256,
  "thresholds": {
   "warn_n": 5,
   "alert_n": 20,
@@ -24,11 +24,17 @@
    "key": "pct_burst",
    "label": "추월% 폭주",
    "desc": "추월%가 같은 1초에 10칸 이상 건너뜁니다. 정상 플레이면 몇 분에 걸쳐 하나씩 오릅니다 — 세이브를 바꿔 끼워 진행도가 어긋난 흔적입니다.",
-   "total": 28,
-   "recent": 5
+   "total": 29,
+   "recent": 6
   }
  ],
  "daily": [
+  {
+   "date": "2026-10-01",
+   "n": 1,
+   "clock_drift": 0,
+   "pct_burst": 1
+  },
   {
    "date": "2026-09-30",
    "n": 1,
@@ -158,6 +164,16 @@
  ],
  "users": [
   {
+   "tag": "b00b85",
+   "day": "2026-10-01",
+   "kinds": [
+    "pct_burst"
+   ],
+   "drift_h": -0.0,
+   "burst": 12,
+   "max_pct": 22
+  },
+  {
    "tag": "fd05de",
    "day": "2026-09-30",
    "kinds": [
@@ -185,7 +201,7 @@
    ],
    "drift_h": -0.3,
    "burst": 22,
-   "max_pct": 58
+   "max_pct": 61
   },
   {
    "tag": "d8cffe",
@@ -203,9 +219,9 @@
    "kinds": [
     "pct_burst"
    ],
-   "drift_h": 0.0,
+   "drift_h": -0.0,
    "burst": 35,
-   "max_pct": 65
+   "max_pct": 71
   },
   {
    "tag": "d7e8d4",
@@ -223,7 +239,7 @@
    "kinds": [
     "pct_burst"
    ],
-   "drift_h": 0.0,
+   "drift_h": -0.0,
    "burst": 19,
    "max_pct": 32
   },
@@ -268,16 +284,6 @@
    "max_pct": 29
   },
   {
-   "tag": "4eb626",
-   "day": "2026-09-17",
-   "kinds": [
-    "pct_burst"
-   ],
-   "drift_h": -0.0,
-   "burst": 29,
-   "max_pct": 29
-  },
-  {
    "tag": "e45d95",
    "day": "2026-09-17",
    "kinds": [
@@ -287,6 +293,16 @@
    "drift_h": 6216.0,
    "burst": 25,
    "max_pct": 25
+  },
+  {
+   "tag": "4eb626",
+   "day": "2026-09-17",
+   "kinds": [
+    "pct_burst"
+   ],
+   "drift_h": -0.0,
+   "burst": 29,
+   "max_pct": 29
   },
   {
    "tag": "2de128",
@@ -309,14 +325,14 @@
    "max_pct": 32
   },
   {
-   "tag": "b8bf80",
+   "tag": "92e4cd",
    "day": "2026-09-13",
    "kinds": [
     "pct_burst"
    ],
-   "drift_h": -0.0,
-   "burst": 35,
-   "max_pct": 48
+   "drift_h": 0.0,
+   "burst": 31,
+   "max_pct": 32
   },
   {
    "tag": "f0a675",
@@ -329,14 +345,14 @@
    "max_pct": 31
   },
   {
-   "tag": "92e4cd",
+   "tag": "b8bf80",
    "day": "2026-09-13",
    "kinds": [
     "pct_burst"
    ],
-   "drift_h": 0.0,
-   "burst": 31,
-   "max_pct": 32
+   "drift_h": -0.0,
+   "burst": 35,
+   "max_pct": 48
   },
   {
    "tag": "18a951",
@@ -369,16 +385,6 @@
    "max_pct": 0
   },
   {
-   "tag": "fe5869",
-   "day": "2026-09-06",
-   "kinds": [
-    "pct_burst"
-   ],
-   "drift_h": -0.2,
-   "burst": 25,
-   "max_pct": 77
-  },
-  {
    "tag": "dc7323",
    "day": "2026-09-06",
    "kinds": [
@@ -387,6 +393,16 @@
    "drift_h": 0.0,
    "burst": 19,
    "max_pct": 19
+  },
+  {
+   "tag": "fe5869",
+   "day": "2026-09-06",
+   "kinds": [
+    "pct_burst"
+   ],
+   "drift_h": -0.2,
+   "burst": 25,
+   "max_pct": 77
   },
   {
    "tag": "eab039",
@@ -429,14 +445,14 @@
    "max_pct": 19
   },
   {
-   "tag": "7563b0",
+   "tag": "dee8d1",
    "day": "2026-09-02",
    "kinds": [
     "pct_burst"
    ],
    "drift_h": 0.0,
-   "burst": 11,
-   "max_pct": 29
+   "burst": 13,
+   "max_pct": 90
   },
   {
    "tag": "b730ab",
@@ -449,15 +465,15 @@
    "max_pct": 100
   },
   {
-   "tag": "dee8d1",
+   "tag": "7563b0",
    "day": "2026-09-02",
    "kinds": [
     "pct_burst"
    ],
    "drift_h": 0.0,
-   "burst": 13,
-   "max_pct": 90
+   "burst": 11,
+   "max_pct": 29
   }
  ],
- "scan_mb": 1243.0
+ "scan_mb": 1286.0
 }
