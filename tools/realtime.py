@@ -278,6 +278,56 @@ def main() -> None:
                      for i, (k, lab, _) in enumerate(ORDER)]
     out["cohort_n"] = n
 
+    # ── 국가별 ─────────────────────────────────────────────────
+    # 마케팅은 국가 단위로 돌리는데 퍼널은 전체 하나뿐이라 "어느 시장 설치가 값을 하나"를
+    # 볼 데가 없었다. 같은 코호트를 나라로 쪼갠다 — 추가 쿼리 없이 이미 받은 줄로 센다.
+    # 눈금은 퍼널에서 벽으로 확인된 칸들: 인트로(초반 이탈), 부동산2(최대 단일 낙폭),
+    # 은퇴(중반 통과), 첫환생(끝까지). 표본이 적으면 비율이 요동치므로 5명 미만은 묶는다.
+    MARKS = [("intro_done", "인트로"), ("property_2", "부동산2"),
+             ("game_sale", "은퇴"), ("first_rebirth", "첫환생")]
+    idx_of = {k: i for i, (k, _, _) in enumerate(ORDER)}
+    MIN_N = 5
+
+    def blank(name: str) -> dict:
+        return {"country": name, "n": 0, "mins": [], **{k: 0 for k, _ in MARKS}}
+
+    buckets: dict[str, dict] = {}
+    for u in users:
+        b = buckets.setdefault(u["country"] or "(미상)", blank(u["country"] or "(미상)"))
+        b["n"] += 1
+        b["mins"].append(u["mins"])
+        for k, _ in MARKS:
+            # 척추는 far 까지 밟은 것으로 본다(퍼널과 같은 규칙) — 안 그러면 여기만 숫자가 다르다
+            i = idx_of[k]
+            if u["reached"][i] or (i < len(_SPINE) and i <= u["far"]):
+                b[k] += 1
+
+    small = blank(f"기타({MIN_N}명 미만)")
+    rows_c = []
+    for b in buckets.values():
+        tgt = b if b["n"] >= MIN_N else small
+        if tgt is small:
+            small["n"] += b["n"]
+            small["mins"] += b["mins"]
+            for k, _ in MARKS:
+                small[k] += b[k]
+            continue
+        rows_c.append(b)
+    if small["n"]:
+        rows_c.append(small)
+
+    def finish(b: dict) -> dict:
+        ms = sorted(b.pop("mins"))
+        b["med_min"] = ms[len(ms) // 2] if ms else 0
+        for k, _ in MARKS:
+            b[k + "_pct"] = round(100 * b[k] / b["n"], 1) if b["n"] else 0
+        return b
+
+    out["by_country"] = {
+        "marks": [{"key": k, "label": lab} for k, lab in MARKS],
+        "rows": sorted((finish(b) for b in rows_c), key=lambda x: -x["n"]),
+    }
+
     # ── 리워드 광고 ────────────────────────────────────────────────
     # ads.gd 가 결과를 네 갈래로 쏜다(rewarded_result): earned/dismissed/failed/no_ad.
     #   earned    = 완주 → 보상 지급

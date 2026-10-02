@@ -43,6 +43,7 @@
 
     funnel(d.funnel || [], d.cohort_n || 0);
     ads(d.ads);
+    country(d.by_country, d.cohort_n || 0);
     table(d);
   }
 
@@ -53,6 +54,38 @@
     repair: '수리', offline: '방치보상', boost: '수익부스트', gem_ad: '보석광고',
     city_repair: '도시 수리', city_boost: '도시 부스트',
   };
+
+  /* 국가별 — 추가 쿼리 없이 같은 코호트를 나라로 쪼갠 값이다.
+     비율은 가입 대비. 5명 미만 나라는 묶었다(비율이 요동쳐서). */
+  function country(c, total) {
+    const card = $('#rt-ctry-card');
+    if (!c || !(c.rows || []).length) { card.hidden = true; return; }
+    card.hidden = false;
+    $('#rt-ctry-count').textContent = `${c.rows.length}개 구간 · 가입 ${num(total)}명`;
+
+    const t = $('#rt-ctry');
+    t.textContent = '';
+    const hr = t.createTHead().insertRow();
+    ['국가', '가입', '비중', ...c.marks.map(m => m.label), '중앙 체류'].forEach((h, i) => {
+      const th = document.createElement('th');
+      if (!i) th.className = 'date';
+      th.textContent = h;
+      hr.appendChild(th);
+    });
+    const tb = t.createTBody();
+    for (const r of c.rows) {
+      const tr = tb.insertRow();
+      const cell = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
+      cell(r.country, 'date');
+      cell(num(r.n));
+      cell(total ? Math.round(100 * r.n / total) + '%' : '—');
+      for (const m of c.marks) {
+        const td = cell(`${num(r[m.key])} · ${r[m.key + '_pct']}%`);
+        td.title = `${r.country} 가입 ${r.n}명 중 ${r[m.key]}명이 ${m.label}까지`;
+      }
+      cell(dur(r.med_min));
+    }
+  }
 
   function ads(a) {
     const card = $('#rt-ads-card');
