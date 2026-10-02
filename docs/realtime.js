@@ -56,7 +56,9 @@
   };
 
   /* 국가별 — 추가 쿼리 없이 같은 코호트를 나라로 쪼갠 값이다.
-     비율은 가입 대비. 5명 미만 나라는 묶었다(비율이 요동쳐서). */
+     비율은 가입 대비. 표본이 작은 나라는 흐리게 눌러 둔다 — 비율이 한 칸에 수십 %p 씩
+     움직이는데 같은 굵기로 보이면 큰 시장과 나란히 읽히면서 판단을 흔든다. */
+  const THIN = 5;
   function country(c, total) {
     const card = $('#rt-ctry-card');
     if (!c || !(c.rows || []).length) { card.hidden = true; return; }
@@ -75,8 +77,10 @@
     const tb = t.createTBody();
     for (const r of c.rows) {
       const tr = tb.insertRow();
+      if (r.n < THIN) tr.className = 'thin';
       const cell = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
-      cell(r.country, 'date');
+      const nm = cell(r.country, 'date');
+      if (r.n < THIN) nm.title = `가입 ${r.n}명 — 비율이 한 칸에 ${Math.round(100 / r.n)}%p 씩 움직입니다.`;
       cell(num(r.n));
       cell(total ? Math.round(100 * r.n / total) + '%' : '—');
       for (const m of c.marks) {

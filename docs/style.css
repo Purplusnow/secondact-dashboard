@@ -509,3 +509,6 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 
 /* 카드 제목 옆 인원 — 제목이지 값이 아니라 눌러 둔다 */
 .card-head h2 .count { font-weight: 500; font-size: 12.5px; color: var(--ink-3); margin-left: 8px; }
+
+/* 표본이 작은 국가 줄 — 비율이 요동치므로 큰 시장과 같은 굵기로 보이면 안 된다 */
+.rt-ads tr.thin td { color: var(--ink-3); }
