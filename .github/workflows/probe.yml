@@ -1,0 +1,46 @@
+# 유저 한 명 진단 — 수동 실행 전용. 아무것도 커밋하지 않는다.
+#
+# 목록에서 이상한 줄을 집었을 때 그 유저의 이벤트 흐름을 보려고 쓴다.
+# 출력은 Actions 로그로만 간다. 공개 리포라 원본 식별자·IP·기기정보는 찍지 않는다
+# (화면에 보이는 6자 해시로 찾고, 게임플레이 이벤트만 꺼낸다).
+name: probe
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '유저 꼬리표 6자 (예: 8bc9b8)'
+        required: true
+      day:
+        description: '하루만 볼 날짜 YYYYMMDD (비우면 전 기간 — 스캔 1.5GB)'
+        required: false
+      limit:
+        description: '찍을 이벤트 줄 수'
+        required: false
+        default: '400'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    env:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 의존성
+        run: pip install --quiet google-cloud-bigquery
+      - name: 서비스계정 키 파일화
+        run: |
+          printf '%s' "$GCP_SA_KEY" > "$RUNNER_TEMP/sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+      - name: 조회
+        working-directory: tools
+        run: |
+          python3 probe.py --tag "${{ inputs.tag }}" \
+            ${{ inputs.day && format('--day {0}', inputs.day) || '' }} \
+            --limit "${{ inputs.limit }}"
