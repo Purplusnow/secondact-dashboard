@@ -492,3 +492,17 @@ a { color: #2a78d6; text-underline-offset: 2px; }
    나란히 놓여도 서로 다른 뜻으로 읽힌다. */
 .pg-cell.is-hi .pg i { background: var(--good); }
 .pg-cell.is-hi .pg-val { color: var(--good); font-weight: 600; }
+
+/* 위험 신호 띠 — 경고 단계일 때만 뜬다. 늘 떠 있는 경고는 며칠이면 안 보이게 된다. */
+.risk {
+  padding: 11px 24px; font-size: 13px; line-height: 1.6;
+  border-bottom: 1px solid var(--hair);
+}
+.risk.is-warn  { background: #fff6e0; color: #6b4a00; }
+.risk.is-alert { background: #fdeaea; color: #8a1f1f; }
+.risk b { font-weight: 650; }
+.risk-row {
+  font-size: 12.5px; color: var(--ink-2); padding: 3px 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+#risk-table td.date { white-space: normal; color: var(--ink-2); font-size: 12.5px; }

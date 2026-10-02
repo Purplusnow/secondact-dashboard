@@ -7,7 +7,7 @@
 <meta name="description" content="일별 광고매출·인앱매출·마케팅비를 누적으로 추적하는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=f1b27363">
+<link rel="stylesheet" href="style.css?v=93a852bc">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -26,6 +26,8 @@
   <button class="vtab" data-view="realtime" type="button">실시간</button>
   <button class="vtab" data-view="users" type="button">전체 가입자</button>
 </nav>
+
+<div class="risk" id="risk" hidden></div>
 
 <div class="demo-banner" id="demo-banner" hidden>
   데모 데이터입니다 — 실제 기록이 아닙니다. <a href="./">실제 데이터 보기</a>
@@ -190,6 +192,15 @@
     <div id="ig-city-pacing"></div>
   </section>
 
+  <section class="card" id="risk-card" hidden>
+    <div class="card-head"><h2>⚠ 위험 신호 — 조작 의심</h2>
+      <p class="card-sub">아래 유저들은 위 지표에 섞여 있습니다. 수가 늘면 엔딩 도달률·페이싱이 먼저 오염됩니다.</p>
+      <p class="card-sub" id="risk-sub"></p></div>
+    <div class="table-scroll"><table class="ledger" id="risk-table"></table></div>
+    <div class="vsub">최근 사례</div>
+    <div id="risk-users"></div>
+  </section>
+
   <section class="empty" id="ig-empty" hidden>
     <h2>아직 인게임 데이터가 없습니다</h2>
     <p>BigQuery 수집(Action)이 <code>docs/data/ingame.json</code> 을 만들면 채워집니다.
@@ -290,6 +301,7 @@
 
 <script src="app.js?v=93c7bd62"></script>
 <script src="ingame.js?v=1e2db85a"></script>
+<script src="anomaly.js"></script>
 <script src="userrow.js?v=1be878d4"></script>
 <script src="realtime.js?v=e9446932"></script>
 <script src="users.js?v=3d631072"></script>

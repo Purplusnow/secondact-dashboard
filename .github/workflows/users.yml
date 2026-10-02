@@ -46,13 +46,19 @@ jobs:
         working-directory: tools
         run: python3 users.py
 
+      # 위험 신호 — 같은 자격증명으로 이미 전 기간을 훑는 잡이라 여기 얹는다.
+      - name: 위험 신호 감시
+        if: env.GCP_SA_KEY != ''
+        working-directory: tools
+        run: python3 anomaly.py
+
       - name: 커밋
         if: env.GCP_SA_KEY != ''
         run: |
           git config user.name  "secondact-bot"
           git config user.email "34591718+Purplusnow@users.noreply.github.com"
-          git add docs/data/users
-          if git diff --cached --quiet -- docs/data/users; then
+          git add docs/data/users docs/data/anomaly.json
+          if git diff --cached --quiet -- docs/data/users docs/data/anomaly.json; then
             echo "새로 받은 날짜 없음 — 커밋 생략"
             exit 0
           fi
