@@ -111,7 +111,7 @@ def main() -> int:
              "burst": int(r["burst"] or 0), "max_pct": int(r["max_pct"] or 0)}
         users.append(u)
         d = daily.setdefault(r["first_day"], {"date": r["first_day"], "n": 0,
-                                              "clock_drift": 0, "fast_progress": 0})
+                                              "clock_drift": 0, "pct_burst": 0})
         d["n"] += 1
         for k in kinds:
             d[k] += 1
