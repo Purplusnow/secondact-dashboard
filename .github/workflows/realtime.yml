@@ -10,7 +10,10 @@ name: realtime
 
 on:
   schedule:
-    - cron: '5 * * * *'           # 매시 5분
+    # 시간당 한 번. 분을 23 으로 둔 건 정시 근처가 혼잡해서다 — GitHub 의 schedule 은
+    # 보장이 아니라 best-effort 라 부하가 걸리면 지연되거나 그냥 버려진다. 매시 5분으로
+    # 뒀을 땐 하루 24번 중 4번만 돌았다(10/01~02 실측). 정시에서 멀수록 덜 버려진다.
+    - cron: '23 * * * *'          # 매시 23분(UTC)
   workflow_dispatch:
 
 permissions:
@@ -67,4 +70,12 @@ jobs:
             exit 0
           fi
           git commit -m "실시간 수집: $(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') KST"
-          git push
+          # 다른 수집 잡이나 사람 커밋이 사이에 끼면 푸시가 밀린다(! [rejected] fetch first).
+          # 재시도가 없으면 수집은 성공해 놓고 그 회차 데이터를 통째로 버리게 된다 —
+          # 10/02 00:34 스케줄 실행이 그렇게 날아갔다. 리베이스하고 몇 번 다시 민다.
+          for i in 1 2 3 4 5; do
+            git push && break
+            echo "푸시 밀림 — 리베이스 후 재시도 $i"
+            git pull --rebase --autostash origin main || exit 1
+            sleep $((i * 3))
+          done
