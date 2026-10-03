@@ -26,6 +26,10 @@ TABLE = f"`{PROJECT}.{DATASET}.events_*`"
 # 아침에는 어제·오늘 두 장이 동시에 존재하고, LIKE 'intraday%' 로 받으면 이틀치가 합산된다
 # (실측: 10/02 05:10 수집에서 '오늘 가입'이 206명 — 10/01 분이 통째로 섞인 값이었다).
 INTRADAY_ANY = "_TABLE_SUFFIX LIKE 'intraday%'"
+# 지역이 안 잡히는 줄은 사람이 아니다. 빌드를 올릴 때마다 Play 사전 출시 보고서가 실기기에서
+# 앱을 몇 분씩 돌리는데 전부 여기로 들어온다(10/03 실측 385명 중 25명). 퍼널뿐 아니라
+# 활동유저·결제·광고 집계에서도 빼야 숫자가 맞는다.
+HAS_GEO = "geo.country IS NOT NULL AND geo.country != ''"
 INTRADAY = INTRADAY_ANY   # main() 에서 최신 테이블 하루로 교체한다
 OUT = os.path.join(os.path.dirname(__file__), "..", "docs", "data", "realtime.json")
 # 가입자 목록은 최근 24시간 전부를 담는다(인원 상한 없음). 하루 1만 명이면 JSON 2MB 쯤인데
@@ -99,7 +103,7 @@ def ad_country() -> list[dict]:
         COUNTIF({res} = 'no_ad')     AS no_ad,
         COUNTIF({res} = 'failed')    AS failed,
         COUNT(DISTINCT user_pseudo_id) AS users
-      FROM {TABLE} WHERE {INTRADAY} AND event_name='ad_impression'
+      FROM {TABLE} WHERE {INTRADAY} AND {HAS_GEO} AND event_name='ad_impression'
       GROUP BY country
     """)
     MIN_N = 10
@@ -176,7 +180,7 @@ def main() -> None:
         COUNTIF(event_name='app_exception') AS exceptions,
         FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', MIN(TIMESTAMP_MICROS(event_timestamp)), 'Asia/Seoul') AS first_at,
         FORMAT_TIMESTAMP('%Y-%m-%d %H:%M', MAX(TIMESTAMP_MICROS(event_timestamp)), 'Asia/Seoul') AS last_at
-      FROM {TABLE} WHERE {INTRADAY}
+      FROM {TABLE} WHERE {INTRADAY} AND {HAS_GEO}
     """)[0]
 
     flags = ",\n        ".join(
@@ -339,7 +343,7 @@ def main() -> None:
         (SELECT value.string_value FROM UNNEST(event_params) WHERE key='result') AS result,
         COUNT(*) AS n,
         COUNT(DISTINCT user_pseudo_id) AS users
-      FROM {TABLE} WHERE {INTRADAY} AND event_name='ad_impression'
+      FROM {TABLE} WHERE {INTRADAY} AND {HAS_GEO} AND event_name='ad_impression'
       GROUP BY placement, result
     """)
     RESULTS = ["earned", "dismissed", "no_ad", "failed"]
