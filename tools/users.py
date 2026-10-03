@@ -74,7 +74,7 @@ def fetch_all() -> list[dict]:
         ANY_VALUE(geo.country) AS country,
         {flags_sql()}
       FROM {rt.TABLE}
-      WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
+      WHERE _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''
       GROUP BY user_pseudo_id
       HAVING joined_day IS NOT NULL
     """)

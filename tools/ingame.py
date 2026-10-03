@@ -21,6 +21,10 @@ PROJECT = os.environ.get("BQ_PROJECT", "second-act-life")
 DATASET = os.environ.get("BQ_DATASET", "analytics_544010325")
 LOCATION = os.environ.get("BQ_LOCATION", "asia-northeast3")
 TABLE = f"`{PROJECT}.{DATASET}.events_*`"
+# 지역이 안 잡히는 줄은 사람이 아니다 — 빌드를 올릴 때마다 Play 사전 출시 보고서가 실기기에서
+# 앱을 몇 분씩 돌리는데 전부 거기로 들어온다(10/03 실측: 실시간 385명 중 25명). 전부 체류 0분·
+# 첫 단계 정지라 리텐션·퍼널·도달률을 통째로 희석한다. BigQuery 에서 NULL != '' 은 TRUE 가
+# 아니므로 이 한 줄로 NULL 과 빈 문자열이 같이 걸러진다.
 OUT = os.path.join(os.path.dirname(__file__), "..", "docs", "data", "ingame.json")
 
 # v819 진단이벤트 배포일 — 환생/deci 퍼널은 이 이후만 유효.
@@ -37,7 +41,7 @@ def q(sql: str) -> list[dict]:
 
 def suffix_daily(cond: str) -> str:
     """_TABLE_SUFFIX 조건 + intraday 제외 헬퍼."""
-    return f"({cond}) AND _TABLE_SUFFIX NOT LIKE 'intraday%'"
+    return f"({cond}) AND _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''"
 
 
 def main() -> None:
@@ -50,7 +54,7 @@ def main() -> None:
 
     # ── KPI: DAU·WAU·신규(7일)·누적·D1/D7 리텐션 ───────────────────────
     # (기존 '신규/활성 45일'은 게임 나이와 겹쳐 신규≈활성≈전체로 오해 유발 → 실질 지표로 교체)
-    last_t = q(f"SELECT MAX(_TABLE_SUFFIX) AS t FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'")[0]["t"]
+    last_t = q(f"SELECT MAX(_TABLE_SUFFIX) AS t FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''")[0]["t"]
     out["last_table"] = last_t
 
     _last = datetime.strptime(last_t, "%Y%m%d").date()
@@ -63,13 +67,13 @@ def main() -> None:
       FROM {TABLE}
       WHERE {suffix_daily(f"_TABLE_SUFFIX BETWEEN '{d7}' AND '{last_t}'")}
     """)[0]
-    cum = q(f"SELECT COUNT(DISTINCT user_pseudo_id) AS n FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'")[0]["n"]
+    cum = q(f"SELECT COUNT(DISTINCT user_pseudo_id) AS n FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''")[0]["n"]
     # 리텐션 곡선 D1~D30 — 설치일(d0) 대비 정확히 n일 뒤 복귀. 분모(base[n])=마지막 테이블일 기준 n일 관측
     # 가능한 코호트(d0 ≤ last-n). 복귀자는 정의상 d0+n ≤ last라 모두 관측가능(별도 필터 불필요).
     inst_hist = q(f"""
       SELECT d0, COUNT(*) AS n FROM (
         SELECT user_pseudo_id, MIN(_TABLE_SUFFIX) AS d0
-        FROM {TABLE} WHERE event_name='first_open' AND _TABLE_SUFFIX NOT LIKE 'intraday%'
+        FROM {TABLE} WHERE event_name='first_open' AND _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''
         GROUP BY user_pseudo_id
       ) GROUP BY d0
     """)
@@ -78,12 +82,12 @@ def main() -> None:
         SELECT i.user_pseudo_id AS uid, DATE_DIFF(a.d, i.d0, DAY) AS off
         FROM (
           SELECT user_pseudo_id, MIN(PARSE_DATE('%Y%m%d', _TABLE_SUFFIX)) AS d0
-          FROM {TABLE} WHERE event_name='first_open' AND _TABLE_SUFFIX NOT LIKE 'intraday%'
+          FROM {TABLE} WHERE event_name='first_open' AND _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''
           GROUP BY user_pseudo_id
         ) i
         JOIN (
           SELECT DISTINCT user_pseudo_id, PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS d
-          FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
+          FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''
         ) a ON a.user_pseudo_id = i.user_pseudo_id
       ) WHERE off BETWEEN 1 AND 30 GROUP BY off
     """)
@@ -106,12 +110,12 @@ def main() -> None:
         SELECT i.user_pseudo_id AS uid, i.d0 AS d0, DATE_DIFF(a.d, PARSE_DATE('%Y%m%d', i.d0), DAY) AS off
         FROM (
           SELECT user_pseudo_id, MIN(_TABLE_SUFFIX) AS d0
-          FROM {TABLE} WHERE event_name='first_open' AND _TABLE_SUFFIX NOT LIKE 'intraday%'
+          FROM {TABLE} WHERE event_name='first_open' AND _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''
           GROUP BY user_pseudo_id
         ) i
         JOIN (
           SELECT DISTINCT user_pseudo_id, PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS d
-          FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
+          FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''
         ) a ON a.user_pseudo_id = i.user_pseudo_id
       ) WHERE off BETWEEN 1 AND {COHORT_N} GROUP BY d0, off
     """)
@@ -154,7 +158,7 @@ def main() -> None:
         COUNT(DISTINCT IF(event_name='onb_step' AND {_stp('game_sale')}, user_pseudo_id, NULL)) AS retired,
         COUNT(DISTINCT IF(event_name='onb_step' AND {_stp('first_rebirth')}, user_pseudo_id, NULL)) AS rebirthed
       FROM {TABLE}
-      WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
+      WHERE _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''
     """)[0]
     r = {k: int(v or 0) for k, v in fr.items()}
     out["rebirth_funnel"] = [
@@ -305,7 +309,7 @@ def main() -> None:
           ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp)[SAFE_OFFSET(0)] AS fver,
           {flag_sql}
         FROM {TABLE}
-        WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
+        WHERE _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''
         GROUP BY user_pseudo_id
       )
       SELECT fver AS version, COUNT(*) AS users, {sum_sql}
@@ -346,7 +350,7 @@ def main() -> None:
           MAX(IF(event_name='progress_pct',
                  (SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct'), 0)) AS maxpct
         FROM {TABLE}
-        WHERE _TABLE_SUFFIX NOT LIKE 'intraday%'
+        WHERE _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''
         GROUP BY user_pseudo_id
       )
       SELECT fver AS version, IFNULL(maxpct, 0) AS maxpct, COUNT(*) AS users

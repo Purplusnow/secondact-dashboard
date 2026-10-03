@@ -35,7 +35,11 @@ import realtime as rt
 
 KST = timezone(timedelta(hours=9))
 OUT = os.path.join(os.path.dirname(__file__), "..", "docs", "data", "anomaly.json")
-DAILY = "_TABLE_SUFFIX NOT LIKE 'intraday%'"
+# 지역이 안 잡히는 줄은 사람이 아니다 — 빌드를 올릴 때마다 Play 사전 출시 보고서가 실기기에서
+# 앱을 몇 분씩 돌리는데 전부 거기로 들어온다(10/03 실측: 실시간 385명 중 25명). 전부 체류 0분·
+# 첫 단계 정지라 리텐션·퍼널·도달률을 통째로 희석한다. BigQuery 에서 NULL != '' 은 TRUE 가
+# 아니므로 이 한 줄로 NULL 과 빈 문자열이 같이 걸러진다.
+DAILY = "_TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''"
 
 WINDOW = 7          # '최근'의 기준(일)
 DRIFT_SEC = 3600    # 이만큼 넘게 벌어지면 시계를 건드린 것으로 본다
