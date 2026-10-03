@@ -12,6 +12,7 @@ intraday 는 후처리 전이고 '하루가 덜 찬' 값이라 완결 지표(리
 """
 import json
 import os
+import re
 from datetime import datetime, timedelta, timezone
 
 from google.cloud import bigquery
@@ -308,6 +309,12 @@ def main() -> None:
     out["cohort_n"] = n
     out["excluded_nogeo"] = nogeo
     out["excluded_build"] = testbuild
+    # 가장 최근 라이브 빌드 — 목록에서 '새 빌드로 들어온 사람'을 눈에 띄게 하는 기준.
+    # 롤아웃이 끝나면 자연히 이쪽이 다수가 되고 옛 빌드가 눌리므로 규칙을 안 고쳐도 된다.
+    def _bn(v: str) -> int:
+        m = re.search(r"v(\d+)", v or "")
+        return int(m.group(1)) if m else -1
+    out["newest_build"] = max(LIVE, key=_bn, default=None)
     out["versions"] = {
         "live": sorted(LIVE),
         "rows": sorted(({"ver": v, "n": c, "live": v in LIVE} for v, c in by_ver.items()),

@@ -272,12 +272,13 @@
   function table(d) {
     const stages = d.stage_labels || [];
     const spineN = spineLen(stages);
+    const newest = d.newest_build || '';
     const t = $('#rt-users');
     t.textContent = '';
 
     const hr = t.createTHead().insertRow();
     // 도달 단계·버전은 뺐다 — 도달 지점은 진행 막대가 이미 말하고, 버전은 지금 한 종류뿐이다.
-    ['유저', '가입', '마지막', '체류', '추월%', '진행', '국가'].forEach((h, i) => {
+    ['유저', '가입', '마지막', '체류', '추월%', '진행', '빌드', '국가'].forEach((h, i) => {
       const th = document.createElement('th');
       if (i === 1) th.className = 'date';
       th.textContent = h;
@@ -291,7 +292,7 @@
     $('#rt-count').textContent = users.length ? `최근 24시간 ${num(users.length)}명` : '';
     if (!users.length) {
       const td = tb.insertRow().insertCell();
-      td.colSpan = 7; td.textContent = '최근 24시간 안에 가입자가 없습니다';
+      td.colSpan = 8; td.textContent = '최근 24시간 안에 가입자가 없습니다';
       return;
     }
 
@@ -337,6 +338,13 @@
       progCell(tr.insertCell(), u.prog);
 
       fillStrip(tr.insertCell(), u.reached || [], stages, u.far, spineN);
+
+      // 빌드 번호만 짧게. 최신 라이브 빌드가 아니면 눌러 둔다 — 롤아웃 중에 '새 빌드로 들어온
+      // 사람'이 눈에 걸려야 한다. 롤아웃이 끝나면 저절로 다수가 진해지고 옛 빌드가 눌린다.
+      const bv = (u.ver || '').match(/v(\d+)/);
+      const bc = c(bv ? 'v' + bv[1] : '—', 'uid');
+      if (u.ver !== newest) bc.classList.add('dim');
+      bc.title = u.ver || '';
 
       c(u.country || '—');
     }
