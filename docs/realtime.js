@@ -27,7 +27,8 @@
     $('#rt-meta').textContent =
       `수집 ${d.updated}` +
       (s.first_at ? `  ·  데이터 범위 ${s.first_at} ~ ${s.last_at} (KST)` : '') +
-      (d.excluded_nogeo ? `  ·  지역 미상 ${num(d.excluded_nogeo)}명 제외(Play 사전 출시 보고서 등)` : '')
+      (d.excluded_nogeo ? `  ·  지역 미상 ${num(d.excluded_nogeo)}명 제외` : '')
+      + (d.excluded_build ? `  ·  테스트 빌드 ${num(d.excluded_build)}명 제외` : '')
       + (d.scan_mb != null ? `  ·  스캔 ${d.scan_mb}MB` : '');
 
     const users = d.users || [];
@@ -43,6 +44,7 @@
     ]);
 
     funnel(d.funnel || [], d.cohort_n || 0);
+    versions(d.versions);
     ads(d.ads);
     country(d.by_country, d.cohort_n || 0);
     table(d);
@@ -60,6 +62,41 @@
      비율은 가입 대비. 표본이 작은 나라는 흐리게 눌러 둔다 — 비율이 한 칸에 수십 %p 씩
      움직이는데 같은 굵기로 보이면 큰 시장과 나란히 읽히면서 판단을 흔든다. */
   const THIN = 5;
+  /* 버전별 — 새 빌드가 실제로 퍼지고 있는지 보는 자리. 라이브로 인정된 빌드만 코호트에
+     들어가고, 한두 명짜리 테스트 빌드는 빠진다(빠진 줄도 같이 보여 준다 — 숨기면 롤아웃이
+     시작된 걸 놓친다). */
+  function versions(v) {
+    const card = $('#rt-ver-card');
+    if (!v || !(v.rows || []).length) { card.hidden = true; return; }
+    const rows = v.rows;
+    // 라이브 빌드 하나뿐이고 테스트도 없으면 볼 게 없다
+    if (rows.length < 2) { card.hidden = true; return; }
+    card.hidden = false;
+    const live = rows.filter(r => r.live).map(r => r.ver).join(', ') || '—';
+    $('#rt-ver-sub').textContent = `라이브 ${live} · 그 외 ${rows.filter(r => !r.live).length}개 빌드`;
+
+    const host = $('#rt-ver');
+    host.textContent = '';
+    const max = Math.max(...rows.map(r => r.n));
+    for (const r of rows) {
+      const row = document.createElement('div');
+      row.className = 'fn-row' + (r.live ? '' : ' is-side');
+      const lab = document.createElement('span');
+      lab.className = 'fn-label'; lab.style.width = '96px';
+      lab.textContent = r.ver.replace(/^1\.0 \((.*)\)$/, '$1');
+      const track = document.createElement('span'); track.className = 'fn-track';
+      const fill = document.createElement('i');
+      fill.style.width = (max ? 100 * r.n / max : 0) + '%';
+      track.appendChild(fill);
+      const val = document.createElement('span');
+      val.className = 'fn-val'; val.textContent = `${num(r.n)}명`;
+      const tag = document.createElement('span');
+      tag.className = 'fn-drop'; tag.textContent = r.live ? '' : '테스트';
+      row.append(lab, track, val, tag);
+      host.appendChild(row);
+    }
+  }
+
   function country(c, total) {
     const card = $('#rt-ctry-card');
     if (!c || !(c.rows || []).length) { card.hidden = true; return; }

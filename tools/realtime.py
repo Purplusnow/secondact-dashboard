@@ -232,8 +232,19 @@ def main() -> None:
       ORDER BY MIN(event_timestamp) DESC
     """)
 
+    # 라이브 빌드 판정. 하루에도 빌드를 십수 개 올리는 날이 있고(10/03: v954~v965),
+    # 그 기기들은 지역이 잡히는데도 체류 0분·단계 0 이라 지역 필터로는 안 걸린다.
+    # 실제로 배포된 빌드는 금세 수십 명이 붙고 테스트 빌드는 한두 명에 머문다 — 그 차이로 가른다.
+    # 단계 롤아웃이 커지면 자연히 문턱을 넘어 코호트에 합류한다(영영 숨기지 않는다).
+    from collections import Counter
+    vcount = Counter((r["ver"] or "?") for r in rows if (r["country"] or "").strip())
+    floor = max(10, int(0.03 * sum(vcount.values())))
+    LIVE = {v for v, c in vcount.items() if c >= floor}
+
     users, funnel, rec, stay60 = [], [0] * len(ORDER), [0] * len(ORDER), 0
     nogeo = 0
+    testbuild = 0
+    by_ver: dict[str, int] = {}
     for r in rows:
         # 국가가 비어 있는 줄은 코호트에서 뺀다. 빌드를 올릴 때마다 Play 사전 출시 보고서가
         # 실기기 여러 대에서 앱을 몇 분씩 돌리는데, 그게 전부 '지역 없음 · 체류 0분 · 첫 단계 정지'로
@@ -242,6 +253,11 @@ def main() -> None:
         # 어느 날 진짜 유저의 지역이 안 잡히기 시작해도 모르게 된다.
         if not (r["country"] or "").strip():
             nogeo += 1
+            continue
+        ver = r["ver"] or "?"
+        by_ver[ver] = by_ver.get(ver, 0) + 1
+        if ver not in LIVE:
+            testbuild += 1
             continue
         reached = [int(r.get(col) or 0) for _, _, col in ORDER]
         stay60 += 1 if r.get("s_" + EXTRA[0][0]) else 0
@@ -291,6 +307,12 @@ def main() -> None:
                      for i, (k, lab, _) in enumerate(ORDER)]
     out["cohort_n"] = n
     out["excluded_nogeo"] = nogeo
+    out["excluded_build"] = testbuild
+    out["versions"] = {
+        "live": sorted(LIVE),
+        "rows": sorted(({"ver": v, "n": c, "live": v in LIVE} for v, c in by_ver.items()),
+                       key=lambda x: (-x["n"], x["ver"])),
+    }
 
     # ── 국가별 ─────────────────────────────────────────────────
     # 마케팅은 국가 단위로 돌리는데 퍼널은 전체 하나뿐이라 "어느 시장 설치가 값을 하나"를

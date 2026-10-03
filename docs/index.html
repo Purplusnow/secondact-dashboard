@@ -242,6 +242,14 @@
     <div class="table-scroll"><table class="ledger rt-ads" id="rt-ads-country"></table></div>
   </section>
 
+  <section class="card" id="rt-ver-card" hidden>
+    <div class="card-head"><h2>버전별</h2>
+      <p class="card-sub">새 빌드가 실제로 퍼지고 있는지 보는 자리입니다. 사람이 붙는 빌드만 코호트에 넣고,
+        한두 명짜리 테스트 빌드는 <span class="fn-side-key">녹색</span>으로 빼 둡니다 — 숨기면 롤아웃이 시작된 걸 놓칩니다.</p>
+      <p class="card-sub" id="rt-ver-sub"></p></div>
+    <div class="chart" id="rt-ver"></div>
+  </section>
+
   <section class="card" id="rt-ctry-card" hidden>
     <div class="card-head"><h2>국가별 <span class="count" id="rt-ctry-count"></span></h2>
       <p class="card-sub">같은 코호트를 나라로 쪼갰습니다. 마케팅은 국가 단위로 도는데 퍼널은 하나뿐이라
@@ -312,7 +320,7 @@
 <script src="ingame.js?v=1e2db85a"></script>
 <script src="anomaly.js?v=96a1c6d7"></script>
 <script src="userrow.js?v=1be878d4"></script>
-<script src="realtime.js?v=649c9c74"></script>
+<script src="realtime.js?v=ca759c80"></script>
 <script src="users.js?v=3d631072"></script>
 </body>
 </html>
