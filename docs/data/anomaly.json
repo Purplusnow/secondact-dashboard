@@ -1,11 +1,11 @@
 {
- "updated": "2026-10-03 03:36 KST",
+ "updated": "2026-10-03 13:33 KST",
  "level": "warn",
  "window_days": 7,
  "total": 31,
  "recent": 6,
- "recent_base": 2345,
- "recent_rate": 0.256,
+ "recent_base": 2690,
+ "recent_rate": 0.223,
  "thresholds": {
   "warn_n": 5,
   "alert_n": 20,
@@ -201,7 +201,7 @@
    ],
    "drift_h": -0.3,
    "burst": 22,
-   "max_pct": 61
+   "max_pct": 64
   },
   {
    "tag": "d8cffe",
@@ -221,7 +221,7 @@
    ],
    "drift_h": -0.0,
    "burst": 35,
-   "max_pct": 71
+   "max_pct": 77
   },
   {
    "tag": "d7e8d4",
@@ -239,19 +239,9 @@
    "kinds": [
     "pct_burst"
    ],
-   "drift_h": -0.0,
-   "burst": 19,
-   "max_pct": 32
-  },
-  {
-   "tag": "581c34",
-   "day": "2026-09-21",
-   "kinds": [
-    "pct_burst"
-   ],
    "drift_h": 0.0,
-   "burst": 38,
-   "max_pct": 38
+   "burst": 19,
+   "max_pct": 34
   },
   {
    "tag": "f3e7fd",
@@ -262,6 +252,16 @@
    "drift_h": 6300.4,
    "burst": 1,
    "max_pct": 19
+  },
+  {
+   "tag": "581c34",
+   "day": "2026-09-21",
+   "kinds": [
+    "pct_burst"
+   ],
+   "drift_h": 0.0,
+   "burst": 38,
+   "max_pct": 38
   },
   {
    "tag": "8530c6",
@@ -284,6 +284,16 @@
    "max_pct": 29
   },
   {
+   "tag": "4eb626",
+   "day": "2026-09-17",
+   "kinds": [
+    "pct_burst"
+   ],
+   "drift_h": -0.0,
+   "burst": 29,
+   "max_pct": 29
+  },
+  {
    "tag": "e45d95",
    "day": "2026-09-17",
    "kinds": [
@@ -293,16 +303,6 @@
    "drift_h": 6216.0,
    "burst": 25,
    "max_pct": 25
-  },
-  {
-   "tag": "4eb626",
-   "day": "2026-09-17",
-   "kinds": [
-    "pct_burst"
-   ],
-   "drift_h": -0.0,
-   "burst": 29,
-   "max_pct": 29
   },
   {
    "tag": "2de128",
@@ -425,16 +425,6 @@
    "max_pct": 19
   },
   {
-   "tag": "3dd622",
-   "day": "2026-09-03",
-   "kinds": [
-    "pct_burst"
-   ],
-   "drift_h": -0.0,
-   "burst": 16,
-   "max_pct": 16
-  },
-  {
    "tag": "65bfe3",
    "day": "2026-09-03",
    "kinds": [
@@ -443,6 +433,16 @@
    "drift_h": 0.0,
    "burst": 19,
    "max_pct": 19
+  },
+  {
+   "tag": "3dd622",
+   "day": "2026-09-03",
+   "kinds": [
+    "pct_burst"
+   ],
+   "drift_h": -0.0,
+   "burst": 16,
+   "max_pct": 16
   },
   {
    "tag": "dee8d1",
@@ -455,16 +455,6 @@
    "max_pct": 90
   },
   {
-   "tag": "b730ab",
-   "day": "2026-09-02",
-   "kinds": [
-    "pct_burst"
-   ],
-   "drift_h": -0.0,
-   "burst": 13,
-   "max_pct": 100
-  },
-  {
    "tag": "7563b0",
    "day": "2026-09-02",
    "kinds": [
@@ -473,7 +463,17 @@
    "drift_h": 0.0,
    "burst": 11,
    "max_pct": 29
+  },
+  {
+   "tag": "b730ab",
+   "day": "2026-09-02",
+   "kinds": [
+    "pct_burst"
+   ],
+   "drift_h": -0.0,
+   "burst": 13,
+   "max_pct": 100
   }
  ],
- "scan_mb": 1286.0
+ "scan_mb": 1366.0
 }
