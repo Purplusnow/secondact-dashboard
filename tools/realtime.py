@@ -229,7 +229,16 @@ def main() -> None:
     """)
 
     users, funnel, rec, stay60 = [], [0] * len(ORDER), [0] * len(ORDER), 0
+    nogeo = 0
     for r in rows:
+        # 국가가 비어 있는 줄은 코호트에서 뺀다. 빌드를 올릴 때마다 Play 사전 출시 보고서가
+        # 실기기 여러 대에서 앱을 몇 분씩 돌리는데, 그게 전부 '지역 없음 · 체류 0분 · 첫 단계 정지'로
+        # 들어와 퍼널을 통째로 끌어내린다(실측 10/03: 385명 중 25명, 인트로 이탈이 -3% → -12%).
+        # 사람이 아니라 로봇이므로 세면 안 된다. 몇 명을 뺐는지는 화면에 적는다 — 조용히 지우면
+        # 어느 날 진짜 유저의 지역이 안 잡히기 시작해도 모르게 된다.
+        if not (r["country"] or "").strip():
+            nogeo += 1
+            continue
         reached = [int(r.get(col) or 0) for _, _, col in ORDER]
         stay60 += 1 if r.get("s_" + EXTRA[0][0]) else 0
         # 마지막으로 '도달한' 단계. 중간을 건너뛴 기록이 있어도 가장 멀리 간 지점을 쓴다.
@@ -277,6 +286,7 @@ def main() -> None:
                       "kind": "side" if k in SIDE else "spine"}
                      for i, (k, lab, _) in enumerate(ORDER)]
     out["cohort_n"] = n
+    out["excluded_nogeo"] = nogeo
 
     # ── 국가별 ─────────────────────────────────────────────────
     # 마케팅은 국가 단위로 돌리는데 퍼널은 전체 하나뿐이라 "어느 시장 설치가 값을 하나"를

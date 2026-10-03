@@ -27,7 +27,8 @@
     $('#rt-meta').textContent =
       `수집 ${d.updated}` +
       (s.first_at ? `  ·  데이터 범위 ${s.first_at} ~ ${s.last_at} (KST)` : '') +
-      (d.scan_mb != null ? `  ·  스캔 ${d.scan_mb}MB` : '');
+      (d.excluded_nogeo ? `  ·  지역 미상 ${num(d.excluded_nogeo)}명 제외(Play 사전 출시 보고서 등)` : '')
+      + (d.scan_mb != null ? `  ·  스캔 ${d.scan_mb}MB` : '');
 
     const users = d.users || [];
     const stuck = users.filter(u => u.far <= 1).length;   // 인트로도 못 넘긴 사람
