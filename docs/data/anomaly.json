@@ -1,11 +1,11 @@
 {
- "updated": "2026-10-03 13:33 KST",
+ "updated": "2026-10-04 02:30 KST",
  "level": "warn",
  "window_days": 7,
  "total": 31,
- "recent": 6,
- "recent_base": 2690,
- "recent_rate": 0.223,
+ "recent": 5,
+ "recent_base": 2355,
+ "recent_rate": 0.212,
  "thresholds": {
   "warn_n": 5,
   "alert_n": 20,
@@ -25,7 +25,7 @@
    "label": "추월% 폭주",
    "desc": "추월%가 같은 1초에 10칸 이상 건너뜁니다. 정상 플레이면 몇 분에 걸쳐 하나씩 오릅니다 — 세이브를 바꿔 끼워 진행도가 어긋난 흔적입니다.",
    "total": 29,
-   "recent": 6
+   "recent": 5
   }
  ],
  "daily": [
@@ -244,16 +244,6 @@
    "max_pct": 34
   },
   {
-   "tag": "f3e7fd",
-   "day": "2026-09-21",
-   "kinds": [
-    "clock_drift"
-   ],
-   "drift_h": 6300.4,
-   "burst": 1,
-   "max_pct": 19
-  },
-  {
    "tag": "581c34",
    "day": "2026-09-21",
    "kinds": [
@@ -262,6 +252,16 @@
    "drift_h": 0.0,
    "burst": 38,
    "max_pct": 38
+  },
+  {
+   "tag": "f3e7fd",
+   "day": "2026-09-21",
+   "kinds": [
+    "clock_drift"
+   ],
+   "drift_h": 6300.4,
+   "burst": 1,
+   "max_pct": 19
   },
   {
    "tag": "8530c6",
@@ -325,16 +325,6 @@
    "max_pct": 32
   },
   {
-   "tag": "92e4cd",
-   "day": "2026-09-13",
-   "kinds": [
-    "pct_burst"
-   ],
-   "drift_h": 0.0,
-   "burst": 31,
-   "max_pct": 32
-  },
-  {
    "tag": "f0a675",
    "day": "2026-09-13",
    "kinds": [
@@ -353,6 +343,16 @@
    "drift_h": -0.0,
    "burst": 35,
    "max_pct": 48
+  },
+  {
+   "tag": "92e4cd",
+   "day": "2026-09-13",
+   "kinds": [
+    "pct_burst"
+   ],
+   "drift_h": 0.0,
+   "burst": 31,
+   "max_pct": 32
   },
   {
    "tag": "18a951",
@@ -425,16 +425,6 @@
    "max_pct": 19
   },
   {
-   "tag": "65bfe3",
-   "day": "2026-09-03",
-   "kinds": [
-    "pct_burst"
-   ],
-   "drift_h": 0.0,
-   "burst": 19,
-   "max_pct": 19
-  },
-  {
    "tag": "3dd622",
    "day": "2026-09-03",
    "kinds": [
@@ -445,14 +435,14 @@
    "max_pct": 16
   },
   {
-   "tag": "dee8d1",
-   "day": "2026-09-02",
+   "tag": "65bfe3",
+   "day": "2026-09-03",
    "kinds": [
     "pct_burst"
    ],
    "drift_h": 0.0,
-   "burst": 13,
-   "max_pct": 90
+   "burst": 19,
+   "max_pct": 19
   },
   {
    "tag": "7563b0",
@@ -463,6 +453,16 @@
    "drift_h": 0.0,
    "burst": 11,
    "max_pct": 29
+  },
+  {
+   "tag": "dee8d1",
+   "day": "2026-09-02",
+   "kinds": [
+    "pct_burst"
+   ],
+   "drift_h": 0.0,
+   "burst": 13,
+   "max_pct": 90
   },
   {
    "tag": "b730ab",
