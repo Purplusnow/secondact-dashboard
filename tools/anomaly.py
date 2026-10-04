@@ -188,6 +188,63 @@ def reasons() -> list[dict]:
     """)]
 
 
+# v971 부터 네이티브가 APK 서명 인증서를 런타임 검사한다. 변조 APK 는 재서명되므로 해시가
+# 달라지고, 그 경우 보석 지급을 차단한다. 정상 Play 앱 서명 키의 앞 16자:
+GOOD_CERT = os.environ.get("APK_CERT", "dc0a72d0f17e769e")
+
+
+def apk_cert() -> dict:
+    """APK 서명 검증 감시 — ①오탐 조기경보가 최우선이다.
+
+    차단은 '지급을 막는' 동작이라, 오탐 하나가 정상 유저의 결제를 통째로 날린다.
+    판별법(2막 세션 제시): bad_apk_cert 가 떴는데 그 유저에게 과거 bad_orderid·no_price
+    이력이 전혀 없고 정상 결제 이력만 있으면 **오탐**이다. 하나라도 나오면 롤백 신호다.
+
+    apk_cert 는 user_properties 에 들어온다(event_params 아님). 전 유저에게 기록되므로
+    분포를 보면 변조 APK 의 종류와 규모를 처음으로 직접 볼 수 있다.
+    """
+    r = "(SELECT value.string_value FROM UNNEST(event_params) WHERE key='reason')"
+    cert = ("(SELECT value.string_value FROM UNNEST(user_properties)"
+            " WHERE key='apk_cert')")
+    row = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          COUNTIF(event_name='purchase_anomaly' AND {r} = 'bad_apk_cert') AS cert_bad,
+          COUNTIF(event_name='purchase_anomaly' AND {r} IN ('bad_orderid','dup_orderid')) AS id_bad,
+          COUNTIF(event_name='purchase_anomaly' AND {r} = 'no_price') AS noprice,
+          COUNTIF(event_name='purchase') AS ok
+        FROM {rt.TABLE} WHERE {DAILY} GROUP BY uid
+      )
+      SELECT
+        SUM(cert_bad) AS events,
+        COUNTIF(cert_bad > 0) AS users,
+        -- 오탐 의심: 인증서만 걸렸고 다른 위조 이력이 없으며 정상 결제 이력이 있는 사람
+        COUNTIF(cert_bad > 0 AND id_bad = 0 AND noprice = 0 AND ok > 0) AS false_pos,
+        -- 참고: 다른 이력도 없지만 결제 이력도 없는 경우(판단 보류 — 신규 변조본일 수 있다)
+        COUNTIF(cert_bad > 0 AND id_bad = 0 AND noprice = 0 AND ok = 0) AS unknown
+      FROM u
+    """)[0]
+    dist = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          ARRAY_AGG({cert} IGNORE NULLS ORDER BY event_timestamp DESC LIMIT 1)[SAFE_OFFSET(0)] AS cert
+        FROM {rt.TABLE} WHERE {DAILY} GROUP BY uid
+      )
+      SELECT IFNULL(cert, '(미기록)') AS cert, COUNT(*) AS users
+      FROM u GROUP BY cert ORDER BY users DESC LIMIT 12
+    """)
+    return {
+        "good": GOOD_CERT,
+        "events": int(row["events"] or 0),
+        "users": int(row["users"] or 0),
+        "false_pos": int(row["false_pos"] or 0),
+        "unknown": int(row["unknown"] or 0),
+        "dist": [{"cert": x["cert"], "users": int(x["users"]),
+                  "ok": x["cert"] == GOOD_CERT or x["cert"] == "(미기록)"}
+                 for x in dist],
+    }
+
+
 def new_by_day() -> dict[str, int]:
     """날짜별 신규 가입자 수 — 비율의 분모. users.py 가 만든 index 를 그대로 쓴다."""
     path = os.path.join(os.path.dirname(OUT), "users", "index.json")
@@ -229,7 +286,12 @@ def main() -> int:
     base = sum(n for d, n in newd.items() if d >= since)
     rate = (len(recent) / base) if base else 0.0
 
-    if len(recent) >= ALERT_N or rate >= ALERT_RATE:
+    cert = apk_cert()
+    # 오탐은 무조건 최고 단계다 — 정상 유저의 결제를 막고 있다는 뜻이고, 숫자가 작을수록
+    # 오히려 급하다(하나 보일 때 막아야 전부로 번지지 않는다). 비율 기준보다 먼저 본다.
+    if cert["false_pos"] > 0:
+        level = "alert"
+    elif len(recent) >= ALERT_N or rate >= ALERT_RATE:
         level = "alert"
     elif len(recent) >= WARN_N or rate >= WARN_RATE:
         level = "warn"
@@ -265,6 +327,7 @@ def main() -> int:
              "total": sum(1 for u in users if "pct_burst" in u["kinds"]),
              "recent": sum(1 for u in recent if "pct_burst" in u["kinds"])},
         ],
+        "apk_cert": cert,
         "segments": segments(),
         "compare": compare(),
         "reasons": reasons(),
@@ -275,6 +338,9 @@ def main() -> int:
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
         f.write("\n")
+    if cert["users"] or cert["false_pos"]:
+        print(f"  APK 인증서 차단: {cert['users']}명/{cert['events']}건 · "
+              f"오탐 의심 {cert['false_pos']}명 · 판단보류 {cert['unknown']}명")
     print(f"[{level}] 누적 {len(users)}명 · 최근 {WINDOW}일 {len(recent)}명 "
           f"/ 신규 {base}명 ({out['recent_rate']}%) · 스캔 {out['scan_mb']}MB")
     for s in out["signals"]:

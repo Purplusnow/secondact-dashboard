@@ -208,6 +208,12 @@
     <div class="table-scroll"><table class="ledger" id="risk-table"></table></div>
     <p class="card-sub" id="risk-reason"></p>
 
+    <div class="vsub">APK 서명 인증서 — v971부터 변조본 결제 차단</div>
+    <p class="card-sub">변조 APK는 재서명되므로 인증서 해시가 달라집니다. <b>오탐 의심</b>은 인증서에만 걸렸는데
+      과거 위조 이력이 없고 정상 결제 이력만 있는 유저입니다 — <b>0이 아니면 즉시 롤백 검토</b>입니다.
+      인증서를 못 읽으면 통과시킵니다(fail-open).</p>
+    <div id="risk-cert"></div>
+
     <div class="vsub">구간별 비율 — 깊이 갈수록 짙어집니다</div>
     <p class="card-sub">전체 비율이 작아도 엔드게임 코호트에서는 몇 배가 됩니다. 조작 유저는 진행을 가속하니
       깊은 구간에 몰립니다 — <b>엔딩 도달률·페이싱을 읽기 전에 이 표를 보세요.</b></p>
@@ -351,7 +357,7 @@
 <script src="refresh.js?v=4816d6ee"></script>
 <script src="app.js?v=93c7bd62"></script>
 <script src="ingame.js?v=33358a7e"></script>
-<script src="anomaly.js?v=afae6b91"></script>
+<script src="anomaly.js?v=451736e7"></script>
 <script src="userrow.js?v=1be878d4"></script>
 <script src="realtime.js?v=2eeaf960"></script>
 <script src="users.js?v=4ffd5a32"></script>

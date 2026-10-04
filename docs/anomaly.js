@@ -33,10 +33,21 @@
     host.hidden = quiet;
 
     const on = (d.signals || []).filter(s => s.recent > 0);
+    const fp = (d.apk_cert || {}).false_pos || 0;
     const head = document.createElement('b');
-    head.textContent = d.level === 'alert' ? '위험 — 조작 유저가 번지고 있습니다'
+    // 오탐은 다른 무엇보다 먼저 말해야 한다 — 정상 유저의 결제를 막고 있다는 뜻이다.
+    head.textContent = fp > 0
+      ? `🚨 결제 차단 오탐 ${num(fp)}명 — 정상 유저의 결제가 막히고 있습니다. 즉시 롤백 검토`
+      : d.level === 'alert' ? '위험 — 조작 유저가 번지고 있습니다'
       : '주의 — 조작 의심 유저가 늘고 있습니다';
     const body = document.createElement('span');
+    if (fp > 0) {
+      body.textContent = ' 인증서 검증(bad_apk_cert)에 걸렸는데 과거 위조 이력이 없고 '
+        + '정상 결제 이력만 있는 유저입니다 — 변조본이 아니라 우리 쪽 판정이 틀렸을 가능성이 큽니다.';
+      host.append(head, body);
+      detail(d);
+      return;
+    }
     body.textContent =
       ` 최근 ${d.window_days}일 ${num(d.recent)}명`
       + (d.recent_base ? ` / 신규 ${num(d.recent_base)}명 (${d.recent_rate}%)` : '')
@@ -146,6 +157,41 @@
       ? (d.reasons || []).map(r => `${r.reason} ${num(r.users)}명/${num(r.events)}건`).join('  ·  ')
         + '   (no_price 는 가격 조회 전에 결제가 끝난 정상 케이스가 섞입니다 — 차단 대상 아님)'
       : '';
+
+    // APK 인증서 — v971 부터. 오탐 조기경보가 핵심이라 숫자 셋을 나란히 둔다.
+    const ac = d.apk_cert || {};
+    const acEl = $('#risk-cert');
+    if (!ac.dist || !ac.dist.length) {
+      acEl.textContent = '';
+    } else {
+      acEl.textContent = '';
+      const line = document.createElement('p');
+      line.className = 'card-sub';
+      line.innerHTML = `차단 <b>${num(ac.users)}명 / ${num(ac.events)}건</b>`
+        + `  ·  <b${ac.false_pos ? ' style="color:var(--bad)"' : ''}>오탐 의심 ${num(ac.false_pos)}명</b>`
+        + `  ·  판단 보류 ${num(ac.unknown)}명`
+        + `  ·  정상 인증서 <code>${ac.good}</code>`;
+      acEl.appendChild(line);
+      const t = document.createElement('table');
+      t.className = 'ledger';
+      const hr = t.createTHead().insertRow();
+      ['APK 서명 인증서', '유저', ''].forEach((h, i) => {
+        const th = document.createElement('th');
+        if (!i) th.className = 'date';
+        th.textContent = h;
+        hr.appendChild(th);
+      });
+      const tb = t.createTBody();
+      for (const r of ac.dist) {
+        const tr = tb.insertRow();
+        const cell = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
+        const nm = cell(r.cert, 'date');
+        if (!r.ok) nm.className = 'date neg';
+        cell(num(r.users));
+        cell(r.cert === ac.good ? '정상' : r.cert === '(미기록)' ? 'v970 이전' : '변조본');
+      }
+      acEl.appendChild(t);
+    }
 
     const list = $('#risk-users');
     list.textContent = '';
