@@ -153,6 +153,33 @@ def fake(day: str | None) -> int:
         ROUND(AVG(IF(bad = 0 AND ok = 0, ads, NULL)), 1) AS ads_plain
       FROM u
     """)[0]
+    # ⚠ '결제 이력이 없으니 손실 아님'은 반사실을 잘못 잡은 것이다. 비교해야 할 건
+    #   "그 상품을 샀겠나"가 아니라 "조작 안 했으면 평범한 유저였을 텐데 그 가치는 얼마인가"다.
+    #   그래서 위조 유저의 결제율·체류·접속일을 **일반 유저와 나란히** 둔다.
+    ltv = rt.q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          COUNTIF(event_name='purchase_anomaly') AS bad,
+          COUNTIF(event_name='purchase') AS ok,
+          COUNTIF(event_name='ad_impression') AS ads,
+          COUNT(DISTINCT event_date) AS days,
+          SUM((SELECT value.int_value FROM UNNEST(event_params)
+               WHERE key='engagement_time_msec')) AS eng
+        FROM {rt.TABLE} WHERE {where} GROUP BY uid
+      )
+      SELECT CASE WHEN bad > 0 THEN '위조' ELSE '일반' END AS seg,
+             COUNT(*) AS users, COUNTIF(ok > 0) AS payers,
+             ROUND(AVG(ads), 1) AS ads, ROUND(AVG(days), 1) AS days,
+             ROUND(AVG(eng) / 60000.0, 1) AS mins
+      FROM u GROUP BY seg ORDER BY seg
+    """)
+    print(f"\n=== 위조 유저 vs 일반 유저 (반사실 비교) ===")
+    print(f"{'':<6}{'유저':>7}{'결제자':>7}{'결제율':>8}{'광고':>7}{'접속일':>7}{'체류':>8}")
+    for x in ltv:
+        n, pay = int(x["users"]), int(x["payers"])
+        print(f"{x['seg']:<6}{n:>7}{pay:>7}{(100*pay/n if n else 0):>7.2f}%"
+              f"{x['ads']:>7}{x['days']:>7}{x['mins']:>7}분")
+
     print(f"\n=== 위조 유저는 '돈 낼 사람'이었나 ===")
     print(f"  위조 유저 {ov['fake_users']}명 · 정상 결제자 {ov['pay_users']}명 · "
           f"**둘 다 한 사람 {ov['both']}명**")
@@ -181,7 +208,7 @@ def fake(day: str | None) -> int:
       WITH u AS (
         SELECT user_pseudo_id AS uid,
           COUNTIF(event_name='purchase_anomaly') AS bad,
-          COUNTIF(event_name LIKE 'city\\_%') AS city_ev,
+          COUNTIF(STARTS_WITH(event_name, 'city_')) AS city_ev,
           MAX(IF(event_name='progress_pct',
                  (SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct'), 0)) AS mp
         FROM {rt.TABLE} WHERE {where} GROUP BY uid
