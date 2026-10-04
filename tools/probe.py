@@ -285,6 +285,47 @@ def city(day: str | None) -> int:
     print(f"  **둘 다 = 자격자 {rows['both']}명** · 그중 최근 30일 활성 {rows['both_30d']}명")
     print(f"  실제 2부 진입 {rows['entered']}명 · 관측된 최대 world_stage {rows['max_world']}")
 
+    # 자격자가 실제로 v965 를 받았나 — '잠긴 게 아니라 아직 업데이트 전'인지 가른다.
+    # 버전은 intraday 까지 포함해 '마지막으로 본 버전'으로 잡는다(오늘 업데이트분을 놓치지 않게).
+    ver = rt.q(f"""
+      WITH q AS (
+        SELECT user_pseudo_id AS uid
+        FROM {rt.TABLE} WHERE {where}
+        GROUP BY uid
+        HAVING MAX(IF(event_name='codex_open', {cp}, 0)) >= 100
+           AND MAX(IF(event_name='progress_pct', {pp}, 0)) >= 100
+      ),
+      v AS (
+        SELECT user_pseudo_id AS uid,
+          ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp DESC LIMIT 1)[SAFE_OFFSET(0)] AS ver,
+          MAX(event_timestamp) AS last_ts,
+          COUNTIF(STARTS_WITH(event_name, 'city_')) AS city_ev
+        FROM {rt.TABLE} GROUP BY uid
+      )
+      SELECT IFNULL(v.ver, '(미상)') AS ver, COUNT(*) AS n, COUNTIF(v.city_ev > 0) AS entered,
+             FORMAT_TIMESTAMP('%m-%d %H:%M', TIMESTAMP_MICROS(MAX(v.last_ts)), 'Asia/Seoul') AS last_seen
+      FROM q JOIN v USING (uid)
+      GROUP BY ver ORDER BY n DESC
+    """)
+    print("\n=== 자격자 63명이 어느 빌드를 쓰고 있나 (마지막으로 본 버전) ===")
+    print(f"{'버전':<14}{'자격자':>7}{'2부진입':>8}  마지막 활동")
+    for x in ver:
+        print(f"{str(x['ver']).replace('1.0 (','').replace(')',''):<14}{x['n']:>7}{x['entered']:>8}  {x['last_seen']}")
+
+    # 배포 진척도 — 오늘 활성 유저 중 v965 비율
+    roll = rt.q(f"""
+      WITH v AS (
+        SELECT user_pseudo_id AS uid,
+          ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp DESC LIMIT 1)[SAFE_OFFSET(0)] AS ver
+        FROM {rt.TABLE} WHERE _TABLE_SUFFIX LIKE 'intraday%' GROUP BY uid
+      )
+      SELECT IFNULL(ver, '(미상)') AS ver, COUNT(*) AS n FROM v GROUP BY ver ORDER BY n DESC LIMIT 6
+    """)
+    tot = sum(int(x["n"]) for x in roll)
+    print(f"\n=== 배포 진척도 — 오늘 활성 유저 {tot}명의 버전 ===")
+    for x in roll:
+        print(f"  {str(x['ver']).replace('1.0 (','').replace(')',''):<10}{x['n']:>6}명  {100*int(x['n'])/tot:>5.1f}%")
+
     print("\n=== 도감 최고 달성률 분포 (연 적 있는 사람만) ===")
     dist = rt.q(f"""
       WITH u AS (
