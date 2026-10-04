@@ -525,10 +525,9 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .reload:disabled { opacity: .55; cursor: default; }
 .reload + .updated { margin-left: 0; }
 
-/* 퍼널 칸 주석 — 낙폭이 '설계대로'인 칸에 이유를 붙인다. 숫자가 아니라 읽는 법이라 흐리게. */
-.fn-note {
-  flex: none; font-size: 11px; color: var(--ink-3);
-  border: 1px solid var(--hair); border-radius: 3px;
-  padding: 1px 5px; margin-left: 2px; cursor: help; white-space: nowrap;
+/* 낙폭이 '설계대로'인 칸 표시 — 줄 안에 꼬리표를 넣으면 그 줄만 막대가 짧아져 축이 깨진다.
+   라벨에 점선만 긋고(설명은 title), 본문은 차트 아래 각주로 뺀다. 레이아웃에 영향 0. */
+.fn-label.has-note {
+  text-decoration: underline dotted var(--axis);
+  text-underline-offset: 3px; cursor: help;
 }
-.fn-row.has-note .fn-drop { width: 0; }

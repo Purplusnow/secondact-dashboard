@@ -264,23 +264,30 @@
       dr.className = 'fn-drop' + (drop >= 30 ? ' is-big' : '');
       dr.textContent = prev && drop > 0 ? `-${drop}%` : '';
       // 첫후원 앞에는 건물 매수 조건이 붙어 있고 그걸 채우려면 방치가 필요하다(v965~).
-      // 유저가 앱을 닫았다 와야 하므로 당일 창에서는 원리상 낮게 나온다 — 회귀가 아니다.
-      // 실측: 후원한 v965 유저는 세션 2회·첫~마지막 179분, 안 한 쪽은 1회·27분.
+      // 당일 창에서는 원리상 낮게 나온다 — 회귀가 아니다.
+      // ⚠ 꼬리표를 줄 안에 넣었더니 그 줄만 track(flex:1)이 좁아져 막대 끝이 어긋났다.
+      //   퍼널은 길이를 세로로 비교하는 그림이라 한 줄만 축이 달라지면 차트가 깨진다.
+      //   그래서 줄 구조는 건드리지 않고 라벨에 점선만 긋고, 설명은 차트 아래 각주로 뺀다.
       if (r.key === 'first_donate') {
-        row.classList.add('has-note');
-        dr.textContent = '';
-        const note = document.createElement('span');
-        note.className = 'fn-note';
-        note.textContent = '방치 게이트';
-        note.title = '첫후원 앞 건물 매수 조건을 채우려면 방치 시간이 필요합니다(v965~). '
+        lab.classList.add('has-note');
+        lab.title = '첫후원 앞 건물 매수 조건을 채우려면 방치 시간이 필요합니다(v965~). '
           + '유저가 앱을 닫았다 와야 해서 당일 창에서는 낮게 나옵니다 — 버전 비교는 '
           + '인게임 뷰의 코호트에서 은퇴→첫환생으로 보세요.';
-        row.append(note);
       }
 
       row.append(lab, track, val, dr);
       host.appendChild(row);
     });
+
+    // 각주 — 줄 안에 못 넣는 설명은 여기에. 차트 축을 안 건드린다.
+    if (rows.some(r => r.key === 'first_donate')) {
+      const fn = document.createElement('p');
+      fn.className = 'chart-note';
+      fn.innerHTML = '<b>첫후원</b>의 낙폭은 설계대로입니다 — 앞에 건물 매수 조건이 붙어 있고(v965~) '
+        + '그걸 채우려면 방치 시간이 필요해, 유저가 앱을 닫았다 와야 합니다. '
+        + '당일 창에서는 원리상 낮게 나옵니다. 버전 비교는 인게임 뷰의 코호트에서 <b>은퇴→첫환생</b>으로 보세요.';
+      host.appendChild(fn);
+    }
   }
 
   function table(d) {
