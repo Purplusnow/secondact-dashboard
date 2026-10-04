@@ -371,7 +371,9 @@ def vercmp(day: str | None) -> int:
     ⚠ first_donate 는 v965 부터 앞에 방치 게이트가 붙었다 — 설계상 당일 수치가 낮아야 맞다.
       '나빠졌다'로 읽으면 안 되는 칸이라 표에서 따로 표시한다.
     """
-    where = (f"_TABLE_SUFFIX = '{day}'" if day else "_TABLE_SUFFIX NOT LIKE 'intraday%'")
+    # intraday 까지 포함한다 — 확정 테이블만 보면 최근 빌드의 뒷구간이 통째로 안 잡혀
+    # '나빠졌다'는 착시가 생긴다(v965 의 6시간·24시간 값이 똑같이 나왔던 게 그 증상이다).
+    where = (f"_TABLE_SUFFIX = '{day}'" if day else "TRUE")
     step = "(SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')"
     secs = "(SELECT value.int_value FROM UNNEST(event_params) WHERE key='secs_since_install')"
     STAGES = [("intro_done", "인트로"), ("dev_launch", "출시"), ("property_1", "부동산1"),
@@ -381,19 +383,25 @@ def vercmp(day: str | None) -> int:
         sel = ",\n          ".join(
             f"COUNTIF({step}='{k}' AND {secs} <= {hours*3600}) > 0 AS r_{k}"
             for k, _ in STAGES)
+        # ⚠ 관측창 보정: 설치 후 N시간이 '데이터에 담길 만큼' 지난 사람만 센다.
+        #   어제 23시에 깐 사람은 6시간이 아직 안 지났으니 분모에 넣으면 무조건 미도달로 잡힌다.
+        #   이걸 안 하면 최근 빌드가 항상 나빠 보인다 — 비교가 아니라 착시가 된다.
         rows = rt.q(f"""
           WITH u AS (
             SELECT user_pseudo_id AS uid,
               ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp LIMIT 1)[SAFE_OFFSET(0)] AS ver,
               COUNTIF({step}='new_game') > 0 AS started,
+              MIN(TIMESTAMP_MICROS(event_timestamp)) AS first_seen,
               {sel}
             FROM {rt.TABLE} WHERE {where} AND event_name='onb_step'
             GROUP BY uid
           )
           SELECT ver, COUNT(*) AS n, """ + ", ".join(
               f"COUNTIF(r_{k}) AS c_{k}" for k, _ in STAGES) + f"""
-          FROM u WHERE started AND ver IS NOT NULL
-          GROUP BY ver HAVING n >= 50 ORDER BY ver DESC LIMIT 6
+          FROM u
+          WHERE started AND ver IS NOT NULL
+            AND first_seen <= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL {hours} HOUR)
+          GROUP BY ver HAVING n >= 30 ORDER BY ver DESC LIMIT 6
         """)
         print(f"\n=== 설치 후 {hours}시간 안에 도달 (새 게임 시작자 기준) ===")
         print(f"{'버전':<10}{'인원':>6}" + "".join(f"{lab:>9}" for _, lab in STAGES))
