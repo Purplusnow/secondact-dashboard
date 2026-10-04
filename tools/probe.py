@@ -158,6 +158,46 @@ def fake(day: str | None) -> int:
           f"**둘 다 한 사람 {ov['both']}명**")
     print(f"  광고 시청 평균 — 위조 {ov['ads_fake']}회 · 결제자 {ov['ads_payer']}회 · 일반 {ov['ads_plain']}회")
 
+    # no_price 와 bad_orderid 의 교집합 — 같은 변조군인지, 다른 성격인지 가른다.
+    # 겹치면 같은 집단, 안 겹치면 no_price 는 '가격 조회 전에 콜백이 온 정상 케이스'일 가능성이 크다.
+    ix = rt.q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          COUNTIF(event_name='purchase_anomaly' AND {r} = 'bad_orderid') AS bo,
+          COUNTIF(event_name='purchase_anomaly' AND {r} = 'no_price') AS np
+        FROM {rt.TABLE} WHERE {where} GROUP BY uid
+      )
+      SELECT COUNTIF(bo > 0 AND np = 0) AS only_bo,
+             COUNTIF(np > 0 AND bo = 0) AS only_np,
+             COUNTIF(bo > 0 AND np > 0) AS both
+      FROM u
+    """)[0]
+    print(f"\n=== no_price 와 bad_orderid 의 관계 ===")
+    print(f"  bad_orderid 만 {ix['only_bo']}명 · no_price 만 {ix['only_np']}명 · 둘 다 {ix['both']}명")
+
+    # 2부(도시) 도달 코호트 안의 위조 비율 — 전체 비율과 비교해야 '과대표집'이 보인다.
+    # 엔드게임은 모수가 작아서 0.76% 가 두 자릿수 %가 될 수 있다.
+    city = rt.q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          COUNTIF(event_name='purchase_anomaly') AS bad,
+          COUNTIF(event_name LIKE 'city\\_%') AS city_ev,
+          MAX(IF(event_name='progress_pct',
+                 (SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct'), 0)) AS mp
+        FROM {rt.TABLE} WHERE {where} GROUP BY uid
+      )
+      SELECT 'ALL' AS seg, COUNT(*) AS users, COUNTIF(bad > 0) AS fake FROM u
+      UNION ALL SELECT '추월 50%+', COUNTIF(mp >= 50), COUNTIF(mp >= 50 AND bad > 0) FROM u
+      UNION ALL SELECT '추월 90%+', COUNTIF(mp >= 90), COUNTIF(mp >= 90 AND bad > 0) FROM u
+      UNION ALL SELECT '추월 100%', COUNTIF(mp >= 100), COUNTIF(mp >= 100 AND bad > 0) FROM u
+      UNION ALL SELECT '2부 진입', COUNTIF(city_ev > 0), COUNTIF(city_ev > 0 AND bad > 0) FROM u
+    """)
+    print(f"\n=== 구간별 위조 유저 비율 (과대표집 확인) ===")
+    print(f"{'구간':<12}{'유저':>8}{'위조':>7}{'비율':>8}")
+    for x in city:
+        n, f = int(x["users"] or 0), int(x["fake"] or 0)
+        print(f"{x['seg']:<12}{n:>8}{f:>7}{(100*f/n if n else 0):>7.1f}%")
+
     # 유저당 건수 분포 — 1~2건은 사고일 수 있고 수백 건은 변명의 여지가 없다
     dist = rt.q(f"""
       SELECT CASE WHEN n = 1 THEN '1건' WHEN n <= 3 THEN '2~3건'
