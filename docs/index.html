@@ -197,6 +197,16 @@
       <p class="card-sub">아래 유저들은 위 지표에 섞여 있습니다. 수가 늘면 엔딩 도달률·페이싱이 먼저 오염됩니다.</p>
       <p class="card-sub" id="risk-sub"></p></div>
     <div class="table-scroll"><table class="ledger" id="risk-table"></table></div>
+    <p class="card-sub" id="risk-reason"></p>
+
+    <div class="vsub">구간별 비율 — 깊이 갈수록 짙어집니다</div>
+    <p class="card-sub">전체 비율이 작아도 엔드게임 코호트에서는 몇 배가 됩니다. 조작 유저는 진행을 가속하니
+      깊은 구간에 몰립니다 — <b>엔딩 도달률·페이싱을 읽기 전에 이 표를 보세요.</b></p>
+    <div class="chart" id="risk-seg"></div>
+
+    <div class="vsub">위조 유저는 어떤 사람들인가</div>
+    <div id="risk-cmp"></div>
+
     <div class="vsub">최근 사례</div>
     <div id="risk-users"></div>
   </section>
@@ -318,7 +328,7 @@
 <script src="refresh.js?v=4816d6ee"></script>
 <script src="app.js?v=93c7bd62"></script>
 <script src="ingame.js?v=1e2db85a"></script>
-<script src="anomaly.js?v=7c81c7e0"></script>
+<script src="anomaly.js?v=afae6b91"></script>
 <script src="userrow.js?v=1be878d4"></script>
 <script src="realtime.js?v=1d03f5ba"></script>
 <script src="users.js?v=3d631072"></script>

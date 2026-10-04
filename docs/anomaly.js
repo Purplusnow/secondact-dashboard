@@ -78,6 +78,75 @@
       c(s.desc, 'date');
     }
 
+    // 구간별 과대표집 — 전체 비율만 보면 '작으니 무시'로 가는데, 깊은 구간에선 몇 배가 된다.
+    const seg = $('#risk-seg');
+    seg.textContent = '';
+    for (const r of d.segments || []) {
+      if (!r.users) continue;
+      const row = document.createElement('div');
+      row.className = 'fn-row';
+      const lab = document.createElement('span');
+      lab.className = 'fn-label'; lab.style.width = '84px'; lab.textContent = r.seg;
+      const track = document.createElement('span'); track.className = 'fn-track';
+      const fill = document.createElement('i');
+      // 눈금은 10% 고정 — 구간끼리 길이를 바로 비교하려면 축이 같아야 한다
+      fill.style.width = Math.min(100, r.pct * 10) + '%';
+      if (r.mult && r.mult >= 3) fill.style.background = 'var(--bad)';
+      track.appendChild(fill);
+      const val = document.createElement('span');
+      val.className = 'fn-val';
+      val.textContent = `${num(r.fake)}/${num(r.users)}명 · ${r.pct}%`;
+      const mult = document.createElement('span');
+      mult.className = 'fn-drop' + (r.mult && r.mult >= 3 ? ' is-big' : '');
+      mult.textContent = r.mult && r.mult > 1 ? `${r.mult}배` : '';
+      row.append(lab, track, val, mult);
+      seg.appendChild(row);
+    }
+
+    // 반사실 — '결제 이력 없으니 손실 아님'을 막는 두 줄
+    const c = d.compare || {};
+    const cmp = $('#risk-cmp');
+    cmp.textContent = '';
+    if (c.fake && c.normal) {
+      const t = document.createElement('table');
+      t.className = 'ledger';
+      const hr = t.createTHead().insertRow();
+      ['', '유저', '결제자', '결제율', '광고', '접속일', '체류'].forEach((h, i) => {
+        const th = document.createElement('th');
+        if (!i) th.className = 'date';
+        th.textContent = h;
+        hr.appendChild(th);
+      });
+      const tb = t.createTBody();
+      for (const [key, label] of [['fake', '위조 유저'], ['normal', '일반 유저']]) {
+        const x = c[key], tr = tb.insertRow();
+        const cell = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
+        cell(label, 'date');
+        cell(num(x.users));
+        cell(num(x.payers));
+        const pc = cell(x.pay_pct + '%');
+        if (key === 'fake') pc.className = 'neg';
+        cell(x.ads + '회');
+        cell(x.days + '일');
+        cell(x.mins + '분');
+      }
+      cmp.appendChild(t);
+      const note = document.createElement('p');
+      note.className = 'card-sub';
+      const ratio = c.normal.pay_pct ? (c.fake.pay_pct / c.normal.pay_pct).toFixed(0) : '—';
+      note.textContent = `위조 유저의 결제율이 일반의 ${ratio}배입니다 — 비지출자가 아니라 `
+        + '돈 쓸 성향이 있는 유저층입니다. "결제 이력이 없으니 손실이 아니다"로 읽으면 안 됩니다. '
+        + `광고는 ${c.fake.ads}회로 일반(${c.normal.ads}회)의 일부만 봅니다(보석이 무한하니 볼 이유가 없음).`;
+      cmp.appendChild(note);
+    }
+
+    // 사유별 — no_price 는 정상 결제에서도 난다. 갈라 두지 않으면 전부 치터로 읽힌다.
+    const rs = $('#risk-reason');
+    rs.textContent = (d.reasons || []).length
+      ? (d.reasons || []).map(r => `${r.reason} ${num(r.users)}명/${num(r.events)}건`).join('  ·  ')
+        + '   (no_price 는 가격 조회 전에 결제가 끝난 정상 케이스가 섞입니다 — 차단 대상 아님)'
+      : '';
+
     const list = $('#risk-users');
     list.textContent = '';
     const us = (d.users || []).slice(0, 20);

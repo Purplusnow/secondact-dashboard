@@ -40,6 +40,8 @@ from datetime import datetime, timedelta, timezone
 
 import realtime as rt
 
+q = rt.q   # 쿼리는 realtime 쪽 래퍼를 그대로 쓴다(스캔량 누적도 거기서 센다)
+
 KST = timezone(timedelta(hours=9))
 OUT = os.path.join(os.path.dirname(__file__), "..", "docs", "data", "anomaly.json")
 # 지역이 안 잡히는 줄은 사람이 아니다 — 빌드를 올릴 때마다 Play 사전 출시 보고서가 실기기에서
@@ -101,6 +103,89 @@ def fetch() -> list[dict]:
          OR u.fake >= {FAKE_N}
       ORDER BY first_day DESC
     """)
+
+
+def segments() -> list[dict]:
+    """구간별 위조 유저 비율 — 과대표집을 숫자로 남긴다.
+
+    전체에서 0.7% 여도 엔딩 도달 코호트에서는 5.2%(7.4배)다. 조작 유저는 무한 보석으로
+    진행을 가속하니 깊은 구간에 몰릴 수밖에 없다. '전체 비율이 작으니 무시해도 된다'는
+    판단을 막으려면 이 표가 화면에 있어야 한다 — 밸런스 숫자를 읽는 자리에서 같이 봐야 한다.
+    """
+    pct = "(SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct')"
+    rows = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          COUNTIF(event_name='purchase_anomaly'
+                  OR event_name='progress_pct') > 0 AS _dummy,
+          COUNTIF(event_name='purchase_anomaly') AS bad,
+          COUNTIF(STARTS_WITH(event_name, 'city_')) AS city_ev,
+          MAX(IF(event_name='progress_pct', {pct}, 0)) AS mp
+        FROM {rt.TABLE} WHERE {DAILY} GROUP BY uid
+      )
+      SELECT '전체' AS seg, 0 AS ord, COUNT(*) AS users, COUNTIF(bad > 0) AS fake FROM u
+      UNION ALL SELECT '추월 50%+', 1, COUNTIF(mp >= 50), COUNTIF(mp >= 50 AND bad > 0) FROM u
+      UNION ALL SELECT '추월 90%+', 2, COUNTIF(mp >= 90), COUNTIF(mp >= 90 AND bad > 0) FROM u
+      UNION ALL SELECT '추월 100%', 3, COUNTIF(mp >= 100), COUNTIF(mp >= 100 AND bad > 0) FROM u
+      UNION ALL SELECT '2부 진입', 4, COUNTIF(city_ev > 0), COUNTIF(city_ev > 0 AND bad > 0) FROM u
+      ORDER BY ord
+    """)
+    base = None
+    out = []
+    for r in rows:
+        n, f = int(r["users"] or 0), int(r["fake"] or 0)
+        rate = round(100 * f / n, 2) if n else 0
+        if base is None:
+            base = rate or None
+        out.append({"seg": r["seg"], "users": n, "fake": f, "pct": rate,
+                    "mult": round(rate / base, 1) if base else None})
+    return out
+
+
+def compare() -> dict:
+    """위조 유저 vs 일반 유저 — 피해 추정의 반사실.
+
+    '결제 이력이 없으니 손실 아님'은 틀린 읽기다. 비교해야 할 건 "그 상품을 샀겠나"가
+    아니라 "조작 안 했으면 평범한 유저였을 텐데 그 가치가 얼마인가"다.
+    실측(10/04): 위조 유저 결제율 8.94% 대 일반 0.81% — 11배다. 비지출자가 아니라
+    오히려 고의향 유저층이고, 체류도 비슷하다. 이 두 줄이 화면에 있어야 피해를 안 깎는다.
+    """
+    rows = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          COUNTIF(event_name='purchase_anomaly') AS bad,
+          COUNTIF(event_name='purchase') AS ok,
+          COUNTIF(event_name='ad_impression') AS ads,
+          COUNT(DISTINCT event_date) AS days,
+          SUM((SELECT value.int_value FROM UNNEST(event_params)
+               WHERE key='engagement_time_msec')) AS eng
+        FROM {rt.TABLE} WHERE {DAILY} GROUP BY uid
+      )
+      SELECT IF(bad > 0, 'fake', 'normal') AS seg, COUNT(*) AS users,
+             COUNTIF(ok > 0) AS payers, ROUND(AVG(ads), 1) AS ads,
+             ROUND(AVG(days), 1) AS days, ROUND(AVG(eng) / 60000.0, 1) AS mins
+      FROM u GROUP BY seg
+    """)
+    out = {}
+    for r in rows:
+        n = int(r["users"] or 0)
+        out[r["seg"]] = {"users": n, "payers": int(r["payers"] or 0),
+                         "pay_pct": round(100 * int(r["payers"] or 0) / n, 2) if n else 0,
+                         "ads": float(r["ads"] or 0), "days": float(r["days"] or 0),
+                         "mins": float(r["mins"] or 0)}
+    return out
+
+
+def reasons() -> list[dict]:
+    """사유별 — no_price 는 정상 결제에서도 나므로 차단 대상이 아니다.
+    화면에 갈라 두지 않으면 '전부 치터'로 읽혀 과대평가된다."""
+    r = "(SELECT value.string_value FROM UNNEST(event_params) WHERE key='reason')"
+    return [{"reason": x["reason"], "events": int(x["n"]), "users": int(x["users"])}
+            for x in q(f"""
+      SELECT {r} AS reason, COUNT(*) AS n, COUNT(DISTINCT user_pseudo_id) AS users
+      FROM {rt.TABLE} WHERE {DAILY} AND event_name='purchase_anomaly'
+      GROUP BY reason ORDER BY n DESC
+    """)]
 
 
 def new_by_day() -> dict[str, int]:
@@ -180,6 +265,9 @@ def main() -> int:
              "total": sum(1 for u in users if "pct_burst" in u["kinds"]),
              "recent": sum(1 for u in recent if "pct_burst" in u["kinds"])},
         ],
+        "segments": segments(),
+        "compare": compare(),
+        "reasons": reasons(),
         "daily": sorted(daily.values(), key=lambda d: d["date"], reverse=True),
         "users": users[:200],
         "scan_mb": round(rt._billed / 1024 / 1024, 1),
