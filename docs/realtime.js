@@ -45,6 +45,7 @@
 
     funnel(d.funnel || [], d.cohort_n || 0);
     versions(d.versions);
+    cityView(d.city);
     ads(d.ads);
     country(d.by_country, d.cohort_n || 0);
     table(d);
@@ -65,6 +66,34 @@
   /* 버전별 — 새 빌드가 실제로 퍼지고 있는지 보는 자리. 라이브로 인정된 빌드만 코호트에
      들어가고, 한두 명짜리 테스트 빌드는 빠진다(빠진 줄도 같이 보여 준다 — 숨기면 롤아웃이
      시작된 걸 놓친다). */
+  /* 2부 — 오늘 도시에서 활동한 사람. 모수가 작을 때는 비율보다 '몇 명'이 중요하다. */
+  function cityView(c) {
+    const card = $('#rt-city-card');
+    if (!c || !c.users) { card.hidden = true; return; }
+    card.hidden = false;
+    $('#rt-city-sub').textContent =
+      `오늘 도시에서 활동한 사람 ${num(c.users)}명 · 진입 이벤트 ${num(c.enters)}회`
+      + (c.done ? ` · 도시 완성 ${num(c.done)}명` : '');
+
+    const host = $('#rt-city');
+    host.textContent = '';
+    for (const s of c.steps || []) {
+      const row = document.createElement('div');
+      row.className = 'fn-row';
+      const lab = document.createElement('span');
+      lab.className = 'fn-label'; lab.style.width = '96px'; lab.textContent = s.label;
+      const track = document.createElement('span'); track.className = 'fn-track';
+      const fill = document.createElement('i');
+      fill.style.width = (c.users ? 100 * s.n / c.users : 0) + '%';
+      track.appendChild(fill);
+      const val = document.createElement('span');
+      val.className = 'fn-val';
+      val.textContent = `${num(s.n)}명 · ${s.pct}%`;
+      row.append(lab, track, val);
+      host.appendChild(row);
+    }
+  }
+
   function versions(v) {
     const card = $('#rt-ver-card');
     if (!v || !(v.rows || []).length) { card.hidden = true; return; }

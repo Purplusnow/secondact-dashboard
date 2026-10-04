@@ -359,6 +359,35 @@ def main() -> None:
                        key=lambda x: (-x["n"], x["country"])),
     }
 
+    # ── 2부(도시) ──────────────────────────────────────────────
+    # 2부 활동은 확정 테이블보다 intraday 에 먼저 들어온다. 출시 직후라 하루 단위로는
+    # 아직 0 으로 보이는데, 여기서는 오늘 누가 들어왔고 어디까지 갔는지가 바로 보인다.
+    # 가입 코호트와 무관하다 — 2부는 오래 플레이한 사람만 닿으므로 '오늘 가입자' 안에 없다.
+    CITY_STEPS = [("first_conquer", "첫 인수"), ("first_upgrade", "첫 업그레이드"),
+                  ("first_rent", "첫 월세"), ("first_event", "첫 라이브이벤트")]
+    cstep = "(SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')"
+    csel = ",\n        ".join(
+        f"COUNT(DISTINCT IF(event_name='city_onb_step' AND {cstep}='{k}',"
+        f" user_pseudo_id, NULL)) AS s_{k}"
+        for k, _ in CITY_STEPS)
+    crow = q(f"""
+      SELECT
+        COUNT(DISTINCT user_pseudo_id) AS users,
+        COUNTIF(event_name='city_enter') AS enters,
+        {csel},
+        COUNT(DISTINCT IF(event_name='city_complete', user_pseudo_id, NULL)) AS done
+      FROM {TABLE} WHERE {INTRADAY} AND {HAS_GEO} AND STARTS_WITH(event_name, 'city_')
+    """)[0]
+    cn = int(crow["users"] or 0)
+    out["city"] = {
+        "users": cn,
+        "enters": int(crow["enters"] or 0),
+        "done": int(crow["done"] or 0),
+        "steps": [{"key": k, "label": lab, "n": int(crow[f"s_{k}"] or 0),
+                   "pct": round(100 * int(crow[f"s_{k}"] or 0) / cn, 1) if cn else 0}
+                  for k, lab in CITY_STEPS],
+    }
+
     # ── 리워드 광고 ────────────────────────────────────────────────
     # ads.gd 가 결과를 네 갈래로 쏜다(rewarded_result): earned/dismissed/failed/no_ad.
     #   earned    = 완주 → 보상 지급
