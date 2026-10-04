@@ -355,7 +355,6 @@ def main() -> None:
         b = buckets.setdefault(u["country"] or "(미상)", blank(u["country"] or "(미상)"))
         b["n"] += 1
         b["mins"].append(u["mins"])
-        b.setdefault("_mins", []).append(u["mins"])   # 티어 합산용 사본(finish 가 mins 를 소모한다)
         for k, _ in MARKS:
             # 척추는 far 까지 밟은 것으로 본다(퍼널과 같은 규칙) — 안 그러면 여기만 숫자가 다르다
             i = idx_of[k]
@@ -363,32 +362,32 @@ def main() -> None:
                 b[k] += 1
 
     def finish(b: dict) -> dict:
-        ms = sorted(b.pop("mins", b.get("_mins", [])))
-        b.pop("_mins", None)
+        ms = sorted(b.pop("mins"))
         b["med_min"] = ms[len(ms) // 2] if ms else 0
         for k, _ in MARKS:
             b[k + "_pct"] = round(100 * b[k] / b["n"], 1) if b["n"] else 0
         return b
 
-    rows_c = sorted((finish(b) for b in buckets.values()),
-                    key=lambda x: (-x["n"], x["country"]))
-
-    # 티어 합계 — 나라가 30개 가까이 깔리면 "비싼 시장이 전체로 얼마나 하나"가 안 보인다.
-    # 시장 단가 기준(T1=미국·일본·독일…)이지 우리 성과 기준이 아니다. 그 어긋남이 핵심이다 —
-    # 미국은 T1 인데 우리 지표로는 최하위다. 티어로 묶으면 그게 한 줄로 드러난다.
+    # ⚠ 티어 합산을 먼저 한다 — finish() 가 버킷의 체류 목록을 소모하므로, 나라별을 마무리한
+    #   뒤에 합치면 체류가 전부 0 이 된다(실제로 한 번 그렇게 냈다).
+    # 티어는 시장 단가 기준(T1=미국·일본·독일…)이지 우리 성과 기준이 아니다. 그 어긋남이
+    # 핵심이다 — 미국은 T1 인데 우리 지표로는 최하위다. 묶으면 그게 한 줄로 드러난다.
     tiers = load_tiers()
     tbuck = {t: blank(t) for t in ("T1", "T2", "T3")}
     for b in buckets.values():
-        t = tiers.get(b["country"], "T3")
-        tb = tbuck[t]
+        tb = tbuck[tiers.get(b["country"], "T3")]
         tb["n"] += b["n"]
+        tb["mins"] += b["mins"]
         for k, _ in MARKS:
             tb[k] += b[k]
-        tb["_mins"] = tb.get("_mins", []) + b.get("_mins", [])
+    tier_rows = [finish(tbuck[t]) for t in ("T1", "T2", "T3") if tbuck[t]["n"]]
+
+    rows_c = sorted((finish(b) for b in buckets.values()),
+                    key=lambda x: (-x["n"], x["country"]))
     out["by_country"] = {
         "marks": [{"key": k, "label": lab} for k, lab in MARKS],
         "rows": rows_c,
-        "tiers": [finish(tbuck[t]) for t in ("T1", "T2", "T3") if tbuck[t]["n"]],
+        "tiers": tier_rows,
     }
 
     # ── 2부(도시) ──────────────────────────────────────────────
