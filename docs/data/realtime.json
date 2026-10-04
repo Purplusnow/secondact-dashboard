@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-04 14:19 KST",
+ "updated": "2026-10-04 14:21 KST",
  "stage_labels": [
   {
    "key": "new_game",
@@ -131,7 +131,7 @@
   {
    "d": "20261004",
    "users": 1252,
-   "events": 70029
+   "events": 70145
   }
  ],
  "day": "20261004",
@@ -2157,12 +2157,12 @@
   {
    "tag": "3b602c",
    "joined": "09:20",
-   "last_seen": "14:30",
-   "mins": 21.4,
-   "span": 309,
+   "last_seen": "14:32",
+   "mins": 22.8,
+   "span": 311,
    "sessions": 1,
    "prog": 0.0,
-   "events": 168,
+   "events": 182,
    "ver": "1.0 (v965)",
    "country": "Malaysia",
    "reached": [
@@ -14129,12 +14129,12 @@
   {
    "tag": "98fbae",
    "joined": "10/03 17:50",
-   "last_seen": "11:29",
-   "mins": 171.6,
-   "span": 1059,
-   "sessions": 3,
-   "prog": 2.2,
-   "events": 583,
+   "last_seen": "14:20",
+   "mins": 174.4,
+   "span": 1230,
+   "sessions": 4,
+   "prog": 3.2,
+   "events": 634,
    "ver": "1.0 (v965)",
    "country": "India",
    "reached": [
@@ -14160,12 +14160,12 @@
     1,
     1,
     1,
-    0,
+    1,
     0,
     1
    ],
-   "far": 21,
-   "far_label": "신분7"
+   "far": 22,
+   "far_label": "첫환생"
   },
   {
    "tag": "2534d1",
@@ -16481,9 +16481,9 @@
   {
    "key": "first_rebirth",
    "label": "첫환생",
-   "n": 10,
-   "rec": 10,
-   "pct": 2.5,
+   "n": 11,
+   "rec": 11,
+   "pct": 2.8,
    "kind": "spine"
   },
   {
@@ -16505,7 +16505,7 @@
  ],
  "cohort_n": 394,
  "excluded_nogeo": 5,
- "excluded_build": 4,
+ "excluded_build": 3,
  "newest_build": "1.0 (v965)",
  "versions": {
   "live": [
@@ -16530,11 +16530,6 @@
    },
    {
     "ver": "1.0 (v819)",
-    "n": 1,
-    "live": false
-   },
-   {
-    "ver": "1.0 (v963)",
     "n": 1,
     "live": false
    },
@@ -16571,12 +16566,12 @@
     "intro_done": 56,
     "property_2": 39,
     "game_sale": 34,
-    "first_rebirth": 2,
+    "first_rebirth": 3,
     "med_min": 17.9,
     "intro_done_pct": 96.6,
     "property_2_pct": 67.2,
     "game_sale_pct": 58.6,
-    "first_rebirth_pct": 3.4
+    "first_rebirth_pct": 5.2
    },
    {
     "country": "Türkiye",
@@ -16951,7 +16946,7 @@
     "property_2": 52,
     "game_sale": 42,
     "first_rebirth": 2,
-    "med_min": 0,
+    "med_min": 9.8,
     "intro_done_pct": 92.9,
     "property_2_pct": 53.1,
     "game_sale_pct": 42.9,
@@ -16964,7 +16959,7 @@
     "property_2": 74,
     "game_sale": 66,
     "first_rebirth": 2,
-    "med_min": 0,
+    "med_min": 9.4,
     "intro_done_pct": 91.2,
     "property_2_pct": 50.3,
     "game_sale_pct": 44.9,
@@ -16976,12 +16971,12 @@
     "intro_done": 138,
     "property_2": 90,
     "game_sale": 77,
-    "first_rebirth": 6,
-    "med_min": 0,
+    "first_rebirth": 7,
+    "med_min": 11.9,
     "intro_done_pct": 92.6,
     "property_2_pct": 60.4,
     "game_sale_pct": 51.7,
-    "first_rebirth_pct": 4.0
+    "first_rebirth_pct": 4.7
    }
   ]
  },
@@ -17017,15 +17012,15 @@
   ]
  },
  "ads": {
-  "total": 1059,
+  "total": 1061,
   "by_result": [
    {
     "result": "earned",
-    "n": 875
+    "n": 876
    },
    {
     "result": "dismissed",
-    "n": 52
+    "n": 53
    },
    {
     "result": "no_ad",
@@ -17036,13 +17031,13 @@
     "n": 1
    }
   ],
-  "finish_pct": 94.4,
-  "supply_pct": 12.5,
+  "finish_pct": 94.3,
+  "supply_pct": 12.4,
   "by_country": [
    {
     "country": "India",
-    "total": 197,
-    "earned": 161,
+    "total": 198,
+    "earned": 162,
     "dismissed": 5,
     "no_ad": 31,
     "failed": 0,
@@ -17052,14 +17047,14 @@
    },
    {
     "country": "Brazil",
-    "total": 91,
+    "total": 92,
     "earned": 82,
-    "dismissed": 4,
+    "dismissed": 5,
     "no_ad": 5,
     "failed": 0,
     "users": 36,
-    "finish_pct": 95.3,
-    "supply_pct": 5.5
+    "finish_pct": 94.3,
+    "supply_pct": 5.4
    },
    {
     "country": "Taiwan",
@@ -17309,19 +17304,19 @@
   "by_placement": [
    {
     "placement": "offline",
-    "earned": 419,
+    "earned": 420,
     "dismissed": 17,
     "no_ad": 73,
     "failed": 0,
-    "total": 509
+    "total": 510
    },
    {
     "placement": "boost",
     "earned": 280,
-    "dismissed": 28,
+    "dismissed": 29,
     "no_ad": 44,
     "failed": 1,
-    "total": 353
+    "total": 354
    },
    {
     "placement": "gem_ad",
