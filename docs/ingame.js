@@ -56,6 +56,65 @@
   }
   document.querySelectorAll('.vtab').forEach(b => b.addEventListener('click', () => show(b.dataset.view)));
 
+  /* 2부 개방 현황 — '관문이 막나 vs 배포가 안 됐나'를 가르는 자리.
+     자격자 × 배포율이 곧 '지금 2부를 볼 수 있는 사람' 상한이고, 받은 자격자의 진입률이
+     관문의 실제 난이도다. 둘을 나란히 두지 않으면 진입자 수만 보고 관문을 탓하게 된다. */
+  function renderGate(d) {
+    const g = d.city_gate;
+    const card = $('#ig-gate-card');
+    if (!g || !g.all_users) { card.hidden = true; return; }
+    card.hidden = false;
+
+    const n = v => Math.round(v || 0).toLocaleString('ko-KR');
+    $('#ig-gate-sub').textContent =
+      `${g.build} 배포 ${g.rollout_pct}% (${n(g.on_new)}/${n(g.all_users)}명) · ${g.note}`;
+
+    const tiles = $('#ig-gate-tiles');
+    tiles.textContent = '';
+    const put = (label, value, sub, warn) => {
+      const el = document.createElement('div'); el.className = 'tile';
+      const l = document.createElement('div'); l.className = 'tile-label'; l.textContent = label;
+      const vv = document.createElement('div'); vv.className = 'tile-value num'; vv.textContent = value;
+      if (warn) vv.style.color = 'var(--bad)';
+      const b = document.createElement('div'); b.className = 'tile-sub'; b.textContent = sub;
+      el.append(l, vv, b); tiles.appendChild(el);
+    };
+    put('자격자', n(g.eligible), `도감 100% + 추월 100% · 최근 30일 활성 ${n(g.eligible_30d)}명`);
+    put('새 빌드 보유', n(g.eligible_new), `자격자 중 ${g.build.replace(/^1\.0 \((.*)\)$/, '$1')}`);
+    put('2부 진입', n(g.entered), '전체 누적');
+    put('진입 전환율', g.conv_pct == null ? '—' : g.conv_pct + '%',
+      '새 빌드 받은 자격자 중', g.conv_pct != null && g.conv_pct < 50);
+
+    // 깔때기 — 전체에서 자격자까지 얼마나 좁아지는지
+    const host = $('#ig-gate-funnel');
+    host.textContent = '';
+    const steps = [
+      ['전체 유저', g.all_users], ['도감 100%', g.codex100], ['추월 100%', g.pct100],
+      ['자격자(둘 다)', g.eligible], [`${g.build.replace(/^1\.0 \((.*)\)$/, '$1')} 보유`, g.eligible_new],
+      ['2부 진입', g.entered],
+    ];
+    const max = steps[0][1] || 1;
+    steps.forEach(([lab, val], i) => {
+      const row = document.createElement('div'); row.className = 'fn-row';
+      const l = document.createElement('span'); l.className = 'fn-label'; l.style.width = '92px'; l.textContent = lab;
+      const track = document.createElement('span'); track.className = 'fn-track';
+      const fill = document.createElement('i');
+      // 로그 눈금 — 1.6만에서 3명까지 네 자릿수라 선형으로는 뒤가 전부 선이 된다
+      fill.style.width = (val > 0 ? Math.max(2, Math.log10(val + 1) / Math.log10(max + 1) * 100) : 0) + '%';
+      track.appendChild(fill);
+      const vv = document.createElement('span'); vv.className = 'fn-val'; vv.textContent = n(val) + '명';
+      const dr = document.createElement('span'); dr.className = 'fn-drop';
+      const prev = i ? steps[i - 1][1] : 0;
+      dr.textContent = i && prev ? `${Math.round(100 * val / prev)}%` : '';
+      row.append(l, track, vv, dr); host.appendChild(row);
+    });
+    const note = document.createElement('p');
+    note.className = 'chart-note';
+    note.textContent = '막대는 로그 눈금입니다(1.6만 → 한 자릿수까지 네 자릿수를 걸쳐서). '
+      + '오른쪽 %는 직전 단계 대비 통과율입니다.';
+    host.appendChild(note);
+  }
+
   // ── 데이터 로드 ────────────────────────────────────────────
   async function load() {
     let d;
@@ -67,7 +126,7 @@
     if (!d || !d.rebirth_funnel) { $('#ig-empty').hidden = false; return; }
     const up = $('#updated'); if (up && d.updated) { up.textContent = '데이터 기준 ' + d.updated; up.title = 'BigQuery 수집 시각(매일 11:20 KST 자동). 페이지 배포 시각과 다를 수 있음'; }
     _data = d;
-    renderKpi(d); renderFunnel(d); renderVersions(d); renderPacing(d);
+    renderKpi(d); renderFunnel(d); renderVersions(d); renderPacing(d); renderGate(d);
     renderRetentionCohort(d); renderProgressHeatmap(d);
     renderCityKpi(d); renderCityFunnel(d); renderCityDeci(d); renderCityPacing(d);
     renderVersionViews(d);

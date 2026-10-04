@@ -21,6 +21,8 @@ PROJECT = os.environ.get("BQ_PROJECT", "second-act-life")
 DATASET = os.environ.get("BQ_DATASET", "analytics_544010325")
 LOCATION = os.environ.get("BQ_LOCATION", "asia-northeast3")
 TABLE = f"`{PROJECT}.{DATASET}.events_*`"
+# 2부(도시)가 처음 들어간 빌드. 자격자가 이걸 받아야 진입 자체가 가능하다.
+CITY_BUILD = os.environ.get("CITY_BUILD", "1.0 (v965)")
 # 지역이 안 잡히는 줄은 사람이 아니다 — 빌드를 올릴 때마다 Play 사전 출시 보고서가 실기기에서
 # 앱을 몇 분씩 돌리는데 전부 거기로 들어온다(10/03 실측: 실시간 385명 중 25명). 전부 체류 0분·
 # 첫 단계 정지라 리텐션·퍼널·도달률을 통째로 희석한다. BigQuery 에서 NULL != '' 은 TRUE 가
@@ -414,6 +416,46 @@ def main() -> None:
       FROM u WHERE entered=1
     """)[0]
     ce = int(cu["entered"] or 0)
+    # ── 2부 개방 현황 ────────────────────────────────────────────
+    # 진입자가 적을 때 "관문이 빡센가"와 "아직 업데이트를 안 받았나"는 전혀 다른 문제인데
+    # 진입자 수만 봐서는 안 갈린다. 관문은 '도감 100% AND 최종환생(추월 100%)' 둘 다이고,
+    # 2부 코드는 v965 부터 들어 있다. 자격자 → 새 빌드 보유 → 실제 진입 순으로 깔아 둔다.
+    # (실측 10/04: 자격자 63명 중 v965 보유 3명, 그 3명이 전원 진입 — 관문이 아니라 배포가 병목)
+    cpct = "(SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct')"
+    gate = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          MAX(IF(event_name='codex_open', {cpct}, 0)) AS codex,
+          MAX(IF(event_name='progress_pct', {cpct}, 0)) AS pct,
+          COUNTIF(STARTS_WITH(event_name, 'city_')) AS city_ev,
+          ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp DESC LIMIT 1)[SAFE_OFFSET(0)] AS ver,
+          MAX(event_date) AS last_day
+        FROM {TABLE} WHERE {suffix_daily("TRUE")} GROUP BY uid
+      ),
+      e AS (SELECT *, (codex >= 100 AND pct >= 100) AS ok FROM u)
+      SELECT
+        COUNTIF(codex >= 100) AS codex100,
+        COUNTIF(pct >= 100) AS pct100,
+        COUNTIF(ok) AS eligible,
+        COUNTIF(ok AND last_day >= FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE('Asia/Seoul'), INTERVAL 30 DAY))) AS eligible_30d,
+        COUNTIF(ok AND ver = '{CITY_BUILD}') AS eligible_new,
+        COUNTIF(ok AND ver = '{CITY_BUILD}' AND city_ev > 0) AS entered_new,
+        COUNTIF(city_ev > 0) AS entered,
+        COUNT(*) AS all_users,
+        COUNTIF(ver = '{CITY_BUILD}') AS on_new
+      FROM e
+    """)[0]
+    g = {k: int(gate[k] or 0) for k in gate.keys()}
+    out["city_gate"] = {
+        "build": CITY_BUILD,
+        **g,
+        # 받은 자격자 중 몇 %가 실제로 들어갔나 — 관문이 막고 있는지 보는 유일한 지표다.
+        "conv_pct": round(100 * g["entered_new"] / g["eligible_new"], 1) if g["eligible_new"] else None,
+        # 배포 진척도. 자격자 × 이 비율이 곧 '지금 2부를 볼 수 있는 사람' 상한이다.
+        "rollout_pct": round(100 * g["on_new"] / g["all_users"], 1) if g["all_users"] else None,
+        "note": "도감은 codex_open(화면을 연 순간)으로만 관측되므로 자격자 수는 하한입니다.",
+    }
+
     out["city_kpi"] = {
         "entered": ce,
         "completed": int(cu["completed"] or 0),
