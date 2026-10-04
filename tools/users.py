@@ -72,6 +72,10 @@ def fetch_all() -> list[dict]:
                (SELECT value.int_value FROM UNNEST(event_params) WHERE key='rebirth'), 0)) AS rebirth,
         COUNTIF(event_name='purchase') AS buys,
         ANY_VALUE(geo.country) AS country,
+        -- 지금 쓰고 있는 빌드(마지막으로 본 것). 이 화면은 '지금까지의 최종 상태'라
+        -- 첫 설치 빌드보다 현재 빌드가 성격에 맞는다 — "이 자격자는 아직 구버전이네"가 보인다.
+        ARRAY_AGG(app_info.version IGNORE NULLS
+                  ORDER BY event_timestamp DESC LIMIT 1)[SAFE_OFFSET(0)] AS ver,
         {flags_sql()}
       FROM {rt.TABLE}
       WHERE _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''
@@ -95,6 +99,7 @@ def pack(r: dict, spine_n: int) -> dict:
         "rb": int(r["rebirth"] or 0),
         "r": mask, "f": far,
         "b": int(r["buys"] or 0),
+        "v": r["ver"] or "",
         "c": r["country"] or "",
     }
 
@@ -123,10 +128,22 @@ def main() -> int:
     spine_n = len(rt._SPINE)
     by_day: dict[str, list] = defaultdict(list)
     progs = []
+    vcount: dict[str, int] = defaultdict(int)
     for r in rows:
         u = pack(r, spine_n)
         by_day[r["joined_day"]].append(u)
         progs.append(u["p"])
+        if u["v"]:
+            vcount[u["v"]] += 1
+
+    # 최신 '정식' 빌드 — 화면에서 구버전을 눌러 표시하는 기준.
+    # 테스트 빌드는 한두 명이라 30명 문턱으로 걸러진다(정식 최소 릴리스도 수십 명 단위다).
+    import re as _re
+    def _bn(v: str) -> int:
+        m = _re.search(r"v(\d+)", v or "")
+        return int(m.group(1)) if m else -1
+    real = [v for v, c in vcount.items() if c >= 30]
+    newest = max(real, key=_bn) if real else None
 
     # 같은 날 안에서는 늦게 들어온 사람이 위로 — 실시간 뷰와 같은 순서다.
     written = 0
@@ -155,6 +172,9 @@ def main() -> int:
                           "kind": "side" if k in rt.SIDE else "spine"}
                          for k, lab, _ in rt.ORDER],
         "scan_mb": round(rt._billed / 1024 / 1024, 1),
+        "newest_build": newest,
+        "versions": sorted(({"ver": v, "n": c} for v, c in vcount.items() if c >= 30),
+                           key=lambda x: -x["n"]),
     }
     write_if_changed(INDEX, idx, indent=1)
     print(f"총 {idx['total']}명 / {len(days)}일 · 파일 {written}장 갱신 · 스캔 {idx['scan_mb']}MB")

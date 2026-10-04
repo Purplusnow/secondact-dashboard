@@ -10,7 +10,9 @@
   const num = n => Math.round(n || 0).toLocaleString('ko-KR');
   const { dur, progCell, unpack, spineLen, fillStrip } = window.UserRow;
 
-  const HEAD = ['가입일', '유저', '가입시각', '최근 접속', '접속일', '체류 합계', '추월%', '환생', '진행', '국가'];
+  const HEAD = ['가입일', '유저', '가입시각', '최근 접속', '접속일', '체류 합계', '추월%', '환생', '진행', '빌드', '국가'];
+
+  let newest = '';
 
   let idx = null, stages = [], spineN = 0, dayAt = 0, tbody = null, shown = 0;
   let loaded = false, busy = false, dateKey = '';
@@ -37,6 +39,7 @@
 
     stages = idx.stage_labels || [];
     spineN = spineLen(stages);
+    newest = idx.newest_build || '';
 
     const R = idx.reach || {};
     $('#us-meta').textContent =
@@ -44,6 +47,10 @@
       + (R['1'] != null
           ? `  ·  추월 1%+ ${num(R['1'])} · 10%+ ${num(R['10'])} · 50%+ ${num(R['50'])}`
             + ` · 90%+ ${num(R['90'])} · 100% ${num(R['100'])}`
+          : '')
+      + (idx.newest_build && (idx.versions || []).length
+          ? '  ·  ' + idx.versions.slice(0, 3).map(v =>
+              `${v.ver.replace(/^1\.0 \((.*)\)$/, '$1')} ${Math.round(100 * v.n / idx.total)}%`).join(' · ')
           : '')
       + (idx.scan_mb != null ? `  ·  스캔 ${idx.scan_mb}MB` : '');
 
@@ -148,6 +155,13 @@
     if (!u.rb) rc.className = 'dim';
 
     fillStrip(tr.insertCell(), unpack(u.r || 0, stages.length), stages, u.f, spineN);
+
+    // 지금 쓰고 있는 빌드. 최신 정식 빌드가 아니면 눌러 둔다 — 롤아웃 중에 '아직 구버전인
+    // 사람'이 눈에 걸려야 한다(2부처럼 새 빌드에만 있는 콘텐츠를 볼 수 있는지가 여기서 갈린다).
+    const bv = (u.v || '').match(/v(\d+)/);
+    const bc = c(bv ? 'v' + bv[1] : '—', 'uid');
+    if (u.v !== newest) bc.classList.add('dim');
+    bc.title = u.v || '';
 
     // 결제한 줄은 표시해 둔다 — 전체 목록에서 결제자를 눈으로 찾을 수 있는 유일한 단서다
     const ct = c((u.b ? '💳 ' : '') + (u.c || '—'));
