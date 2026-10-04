@@ -133,6 +133,31 @@ def fake(day: str | None) -> int:
         print(f"{str(x['ver']).replace('1.0 (','').replace(')',''):<14}"
               f"{x['users']:>7}{x['bad_users']:>9}{rate:>7.2f}%{x['bad_events']:>9}{x['ok_events']:>9}")
 
+    # 위조 유저가 '돈 낼 사람이었나' — 피해 추정의 핵심.
+    # 막혔다면 샀을까? 위조와 정상결제를 모두 한 사람이 있으면 '낼 의사는 있던 사람'이고,
+    # 겹침이 0 이면 치터는 애초에 안 사는 집단이라 직접 매출 손실은 0 에 가깝다.
+    ov = rt.q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          COUNTIF(event_name='purchase_anomaly') AS bad,
+          COUNTIF(event_name='purchase') AS ok,
+          COUNTIF(event_name='ad_impression') AS ads
+        FROM {rt.TABLE} WHERE {where} GROUP BY uid
+      )
+      SELECT
+        COUNTIF(bad > 0) AS fake_users,
+        COUNTIF(ok > 0) AS pay_users,
+        COUNTIF(bad > 0 AND ok > 0) AS both,
+        ROUND(AVG(IF(bad > 0, ads, NULL)), 1) AS ads_fake,
+        ROUND(AVG(IF(bad = 0 AND ok > 0, ads, NULL)), 1) AS ads_payer,
+        ROUND(AVG(IF(bad = 0 AND ok = 0, ads, NULL)), 1) AS ads_plain
+      FROM u
+    """)[0]
+    print(f"\n=== 위조 유저는 '돈 낼 사람'이었나 ===")
+    print(f"  위조 유저 {ov['fake_users']}명 · 정상 결제자 {ov['pay_users']}명 · "
+          f"**둘 다 한 사람 {ov['both']}명**")
+    print(f"  광고 시청 평균 — 위조 {ov['ads_fake']}회 · 결제자 {ov['ads_payer']}회 · 일반 {ov['ads_plain']}회")
+
     # 유저당 건수 분포 — 1~2건은 사고일 수 있고 수백 건은 변명의 여지가 없다
     dist = rt.q(f"""
       SELECT CASE WHEN n = 1 THEN '1건' WHEN n <= 3 THEN '2~3건'
