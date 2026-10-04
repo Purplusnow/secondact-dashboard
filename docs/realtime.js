@@ -263,6 +263,20 @@
       const dr = document.createElement('span');
       dr.className = 'fn-drop' + (drop >= 30 ? ' is-big' : '');
       dr.textContent = prev && drop > 0 ? `-${drop}%` : '';
+      // 첫후원 앞에는 건물 매수 조건이 붙어 있고 그걸 채우려면 방치가 필요하다(v965~).
+      // 유저가 앱을 닫았다 와야 하므로 당일 창에서는 원리상 낮게 나온다 — 회귀가 아니다.
+      // 실측: 후원한 v965 유저는 세션 2회·첫~마지막 179분, 안 한 쪽은 1회·27분.
+      if (r.key === 'first_donate') {
+        row.classList.add('has-note');
+        dr.textContent = '';
+        const note = document.createElement('span');
+        note.className = 'fn-note';
+        note.textContent = '방치 게이트';
+        note.title = '첫후원 앞 건물 매수 조건을 채우려면 방치 시간이 필요합니다(v965~). '
+          + '유저가 앱을 닫았다 와야 해서 당일 창에서는 낮게 나옵니다 — 버전 비교는 '
+          + '인게임 뷰의 코호트에서 은퇴→첫환생으로 보세요.';
+        row.append(note);
+      }
 
       row.append(lab, track, val, dr);
       host.appendChild(row);
