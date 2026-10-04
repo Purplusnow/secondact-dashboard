@@ -46,6 +46,7 @@
     funnel(d.funnel || [], d.cohort_n || 0);
     versions(d.versions);
     cityView(d.city);
+    certView(d.apk_cert);
     ads(d.ads);
     country(d.by_country, d.cohort_n || 0);
     table(d);
@@ -66,6 +67,44 @@
   /* 버전별 — 새 빌드가 실제로 퍼지고 있는지 보는 자리. 라이브로 인정된 빌드만 코호트에
      들어가고, 한두 명짜리 테스트 빌드는 빠진다(빠진 줄도 같이 보여 준다 — 숨기면 롤아웃이
      시작된 걸 놓친다). */
+  /* APK 서명 인증서 — v971 부터 변조본 결제를 차단한다.
+     오탐(정상 유저가 막힘)은 돈 낸 사람이 물건을 못 받는 상황이라 어뷰징보다 훨씬 비싸다.
+     1명만 나와도 화면 맨 위로 올린다. intraday 라 시간 단위로 보인다. */
+  function certView(a) {
+    const card = $('#rt-cert-card');
+    if (!a || (!a.users && !(a.dist || []).some(x => x.cert !== '(미기록)'))) {
+      card.hidden = true; return;
+    }
+    card.hidden = false;
+    const fp = a.false_pos || 0;
+    card.classList.toggle('is-alarm', fp > 0);
+    $('#rt-cert-sub').innerHTML = fp > 0
+      ? `<b style="color:var(--bad)">🚨 오탐 의심 ${num(fp)}명 — 정상 유저의 결제가 막히고 있습니다. 즉시 롤백 검토</b>`
+        + `<br>차단 ${num(a.users)}명/${num(a.events)}건 · 위조 이력 있는 차단 ${num(a.known_bad)}명 · 판단 보류 ${num(a.unknown)}명`
+      : `차단 <b>${num(a.users)}명 / ${num(a.events)}건</b>`
+        + `  ·  오탐 의심 <b>${num(fp)}명</b>`
+        + `  ·  위조 이력 있는 차단 ${num(a.known_bad)}명(정상 작동)`
+        + `  ·  판단 보류 ${num(a.unknown)}명`;
+
+    const t = $('#rt-cert');
+    t.textContent = '';
+    const hr = t.createTHead().insertRow();
+    ['APK 서명 인증서', '유저', ''].forEach((h, i) => {
+      const th = document.createElement('th');
+      if (!i) th.className = 'date';
+      th.textContent = h;
+      hr.appendChild(th);
+    });
+    const tb = t.createTBody();
+    for (const r of a.dist || []) {
+      const tr = tb.insertRow();
+      const cell = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
+      const nm = cell(r.cert, r.ok ? 'date' : 'date neg');
+      cell(num(r.users));
+      cell(r.cert === a.good ? '정상' : r.cert === '(미기록)' ? 'v970 이전' : '변조본');
+    }
+  }
+
   /* 2부 — 오늘 도시에서 활동한 사람. 모수가 작을 때는 비율보다 '몇 명'이 중요하다. */
   function cityView(c) {
     const card = $('#rt-city-card');

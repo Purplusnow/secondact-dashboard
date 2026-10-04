@@ -390,6 +390,49 @@ def main() -> None:
         "tiers": tier_rows,
     }
 
+    # ── APK 서명 인증서 (v971~) ────────────────────────────────
+    # ⚠ 이건 intraday 로 봐야 한다. anomaly.py 쪽은 확정 일별 테이블이라 오늘치가 내일
+    #   오후에야 보이는데, 차단 롤아웃 감시는 시간 단위여야 한다 — 오탐이 나면 Play 자동환불
+    #   전에 롤백해야 하고(실질 데드라인 3일), 그 사이에 돈 낸 사람이 물건을 못 받는다.
+    # 오탐 판별: 인증서에만 걸렸고 다른 위조 이력이 없으며 정상 결제 이력이 있는 사람.
+    rsn = "(SELECT value.string_value FROM UNNEST(event_params) WHERE key='reason')"
+    crt = "(SELECT value.string_value FROM UNNEST(user_properties) WHERE key='apk_cert')"
+    cert_row = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          COUNTIF(event_name='purchase_anomaly' AND {rsn}='bad_apk_cert') AS cert_bad,
+          COUNTIF(event_name='purchase_anomaly' AND {rsn} IN ('bad_orderid','dup_orderid')) AS id_bad,
+          COUNTIF(event_name='purchase_anomaly' AND {rsn}='no_price') AS noprice,
+          COUNTIF(event_name='purchase') AS ok
+        FROM {TABLE} WHERE {INTRADAY} GROUP BY uid
+      )
+      SELECT SUM(cert_bad) AS events, COUNTIF(cert_bad > 0) AS users,
+             COUNTIF(cert_bad > 0 AND id_bad = 0 AND noprice = 0 AND ok > 0) AS false_pos,
+             COUNTIF(cert_bad > 0 AND id_bad = 0 AND noprice = 0 AND ok = 0) AS unknown,
+             COUNTIF(cert_bad > 0 AND (id_bad > 0 OR noprice > 0)) AS known_bad
+      FROM u
+    """)[0]
+    cert_dist = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          ARRAY_AGG({crt} IGNORE NULLS ORDER BY event_timestamp DESC LIMIT 1)[SAFE_OFFSET(0)] AS cert
+        FROM {TABLE} WHERE {INTRADAY} GROUP BY uid
+      )
+      SELECT IFNULL(cert, '(미기록)') AS cert, COUNT(*) AS users
+      FROM u GROUP BY cert ORDER BY users DESC LIMIT 10
+    """)
+    GOOD_CERT = os.environ.get("APK_CERT", "dc0a72d0f17e769e")
+    out["apk_cert"] = {
+        "good": GOOD_CERT,
+        "events": int(cert_row["events"] or 0),
+        "users": int(cert_row["users"] or 0),
+        "false_pos": int(cert_row["false_pos"] or 0),
+        "unknown": int(cert_row["unknown"] or 0),
+        "known_bad": int(cert_row["known_bad"] or 0),
+        "dist": [{"cert": x["cert"], "users": int(x["users"]),
+                  "ok": x["cert"] in (GOOD_CERT, "(미기록)")} for x in cert_dist],
+    }
+
     # ── 2부(도시) ──────────────────────────────────────────────
     # 2부 활동은 확정 테이블보다 intraday 에 먼저 들어온다. 출시 직후라 하루 단위로는
     # 아직 0 으로 보이는데, 여기서는 오늘 누가 들어왔고 어디까지 갔는지가 바로 보인다.

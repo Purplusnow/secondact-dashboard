@@ -534,3 +534,6 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 
 /* 티어 줄의 성과 요약 — 숫자가 아니라 맥락이라 눌러서 뒤에 붙인다 */
 .fn-tier-perf { flex: none; font-size: 11.5px; color: var(--ink-3); white-space: nowrap; }
+
+/* 오탐이 뜬 인증서 카드 — 다른 카드와 같은 무게로 보이면 안 된다 */
+.card.is-alarm { border-color: var(--bad); background: #fdeaea; }

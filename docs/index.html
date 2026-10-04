@@ -7,7 +7,7 @@
 <meta name="description" content="일별 광고매출·인앱매출·마케팅비를 누적으로 추적하는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=f91cdcfa">
+<link rel="stylesheet" href="style.css?v=6352fb5b">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -267,6 +267,15 @@
     <div class="table-scroll"><table class="ledger rt-ads" id="rt-ads-country"></table></div>
   </section>
 
+  <section class="card" id="rt-cert-card" hidden>
+    <div class="card-head"><h2>🔐 APK 서명 인증서 — 변조본 결제 차단 (v971~)</h2>
+      <p class="card-sub">확정 데이터는 하루 늦게 오므로 <b>여기서만 시간 단위로 보입니다</b>.
+        오탐(정상 유저가 막힘)은 돈 낸 사람이 물건을 못 받는 상황이라 어뷰징보다 훨씬 비쌉니다 —
+        1명이라도 보이면 즉시 롤백 검토입니다. Play 자동환불까지 <b>3일</b>이 실질 데드라인입니다.</p>
+      <p class="card-sub" id="rt-cert-sub"></p></div>
+    <div class="table-scroll"><table class="ledger rt-ads" id="rt-cert"></table></div>
+  </section>
+
   <section class="card" id="rt-city-card" hidden>
     <div class="card-head"><h2>🏙 2부(도시) — 오늘</h2>
       <p class="card-sub">2부 활동은 확정 데이터보다 여기에 먼저 들어옵니다. <b>위 가입자 코호트와는 무관합니다</b> —
@@ -359,7 +368,7 @@
 <script src="ingame.js?v=33358a7e"></script>
 <script src="anomaly.js?v=451736e7"></script>
 <script src="userrow.js?v=1be878d4"></script>
-<script src="realtime.js?v=2eeaf960"></script>
+<script src="realtime.js?v=b5a8ec98"></script>
 <script src="users.js?v=4ffd5a32"></script>
 </body>
 </html>
