@@ -15,6 +15,10 @@ on:
         description: 'true 로 두면 시계조작 의심 유저를 훑는다'
         required: false
         default: 'false'
+      fake:
+        description: 'true 로 두면 결제 위조를 사유별로 분해한다'
+        required: false
+        default: 'false'
       day:
         description: '하루만 볼 날짜 YYYYMMDD (비우면 전 기간 — 스캔 1.5GB)'
         required: false
@@ -45,6 +49,6 @@ jobs:
       - name: 조회
         working-directory: tools
         run: |
-          python3 probe.py ${{ inputs.scan == 'true' && '--scan' || format('--tag {0}', inputs.tag) }} \
+          python3 probe.py ${{ inputs.fake == 'true' && '--fake' || (inputs.scan == 'true' && '--scan' || format('--tag {0}', inputs.tag)) }} \
             ${{ inputs.day && format('--day {0}', inputs.day) || '' }} \
             --limit "${{ inputs.limit }}"

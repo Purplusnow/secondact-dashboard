@@ -73,16 +73,70 @@ def scan(day: str | None) -> int:
     return 0
 
 
+def fake(day: str | None) -> int:
+    """결제 위조 사유별 분해 — 고치기 전에 '정상 결제가 섞여 있나'를 봐야 한다.
+
+    reason 세 갈래의 성격이 다르다:
+      bad_orderid  주문ID 형식 불일치/누락 — 위조 정황이지만, 빌링 라이브러리가 orderId 를
+                   늦게 주거나 복구(restore) 경로에선 비어 올 수도 있어 정상 섞임 가능.
+      dup_orderid  주문ID 재사용 — 리플레이. 정상 결제에서는 나올 수 없다.
+      no_price     ProductDetails 미로드 — **정상 결제에서도 난다.** 네트워크가 느리거나
+                   가격 조회가 안 끝난 상태에서 결제가 완료되면 여기로 떨어진다. 차단하면 안 된다.
+    """
+    where = (f"_TABLE_SUFFIX = '{day}'" if day else "_TABLE_SUFFIX NOT LIKE 'intraday%'")
+    g = ("(SELECT COALESCE(value.string_value, CAST(value.int_value AS STRING))"
+         " FROM UNNEST(event_params) WHERE key='granted')")
+    r = "(SELECT value.string_value FROM UNNEST(event_params) WHERE key='reason')"
+    pid = "(SELECT value.string_value FROM UNNEST(event_params) WHERE key='product_id')"
+    rows = rt.q(f"""
+      SELECT {r} AS reason, {g} AS granted,
+             COUNT(*) AS n, COUNT(DISTINCT user_pseudo_id) AS users,
+             COUNT(DISTINCT {pid}) AS products
+      FROM {rt.TABLE} WHERE {where} AND event_name='purchase_anomaly'
+      GROUP BY reason, granted ORDER BY n DESC
+    """)
+    print("=== purchase_anomaly 사유별 ===")
+    print(f"{'사유':<14}{'지급':>6}{'건수':>8}{'유저':>7}{'상품종류':>9}")
+    for x in rows:
+        print(f"{str(x['reason']):<14}{str(x['granted']):>6}{x['n']:>8}{x['users']:>7}{x['products']:>9}")
+
+    # 정상 purchase 와 비교 — 위조가 전체 결제에서 차지하는 비중
+    tot = rt.q(f"""
+      SELECT COUNTIF(event_name='purchase') AS ok,
+             COUNTIF(event_name='purchase_anomaly') AS bad,
+             COUNT(DISTINCT IF(event_name='purchase', user_pseudo_id, NULL)) AS ok_users
+      FROM {rt.TABLE} WHERE {where}
+    """)[0]
+    print(f"\n정상 purchase {tot['ok']}건({tot['ok_users']}명) · 위조 {tot['bad']}건")
+
+    # 유저당 건수 분포 — 1~2건은 사고일 수 있고 수백 건은 변명의 여지가 없다
+    dist = rt.q(f"""
+      SELECT CASE WHEN n = 1 THEN '1건' WHEN n <= 3 THEN '2~3건'
+                  WHEN n <= 10 THEN '4~10건' WHEN n <= 50 THEN '11~50건'
+                  ELSE '51건+' END AS band, COUNT(*) AS users, SUM(n) AS events
+      FROM (SELECT user_pseudo_id, COUNT(*) AS n FROM {rt.TABLE}
+            WHERE {where} AND event_name='purchase_anomaly' GROUP BY user_pseudo_id)
+      GROUP BY band ORDER BY users DESC
+    """)
+    print(f"\n{'유저당 건수':<12}{'유저':>7}{'건수합':>9}")
+    for x in dist:
+        print(f"{x['band']:<12}{x['users']:>7}{x['events']:>9}")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", default="", help="화면에 보이는 6자 유저 꼬리표")
     ap.add_argument("--day", help="YYYYMMDD. 주면 그 하루만 스캔")
     ap.add_argument("--limit", type=int, default=400, help="찍을 이벤트 줄 수")
     ap.add_argument("--scan", action="store_true", help="tag 대신 시계조작 의심 유저를 훑는다")
+    ap.add_argument("--fake", action="store_true", help="결제 위조를 사유별로 분해한다")
     a = ap.parse_args()
 
     if a.scan:
         return scan(a.day)
+    if a.fake:
+        return fake(a.day)
 
     where = (f"_TABLE_SUFFIX = '{a.day}'" if a.day else "_TABLE_SUFFIX NOT LIKE 'intraday%'")
     tag = "".join(c for c in a.tag.lower() if c in "0123456789abcdef")[:6]
