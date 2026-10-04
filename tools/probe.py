@@ -109,6 +109,30 @@ def fake(day: str | None) -> int:
     """)[0]
     print(f"\n정상 purchase {tot['ok']}건({tot['ok_users']}명) · 위조 {tot['bad']}건")
 
+    # 버전별 — 특정 빌드가 구멍을 냈는지, 아니면 변조 APK 라 버전과 무관한지 가른다.
+    # 버전마다 유저 수가 다르므로 비율로 봐야 한다(v823 이 제일 크다고 제일 나쁜 게 아니다).
+    byver = rt.q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp)[SAFE_OFFSET(0)] AS ver,
+          COUNTIF(event_name='purchase_anomaly') AS bad,
+          COUNTIF(event_name='purchase') AS ok
+        FROM {rt.TABLE} WHERE {where} GROUP BY uid
+      )
+      SELECT ver, COUNT(*) AS users,
+             COUNTIF(bad > 0) AS bad_users, SUM(bad) AS bad_events,
+             COUNTIF(ok > 0) AS ok_users, SUM(ok) AS ok_events
+      FROM u WHERE ver IS NOT NULL
+      GROUP BY ver HAVING users >= 30
+      ORDER BY ver DESC
+    """)
+    print(f"\n=== 버전별(첫 등장 버전 코호트, 30명 이상) ===")
+    print(f"{'버전':<14}{'유저':>7}{'위조유저':>9}{'비율':>8}{'위조건수':>9}{'정상결제':>9}")
+    for x in byver:
+        rate = 100 * x["bad_users"] / x["users"] if x["users"] else 0
+        print(f"{str(x['ver']).replace('1.0 (','').replace(')',''):<14}"
+              f"{x['users']:>7}{x['bad_users']:>9}{rate:>7.2f}%{x['bad_events']:>9}{x['ok_events']:>9}")
+
     # 유저당 건수 분포 — 1~2건은 사고일 수 있고 수백 건은 변명의 여지가 없다
     dist = rt.q(f"""
       SELECT CASE WHEN n = 1 THEN '1건' WHEN n <= 3 THEN '2~3건'
