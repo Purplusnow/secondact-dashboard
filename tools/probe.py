@@ -240,6 +240,86 @@ def fake(day: str | None) -> int:
     return 0
 
 
+def city(day: str | None) -> int:
+    """2부 진입 자격자 수 — 관문이 실제로 몇 명에게 열려 있나.
+
+    main.gd _maybe_begin_city_transition 의 조건은 둘 다다:
+      · discovered_count() >= properties.size()   (도감 100%)
+      · world_stage >= WORLD_ENDING               (최종 환생 = 추월 100%)
+    그리고 rebirth_done 때만 판정하므로, 둘을 채운 상태로 '환생을 한 번 더' 해야 열린다.
+
+    ⚠ 도감은 codex_open(유저가 도감 화면을 연 순간)으로만 관측된다. 100% 를 채웠지만
+      화면을 안 연 사람은 안 잡히므로 **아래 숫자는 하한**이다.
+    """
+    where = (f"_TABLE_SUFFIX = '{day}'" if day else "_TABLE_SUFFIX NOT LIKE 'intraday%'")
+    cp = "(SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct')"
+    pp = "(SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct')"
+    wd = "(SELECT value.int_value FROM UNNEST(event_params) WHERE key='world')"
+    rows = rt.q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          MAX(IF(event_name='codex_open', {cp}, 0)) AS codex,
+          MAX(IF(event_name='progress_pct', {pp}, 0)) AS pct,
+          MAX(IF(event_name='prog_rebirth', {wd}, 0)) AS world,
+          COUNTIF(event_name='codex_open') AS codex_opens,
+          COUNTIF(STARTS_WITH(event_name, 'city_')) AS city_ev,
+          MAX(event_date) AS last_day
+        FROM {rt.TABLE} WHERE {where} GROUP BY uid
+      )
+      SELECT
+        COUNT(*) AS all_users,
+        COUNTIF(codex_opens > 0) AS opened_codex,
+        COUNTIF(codex >= 100) AS codex100,
+        COUNTIF(pct >= 100) AS pct100,
+        COUNTIF(codex >= 100 AND pct >= 100) AS both,
+        COUNTIF(codex >= 100 AND pct >= 100
+                AND last_day >= FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE('Asia/Seoul'), INTERVAL 30 DAY))) AS both_30d,
+        COUNTIF(city_ev > 0) AS entered,
+        MAX(world) AS max_world
+      FROM u
+    """)[0]
+    print("=== 2부 진입 자격자 ===")
+    print(f"  전체 {rows['all_users']}명 · 도감을 한 번이라도 연 사람 {rows['opened_codex']}명")
+    print(f"  도감 100%  {rows['codex100']}명   (열어본 사람 기준 — 하한)")
+    print(f"  추월 100%  {rows['pct100']}명")
+    print(f"  **둘 다 = 자격자 {rows['both']}명** · 그중 최근 30일 활성 {rows['both_30d']}명")
+    print(f"  실제 2부 진입 {rows['entered']}명 · 관측된 최대 world_stage {rows['max_world']}")
+
+    print("\n=== 도감 최고 달성률 분포 (연 적 있는 사람만) ===")
+    dist = rt.q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid, MAX({cp}) AS codex
+        FROM {rt.TABLE} WHERE {where} AND event_name='codex_open' GROUP BY uid
+      )
+      SELECT CASE WHEN codex >= 100 THEN '100%' WHEN codex >= 90 THEN '90~99%'
+                  WHEN codex >= 70 THEN '70~89%' WHEN codex >= 50 THEN '50~69%'
+                  WHEN codex >= 25 THEN '25~49%' ELSE '~24%' END AS band,
+             COUNT(*) AS users
+      FROM u GROUP BY band ORDER BY users DESC
+    """)
+    for x in dist:
+        print(f"  {x['band']:<8}{x['users']:>6}명")
+
+    print("\n=== 추월% 구간 통과 ===")
+    surv = rt.q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid, MAX({pp}) AS pct
+        FROM {rt.TABLE} WHERE {where} AND event_name='progress_pct' GROUP BY uid
+      )
+      SELECT COUNTIF(pct >= 50) AS p50, COUNTIF(pct >= 80) AS p80,
+             COUNTIF(pct >= 90) AS p90, COUNTIF(pct >= 95) AS p95,
+             COUNTIF(pct >= 100) AS p100 FROM u
+    """)[0]
+    prev, out = None, []
+    for k, lab in [("p50", "50%+"), ("p80", "80%+"), ("p90", "90%+"), ("p95", "95%+"), ("p100", "100%")]:
+        n = int(surv[k])
+        rate = f"  (직전 대비 {100*n/prev:.0f}%)" if prev else ""
+        out.append(f"  {lab:<6}{n:>5}명{rate}")
+        prev = n
+    print("\n".join(out))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", default="", help="화면에 보이는 6자 유저 꼬리표")
@@ -247,12 +327,15 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=400, help="찍을 이벤트 줄 수")
     ap.add_argument("--scan", action="store_true", help="tag 대신 시계조작 의심 유저를 훑는다")
     ap.add_argument("--fake", action="store_true", help="결제 위조를 사유별로 분해한다")
+    ap.add_argument("--city", action="store_true", help="2부 진입 자격자 수를 센다")
     a = ap.parse_args()
 
     if a.scan:
         return scan(a.day)
     if a.fake:
         return fake(a.day)
+    if a.city:
+        return city(a.day)
 
     where = (f"_TABLE_SUFFIX = '{a.day}'" if a.day else "_TABLE_SUFFIX NOT LIKE 'intraday%'")
     tag = "".join(c for c in a.tag.lower() if c in "0123456789abcdef")[:6]
