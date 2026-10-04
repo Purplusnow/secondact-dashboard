@@ -361,6 +361,50 @@ def city(day: str | None) -> int:
     return 0
 
 
+def vercmp(day: str | None) -> int:
+    """버전 코호트 비교 — **설치 후 경과시간을 맞춰서** 본다.
+
+    24시간 창이나 누적 도달률로 버전을 비교하면 새 빌드가 항상 나빠 보인다(코호트가 어리니까).
+    여기서는 onb_step 에 실려 오는 secs_since_install 로 '설치 후 N시간 안에 그 단계를 밟았나'를
+    재므로 나이 차가 사라진다. 분모는 각 버전의 new_game(그 빌드로 새로 시작한 사람)이다.
+
+    ⚠ first_donate 는 v965 부터 앞에 방치 게이트가 붙었다 — 설계상 당일 수치가 낮아야 맞다.
+      '나빠졌다'로 읽으면 안 되는 칸이라 표에서 따로 표시한다.
+    """
+    where = (f"_TABLE_SUFFIX = '{day}'" if day else "_TABLE_SUFFIX NOT LIKE 'intraday%'")
+    step = "(SELECT value.string_value FROM UNNEST(event_params) WHERE key='step')"
+    secs = "(SELECT value.int_value FROM UNNEST(event_params) WHERE key='secs_since_install')"
+    STAGES = [("intro_done", "인트로"), ("dev_launch", "출시"), ("property_1", "부동산1"),
+              ("property_2", "부동산2"), ("game_sale", "은퇴"), ("first_donate", "첫후원*"),
+              ("first_rebirth", "첫환생")]
+    for hours in (6, 24):
+        sel = ",\n          ".join(
+            f"COUNTIF({step}='{k}' AND {secs} <= {hours*3600}) > 0 AS r_{k}"
+            for k, _ in STAGES)
+        rows = rt.q(f"""
+          WITH u AS (
+            SELECT user_pseudo_id AS uid,
+              ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp LIMIT 1)[SAFE_OFFSET(0)] AS ver,
+              COUNTIF({step}='new_game') > 0 AS started,
+              {sel}
+            FROM {rt.TABLE} WHERE {where} AND event_name='onb_step'
+            GROUP BY uid
+          )
+          SELECT ver, COUNT(*) AS n, """ + ", ".join(
+              f"COUNTIF(r_{k}) AS c_{k}" for k, _ in STAGES) + f"""
+          FROM u WHERE started AND ver IS NOT NULL
+          GROUP BY ver HAVING n >= 50 ORDER BY ver DESC LIMIT 6
+        """)
+        print(f"\n=== 설치 후 {hours}시간 안에 도달 (새 게임 시작자 기준) ===")
+        print(f"{'버전':<10}{'인원':>6}" + "".join(f"{lab:>9}" for _, lab in STAGES))
+        for r in rows:
+            n = int(r["n"])
+            cells = "".join(f"{100*int(r[f'c_{k}'])/n:>8.1f}%" for k, _ in STAGES)
+            print(f"{str(r['ver']).replace('1.0 (','').replace(')',''):<10}{n:>6}{cells}")
+    print("\n* 첫후원은 v965 부터 앞에 방치 게이트가 붙었다 — 당일 수치가 낮은 게 설계대로다.")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", default="", help="화면에 보이는 6자 유저 꼬리표")
@@ -369,6 +413,7 @@ def main() -> int:
     ap.add_argument("--scan", action="store_true", help="tag 대신 시계조작 의심 유저를 훑는다")
     ap.add_argument("--fake", action="store_true", help="결제 위조를 사유별로 분해한다")
     ap.add_argument("--city", action="store_true", help="2부 진입 자격자 수를 센다")
+    ap.add_argument("--vercmp", action="store_true", help="버전 코호트를 나이 맞춰 비교한다")
     a = ap.parse_args()
 
     if a.scan:
@@ -377,6 +422,8 @@ def main() -> int:
         return fake(a.day)
     if a.city:
         return city(a.day)
+    if a.vercmp:
+        return vercmp(a.day)
 
     where = (f"_TABLE_SUFFIX = '{a.day}'" if a.day else "_TABLE_SUFFIX NOT LIKE 'intraday%'")
     tag = "".join(c for c in a.tag.lower() if c in "0123456789abcdef")[:6]
