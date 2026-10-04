@@ -86,8 +86,8 @@
       const row = document.createElement('div');
       row.className = 'risk-row';
       row.textContent = `${u.day}  ${u.tag}  `
-        + u.kinds.map(k => k === 'clock_drift'
-            ? `시계 +${u.drift_h}시간`
+        + u.kinds.map(k => k === 'clock_drift' ? `시계 +${u.drift_h}시간`
+            : k === 'fake_purchase' ? `결제 위조 ${u.fake}건(지급됨 ${u.fake_granted})`
             : `추월% 1초에 ${u.burst}칸 건너뜀`).join(' · ')
         + (u.max_pct ? `  (최고 ${u.max_pct}%)` : '');
       list.appendChild(row);
