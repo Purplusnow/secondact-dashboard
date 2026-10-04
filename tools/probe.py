@@ -18,6 +18,7 @@ import realtime as rt
 
 # 눈여겨볼 파라미터만 꺼낸다. 전부 펼치면 줄이 길어져서 흐름이 안 보인다.
 KEYS = ["step", "step_idx", "pct", "deci", "level", "rebirth", "class", "stage",
+        "kind", "granted", "order_id",   # purchase_anomaly 진단용
         "value", "currency", "product_id", "gems", "reason", "balance", "cost",
         "placement", "result", "secs_since_install", "session", "world", "nw_band",
         "overtake_pct", "beat", "beat_total", "engagement_time_msec"]
