@@ -132,6 +132,33 @@
     card.hidden = false;
     $('#rt-ctry-count').textContent = `${c.rows.length}개 구간 · 가입 ${num(total)}명`;
 
+    // 티어 합계 — 나라가 30개 가까이 깔리면 '비싼 시장이 전체로 얼마나 하나'가 안 보인다.
+    // 유입 비중은 가로막대로, 성과는 같은 눈금으로 나란히. 시장 단가 기준이지 우리 성과
+    // 기준이 아니다 — 그 어긋남(T1 인데 성과가 낮다)이 이 표의 핵심이다.
+    const th = $('#rt-ctry-tier');
+    th.textContent = '';
+    const TIER_LABEL = { T1: 'T1 선진', T2: 'T2 중위', T3: 'T3 신흥' };
+    for (const r of c.tiers || []) {
+      const row = document.createElement('div');
+      row.className = 'fn-row';
+      const lab = document.createElement('span');
+      lab.className = 'fn-label'; lab.style.width = '74px';
+      lab.textContent = TIER_LABEL[r.country] || r.country;
+      const track = document.createElement('span'); track.className = 'fn-track';
+      const fill = document.createElement('i');
+      fill.style.width = (total ? 100 * r.n / total : 0) + '%';
+      track.appendChild(fill);
+      const val = document.createElement('span');
+      val.className = 'fn-val'; val.style.width = '116px';
+      val.textContent = `${num(r.n)}명 · ${total ? Math.round(100 * r.n / total) : 0}%`;
+      const perf = document.createElement('span');
+      perf.className = 'fn-tier-perf';
+      perf.textContent = c.marks.map(m => `${m.label} ${r[m.key + '_pct']}%`).join(' · ')
+        + `  ·  체류 ${r.med_min}분`;
+      row.append(lab, track, val, perf);
+      th.appendChild(row);
+    }
+
     const t = $('#rt-ctry');
     t.textContent = '';
     const hr = t.createTHead().insertRow();
