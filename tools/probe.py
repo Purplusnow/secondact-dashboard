@@ -11,6 +11,7 @@ tag 는 화면에 보이는 6자 해시 — SUBSTR(TO_HEX(MD5(user_pseudo_id)),1
 BigQuery 에서 같은 식으로 맞춰 찾는다.
 """
 import argparse
+import datetime
 import os
 import sys
 
@@ -240,6 +241,104 @@ def fake(day: str | None) -> int:
     return 0
 
 
+def pay(day: str | None, country: str, cur: str) -> int:
+    """Play Console 에만 있고 GA4 엔 없는 결제를 역추적한다.
+
+    결제는 Play 에 찍혔는데 GA4 purchase 가 없는 경우가 두 갈래다. 둘은 심각도가 완전히 다르다:
+      (A) 지급은 됐고 이벤트만 유실 — GA4 SDK 는 이벤트를 모아 올린다. 결제 직후 앱을
+          닫아 버리면 기기에 남아 있다가 다음 실행 때 올라온다. 안 돌아오면 영영 안 온다.
+          매출 집계만 낮게 잡힐 뿐 유저 피해는 없다.
+      (B) 지급 자체가 실패 — 돈만 나가고 보석이 안 들어왔다. 환불·악평으로 직결된다.
+
+    가르는 건 **보석 잔액**이다. 게임은 보석을 쓸 때마다 spend_virtual_currency 에
+    balance 를 같이 보낸다. 결제 후 잔액이 그 상품 수량만큼 뛰었으면 (A), 그대로면 (B).
+
+      python3 probe.py --pay --country Taiwan --day 20261002 [--cur TWD]
+
+    --day 는 KST 날짜다(테이블은 앞뒤 하루까지 훑어 UTC 경계를 덮는다).
+    """
+    # 통화로 먼저 훑는다 — '정말 GA4 에 없는가'를 먼저 확정해야 나머지가 의미 있다.
+    if cur:
+        rows = rt.q(f"""
+          SELECT SUBSTR(TO_HEX(MD5(user_pseudo_id)), 1, 6) AS tag,
+            FORMAT_TIMESTAMP('%m-%d %H:%M', TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') AS at,
+            (SELECT value.string_value FROM UNNEST(event_params) WHERE key='product_id') AS pid,
+            COALESCE((SELECT value.double_value FROM UNNEST(event_params) WHERE key='value'),
+                     (SELECT value.float_value  FROM UNNEST(event_params) WHERE key='value'),
+                     CAST((SELECT value.int_value FROM UNNEST(event_params) WHERE key='value') AS FLOAT64)) AS val,
+            geo.country AS country, app_info.version AS ver
+          FROM {rt.TABLE}
+          WHERE event_name='purchase'
+            AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='currency') = '{cur}'
+          ORDER BY event_timestamp DESC LIMIT 50
+        """)
+        print(f"=== GA4 에 기록된 {cur} 결제 (전 기간) ===")
+        if not rows:
+            print("  한 건도 없습니다.")
+        for x in rows:
+            print(f"  {x['at']}  {x['tag']}  {x['pid']}  {cur} {x['val']:,.0f}  {x['country']}  {x['ver']}")
+
+    if not day:
+        return 0
+
+    # KST 하루는 UTC 테이블 두 개에 걸친다. 앞뒤로 하루씩 넉넉히 잡고 KST 날짜로 자른다.
+    d = datetime.datetime.strptime(day, "%Y%m%d").date()
+    days = [(d + datetime.timedelta(days=i)).strftime("%Y%m%d") for i in (-1, 0, 1)]
+    # 확정본과 스트리밍본을 둘 다 넣는다. 여긴 합계가 아니라 '있나 없나'를 보는 자리라
+    # 중복이 섞여도 판단이 틀어지지 않는다(iap.py 처럼 한쪽만 고를 이유가 없다).
+    sufs = ", ".join(["'" + x + "'" for x in days] + ["'intraday_" + x + "'" for x in days])
+    kst_day = d.strftime("%Y-%m-%d")
+    where = "_TABLE_SUFFIX IN (" + sufs + ")"
+    geo = f"geo.country = '{country}'" if country else "TRUE"  # country 는 main() 에서 거른다
+
+    # 그 나라 그 날의 결제 계열 이벤트 전부 — 시도 자체가 있었는지부터 본다.
+    rows = rt.q(f"""
+      SELECT SUBSTR(TO_HEX(MD5(user_pseudo_id)), 1, 6) AS tag,
+        FORMAT_TIMESTAMP('%m-%d %H:%M:%S', TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') AS at,
+        event_name AS ev,
+        (SELECT value.string_value FROM UNNEST(event_params) WHERE key='product_id') AS pid,
+        (SELECT value.string_value FROM UNNEST(event_params) WHERE key='reason') AS reason,
+        (SELECT COALESCE(value.string_value, CAST(value.int_value AS STRING))
+         FROM UNNEST(event_params) WHERE key='granted') AS granted,
+        app_info.version AS ver
+      FROM {rt.TABLE}
+      WHERE {where} AND {geo}
+        AND event_name IN ('purchase','purchase_failed','purchase_anomaly')
+        AND FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') = '{kst_day}'
+      ORDER BY event_timestamp
+    """)
+    print(f"\n=== {country or '전체'} · {kst_day} 결제 계열 이벤트 ===")
+    if not rows:
+        print("  한 건도 없습니다 — 결제 시도조차 GA4 에 안 남았습니다.")
+    for x in rows:
+        print(f"  {x['at']}  {x['tag']}  {x['ev']:<17} {str(x['pid'] or ''):<16}"
+              f" {str(x['reason'] or ''):<12} granted={x['granted']}  {x['ver']}")
+
+    # 지급 여부 판정 — 보석 잔액이 그날 어떻게 움직였나.
+    # 큰 팩을 받았다면 잔액 최고치가 뛴다. 안 받았으면 평범한 수준에 머문다.
+    bal = ("(SELECT COALESCE(value.int_value, CAST(value.double_value AS INT64))"
+           " FROM UNNEST(event_params) WHERE key='balance')")
+    rows = rt.q(f"""
+      WITH e AS (
+        SELECT user_pseudo_id AS uid, event_timestamp AS ts, {bal} AS bal
+        FROM {rt.TABLE}
+        WHERE {where} AND {geo} AND event_name='spend_virtual_currency'
+          AND FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') = '{kst_day}'
+          AND {bal} IS NOT NULL
+      )
+      SELECT SUBSTR(TO_HEX(MD5(uid)), 1, 6) AS tag, COUNT(*) AS n,
+        MIN(bal) AS lo, MAX(bal) AS hi,
+        FORMAT_TIMESTAMP('%H:%M', TIMESTAMP_MICROS(MIN(ts)), 'Asia/Seoul') AS t0,
+        FORMAT_TIMESTAMP('%H:%M', TIMESTAMP_MICROS(MAX(ts)), 'Asia/Seoul') AS t1
+      FROM e GROUP BY uid ORDER BY hi DESC LIMIT 15
+    """)
+    print(f"\n=== 같은 날 보석 잔액 상위 (지급됐는지의 증거) ===")
+    print(f"{'유저':<8}{'소비':>5}{'최저잔액':>10}{'최고잔액':>10}  시간대")
+    for x in rows:
+        print(f"{x['tag']:<8}{x['n']:>5}{x['lo']:>10,}{x['hi']:>10,}  {x['t0']}~{x['t1']}")
+    return 0
+
+
 def city(day: str | None) -> int:
     """2부 진입 자격자 수 — 관문이 실제로 몇 명에게 열려 있나.
 
@@ -422,6 +521,9 @@ def main() -> int:
     ap.add_argument("--fake", action="store_true", help="결제 위조를 사유별로 분해한다")
     ap.add_argument("--city", action="store_true", help="2부 진입 자격자 수를 센다")
     ap.add_argument("--vercmp", action="store_true", help="버전 코호트를 나이 맞춰 비교한다")
+    ap.add_argument("--pay", action="store_true", help="Play 에만 있는 결제를 역추적한다")
+    ap.add_argument("--country", default="", help="--pay 용 geo.country (예: Taiwan)")
+    ap.add_argument("--cur", default="", help="--pay 용 통화코드 (예: TWD)")
     a = ap.parse_args()
 
     if a.scan:
@@ -432,6 +534,11 @@ def main() -> int:
         return city(a.day)
     if a.vercmp:
         return vercmp(a.day)
+    if a.pay:
+        # 쿼리에 문자열로 박히는 값이라 화이트리스트로 거른다 — 워크플로 입력은 외부 입력이다.
+        country = "".join(c for c in a.country if c.isalpha() or c in " -&")[:40]
+        cur = "".join(c for c in a.cur.upper() if c.isalpha())[:3]
+        return pay(a.day, country, cur)
 
     where = (f"_TABLE_SUFFIX = '{a.day}'" if a.day else "_TABLE_SUFFIX NOT LIKE 'intraday%'")
     tag = "".join(c for c in a.tag.lower() if c in "0123456789abcdef")[:6]

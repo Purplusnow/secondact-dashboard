@@ -27,6 +27,16 @@ on:
         description: 'true 로 두면 버전 코호트를 나이 맞춰 비교한다'
         required: false
         default: 'false'
+      pay:
+        description: 'true 로 두면 Play 에만 있는 결제를 역추적한다 (country·cur 같이 입력)'
+        required: false
+        default: 'false'
+      country:
+        description: '--pay 용 국가명 (예: Taiwan)'
+        required: false
+      cur:
+        description: '--pay 용 통화코드 (예: TWD)'
+        required: false
       day:
         description: '하루만 볼 날짜 YYYYMMDD (비우면 전 기간 — 스캔 1.5GB)'
         required: false
@@ -54,9 +64,23 @@ jobs:
         run: |
           printf '%s' "$GCP_SA_KEY" > "$RUNNER_TEMP/sa.json"
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+      # 입력은 전부 env 로만 넘긴다 — 쉘 줄에 직접 끼워 넣으면 국가명 같은 자유 입력이
+      # 그대로 명령이 된다. 모드만 식으로 고르고 인자 조립은 bash 에서 한다.
       - name: 조회
         working-directory: tools
+        env:
+          MODE: ${{ inputs.vercmp == 'true' && 'vercmp' || (inputs.city == 'true' && 'city' || (inputs.fake == 'true' && 'fake' || (inputs.scan == 'true' && 'scan' || (inputs.pay == 'true' && 'pay' || 'tag')))) }}
+          TAG: ${{ inputs.tag }}
+          DAY: ${{ inputs.day }}
+          LIMIT: ${{ inputs.limit }}
+          COUNTRY: ${{ inputs.country }}
+          CUR: ${{ inputs.cur }}
         run: |
-          python3 probe.py ${{ inputs.vercmp == 'true' && '--vercmp' || (inputs.city == 'true' && '--city' || (inputs.fake == 'true' && '--fake' || (inputs.scan == 'true' && '--scan' || format('--tag {0}', inputs.tag)))) }} \
-            ${{ inputs.day && format('--day {0}', inputs.day) || '' }} \
-            --limit "${{ inputs.limit }}"
+          args=()
+          case "$MODE" in
+            tag) args+=(--tag "$TAG") ;;
+            pay) args+=(--pay --country "$COUNTRY" --cur "$CUR") ;;
+            *)   args+=("--$MODE") ;;
+          esac
+          if [ -n "$DAY" ]; then args+=(--day "$DAY"); fi
+          python3 probe.py "${args[@]}" --limit "$LIMIT"
