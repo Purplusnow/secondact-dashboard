@@ -261,7 +261,7 @@ def pay(day: str | None, country: str, cur: str) -> int:
     if cur:
         rows = rt.q(f"""
           SELECT SUBSTR(TO_HEX(MD5(user_pseudo_id)), 1, 6) AS tag,
-            FORMAT_TIMESTAMP('%m-%d %H:%M', TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') AS at,
+            FORMAT_TIMESTAMP('%m-%d %H:%M', TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') AS at_kst,
             (SELECT value.string_value FROM UNNEST(event_params) WHERE key='product_id') AS pid,
             COALESCE((SELECT value.double_value FROM UNNEST(event_params) WHERE key='value'),
                      (SELECT value.float_value  FROM UNNEST(event_params) WHERE key='value'),
@@ -276,7 +276,7 @@ def pay(day: str | None, country: str, cur: str) -> int:
         if not rows:
             print("  한 건도 없습니다.")
         for x in rows:
-            print(f"  {x['at']}  {x['tag']}  {x['pid']}  {cur} {x['val']:,.0f}  {x['country']}  {x['ver']}")
+            print(f"  {x['at_kst']}  {x['tag']}  {x['pid']}  {cur} {x['val']:,.0f}  {x['country']}  {x['ver']}")
 
     if not day:
         return 0
@@ -294,7 +294,7 @@ def pay(day: str | None, country: str, cur: str) -> int:
     # 그 나라 그 날의 결제 계열 이벤트 전부 — 시도 자체가 있었는지부터 본다.
     rows = rt.q(f"""
       SELECT SUBSTR(TO_HEX(MD5(user_pseudo_id)), 1, 6) AS tag,
-        FORMAT_TIMESTAMP('%m-%d %H:%M:%S', TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') AS at,
+        FORMAT_TIMESTAMP('%m-%d %H:%M:%S', TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') AS at_kst,
         event_name AS ev,
         (SELECT value.string_value FROM UNNEST(event_params) WHERE key='product_id') AS pid,
         (SELECT value.string_value FROM UNNEST(event_params) WHERE key='reason') AS reason,
@@ -311,7 +311,7 @@ def pay(day: str | None, country: str, cur: str) -> int:
     if not rows:
         print("  한 건도 없습니다 — 결제 시도조차 GA4 에 안 남았습니다.")
     for x in rows:
-        print(f"  {x['at']}  {x['tag']}  {x['ev']:<17} {str(x['pid'] or ''):<16}"
+        print(f"  {x['at_kst']}  {x['tag']}  {x['ev']:<17} {str(x['pid'] or ''):<16}"
               f" {str(x['reason'] or ''):<12} granted={x['granted']}  {x['ver']}")
 
     # 지급 여부 판정 — 보석 잔액이 그날 어떻게 움직였나.
