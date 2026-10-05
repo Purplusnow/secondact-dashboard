@@ -86,6 +86,35 @@
         + `  ·  위조 이력 있는 차단 ${num(a.known_bad)}명(정상 작동)`
         + `  ·  판단 보류 ${num(a.unknown)}명`;
 
+    // 차단된 유저 목록 — 오탐이 뜨면 즉시 그 사람 로그를 까야 한다
+    const bl = $('#rt-cert-blocked');
+    bl.textContent = '';
+    if ((a.blocked || []).length) {
+      const bt = document.createElement('table');
+      bt.className = 'ledger';
+      const bh = bt.createTHead().insertRow();
+      ['유저', '처음 본 시각', '판정', '인증서', '빌드', '건수', '국가'].forEach((h, i) => {
+        const th = document.createElement('th');
+        if (i < 1) th.className = 'date';
+        th.textContent = h;
+        bh.appendChild(th);
+      });
+      const bb = bt.createTBody();
+      for (const b of a.blocked) {
+        const tr = bb.insertRow();
+        const cell = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
+        cell(b.tag, 'uid');
+        cell(b.seen, 'date');
+        const kd = cell(b.kind);
+        if (b.kind === '오탐 의심') kd.className = 'neg';
+        cell(b.cert || '(미기록)', b.cert === a.good ? '' : 'neg');
+        cell((b.ver || '').replace(/^1\.0 \((.*)\)$/, '$1'));
+        cell(num(b.events));
+        cell(b.country || '—');
+      }
+      bl.appendChild(bt);
+    }
+
     const t = $('#rt-cert');
     t.textContent = '';
     const hr = t.createTHead().insertRow();

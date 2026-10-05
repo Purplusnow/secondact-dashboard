@@ -421,6 +421,26 @@ def main() -> None:
       SELECT IFNULL(cert, '(미기록)') AS cert, COUNT(*) AS users
       FROM u GROUP BY cert ORDER BY users DESC LIMIT 10
     """)
+    # 차단된 유저는 손에 꼽을 테니 꼬리표를 같이 내보낸다 — 오탐 의심이 뜨면 즉시 그 사람의
+    # 로그를 까야 하는데, 태그가 없으면 찾는 데만 한 바퀴를 더 돈다.
+    blocked = q(f"""
+      WITH u AS (
+        SELECT user_pseudo_id AS uid,
+          COUNTIF(event_name='purchase_anomaly' AND {rsn}='bad_apk_cert') AS cert_bad,
+          COUNTIF(event_name='purchase_anomaly' AND {rsn} IN ('bad_orderid','dup_orderid')) AS id_bad,
+          COUNTIF(event_name='purchase_anomaly' AND {rsn}='no_price') AS noprice,
+          COUNTIF(event_name='purchase') AS ok,
+          ARRAY_AGG({crt} IGNORE NULLS ORDER BY event_timestamp DESC LIMIT 1)[SAFE_OFFSET(0)] AS cert,
+          ANY_VALUE(geo.country) AS country,
+          ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp DESC LIMIT 1)[SAFE_OFFSET(0)] AS ver,
+          FORMAT_TIMESTAMP('%H:%M', TIMESTAMP_MICROS(MIN(event_timestamp)), 'Asia/Seoul') AS seen
+        FROM {TABLE} WHERE {INTRADAY} GROUP BY uid
+      )
+      SELECT SUBSTR(TO_HEX(MD5(uid)), 1, 6) AS tag, cert_bad, id_bad, noprice, ok,
+             IFNULL(cert, '') AS cert, IFNULL(country, '') AS country,
+             IFNULL(ver, '') AS ver, seen
+      FROM u WHERE cert_bad > 0 ORDER BY cert_bad DESC LIMIT 50
+    """)
     GOOD_CERT = os.environ.get("APK_CERT", "dc0a72d0f17e769e")
     out["apk_cert"] = {
         "good": GOOD_CERT,
@@ -431,6 +451,12 @@ def main() -> None:
         "known_bad": int(cert_row["known_bad"] or 0),
         "dist": [{"cert": x["cert"], "users": int(x["users"]),
                   "ok": x["cert"] in (GOOD_CERT, "(미기록)")} for x in cert_dist],
+        "blocked": [{"tag": b["tag"], "events": int(b["cert_bad"]), "cert": b["cert"],
+                     "country": b["country"], "ver": b["ver"], "seen": b["seen"],
+                     # 오탐: 인증서에만 걸렸고 정상 결제 이력이 있음 / 보류: 결제 이력도 없음
+                     "kind": ("오탐 의심" if (b["id_bad"] == 0 and b["noprice"] == 0 and b["ok"] > 0)
+                              else "위조 이력" if (b["id_bad"] or b["noprice"]) else "판단 보류")}
+                    for b in blocked],
     }
 
     # ── 2부(도시) ──────────────────────────────────────────────
