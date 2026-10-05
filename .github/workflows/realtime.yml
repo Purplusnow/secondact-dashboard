@@ -10,10 +10,18 @@ name: realtime
 
 on:
   schedule:
-    # 시간당 한 번. 분을 23 으로 둔 건 정시 근처가 혼잡해서다 — GitHub 의 schedule 은
-    # 보장이 아니라 best-effort 라 부하가 걸리면 지연되거나 그냥 버려진다. 매시 5분으로
-    # 뒀을 땐 하루 24번 중 4번만 돌았다(10/01~02 실측). 정시에서 멀수록 덜 버려진다.
-    - cron: '23 * * * *'          # 매시 23분(UTC)
+    # ⚠ GitHub 의 schedule 은 보장이 아니라 best-effort 다. 슬롯 하나만 걸어 두면
+    # 그 슬롯이 버려지는 날은 그 시간대가 통째로 빈다 — '23분' 단일로 뒀더니 49시간에
+    # 11회(평균 4.5시간 간격)밖에 안 돌았다(10/03~05 실측). 반면 같은 레포의 sync 는
+    # '7분'으로 매시간 빠짐없이 돈다. 즉 버려지는 건 레포 단위가 아니라 슬롯 단위다.
+    #
+    # 그래서 15분 간격 네 슬롯을 깔아 한 번만 살아남으면 되게 한다. 네 번 다 살아나도
+    # 아래 '직전 수집 간격' 가드가 한 시간에 한 번만 실제 수집을 돌리므로
+    # BigQuery 스캔량(회당 ~55MB)은 그대로다 — 건너뛴 회차는 쿼리를 아예 안 친다.
+    - cron: '8 * * * *'
+    - cron: '23 * * * *'
+    - cron: '38 * * * *'
+    - cron: '53 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -32,33 +40,61 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 슬롯을 여러 개 깐 대가로, 같은 시간에 두 번 수집하는 걸 여기서 막는다.
+      # 손으로 돌린 건(workflow_dispatch) 언제나 그대로 수집한다 — 지금 보려고 누른 거다.
+      - name: 직전 수집 간격 확인
+        id: guard
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os, sys, datetime
+          log = lambda m: print(m, file=sys.stderr)   # stdout 은 $GITHUB_OUTPUT 이라 key=value 만 들어가야 한다
+          if os.environ.get("EV") != "schedule":
+              print("skip=false"); raise SystemExit
+          try:
+              with open("docs/data/realtime.json", encoding="utf-8") as f:
+                  u = json.load(f)["updated"]            # "2026-10-06 00:35 KST"
+              kst = datetime.timezone(datetime.timedelta(hours=9))
+              last = datetime.datetime.strptime(u.replace(" KST", ""), "%Y-%m-%d %H:%M").replace(tzinfo=kst)
+              mins = (datetime.datetime.now(kst) - last).total_seconds() / 60
+          except Exception as e:
+              log(f"::warning::직전 수집 시각을 못 읽었습니다({e}) — 그냥 수집합니다")
+              print("skip=false"); raise SystemExit
+          # 45분: 한 시간에 한 번만 통과시키되, 앞 슬롯이 조금 늦게 떠도 다음 시간대를
+          # 막지 않도록 60분보다 짧게 잡는다(네 슬롯 간격이 15분이라 두 번은 안 통과한다).
+          skip = mins < 45
+          log(f"직전 수집 {mins:.0f}분 전 — {'건너뜀' if skip else '수집'}")
+          print("skip=true" if skip else "skip=false")
+          PY
+        env:
+          EV: ${{ github.event_name }}
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
       - name: 의존성
-        if: env.GCP_SA_KEY != ''
+        if: env.GCP_SA_KEY != '' && steps.guard.outputs.skip != 'true'
         run: pip install --quiet google-cloud-bigquery
 
       - name: 서비스계정 키 파일화
-        if: env.GCP_SA_KEY != ''
+        if: env.GCP_SA_KEY != '' && steps.guard.outputs.skip != 'true'
         run: |
           printf '%s' "$GCP_SA_KEY" > "$RUNNER_TEMP/sa.json"
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
 
       - name: 실시간 데이터 수집
-        if: env.GCP_SA_KEY != ''
+        if: env.GCP_SA_KEY != '' && steps.guard.outputs.skip != 'true'
         run: python3 tools/realtime.py
 
       # 인앱매출은 Play Console 이 주문 목록 API 를 안 줘서 손으로 넣고 있었다.
       # 게임이 GA4 표준 purchase(value·currency)를 쏘므로 그쪽으로 받는다 — 같은 자격증명으로
       # 이미 돌고 있는 이 잡에 얹는 게 제일 싸다. 손으로 넣은 날은 건드리지 않는다.
       - name: 인앱매출 수집
-        if: env.GCP_SA_KEY != ''
+        if: env.GCP_SA_KEY != '' && steps.guard.outputs.skip != 'true'
         run: python3 tools/iap.py
 
       - name: 커밋
-        if: env.GCP_SA_KEY != ''
+        if: env.GCP_SA_KEY != '' && steps.guard.outputs.skip != 'true'
         run: |
           # git diff 는 '추적되지 않는 파일'을 못 본다 — 최초 생성 때 변경 없음으로 오판한다.
           # 그래서 먼저 add 하고 스테이지와 비교한다.
