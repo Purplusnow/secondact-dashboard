@@ -499,6 +499,13 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .rt-users td.bk-cell.dim { color: var(--ink-3); }
 .rt-users td.bk-cell.is-hi { color: var(--good); font-weight: 600; }
 
+/* 방치 보상 수령 칸 — 재방문 칸과 같은 규칙(0 은 누르고, 많이 받았으면 색).
+   위첨자는 배수를 쓴 횟수라 본문보다 한 톤 죽여 '곁다리'로 읽히게 둔다. */
+.rt-users td.of-cell { text-align: center; font-variant-numeric: tabular-nums; }
+.rt-users td.of-cell.dim { color: var(--ink-3); }
+.rt-users td.of-cell.is-hi { color: var(--good); font-weight: 600; }
+.of-boost { margin-left: 1px; font-size: 9px; color: #2a78d6; font-weight: 600; }
+
 /* 위험 신호 띠 — 경고 단계일 때만 뜬다. 늘 떠 있는 경고는 며칠이면 안 보이게 된다. */
 .risk {
   padding: 11px 24px; font-size: 13px; line-height: 1.6;

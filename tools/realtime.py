@@ -232,6 +232,13 @@ def main() -> None:
         ANY_VALUE(app_info.version) AS ver,
         ANY_VALUE(geo.country) AS country,
         COUNTIF(event_name='first_open') AS fo,
+        -- 방치 보상 수령. 0원 수령은 애초에 없다 — main.gd _maybe_show_offline 이
+        -- offline_reward <= 0 이면 팝업을 안 띄우고, 수령은 그 팝업에서만 일어난다.
+        -- method 는 base(×1) / ad(×2) / gem(×3). 배수를 쓴 쪽을 따로 세 두면
+        -- '방치를 돌리는 사람'과 '방치에 돈·시간을 더 쓰는 사람'이 갈린다.
+        COUNTIF(event_name='mon_offline_claim') AS off_n,
+        COUNTIF(event_name='mon_offline_claim' AND (SELECT value.string_value
+                FROM UNNEST(event_params) WHERE key='method') IN ('ad','gem')) AS off_boost,
         -- 추월% 두 눈금. progress_pct 는 정수 1~100, progress_deci 는 0.1% 단위 1~32
         -- (32 = 3.2% = 첫 환생 경계). 초반엔 정수 pct 가 한참 0 에 머물러서 deci 가 아니면
         -- '얼마나 왔나'가 안 보인다. 둘 중 큰 쪽이 그 유저의 진행률이다.
@@ -306,6 +313,8 @@ def main() -> None:
             "mins": round(float(r["eng_ms"] or 0) / 60000.0, 1),   # 체류(분)
             "span": int(r["span_min"] or 0),                        # 첫~마지막 간격(분)
             "sessions": int(r["sessions"] or 0),
+            "off": int(r["off_n"] or 0),            # 방치 보상 수령 횟수(0원 건은 존재하지 않음)
+            "off_boost": int(r["off_boost"] or 0),  # 그중 광고×2·보석×3 로 받은 횟수
             # 0 이면 '진행 없음'이 아니라 '0.1% 미만' — deci 1 이 가장 고운 눈금이라 그 아래는 못 잰다.
             "prog": max(float(r["pct"] or 0), int(r["deci"] or 0) / 10.0),
             "events": int(r["events"] or 0),

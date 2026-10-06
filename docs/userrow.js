@@ -74,6 +74,32 @@ window.UserRow = (() => {
     return td;
   }
 
+
+  /* 방치 보상 수령 칸. 0원 수령은 세지 않는 게 아니라 **애초에 없다** —
+     게임이 offline_reward <= 0 이면 팝업을 안 띄우고, 수령은 그 팝업에서만 일어난다.
+
+     배수를 쓴 횟수(광고×2 · 보석×3)를 위첨자로 같이 적는다. 방치형에서 "몇 번 돌아와
+     받았나"와 "받을 때 더 들였나"는 다른 질문이고, 뒤쪽이 수익화에 더 가깝다. */
+  const OFF_HI = 3;   // 이만큼 받았으면 그날 루프를 제대로 돈 것이다
+
+  function offlineCell(td, n, boost) {
+    const c = +n || 0, b = +boost || 0;
+    td.className = 'of-cell' + (c === 0 ? ' dim' : c >= OFF_HI ? ' is-hi' : '');
+    td.textContent = c;
+    if (b > 0) {
+      const sup = document.createElement('sup');
+      sup.className = 'of-boost';
+      sup.textContent = '+' + b;
+      td.appendChild(sup);
+    }
+    td.title = c === 0
+      ? '방치 보상을 한 번도 받지 않았습니다.'
+      : `방치 보상을 ${c}번 받았습니다` + (b > 0 ? `, 그중 ${b}번은 광고·보석으로 배수를 썼습니다.` : '.');
+    td.title += '\n0원 수령은 집계에서 뺀 게 아니라 게임이 아예 만들지 않습니다'
+      + '(쌓인 보상이 없으면 팝업이 뜨지 않습니다).';
+    return td;
+  }
+
   /* 비트마스크 → 단계별 0/1 배열. 전체 뷰는 한 명이 25칸 배열을 들고 다니면 용량이 커져서
      정수 하나로 접어 보낸다(216바이트 → 130바이트). 실시간 뷰는 배열 그대로 쓴다. */
   const unpack = (mask, n) => Array.from({ length: n }, (_, i) => (mask >> i) & 1);
@@ -103,5 +129,5 @@ window.UserRow = (() => {
     });
   }
 
-  return { dur, progText, progCell, visitCell, unpack, spineLen, fillStrip };
+  return { dur, progText, progCell, visitCell, offlineCell, unpack, spineLen, fillStrip };
 })();

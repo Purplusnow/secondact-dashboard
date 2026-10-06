@@ -328,7 +328,7 @@
     }
   }
 
-  const { dur, progCell, fillStrip, spineLen, visitCell } = window.UserRow;
+  const { dur, progCell, fillStrip, spineLen, visitCell, offlineCell } = window.UserRow;
 
   function tiles(rows) {
     const host = $('#rt-tiles');
@@ -423,7 +423,7 @@
 
     const hr = t.createTHead().insertRow();
     // 도달 단계·버전은 뺐다 — 도달 지점은 진행 막대가 이미 말하고, 버전은 지금 한 종류뿐이다.
-    ['유저', '가입', '마지막', '체류', '재방문', '추월%', '진행', '빌드', '국가'].forEach((h, i) => {
+    ['유저', '가입', '마지막', '체류', '재방문', '방치수령', '추월%', '진행', '빌드', '국가'].forEach((h, i) => {
       const th = document.createElement('th');
       if (i === 1) th.className = 'date';
       th.textContent = h;
@@ -437,7 +437,7 @@
     $('#rt-count').textContent = users.length ? `최근 24시간 ${num(users.length)}명` : '';
     if (!users.length) {
       const td = tb.insertRow().insertCell();
-      td.colSpan = 9; td.textContent = '최근 24시간 안에 가입자가 없습니다';
+      td.colSpan = 10; td.textContent = '최근 24시간 안에 가입자가 없습니다';
       return;
     }
 
@@ -482,6 +482,9 @@
       // 재방문 — 방치형에서 체류만큼 중요한 축이다. 오늘 실측으로 2회 이상 돌아온 유저의
       // 체류 중앙값이 39.5분, 한 번만 들어온 유저가 8.6분이었다(4.6배).
       visitCell(tr.insertCell(), u.sessions);
+
+      // 방치 보상 수령 횟수 — 방치형의 핵심 루프를 몇 바퀴 돌았는지.
+      offlineCell(tr.insertCell(), u.off, u.off_boost);
 
       progCell(tr.insertCell(), u.prog);
 
