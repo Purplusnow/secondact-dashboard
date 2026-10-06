@@ -37,72 +37,103 @@
         return res.ok ? await res.json() : null;
       } catch { return null; }
     };
-    const [rt, dy, cfg] = await Promise.all([
-      get('realtime.json', 60000), get('daily.json', 3600000), get('config.json', 86400000)]);
+    const [rt, dy, cfg, ig] = await Promise.all([
+      get('realtime.json', 60000), get('daily.json', 3600000),
+      get('config.json', 86400000), get('ingame.json', 3600000)]);
     if (!rt && !dy) { $('#ad-empty').hidden = false; return; }
-    $('#ad-meta').textContent = rt ? `노출 수집 ${rt.updated} · 오늘 활동 유저 전체 기준` : '';
-    revenue(dy, rt, cfg);
+    $('#ad-meta').textContent = (rt ? `노출 수집 ${rt.updated}` : '')
+      + (ig ? `  ·  이력 수집 ${ig.updated}` : '')
+      + '  ·  오늘 활동 유저 전체 기준';
+    revenue(dy, rt, cfg, ig);
     ads((rt || {}).ads);
   }
 
   /* 매출·노출·eCPM. 오늘 값은 둘 다 '자정부터 지금까지'라 비율은 쓸 만하지만,
      AdMob 집계가 뒤늦게 올라오므로 금액 자체는 잠정이다 — 그렇게 적어 둔다. */
-  function revenue(dy, rt, cfg) {
+  function revenue(dy, rt, cfg, ig) {
     const card = $('#ad-rev');
-    const rows = ((dy || {}).daily || []).filter(r => r.admob);
-    if (!rows.length) { card.hidden = true; return; }
+    const rev = {};                                   // 날짜 → 광고매출(원)
+    // 매출 뷰(app.js)는 날짜별 ECB 환율을 따로 받는다. 여기선 추세만 보면 되므로
+    // config 의 고정 환율로 충분하다 — 환율 때문에 선이 흔들리면 오히려 읽기 나쁘다.
+    const fx = (cfg || {}).fx_fallback || { USD: 1350 };
+    for (const r of ((dy || {}).daily || [])) {
+      if (!r.admob) continue;
+      rev[r.date] = Object.entries(r.admob).reduce((t, [c, v]) => t + v * (fx[c] || 0), 0);
+    }
+    // 노출은 두 출처를 이어 붙인다: 확정본(ingame.json, 어제까지) + 오늘(realtime.json).
+    // 같은 날이 겹치면 확정본이 이긴다.
+    const imp = {};
+    for (const r of ((ig || {}).ads_daily || [])) imp[r.date] = r;
+    const rtAds = (rt || {}).ads;
+    if (rtAds && rt.summary && rt.summary.first_at) {
+      const today = rt.summary.first_at.slice(0, 10);
+      if (!imp[today]) {
+        const g = k => (rtAds.by_result.find(x => x.result === k) || {}).n || 0;
+        imp[today] = { date: today, total: rtAds.total, earned: g('earned'),
+                       supply_bad: g('no_ad') + g('failed'), viewers: rtAds.viewers,
+                       dau: (rt.summary || {}).users || 0, partial: true };
+      }
+    }
+    const days = Object.keys(rev).filter(d => imp[d]).sort();
+    if (!days.length && !Object.keys(rev).length) { card.hidden = true; return; }
     card.hidden = false;
 
-    const fx = (cfg || {}).fx_fallback || { USD: 1350 };
-    const krw = m => Object.entries(m || {}).reduce((t, [c, v]) => t + v * (fx[c] || 0), 0);
-    const last = rows[rows.length - 1];
-    const prior = rows.slice(-8, -1);                       // 어제까지 7일
-    const avg = prior.length ? prior.reduce((t, r) => t + krw(r.admob), 0) / prior.length : 0;
-
-    const shown = (((rt || {}).ads || {}).by_result || [])
-      .filter(x => x.result === 'earned').reduce((t, x) => t + x.n, 0);
-    const today = krw(last.admob);
-    // eCPM = 1,000회 노출당 매출. 분모는 '완주'다 — 보상형은 완주해야 매출이 잡힌다.
-    const ecpm = shown ? today / shown * 1000 : null;
+    const ecpm = d => (imp[d] && imp[d].earned) ? rev[d] / imp[d].earned * 1000 : null;
+    const last = days[days.length - 1];
+    // 오늘은 매출·노출 둘 다 진행 중이라 평균에 넣지 않는다 — 7일 평균이 매일 낮아 보인다.
+    const done = days.filter(d => !(imp[d] || {}).partial).slice(-7);
+    const avgE = done.length
+      ? done.reduce((t, d) => t + (ecpm(d) || 0), 0) / done.filter(d => ecpm(d) != null).length : null;
 
     const host = $('#ad-rev-tiles');
     host.textContent = '';
-    const put = (label, value, sub) => {
+    const put = (label, value, sub, warn) => {
       const el = document.createElement('div');
       el.className = 'tile';
       const l = document.createElement('div'); l.className = 'tile-label'; l.textContent = label;
       const v = document.createElement('div'); v.className = 'tile-value num'; v.textContent = value;
+      if (warn) v.style.color = 'var(--bad)';
       const b = document.createElement('div'); b.className = 'tile-sub'; b.textContent = sub;
       el.append(l, v, b);
       host.appendChild(el);
     };
-    put('오늘 광고매출', '₩' + num(today), `${last.date} · 잠정`);
-    put('최근 7일 평균', '₩' + num(avg), '어제까지');
-    put('오늘 완주', num(shown), '매출이 잡히는 노출');
-    put('eCPM', ecpm != null ? '₩' + num(ecpm) : '—', '완주 1,000회당 · 잠정');
+    const lastDone = done[done.length - 1];
+    put('어제 광고매출', lastDone ? '₩' + num(rev[lastDone]) : '—', lastDone || '');
+    put('어제 eCPM', lastDone && ecpm(lastDone) != null ? '₩' + num(ecpm(lastDone)) : '—', '완주 1,000회당');
+    put('7일 평균 eCPM', avgE != null ? '₩' + num(avgE) : '—', '확정된 날만');
+    put('오늘(잠정)', last && imp[last] ? '₩' + num(rev[last] || 0) : '—',
+      last && ecpm(last) != null ? `eCPM ₩${num(ecpm(last))}` : '집계 진행 중');
 
-    // 일별 추이 — 막대 하나짜리 표. 선 그래프를 새로 들이는 것보다 이 화면 어휘에 맞는다.
     const t = $('#ad-rev-table');
     t.textContent = '';
     const hr = t.createTHead().insertRow();
-    ['날짜', '광고매출', ''].forEach((h, i) => {
+    ['날짜', '광고매출', 'eCPM', '완주', '공급실패', '노출/DAU', ''].forEach((h, i) => {
       const th = document.createElement('th');
       if (!i) th.className = 'date';
       th.textContent = h;
       hr.appendChild(th);
     });
     const tb = t.createTBody();
-    const recent = rows.slice(-14);
-    const top = Math.max(...recent.map(r => krw(r.admob)), 1);
-    for (const r of recent.slice().reverse()) {
-      const v = krw(r.admob);
+    const recent = days.slice(-14);
+    const top = Math.max(...recent.map(d => rev[d] || 0), 1);
+    for (const d of recent.slice().reverse()) {
+      const a = imp[d], e = ecpm(d);
       const tr = tb.insertRow();
       const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
-      c(r.date, 'date');
-      c('₩' + num(v));
+      c(d + (a.partial ? ' (진행중)' : ''), 'date');
+      c('₩' + num(rev[d] || 0));
+      c(e != null ? '₩' + num(e) : '—');
+      c(num(a.earned));
+      // 공급실패는 매출이 그대로 증발하는 칸이라 비율로 보여 주고, 20% 넘으면 붉게 둔다.
+      const sp = a.total ? Math.round(100 * a.supply_bad / a.total) : 0;
+      const spc = c(a.supply_bad ? `${num(a.supply_bad)} (${sp}%)` : '—');
+      if (sp >= 20) spc.className = 'neg';
+      // 노출/DAU — 매출이 줄었을 때 '광고를 덜 봤나, 사람이 줄었나'를 가른다.
+      c(a.dau ? (a.total / a.dau).toFixed(1) : '—');
       const bar = tr.insertCell();
       const track = document.createElement('span'); track.className = 'pg';
-      const fill = document.createElement('i'); fill.style.width = (v / top * 100) + '%';
+      const fill = document.createElement('i'); fill.style.width = ((rev[d] || 0) / top * 100) + '%';
+      if (a.partial) fill.style.opacity = '.45';
       track.appendChild(fill);
       bar.appendChild(track);
     }

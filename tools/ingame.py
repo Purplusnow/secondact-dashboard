@@ -516,6 +516,31 @@ def main() -> None:
         "median_days": (int(x["median_days"]) if x["median_days"] is not None else None),
     } for x in cpace]
 
+    # ── 광고: 일별 노출·완주·공급실패 + DAU ───────────────────────────
+    # 실시간 수집(realtime.py)은 스트리밍 테이블만 봐서 '오늘'밖에 없다. eCPM 추이를 보려면
+    # 확정본에서 일별로 모아 둬야 한다(AdMob 매출은 daily.json 에 이미 일별로 쌓인다).
+    # DAU 를 같이 내보내는 건 노출/DAU 를 봐야 '광고가 줄었나, 사람이 줄었나'가 갈리기 때문이다.
+    adr = q(f"""
+      SELECT
+        FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%Y%m%d', _TABLE_SUFFIX)) AS d,
+        COUNTIF(event_name='ad_impression') AS total,
+        COUNTIF(event_name='ad_impression' AND {_p_str('result')}='earned') AS earned,
+        COUNTIF(event_name='ad_impression' AND {_p_str('result')}='dismissed') AS dismissed,
+        COUNTIF(event_name='ad_impression' AND {_p_str('result')} IN ('no_ad','failed')) AS supply_bad,
+        COUNT(DISTINCT IF(event_name='ad_impression', user_pseudo_id, NULL)) AS viewers,
+        COUNT(DISTINCT user_pseudo_id) AS dau
+      FROM {TABLE}
+      WHERE {suffix_daily(f"_TABLE_SUFFIX BETWEEN '{win_start}' AND '{end_s}'")}
+      GROUP BY d
+      HAVING total > 0
+      ORDER BY d
+    """)
+    out["ads_daily"] = [{
+        "date": x["d"], "total": int(x["total"]), "earned": int(x["earned"]),
+        "dismissed": int(x["dismissed"]), "supply_bad": int(x["supply_bad"]),
+        "viewers": int(x["viewers"]), "dau": int(x["dau"]),
+    } for x in adr]
+
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
     print(f"wrote {OUT}: retired={r['retired']} rebirth={r['rebirthed']} "
@@ -523,7 +548,7 @@ def main() -> None:
           f"pacing={len(out['pacing'])} versions={len(out['by_version'])} "
           f"onb_versions={len(out['onb_versions'])} reach_versions={len(out['reach_versions']['versions'])} "
           f"city_entered={ce} city_complete={out['city_kpi']['completed']} city_deci={len(out['city_deci_curve'])} "
-          f"last_table={out['last_table']}")
+          f"last_table={out['last_table']} ads_daily={len(out['ads_daily'])}")
 
 
 if __name__ == "__main__":
