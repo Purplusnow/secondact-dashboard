@@ -1,6 +1,8 @@
 /* 실시간 뷰 — docs/data/realtime.json 만 읽는다.
  *
  * 보여주는 것은 하나다: 오늘 처음 앱을 연 사람들이 퍼널 어디까지 갔는가.
+ * 광고는 여기 없다 — 광고 매출은 '오늘 가입자'가 아니라 전체 유저에서 나와서
+ * 모수가 다르다. 같은 화면에 두면 24시간 코호트로 읽힌다(ads.js 로 뺐다).
  * 인게임 뷰(완결 일별)와 데이터·로직이 완전히 분리돼 있고, 두 수치를 합치는 코드는 없다.
  */
 (() => {
@@ -47,18 +49,10 @@
     versions(d.versions);
     cityView(d.city);
     certView(d.apk_cert);
-    ads(d.ads);
     country(d.by_country, d.cohort_n || 0);
     table(d);
   }
 
-  /* 리워드 광고 — 결과 네 갈래(ads.gd rewarded_result)를 지점별로 펼친다.
-     완주율과 공급 실패율은 원인이 달라서(유저 행동 vs 인벤토리) 한 숫자로 합치면 안 된다. */
-  const AD_RES = [['earned', '완주'], ['dismissed', '중간이탈'], ['no_ad', '광고없음'], ['failed', '표시실패']];
-  const AD_PLACE = {
-    repair: '수리', offline: '방치보상', boost: '수익부스트', gem_ad: '보석광고',
-    city_repair: '도시 수리', city_boost: '도시 부스트',
-  };
 
   /* 국가별 — 추가 쿼리 없이 같은 코호트를 나라로 쪼갠 값이다.
      비율은 가입 대비. 표본이 작은 나라는 흐리게 눌러 둔다 — 비율이 한 칸에 수십 %p 씩
@@ -253,80 +247,6 @@
     }
   }
 
-  function ads(a) {
-    const card = $('#rt-ads-card');
-    if (!a || !a.total) { card.hidden = true; return; }
-    card.hidden = false;
-
-    const host = $('#rt-ads-tiles');
-    host.textContent = '';
-    const put = (label, value, sub, warn) => {
-      const el = document.createElement('div');
-      el.className = 'tile';
-      const l = document.createElement('div'); l.className = 'tile-label'; l.textContent = label;
-      const v = document.createElement('div'); v.className = 'tile-value num'; v.textContent = value;
-      if (warn) v.style.color = 'var(--bad)';
-      const b = document.createElement('div'); b.className = 'tile-sub'; b.textContent = sub;
-      el.append(l, v, b);
-      host.appendChild(el);
-    };
-    const got = (k) => (a.by_result.find(x => x.result === k) || {}).n || 0;
-    put('광고 요청', num(a.total), '보상 광고를 띄우려 한 횟수');
-    put('완주', num(got('earned')), a.finish_pct != null ? `뜬 광고의 ${a.finish_pct}%` : '');
-    put('공급 실패', num(got('no_ad') + got('failed')),
-      a.supply_pct != null ? `요청의 ${a.supply_pct}%` : '', (a.supply_pct || 0) >= 20);
-    put('시청 유저', num(a.viewers), '한 번이라도 본 사람');
-
-    const t = $('#rt-ads');
-    t.textContent = '';
-    const hr = t.createTHead().insertRow();
-    ['지점', ...AD_RES.map(x => x[1]), '합계'].forEach((h, i) => {
-      const th = document.createElement('th');
-      if (!i) th.className = 'date';
-      th.textContent = h;
-      hr.appendChild(th);
-    });
-    const tb = t.createTBody();
-    for (const row of a.by_placement || []) {
-      const tr = tb.insertRow();
-      const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
-      c(AD_PLACE[row.placement] || row.placement, 'date');
-      for (const [k] of AD_RES) {
-        const cell = c(row[k] ? num(row[k]) : '—');
-        // 공급 쪽 실패는 매출이 그대로 증발하는 칸이라 눈에 띄게 둔다
-        if ((k === 'no_ad' || k === 'failed') && row[k]) cell.className = 'neg';
-      }
-      c(num(row.total), 'sum');
-    }
-
-    // 국가별 — fill rate 는 지역마다 갈려서 전체 평균 하나로는 어디를 손볼지 안 보인다
-    const ct = $('#rt-ads-country');
-    ct.textContent = '';
-    const rows = a.by_country || [];
-    if (!rows.length) return;
-    const chr = ct.createTHead().insertRow();
-    ['국가', '요청', '완주', '완주율', '광고없음', '표시실패', '공급실패율', '유저'].forEach((h, i) => {
-      const th = document.createElement('th');
-      if (!i) th.className = 'date';
-      th.textContent = h;
-      chr.appendChild(th);
-    });
-    const ctb = ct.createTBody();
-    for (const r of rows) {
-      const tr = ctb.insertRow();
-      const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
-      c(r.country, 'date');
-      c(num(r.total));
-      c(num(r.earned));
-      c(r.finish_pct != null ? r.finish_pct + '%' : '—');
-      c(r.no_ad ? num(r.no_ad) : '—');
-      c(r.failed ? num(r.failed) : '—');
-      // 공급실패 20% 넘으면 붉게 — 그 시장에서 광고 매출이 1/5씩 증발하고 있다는 뜻
-      const sp = c(r.supply_pct != null ? r.supply_pct + '%' : '—');
-      if ((r.supply_pct || 0) >= 20) sp.className = 'neg';
-      c(num(r.users));
-    }
-  }
 
   const { dur, progCell, fillStrip, spineLen, visitCell, offlineCell } = window.UserRow;
 

@@ -24,6 +24,7 @@
   <button class="vtab is-on" data-view="revenue" type="button">매출</button>
   <button class="vtab" data-view="ingame" type="button">인게임</button>
   <button class="vtab" data-view="realtime" type="button">실시간</button>
+  <button class="vtab" data-view="ads" type="button">광고</button>
   <button class="vtab" data-view="users" type="button">전체 가입자</button>
 </nav>
 
@@ -255,17 +256,6 @@
     <div class="chart" id="rt-funnel"></div>
   </section>
 
-  <section class="card" id="rt-ads-card" hidden>
-    <div class="card-head"><h2>리워드 광고</h2>
-      <p class="card-sub" id="rt-ads-sub">오늘 전체 유저 기준(가입자만이 아닙니다).
-        <b>완주율</b>은 화면에 뜬 광고만 분모로 삼습니다 — 띄울 광고가 없던 건(<code>no_ad</code>)
-        유저 행동이 아니라 공급 문제라 따로 셉니다.</p></div>
-    <section class="tiles" id="rt-ads-tiles"></section>
-    <div class="vsub">지점별</div>
-    <div class="table-scroll"><table class="ledger rt-ads" id="rt-ads"></table></div>
-    <div class="vsub">국가별 — 요청 10회 미만은 기타로 묶습니다(비율이 요동쳐서)</div>
-    <div class="table-scroll"><table class="ledger rt-ads" id="rt-ads-country"></table></div>
-  </section>
 
   <section class="card" id="rt-cert-card" hidden>
     <div class="card-head"><h2>🔐 APK 서명 인증서 — 변조본 결제 차단 (v971~)</h2>
@@ -339,6 +329,34 @@
   </p>
 </footer>
 
+<main class="wrap" id="view-ads" hidden>
+  <p class="meta" id="ad-meta"></p>
+  <p class="empty" id="ad-empty" hidden>광고 데이터가 아직 없습니다.</p>
+
+  <section class="card" id="ad-rev" hidden>
+    <div class="card-head"><h2>광고 매출</h2>
+      <p class="card-sub">매출은 AdMob, 노출은 GA4라 출처가 둘입니다. 오늘 값은 자정부터 지금까지라
+        <b>둘 다 진행 중</b>이고, AdMob 집계는 뒤늦게 올라오므로 금액은 잠정입니다.
+        <b>eCPM</b>의 분모는 <b>완주</b>입니다 — 보상형 광고는 끝까지 봐야 매출이 잡힙니다.</p></div>
+    <section class="tiles" id="ad-rev-tiles"></section>
+    <div class="vsub">일별 추이 — 최근 14일</div>
+    <div class="table-scroll"><table class="ledger rt-ads" id="ad-rev-table"></table></div>
+  </section>
+
+  <section class="card" id="ad-detail" hidden>
+    <div class="card-head"><h2>리워드 광고</h2>
+      <p class="card-sub">오늘 활동한 <b>전체 유저</b> 기준입니다 — 실시간 탭의 가입자 목록(최근 24시간)과
+        모수가 다릅니다. 그래서 2부 전용 지점(도시 보급)도 여기 나옵니다.
+        <b>완주율</b>은 화면에 뜬 광고만 분모로 삼습니다 — 띄울 광고가 없던 건(<code>no_ad</code>)
+        유저 행동이 아니라 공급 문제라 따로 셉니다.</p></div>
+    <section class="tiles" id="ad-tiles"></section>
+    <div class="vsub">지점별</div>
+    <div class="table-scroll"><table class="ledger rt-ads" id="ad-place"></table></div>
+    <div class="vsub">국가별 — 요청 10회 미만은 기타로 묶습니다(비율이 요동쳐서)</div>
+    <div class="table-scroll"><table class="ledger rt-ads" id="ad-country"></table></div>
+  </section>
+</main>
+
 <main class="wrap" id="view-users" hidden>
 
   <p class="rt-warn">
@@ -367,10 +385,11 @@
 
 <script src="refresh.js?v=4816d6ee"></script>
 <script src="app.js?v=93c7bd62"></script>
-<script src="ingame.js?v=33358a7e"></script>
+<script src="ingame.js?v=fc08ede9"></script>
 <script src="anomaly.js?v=451736e7"></script>
 <script src="userrow.js?v=c3aab60d"></script>
-<script src="realtime.js?v=cc81e9d0"></script>
+<script src="realtime.js?v=3a1f2377"></script>
+<script src="ads.js"></script>
 <script src="users.js?v=4ffd5a32"></script>
 </body>
 </html>
