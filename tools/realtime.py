@@ -64,7 +64,18 @@ EXTRA = [("first_settle", "stay60")]
 #   곁가지 근거: 첫매니저는 슬롯·비용만 맞으면 아무 때나 사고(unlock_class 는 가격 앵커로만 쓴다),
 #   첫금융도 금융상품을 사는 순간 찍힌다. 둘 다 '어디까지 갔나'와 인과가 없어서
 #   직전 칸 대비 낙폭을 재면 거짓말이 된다 → 척추 줄 사이에 끼우지 않고 뒤로 모아 따로 그린다.
-SIDE = {"first_manager", "first_finance"}
+SIDE = {"first_manager", "first_finance", "first_ad"}
+
+# onb_step 이 없는 곁가지 — 게임이 '단계'로 안 찍는 행동을 다른 이벤트에서 만들어 쓴다.
+# 첫광고: ad_impression 의 result='earned' 1회 이상. earned 만 세는 건, 광고를 '띄운' 것과
+# '끝까지 본' 것이 다르기 때문이다 — no_ad(재고 없음)·dismissed(중도 이탈)는 시청이 아니다.
+# ⚠ 이 칸은 ingame.py 에 없다. 곁가지라 척추 낙폭 비교에는 영향이 없지만, 두 화면의
+#   곁가지 줄 수가 하나 다르다는 건 알고 있을 것(퍼널 정의가 갈린 게 아니다).
+DERIVED = [
+    ("first_ad", "첫광고",
+     "event_name='ad_impression' AND (SELECT value.string_value"
+     " FROM UNNEST(event_params) WHERE key='result')='earned'"),
+]
 
 # 표시 순서 — 척추(첫후원 뒤에 신분2~7 삽입) 전부를 세운 뒤 곁가지를 맨 뒤에 붙인다.
 # 척추 사이에 곁가지가 끼면 "여기서 몇 % 빠졌다"는 시선이 끊긴다. 뒤로 몰면 줄이 끊기지 않는다.
@@ -74,6 +85,8 @@ for _k, _lab in STAGES:
     if _k == "first_donate":
         for _lv, _clab in CLASS_STAGES:
             _SPINE.append((f"class{_lv}", _clab, f"c{_lv}"))
+for _k, _lab, _ in DERIVED:
+    _SIDE_ROWS.append((_k, _lab, "s_" + _k))
 ORDER = _SPINE + _SIDE_ROWS
 
 client = bigquery.Client(project=PROJECT, location=LOCATION)
@@ -205,6 +218,9 @@ def main() -> None:
     flags += ",\n        " + ",\n        ".join(
         f"MAX(IF(event_name='class_up' AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='level')>={lv},1,0)) AS c{lv}"
         for lv, _ in CLASS_STAGES)
+    # onb_step 이 아닌 곁가지(첫광고 등) — 조건을 그대로 끼워 넣는다.
+    flags += ",\n        " + ",\n        ".join(
+        f"MAX(IF({cond},1,0)) AS s_{k}" for k, _, cond in DERIVED)
 
     # 최근 24시간에 '처음 연' 사람 — 판정은 first_open 이벤트로 한다.
     # user_first_touch_timestamp 로 바꿔 봤다가 되돌렸다: intraday 는 후처리 전이라 유저 범위
