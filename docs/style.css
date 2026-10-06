@@ -493,6 +493,12 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .pg-cell.is-hi .pg i { background: var(--good); }
 .pg-cell.is-hi .pg-val { color: var(--good); font-weight: 600; }
 
+/* 재방문 칸 — 한 자리 정수라 막대를 안 붙인다. 폭이 좁아서 막대를 넣어도 눈금이
+   안 생기고, 대신 색만으로 '돌아온 사람'이 걸리게 한다. 0 은 눌러 둔다(대다수다). */
+.rt-users td.bk-cell { text-align: center; font-variant-numeric: tabular-nums; }
+.rt-users td.bk-cell.dim { color: var(--ink-3); }
+.rt-users td.bk-cell.is-hi { color: var(--good); font-weight: 600; }
+
 /* 위험 신호 띠 — 경고 단계일 때만 뜬다. 늘 떠 있는 경고는 며칠이면 안 보이게 된다. */
 .risk {
   padding: 11px 24px; font-size: 13px; line-height: 1.6;

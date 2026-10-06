@@ -52,6 +52,28 @@ window.UserRow = (() => {
     return td;
   }
 
+
+  /* 재방문 칸. 값은 '세션 수 − 1' 이다 — 처음 들어온 한 번은 재방문이 아니다.
+
+     세션 경계는 GA4 기준(마지막 활동에서 30분이 지나면 새 세션)이다. 방치형이라 이 눈금이
+     오히려 맞는다: 잠깐 홈으로 내렸다 바로 돌아온 건 한 번 논 거고, 몇 시간 뒤 다시 켠 게
+     진짜 재방문이다. 다만 **30분 안의 껐다 켜기는 안 잡힌다** — 그걸 세려면 빌드가
+     포그라운드 복귀를 직접 보내야 한다.
+
+     0 을 흐리게 두는 건, 이 줄에서 눈에 걸려야 하는 쪽이 '돌아온 사람'이기 때문이다. */
+  const BACK_HI = 2;   // 2회 이상 돌아왔으면 색을 준다
+
+  function visitCell(td, sessions) {
+    const n = Math.max(0, (+sessions || 0) - 1);
+    td.className = 'bk-cell' + (n === 0 ? ' dim' : n >= BACK_HI ? ' is-hi' : '');
+    td.textContent = n;
+    td.title = n === 0
+      ? '처음 들어온 뒤 다시 들어오지 않았습니다.'
+      : `${n}번 다시 들어왔습니다(세션 ${+sessions || 0}회).`;
+    td.title += '\n세션 경계는 30분입니다 — 그보다 짧게 껐다 켠 건 세지 않습니다.';
+    return td;
+  }
+
   /* 비트마스크 → 단계별 0/1 배열. 전체 뷰는 한 명이 25칸 배열을 들고 다니면 용량이 커져서
      정수 하나로 접어 보낸다(216바이트 → 130바이트). 실시간 뷰는 배열 그대로 쓴다. */
   const unpack = (mask, n) => Array.from({ length: n }, (_, i) => (mask >> i) & 1);
@@ -81,5 +103,5 @@ window.UserRow = (() => {
     });
   }
 
-  return { dur, progText, progCell, unpack, spineLen, fillStrip };
+  return { dur, progText, progCell, visitCell, unpack, spineLen, fillStrip };
 })();
