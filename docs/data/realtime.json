@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-07 00:56 KST",
+ "updated": "2026-10-07 00:58 KST",
  "stage_labels": [
   {
    "key": "new_game",
@@ -135,19 +135,19 @@
  "tables": [
   {
    "d": "20261007",
-   "users": 191,
-   "events": 3486
+   "users": 202,
+   "events": 3662
   }
  ],
  "day": "20261007",
  "summary": {
-  "users": 191,
+  "users": 202,
   "new_users": 2,
   "first_touch_today": 2,
   "purchases": 0,
   "exceptions": 0,
   "first_at": "2026-10-07 00:00",
-  "last_at": "2026-10-07 00:56"
+  "last_at": "2026-10-07 00:58"
  },
  "users": [
   {
@@ -241,14 +241,14 @@
   {
    "tag": "74ee22",
    "joined": "10/06 23:55",
-   "last_seen": "00:52",
-   "mins": 21.9,
-   "span": 57,
+   "last_seen": "00:58",
+   "mins": 24.0,
+   "span": 62,
    "sessions": 1,
    "off": 2,
    "off_boost": 1,
    "prog": 0.0,
-   "events": 126,
+   "events": 136,
    "ver": "1.0 (v971)",
    "country": "Egypt",
    "reached": [
@@ -1167,12 +1167,12 @@
    "joined": "10/06 18:24",
    "last_seen": "23:53",
    "mins": 60.4,
-   "span": 328,
+   "span": 329,
    "sessions": 4,
    "off": 5,
    "off_boost": 1,
    "prog": 0.0,
-   "events": 165,
+   "events": 166,
    "ver": "1.0 (v971)",
    "country": "Indonesia",
    "reached": [
@@ -9809,7 +9809,7 @@
     "property_2": 1,
     "game_sale": 1,
     "first_rebirth": 0,
-    "med_min": 21.9,
+    "med_min": 24.0,
     "intro_done_pct": 100.0,
     "property_2_pct": 100.0,
     "game_sale_pct": 100.0,
@@ -9933,12 +9933,12 @@
   "dist": [
    {
     "cert": "dc0a72d0f17e769e",
-    "users": 142,
+    "users": 150,
     "ok": true
    },
    {
     "cert": "(미기록)",
-    "users": 49,
+    "users": 52,
     "ok": true
    }
   ],
@@ -9976,11 +9976,11 @@
   ]
  },
  "ads": {
-  "total": 56,
+  "total": 58,
   "by_result": [
    {
     "result": "earned",
-    "n": 44
+    "n": 46
    },
    {
     "result": "dismissed",
@@ -9995,8 +9995,8 @@
     "n": 0
    }
   ],
-  "finish_pct": 97.8,
-  "supply_pct": 19.6,
+  "finish_pct": 97.9,
+  "supply_pct": 19.0,
   "by_country": [
    {
     "country": "India",
@@ -10011,26 +10011,26 @@
    },
    {
     "country": "기타(요청 10회 미만)",
-    "total": 41,
-    "earned": 34,
+    "total": 43,
+    "earned": 36,
     "dismissed": 0,
     "no_ad": 7,
     "failed": 0,
-    "users": 28,
+    "users": 30,
     "lumped": 17,
     "finish_pct": 100.0,
-    "supply_pct": 17.1
+    "supply_pct": 16.3
    }
   ],
-  "viewers": 29,
+  "viewers": 31,
   "by_placement": [
    {
     "placement": "offline",
-    "earned": 30,
+    "earned": 32,
     "dismissed": 1,
     "no_ad": 8,
     "failed": 0,
-    "total": 39
+    "total": 41
    },
    {
     "placement": "boost",
