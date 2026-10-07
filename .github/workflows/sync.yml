@@ -18,8 +18,13 @@ permissions:
   contents: write
 
 # 같은 파일을 고치므로 절대 겹쳐 돌리지 않는다
+# ⚠ realtime(iap.py) 과 sync(sync.py) 는 **같은 docs/data/daily.json 을 쓴다.**
+# 그래서 두 워크플로가 **하나의 그룹**을 공유한다 — 따로 두면 동시에 떠서 푸시가 밀리고,
+# 재시도 리베이스가 같은 파일 같은 줄을 만나 CONFLICT 로 죽는다(2026-10-07 실측:
+# "업데이트"로 넷을 한꺼번에 던졌더니 realtime 이 그렇게 실패했다).
+# 그룹 이름은 '무엇을 쓰는가'로 짓는다 — 워크플로 이름으로 지으면 또 갈라진다.
 concurrency:
-  group: sync
+  group: write-daily-json
   cancel-in-progress: false
 
 jobs:
