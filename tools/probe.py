@@ -339,6 +339,34 @@ def pay(day: str | None, country: str, cur: str) -> int:
     return 0
 
 
+def tables() -> int:
+    """GA4 export 가 어디까지 왔는지 본다 — '어제 지표가 안 바뀐다'의 원인 판별용.
+
+    두 종류가 있다. 둘을 안 가르면 "데이터가 없다"와 "아직 확정 안 됐다"를 못 구분한다:
+      events_YYYYMMDD           확정본. 보통 다음날 오후에 떨어진다. 지표(ingame.py)가 쓴다.
+      events_intraday_YYYYMMDD  스트리밍. 당일치가 실시간으로 쌓인다. realtime.py 가 쓴다.
+
+    확정본이 이틀 이상 안 오면 export 가 끊긴 것이다(요금·권한·설정). 그때는 구글 콘솔을 봐야지
+    수집기를 고쳐 봐야 소용없다.
+    """
+    rows = rt.q(f"""
+      SELECT _TABLE_SUFFIX AS s, COUNT(*) AS n,
+        COUNT(DISTINCT user_pseudo_id) AS users,
+        FORMAT_TIMESTAMP('%m-%d %H:%M', MAX(TIMESTAMP_MICROS(event_timestamp)), 'Asia/Seoul') AS last_at
+      FROM {rt.TABLE}
+      WHERE _TABLE_SUFFIX >= '2026092'
+      GROUP BY s ORDER BY s DESC LIMIT 20
+    """)
+    print(f"{'테이블':<24}{'종류':<8}{'이벤트':>10}{'유저':>8}  마지막 이벤트(KST)")
+    for x in rows:
+        kind = "스트리밍" if x["s"].startswith("intraday") else "확정본"
+        print(f"{x['s']:<24}{kind:<8}{x['n']:>10,}{x['users']:>8,}  {x['last_at']}")
+    done = sorted(x["s"] for x in rows if not x["s"].startswith("intraday"))
+    if done:
+        print(f"\n확정본 최신: {done[-1]}")
+    return 0
+
+
 def city(day: str | None) -> int:
     """2부 진입 자격자 수 — 관문이 실제로 몇 명에게 열려 있나.
 
@@ -522,6 +550,7 @@ def main() -> int:
     ap.add_argument("--city", action="store_true", help="2부 진입 자격자 수를 센다")
     ap.add_argument("--vercmp", action="store_true", help="버전 코호트를 나이 맞춰 비교한다")
     ap.add_argument("--pay", action="store_true", help="Play 에만 있는 결제를 역추적한다")
+    ap.add_argument("--tables", action="store_true", help="GA4 export 가 어디까지 왔는지 본다")
     ap.add_argument("--country", default="", help="--pay 용 geo.country (예: Taiwan)")
     ap.add_argument("--cur", default="", help="--pay 용 통화코드 (예: TWD)")
     a = ap.parse_args()
@@ -534,6 +563,8 @@ def main() -> int:
         return city(a.day)
     if a.vercmp:
         return vercmp(a.day)
+    if a.tables:
+        return tables()
     if a.pay:
         # 쿼리에 문자열로 박히는 값이라 화이트리스트로 거른다 — 워크플로 입력은 외부 입력이다.
         country = "".join(c for c in a.country if c.isalpha() or c in " -&")[:40]

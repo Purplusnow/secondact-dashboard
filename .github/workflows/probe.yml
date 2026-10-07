@@ -31,6 +31,10 @@ on:
         description: 'true 로 두면 Play 에만 있는 결제를 역추적한다 (country·cur 같이 입력)'
         required: false
         default: 'false'
+      tables:
+        description: 'true 로 두면 GA4 export 가 어디까지 왔는지 본다'
+        required: false
+        default: 'false'
       country:
         description: '--pay 용 국가명 (예: Taiwan)'
         required: false
@@ -69,7 +73,7 @@ jobs:
       - name: 조회
         working-directory: tools
         env:
-          MODE: ${{ inputs.vercmp == 'true' && 'vercmp' || (inputs.city == 'true' && 'city' || (inputs.fake == 'true' && 'fake' || (inputs.scan == 'true' && 'scan' || (inputs.pay == 'true' && 'pay' || 'tag')))) }}
+          MODE: ${{ inputs.vercmp == 'true' && 'vercmp' || (inputs.city == 'true' && 'city' || (inputs.fake == 'true' && 'fake' || (inputs.scan == 'true' && 'scan' || (inputs.pay == 'true' && 'pay' || (inputs.tables == 'true' && 'tables' || 'tag'))))) }}
           TAG: ${{ inputs.tag }}
           DAY: ${{ inputs.day }}
           LIMIT: ${{ inputs.limit }}
