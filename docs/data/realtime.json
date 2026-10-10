@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-11 06:45 KST",
+ "updated": "2026-10-11 07:54 KST",
  "stage_labels": [
   {
    "key": "new_game",
@@ -135,13 +135,13 @@
  "tables": [
   {
    "d": "20261011",
-   "users": 497,
-   "events": 13888
+   "users": 538,
+   "events": 15733
   }
  ],
  "day": "20261011",
  "summary": {
-  "users": 497,
+  "users": 538,
   "new_users": 8,
   "first_touch_today": 8,
   "purchases": 0,
@@ -197,14 +197,14 @@
   {
    "tag": "e64c3a",
    "joined": "04:22",
-   "last_seen": "05:14",
-   "mins": 52.1,
-   "span": 52,
-   "sessions": 1,
-   "off": 0,
+   "last_seen": "07:27",
+   "mins": 52.5,
+   "span": 184,
+   "sessions": 2,
+   "off": 1,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 126,
+   "events": 132,
    "ver": "1.0 (v971)",
    "country": "India",
    "reached": [
@@ -1145,7 +1145,7 @@
     "property_2": 1,
     "game_sale": 1,
     "first_rebirth": 0,
-    "med_min": 52.1,
+    "med_min": 52.5,
     "intro_done_pct": 100.0,
     "property_2_pct": 50.0,
     "game_sale_pct": 50.0,
@@ -1321,19 +1321,19 @@
   "dist": [
    {
     "cert": "dc0a72d0f17e769e",
-    "users": 414,
+    "users": 442,
     "ok": true
    },
    {
     "cert": "(미기록)",
-    "users": 83,
+    "users": 96,
     "ok": true
    }
   ],
   "blocked": []
  },
  "city": {
-  "users": 21,
+  "users": 23,
   "enters": 0,
   "done": 0,
   "steps": [
@@ -1353,22 +1353,22 @@
     "key": "first_rent",
     "label": "첫 월세",
     "n": 1,
-    "pct": 4.8
+    "pct": 4.3
    },
    {
     "key": "first_event",
     "label": "첫 라이브이벤트",
     "n": 1,
-    "pct": 4.8
+    "pct": 4.3
    }
   ]
  },
  "ads": {
-  "total": 263,
+  "total": 294,
   "by_result": [
    {
     "result": "earned",
-    "n": 232
+    "n": 258
    },
    {
     "result": "dismissed",
@@ -1376,16 +1376,27 @@
    },
    {
     "result": "no_ad",
-    "n": 28
+    "n": 33
    },
    {
     "result": "failed",
     "n": 0
    }
   ],
-  "finish_pct": 98.7,
-  "supply_pct": 10.6,
+  "finish_pct": 98.9,
+  "supply_pct": 11.2,
   "by_country": [
+   {
+    "country": "France",
+    "total": 37,
+    "earned": 34,
+    "dismissed": 2,
+    "no_ad": 1,
+    "failed": 0,
+    "users": 11,
+    "finish_pct": 94.4,
+    "supply_pct": 2.7
+   },
    {
     "country": "India",
     "total": 36,
@@ -1398,53 +1409,64 @@
     "supply_pct": 16.7
    },
    {
-    "country": "France",
-    "total": 33,
-    "earned": 30,
-    "dismissed": 2,
-    "no_ad": 1,
-    "failed": 0,
-    "users": 10,
-    "finish_pct": 93.8,
-    "supply_pct": 3.0
-   },
-   {
     "country": "Türkiye",
-    "total": 26,
-    "earned": 21,
+    "total": 27,
+    "earned": 22,
     "dismissed": 0,
     "no_ad": 5,
     "failed": 0,
     "users": 6,
     "finish_pct": 100.0,
-    "supply_pct": 19.2
+    "supply_pct": 18.5
    },
    {
     "country": "Colombia",
-    "total": 20,
-    "earned": 16,
+    "total": 26,
+    "earned": 18,
     "dismissed": 0,
-    "no_ad": 4,
+    "no_ad": 8,
     "failed": 0,
     "users": 5,
     "finish_pct": 100.0,
-    "supply_pct": 20.0
+    "supply_pct": 30.8
    },
    {
     "country": "Brazil",
-    "total": 20,
-    "earned": 18,
+    "total": 22,
+    "earned": 20,
     "dismissed": 0,
     "no_ad": 2,
     "failed": 0,
-    "users": 11,
+    "users": 12,
     "finish_pct": 100.0,
-    "supply_pct": 10.0
+    "supply_pct": 9.1
+   },
+   {
+    "country": "Taiwan",
+    "total": 15,
+    "earned": 14,
+    "dismissed": 1,
+    "no_ad": 0,
+    "failed": 0,
+    "users": 6,
+    "finish_pct": 93.3,
+    "supply_pct": 0.0
+   },
+   {
+    "country": "Indonesia",
+    "total": 14,
+    "earned": 11,
+    "dismissed": 0,
+    "no_ad": 3,
+    "failed": 0,
+    "users": 9,
+    "finish_pct": 100.0,
+    "supply_pct": 21.4
    },
    {
     "country": "Germany",
-    "total": 13,
-    "earned": 13,
+    "total": 14,
+    "earned": 14,
     "dismissed": 0,
     "no_ad": 0,
     "failed": 0,
@@ -1453,26 +1475,26 @@
     "supply_pct": 0.0
    },
    {
-    "country": "Indonesia",
+    "country": "Japan",
+    "total": 14,
+    "earned": 12,
+    "dismissed": 0,
+    "no_ad": 2,
+    "failed": 0,
+    "users": 5,
+    "finish_pct": 100.0,
+    "supply_pct": 14.3
+   },
+   {
+    "country": "Thailand",
     "total": 13,
     "earned": 10,
     "dismissed": 0,
     "no_ad": 3,
     "failed": 0,
-    "users": 8,
-    "finish_pct": 100.0,
-    "supply_pct": 23.1
-   },
-   {
-    "country": "Thailand",
-    "total": 12,
-    "earned": 9,
-    "dismissed": 0,
-    "no_ad": 3,
-    "failed": 0,
     "users": 9,
     "finish_pct": 100.0,
-    "supply_pct": 25.0
+    "supply_pct": 23.1
    },
    {
     "country": "United Kingdom",
@@ -1486,57 +1508,46 @@
     "supply_pct": 0.0
    },
    {
-    "country": "Taiwan",
-    "total": 11,
+    "country": "Ukraine",
+    "total": 10,
     "earned": 10,
-    "dismissed": 1,
+    "dismissed": 0,
     "no_ad": 0,
     "failed": 0,
-    "users": 4,
-    "finish_pct": 90.9,
+    "users": 1,
+    "finish_pct": 100.0,
     "supply_pct": 0.0
    },
    {
-    "country": "Japan",
-    "total": 10,
-    "earned": 8,
-    "dismissed": 0,
-    "no_ad": 2,
-    "failed": 0,
-    "users": 5,
-    "finish_pct": 100.0,
-    "supply_pct": 20.0
-   },
-   {
     "country": "기타(요청 10회 미만)",
-    "total": 58,
-    "earned": 56,
+    "total": 55,
+    "earned": 52,
     "dismissed": 0,
-    "no_ad": 2,
+    "no_ad": 3,
     "failed": 0,
-    "users": 29,
-    "lumped": 15,
+    "users": 33,
+    "lumped": 17,
     "finish_pct": 100.0,
-    "supply_pct": 3.4
+    "supply_pct": 5.5
    }
   ],
-  "viewers": 77,
+  "viewers": 86,
   "by_placement": [
    {
     "placement": "offline",
-    "earned": 133,
+    "earned": 153,
     "dismissed": 3,
-    "no_ad": 15,
+    "no_ad": 17,
     "failed": 0,
-    "total": 151
+    "total": 173
    },
    {
     "placement": "boost",
-    "earned": 61,
+    "earned": 67,
     "dismissed": 0,
-    "no_ad": 7,
+    "no_ad": 10,
     "failed": 0,
-    "total": 68
+    "total": 77
    },
    {
     "placement": "gem_ad",
@@ -1564,6 +1575,6 @@
    }
   ]
  },
- "scan_mb": 106.0,
- "scan_note": "이번 실행 스캔 106.0MB. 매시간(24회/일)이면 월 74.53GB — 무료 구간은 월 1,024GB."
+ "scan_mb": 107.0,
+ "scan_note": "이번 실행 스캔 107.0MB. 매시간(24회/일)이면 월 75.23GB — 무료 구간은 월 1,024GB."
 }
