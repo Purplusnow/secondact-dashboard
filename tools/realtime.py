@@ -273,12 +273,19 @@ def main() -> None:
 
     # 라이브 빌드 판정. 하루에도 빌드를 십수 개 올리는 날이 있고(10/03: v954~v965),
     # 그 기기들은 지역이 잡히는데도 체류 0분·단계 0 이라 지역 필터로는 안 걸린다.
-    # 실제로 배포된 빌드는 금세 수십 명이 붙고 테스트 빌드는 한두 명에 머문다 — 그 차이로 가른다.
-    # 단계 롤아웃이 커지면 자연히 문턱을 넘어 코호트에 합류한다(영영 숨기지 않는다).
+    # 실제로 배포된 빌드는 금세 여럿이 붙고 테스트 빌드는 한두 명에 머문다 — 그 차이로 가른다.
+    #
+    # ⚠ 문턱을 '10명 고정'으로 뒀다가 2026-10-12 에 코호트가 통째로 비었다. 마케팅을 끊어
+    #   하루 가입이 300명대에서 16명으로 떨어지자 **라이브 빌드조차 9명**이라 문턱을 못 넘었고,
+    #   16명 전원이 '테스트 빌드'로 분류돼 가입자 목록·퍼널이 0 이 됐다.
+    #   절대값 문턱은 유입 규모가 바뀌면 이렇게 뒤집힌다 — 비율로 잡고, 그 위에
+    #   **최다 빌드는 무조건 라이브로 둔다**(가장 많이 쓰이는 빌드가 테스트일 수는 없다).
+    #   이 안전장치가 "전부 제외"를 구조적으로 불가능하게 만든다.
     from collections import Counter
     vcount = Counter((r["ver"] or "?") for r in rows if (r["country"] or "").strip())
-    floor = max(10, int(0.03 * sum(vcount.values())))
-    LIVE = {v for v, c in vcount.items() if c >= floor}
+    floor = max(2, int(0.15 * sum(vcount.values())))
+    top = max(vcount.values(), default=0)
+    LIVE = {v for v, c in vcount.items() if c >= floor or c == top}
 
     users, funnel, rec, stay60 = [], [0] * len(ORDER), [0] * len(ORDER), 0
     nogeo = 0
