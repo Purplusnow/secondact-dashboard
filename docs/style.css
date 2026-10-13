@@ -506,6 +506,10 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .rt-users td.of-cell.is-hi { color: var(--good); font-weight: 600; }
 .of-boost { margin-left: 1px; font-size: 9px; color: #2a78d6; font-weight: 600; }
 
+/* 잠정 셀 — 오늘이 안 끝나 아직 오르는 중인 값. 점선 밑줄로 '확정 아님'을 적어 둔다.
+   색(히트맵)은 확정 셀과 같게 둔다 — 색까지 다르면 값이 아니라 분류로 읽힌다. */
+.coh-prov { border-bottom: 2px dotted rgba(0,0,0,.45); font-style: italic; }
+
 /* 위험 신호 띠 — 경고 단계일 때만 뜬다. 늘 떠 있는 경고는 며칠이면 안 보이게 된다. */
 .risk {
   padding: 11px 24px; font-size: 13px; line-height: 1.6;

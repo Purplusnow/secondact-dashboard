@@ -127,6 +127,7 @@
     const up = $('#updated'); if (up && d.updated) { up.textContent = '데이터 기준 ' + d.updated; up.title = 'BigQuery 수집 시각(매일 11:20 KST 자동). 페이지 배포 시각과 다를 수 있음'; }
     _data = d;
     renderKpi(d); renderFunnel(d); renderVersions(d); renderPacing(d); renderGate(d);
+    window.__igData = d;   // 스트리밍 잠정값이 늦게 도착하면 이 데이터로 다시 그린다
     renderRetentionCohort(d); renderProgressHeatmap(d);
     renderCityKpi(d); renderCityFunnel(d); renderCityDeci(d); renderCityPacing(d);
     renderVersionViews(d);
@@ -329,12 +330,38 @@
   }
 
 
+  /* 확정본에 아직 없는 '오늘' 대각선을 스트리밍으로 받아 둔다(realtime.json).
+     코호트 d0 의 Day n 칸은 d0+n 일 데이터를 쓰므로, n = 오늘−d0 인 칸이 전부 비어 있다.
+     그 한 줄만 잠정값으로 메운다 — 오늘이 안 끝났으니 **하한**이고, 화면엔 `+` 를 붙인다. */
+  let provisional = null;
+  (async () => {
+    try {
+      const res = await fetch(`data/realtime.json?t=${Math.floor(Date.now() / 60000)}`, { cache: 'no-store' });
+      if (!res.ok) return;
+      const rt = await res.json();
+      if (rt && rt.cohort_today && (rt.cohort_today.rows || []).length) {
+        provisional = rt.cohort_today;
+        const host = $('#ig-retention-cohort');
+        if (host && host.children.length) renderRetentionCohort(window.__igData || {});
+      }
+    } catch { /* 없으면 그냥 빈 칸으로 둔다 */ }
+  })();
+
   // ── 코호트 리텐션 삼각(설치일 × Day n 히트맵) ─────────────
   function renderRetentionCohort(d) {
     const host = $('#ig-retention-cohort'); if (!host) return; host.innerHTML = '';
     const c = d.retention_cohort;
     if (!c || !c.rows || !c.rows.length) { host.innerHTML = '<p class="card-sub">데이터 없음</p>'; return; }
     const N = c.n;
+    // 잠정 칸: d0 → {pct}. 대각선 위치는 (복귀를 센 날 − d0) 로 정해진다.
+    const prov = {};
+    if (provisional) {
+      const on = Date.parse(provisional.on + 'T00:00:00Z');
+      for (const r of provisional.rows) {
+        const n = Math.round((on - Date.parse(r.day + 'T00:00:00Z')) / 86400000);
+        if (n >= 1 && n <= N) prov[r.day] = { n, pct: r.pct, ret: r.ret, base: r.base };
+      }
+    }
     // 리텐션 히트맵: 0%→옅은 노랑, 높을수록 주황→빨강(50%에서 포화). null=관측불가(회색).
     const heat = p => {
       if (p == null) return 'transparent';
@@ -349,10 +376,16 @@
     // 최신 코호트가 위로 오도록 역순
     c.rows.slice().reverse().forEach(r => {
       h += `<tr><td class="stick vt-ver">${esc(r.date)}</td><td class="num">${num(r.new)}</td>`;
-      r.days.forEach(p => {
-        if (p == null) { h += '<td class="num coh-na">·</td>'; return; }
-        const lg = 90 - 42 * Math.min(p / 50, 1);
-        h += `<td class="num fcell" style="background:${heat(p)};color:${lg < 55 ? '#fff' : '#333'}">${p}%</td>`;
+      const pv = prov[r.date];
+      r.days.forEach((p, i) => {
+        // 확정값이 없고 그 자리가 오늘 대각선이면 잠정값으로 메운다.
+        const isProv = p == null && pv && pv.n === i + 1;
+        const v = isProv ? pv.pct : p;
+        if (v == null) { h += '<td class="num coh-na">·</td>'; return; }
+        const lg = 90 - 42 * Math.min(v / 50, 1);
+        const title = isProv ? ` title="잠정 — 오늘이 끝나지 않았습니다. ${pv.ret}/${pv.base}명, 여기서 오르기만 합니다"` : '';
+        h += `<td class="num fcell${isProv ? ' coh-prov' : ''}"${title}`
+          + ` style="background:${heat(v)};color:${lg < 55 ? '#fff' : '#333'}">${v}%${isProv ? '+' : ''}</td>`;
       });
       h += '</tr>';
     });
@@ -360,7 +393,8 @@
     const tbl = el('table', 'vftable coh-table', h);
     const scroll = el('div', 'table-scroll'); scroll.appendChild(tbl);
     host.appendChild(scroll);
-    host.appendChild(el('p', 'chart-note', `설치일 코호트 × Day1~D${N} 복귀율 · 셀=그 코호트 중 정확히 n일 뒤 접속 비율 · 회색(·)=아직 관측 불가 · 최신 설치일이 위`));
+    host.appendChild(el('p', 'chart-note', `설치일 코호트 × Day1~D${N} 복귀율 · 셀=그 코호트 중 정확히 n일 뒤 접속 비율 · `
+      + `<b>N%+</b>=오늘이 안 끝나 아직 오르는 중인 잠정값(스트리밍) · 회색(·)=아직 관측 불가 · 최신 설치일이 위`));
   }
 
   // ── 은퇴→환생 퍼널 + 원인 3분할 ───────────────────────────
