@@ -436,6 +436,39 @@ def main() -> None:
         "by_day": sorted(_roll("day", 1), key=lambda x: x["day"]),
     }
 
+    # ── 코호트 삼각표의 '오늘' 대각선 (잠정) ────────────────────
+    # 인게임 뷰의 코호트 표는 확정본만 써서, 복귀일이 오늘인 칸이 전부 비어 있다
+    # (코호트 d0 의 Day n 칸은 d0+n 일 데이터를 필요로 한다 → n = 오늘-d0 인 칸들이 공백).
+    # 그 **대각선 한 줄**은 오늘 스트리밍으로 지금 채울 수 있다.
+    #
+    # 오늘이 안 끝났으므로 이 값은 **하한**이다 — 저녁에 더 돌아오면 올라가기만 한다.
+    # 그래서 화면에 `10.5+` 처럼 + 를 붙여 '여기서 더 오른다'를 값 자체에 적는다.
+    # 확정값과 같은 모양으로 그리면 내려간 것처럼 읽히므로 반드시 구분할 것.
+    cdays = [(_d0 - timedelta(days=i)).strftime("%Y%m%d") for i in range(1, 15)]
+    cs = ", ".join("'" + x + "'" for x in cdays)
+    diag = q(f"""
+      WITH coh AS (
+        SELECT user_pseudo_id AS uid,
+               FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%Y%m%d', MIN(_TABLE_SUFFIX))) AS d0
+        FROM {TABLE}
+        WHERE _TABLE_SUFFIX IN ({cs}) AND event_name='first_open' AND {HAS_GEO}
+        GROUP BY uid
+      ), back AS (
+        SELECT DISTINCT user_pseudo_id AS uid
+        FROM {TABLE} WHERE _TABLE_SUFFIX = 'intraday_{day}' AND {HAS_GEO}
+      )
+      SELECT coh.d0 AS day, COUNT(*) AS base,
+             COUNTIF(back.uid IS NOT NULL) AS ret
+      FROM coh LEFT JOIN back ON back.uid = coh.uid
+      GROUP BY day ORDER BY day
+    """)
+    out["cohort_today"] = {
+        "on": f"{day[:4]}-{day[4:6]}-{day[6:]}",   # 복귀를 센 날(= 오늘). 대각선 위치를 이걸로 찾는다
+        "rows": [{"day": r["day"], "base": int(r["base"] or 0), "ret": int(r["ret"] or 0),
+                  "pct": round(100 * int(r["ret"] or 0) / int(r["base"]), 1)}
+                 for r in diag if int(r["base"] or 0) > 0],
+    }
+
     # ── 국가별 ─────────────────────────────────────────────────
     # 마케팅은 국가 단위로 돌리는데 퍼널은 전체 하나뿐이라 "어느 시장 설치가 값을 하나"를
     # 볼 데가 없었다. 같은 코호트를 나라로 쪼갠다 — 추가 쿼리 없이 이미 받은 줄로 센다.
