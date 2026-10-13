@@ -101,22 +101,30 @@ jobs:
       - name: 커밋
         if: env.GCP_SA_KEY != '' && steps.guard.outputs.skip != 'true'
         run: |
-          # git diff 는 '추적되지 않는 파일'을 못 본다 — 최초 생성 때 변경 없음으로 오판한다.
-          # 그래서 먼저 add 하고 스테이지와 비교한다.
           git config user.name  "secondact-bot"
           git config user.email "34591718+Purplusnow@users.noreply.github.com"
-          git add docs/data/realtime.json docs/data/daily.json
-          if git diff --cached --quiet -- docs/data/realtime.json docs/data/daily.json; then
-            echo "변경 없음 — 커밋 생략"
-            exit 0
-          fi
-          git commit -m "실시간 수집: $(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') KST"
-          # 다른 수집 잡이나 사람 커밋이 사이에 끼면 푸시가 밀린다(! [rejected] fetch first).
-          # 재시도가 없으면 수집은 성공해 놓고 그 회차 데이터를 통째로 버리게 된다 —
-          # 10/02 00:34 스케줄 실행이 그렇게 날아갔다. 리베이스하고 몇 번 다시 민다.
-          for i in 1 2 3 4 5; do
-            git push && break
-            echo "푸시 밀림 — 리베이스 후 재시도 $i"
-            git pull --rebase --autostash origin main || exit 1
-            sleep $((i * 3))
-          done
+          # ⚠ 리베이스로 푸시 충돌을 푸는 건 daily.json 에서 안 통한다(2026-10-07·10-13 실측).
+          # realtime(iap.py) 과 sync(sync.py) 가 **같은 파일의 같은 줄**을 고치므로
+          # 리베이스가 CONFLICT 로 죽고, 수집은 성공해 놓고 그 회차를 통째로 버린다.
+          # concurrency 그룹을 공유해도 체크아웃 시점이 어긋나면 여전히 난다.
+          #
+          # 그래서 '합치지' 않고 **최신 위에서 다시 수집한다.** 수집기는 제 필드만
+          # 건드리므로(sync→ads·admob, iap.py→iap), 남의 최신 값을 덮지 않고 얹힌다.
+          push_or_recollect() {
+            for i in 1 2 3; do
+              git add -A docs/data
+              git diff --cached --quiet && { echo "변경 없음 — 커밋 생략"; return 0; }
+              git commit -q -m "실시간 수집: $(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') KST"
+              git push -q && return 0
+              echo "푸시 밀림 — 최신으로 되감고 다시 수집 ($i)"
+              git fetch -q origin main && git reset -q --hard origin/main
+              sleep $((i * 3))
+              "$@" || return 1
+            done
+            echo "::error::세 번 다시 수집해도 푸시가 안 됩니다"
+            return 1
+          }
+          recollect() {
+            python3 tools/realtime.py && python3 tools/iap.py
+          }
+          push_or_recollect recollect
