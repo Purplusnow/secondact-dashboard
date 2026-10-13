@@ -403,23 +403,37 @@ def main() -> None:
         FROM {TABLE} WHERE _TABLE_SUFFIX IN ({sufs}) AND {HAS_GEO}
       )
       SELECT coh.ver AS ver,
+             FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_MICROS(coh.t0), 'Asia/Seoul') AS day,
              COUNT(DISTINCT coh.uid) AS base,
              COUNT(DISTINCT IF(ev.ts > coh.t0 + 86400000000
                                AND ev.ts <= coh.t0 + 172800000000, coh.uid, NULL)) AS ret
       FROM coh LEFT JOIN ev ON ev.uid = coh.uid
-      GROUP BY ver
+      GROUP BY ver, day
     """)
-    rows = [{"ver": r["ver"] or "?", "base": int(r["base"] or 0), "ret": int(r["ret"] or 0)}
-            for r in d1 if int(r["base"] or 0) > 0]
-    for r in rows:
-        r["pct"] = round(100 * r["ret"] / r["base"], 1)
-    tot_b = sum(r["base"] for r in rows)
-    tot_r = sum(r["ret"] for r in rows)
+    # 유저 한 명은 (빌드, 설치일) 한 칸에만 들어가므로 두 축 모두 그냥 더하면 된다.
+    cells = [{"ver": r["ver"] or "?", "day": r["day"],
+              "base": int(r["base"] or 0), "ret": int(r["ret"] or 0)} for r in d1]
+
+    def _roll(keyname: str, floor: int) -> list[dict]:
+        acc: dict = {}
+        for c in cells:
+            a = acc.setdefault(c[keyname], {keyname: c[keyname], "base": 0, "ret": 0})
+            a["base"] += c["base"]; a["ret"] += c["ret"]
+        for a in acc.values():
+            a["pct"] = round(100 * a["ret"] / a["base"], 1) if a["base"] else None
+        return [a for a in acc.values() if a["base"] >= floor]
+
+    tot_b = sum(c["base"] for c in cells)
+    tot_r = sum(c["ret"] for c in cells)
     out["d1_live"] = {
         "base": tot_b, "ret": tot_r,
         "pct": (round(100 * tot_r / tot_b, 1) if tot_b else None),
         # 코호트가 작으면 비율이 튄다. 몇 명짜리인지 같이 보여 주고, 빌드별은 5명 이상만.
-        "rows": sorted((r for r in rows if r["base"] >= 5), key=lambda x: -x["base"]),
+        "rows": sorted(_roll("ver", 5), key=lambda x: -x["base"]),
+        # 설치일별 — 인게임 뷰의 코호트 삼각표에서 **아직 비어 있는 최근 칸**을 이걸로 메운다.
+        # 확정본은 복귀일 테이블이 떨어져야 채워지는데, 나이 기준이면 오늘 데이터로 바로 된다.
+        # 날짜는 전부 보여 준다(문턱 1) — 몇 명짜리인지는 분모로 같이 읽는다.
+        "by_day": sorted(_roll("day", 1), key=lambda x: x["day"]),
     }
 
     # ── 국가별 ─────────────────────────────────────────────────

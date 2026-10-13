@@ -291,12 +291,17 @@
     put('대상 코호트', num(x.base) + '명', '설치 48시간이 지난 사람');
     put('돌아옴', num(x.ret) + '명', '설치 +24~48시간 사이');
 
-    const t = $('#rt-d1');
+    // 설치일별 — 인게임 코호트 삼각표에서 아직 비어 있는 최근 칸이 여기 먼저 찬다.
+    d1table($('#rt-d1-day'), (x.by_day || []).slice().reverse(), '설치일', r => r.day);
+    d1table($('#rt-d1'), x.rows || [], '빌드',
+      r => { const m = (r.ver || '').match(/v(\d+)/); return m ? 'v' + m[1] : (r.ver || '—'); });
+  }
+
+  function d1table(t, rows, head, label) {
     t.textContent = '';
-    const rows = x.rows || [];
     if (!rows.length) { return; }
     const hr = t.createTHead().insertRow();
-    ['빌드', '코호트', '복귀', 'D1', ''].forEach((h, i) => {
+    [head, '코호트', '복귀', 'D1', ''].forEach((h, i) => {
       const th = document.createElement('th');
       if (!i) th.className = 'date';
       th.textContent = h;
@@ -306,11 +311,12 @@
     for (const r of rows) {
       const tr = tb.insertRow();
       const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
-      const bv = (r.ver || '').match(/v(\d+)/);
-      c(bv ? 'v' + bv[1] : (r.ver || '—'), 'date');
+      c(label(r), 'date');
       c(num(r.base));
       c(num(r.ret));
-      c(r.pct + '%');
+      // 분모가 작으면 퍼센트를 눌러 둔다 — 10명 미만에서 '17%'는 한 명 차이다.
+      const pc = c(r.pct + '%');
+      if (r.base < 10) pc.className = 'dim';
       // 눈금은 50% 고정 — 빌드끼리 길이를 바로 비교하려면 축이 같아야 한다.
       const bar = tr.insertCell();
       const track = document.createElement('span'); track.className = 'pg';
