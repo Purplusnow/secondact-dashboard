@@ -368,6 +368,60 @@ def main() -> None:
                        key=lambda x: (-x["n"], x["ver"])),
     }
 
+
+    # ── 속보 D1 (스트리밍) ──────────────────────────────────────
+    # 인게임 뷰의 D1 은 확정본만 쓴다. 그래서 '어제 올린 빌드가 D1 을 깼나'를 알려면
+    # 2~3일을 기다려야 하는데, 지금은 하루에 빌드를 다섯 개씩 올리므로 그때쯤이면
+    # 어느 빌드가 뭘 했는지 못 가린다. 스트리밍을 섞어 그 대기를 하루로 줄인다.
+    #
+    # ⚠ 달력 기준으로 세면 안 된다. '어제 코호트가 오늘 돌아왔나'를 지금 재면 오늘
+    #   저녁에 돌아올 사람이 빠져 과소집계되고, 그 값은 하루 종일 올라간다
+    #   (버전 코호트에서 똑같이 당했다 — v965 가 나빠 보였다가 익으니 뒤집혔다).
+    #   그래서 **유저별 나이**로 잰다: 각자 first_open +24~48시간 사이에 이벤트가 있나.
+    #   분모는 48시간이 **완전히 지난** 유저만. 언제 재도 같은 값이 나온다.
+    #
+    # 이름을 '속보'로 둔 건 확정본 D1 과 다른 수라서다. 둘이 벌어지면 그게 곧
+    # '스트리밍이 뭘 놓치고 있나'의 신호다 — 합치지 말고 나란히 둘 것.
+    # day 는 위에서 고른 최신 intraday 날짜(KST 오늘). 거기서 5일을 되짚는다 —
+    # 48시간 게이트를 통과할 코호트가 그 안에 다 들어온다.
+    _d0 = datetime.strptime(day, "%Y%m%d")
+    days = [(_d0 - timedelta(days=i)).strftime("%Y%m%d") for i in range(5)]
+    sufs = ", ".join(["'" + x + "'" for x in days] + ["'intraday_" + x + "'" for x in days])
+    d1 = q(f"""
+      WITH coh AS (
+        SELECT user_pseudo_id AS uid,
+               MIN(event_timestamp) AS t0,
+               ANY_VALUE(app_info.version) AS ver
+        FROM {TABLE}
+        WHERE _TABLE_SUFFIX IN ({sufs}) AND event_name='first_open' AND {HAS_GEO}
+        GROUP BY uid
+        -- 48시간이 다 지난 사람만. 안 지난 사람을 분모에 넣으면 '아직 안 돌아왔다'가
+        -- '안 돌아온다'로 둔갑한다.
+        HAVING MIN(event_timestamp) <= UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 48 HOUR))
+      ), ev AS (
+        SELECT user_pseudo_id AS uid, event_timestamp AS ts
+        FROM {TABLE} WHERE _TABLE_SUFFIX IN ({sufs}) AND {HAS_GEO}
+      )
+      SELECT coh.ver AS ver,
+             COUNT(DISTINCT coh.uid) AS base,
+             COUNT(DISTINCT IF(ev.ts > coh.t0 + 86400000000
+                               AND ev.ts <= coh.t0 + 172800000000, coh.uid, NULL)) AS ret
+      FROM coh LEFT JOIN ev ON ev.uid = coh.uid
+      GROUP BY ver
+    """)
+    rows = [{"ver": r["ver"] or "?", "base": int(r["base"] or 0), "ret": int(r["ret"] or 0)}
+            for r in d1 if int(r["base"] or 0) > 0]
+    for r in rows:
+        r["pct"] = round(100 * r["ret"] / r["base"], 1)
+    tot_b = sum(r["base"] for r in rows)
+    tot_r = sum(r["ret"] for r in rows)
+    out["d1_live"] = {
+        "base": tot_b, "ret": tot_r,
+        "pct": (round(100 * tot_r / tot_b, 1) if tot_b else None),
+        # 코호트가 작으면 비율이 튄다. 몇 명짜리인지 같이 보여 주고, 빌드별은 5명 이상만.
+        "rows": sorted((r for r in rows if r["base"] >= 5), key=lambda x: -x["base"]),
+    }
+
     # ── 국가별 ─────────────────────────────────────────────────
     # 마케팅은 국가 단위로 돌리는데 퍼널은 전체 하나뿐이라 "어느 시장 설치가 값을 하나"를
     # 볼 데가 없었다. 같은 코호트를 나라로 쪼갠다 — 추가 쿼리 없이 이미 받은 줄로 센다.
