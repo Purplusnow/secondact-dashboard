@@ -45,6 +45,7 @@
       ['예외', num(s.exceptions), 'app_exception', (s.exceptions || 0) > 0],
     ]);
 
+    d1live(d.d1_live);
     funnel(d.funnel || [], d.cohort_n || 0);
     versions(d.versions);
     cityView(d.city);
@@ -267,6 +268,59 @@
 
   /* 퍼널은 26단계라 세로 막대로는 라벨이 안 읽힌다 — 가로 막대 목록이 맞다.
      직전 단계 대비 낙폭을 같이 적어서 '어디서 막혔나'가 눈에 바로 띄게 한다. */
+  /* 속보 D1. 수집기가 유저별 나이(+24~48h)로 이미 계산해 보내므로 여기선 그리기만 한다.
+     코호트가 작으면 비율이 크게 튄다 — 그래서 퍼센트 옆에 항상 분모를 붙인다.
+     "17%" 만 보면 추세로 읽히지만 "4/23명" 이면 한 명 차이라는 게 바로 보인다. */
+  function d1live(x) {
+    const card = $('#rt-d1-card');
+    if (!x || !x.base) { card.hidden = true; return; }
+    card.hidden = false;
+
+    const host = $('#rt-d1-tiles');
+    host.textContent = '';
+    const put = (label, value, sub) => {
+      const el = document.createElement('div');
+      el.className = 'tile';
+      const l = document.createElement('div'); l.className = 'tile-label'; l.textContent = label;
+      const v = document.createElement('div'); v.className = 'tile-value num'; v.textContent = value;
+      const b = document.createElement('div'); b.className = 'tile-sub'; b.textContent = sub;
+      el.append(l, v, b);
+      host.appendChild(el);
+    };
+    put('속보 D1', x.pct != null ? x.pct + '%' : '—', `${num(x.ret)}/${num(x.base)}명`);
+    put('대상 코호트', num(x.base) + '명', '설치 48시간이 지난 사람');
+    put('돌아옴', num(x.ret) + '명', '설치 +24~48시간 사이');
+
+    const t = $('#rt-d1');
+    t.textContent = '';
+    const rows = x.rows || [];
+    if (!rows.length) { return; }
+    const hr = t.createTHead().insertRow();
+    ['빌드', '코호트', '복귀', 'D1', ''].forEach((h, i) => {
+      const th = document.createElement('th');
+      if (!i) th.className = 'date';
+      th.textContent = h;
+      hr.appendChild(th);
+    });
+    const tb = t.createTBody();
+    for (const r of rows) {
+      const tr = tb.insertRow();
+      const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
+      const bv = (r.ver || '').match(/v(\d+)/);
+      c(bv ? 'v' + bv[1] : (r.ver || '—'), 'date');
+      c(num(r.base));
+      c(num(r.ret));
+      c(r.pct + '%');
+      // 눈금은 50% 고정 — 빌드끼리 길이를 바로 비교하려면 축이 같아야 한다.
+      const bar = tr.insertCell();
+      const track = document.createElement('span'); track.className = 'pg';
+      const fill = document.createElement('i');
+      fill.style.width = Math.min(100, r.pct * 2) + '%';
+      track.appendChild(fill);
+      bar.appendChild(track);
+    }
+  }
+
   function funnel(rows, n) {
     const host = $('#rt-funnel');
     host.textContent = '';
