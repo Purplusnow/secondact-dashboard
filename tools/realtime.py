@@ -436,17 +436,20 @@ def main() -> None:
         "by_day": sorted(_roll("day", 1), key=lambda x: x["day"]),
     }
 
-    # ── 코호트 삼각표의 '오늘' 대각선 (잠정) ────────────────────
-    # 인게임 뷰의 코호트 표는 확정본만 써서, 복귀일이 오늘인 칸이 전부 비어 있다
-    # (코호트 d0 의 Day n 칸은 d0+n 일 데이터를 필요로 한다 → n = 오늘-d0 인 칸들이 공백).
-    # 그 **대각선 한 줄**은 오늘 스트리밍으로 지금 채울 수 있다.
+    # ── 코호트 삼각표의 미확정 칸 (스트리밍으로 메움) ──────────
+    # 인게임 뷰의 코호트 표는 확정본만 쓴다. 코호트 d0 의 Day n 칸은 d0+n 일 데이터를
+    # 쓰므로, **확정본이 아직 없는 날이 복귀일인 칸**이 전부 비어 있다.
     #
-    # 오늘이 안 끝났으므로 이 값은 **하한**이다 — 저녁에 더 돌아오면 올라가기만 한다.
-    # 그래서 화면에 `10.5+` 처럼 + 를 붙여 '여기서 더 오른다'를 값 자체에 적는다.
-    # 확정값과 같은 모양으로 그리면 내려간 것처럼 읽히므로 반드시 구분할 것.
+    # ⚠ 처음엔 '오늘' 하루만 메웠다가 표가 깨졌다(2026-10-14): 확정본이 10/12 까지인데
+    #   오늘은 10/14 라, 10/13 이 복귀일인 칸이 통째로 구멍이 나고 대각선이 하나 건너뛴
+    #   모양이 됐다. **확정 안 된 날 전부**를 메워야 한다.
+    #
+    # GA4 는 그날 확정본이 떨어지면 intraday 를 지운다 — 즉 **남아 있는 intraday 테이블의
+    # 집합이 곧 '아직 확정 안 된 날'** 이다. 그래서 그걸 그대로 복귀일 목록으로 쓴다.
+    # 오늘(=최신 intraday)만 아직 안 끝나서 더 오르므로, 거기에만 화면에서 + 를 붙인다.
     cdays = [(_d0 - timedelta(days=i)).strftime("%Y%m%d") for i in range(1, 15)]
     cs = ", ".join("'" + x + "'" for x in cdays)
-    diag = q(f"""
+    prov = q(f"""
       WITH coh AS (
         SELECT user_pseudo_id AS uid,
                FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%Y%m%d', MIN(_TABLE_SUFFIX))) AS d0
@@ -454,20 +457,37 @@ def main() -> None:
         WHERE _TABLE_SUFFIX IN ({cs}) AND event_name='first_open' AND {HAS_GEO}
         GROUP BY uid
       ), back AS (
-        SELECT DISTINCT user_pseudo_id AS uid
-        FROM {TABLE} WHERE _TABLE_SUFFIX = 'intraday_{day}' AND {HAS_GEO}
+        SELECT DISTINCT user_pseudo_id AS uid,
+               FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%Y%m%d', SUBSTR(_TABLE_SUFFIX, 10))) AS rday
+        FROM {TABLE} WHERE {INTRADAY_ANY} AND {HAS_GEO}
       )
-      SELECT coh.d0 AS day, COUNT(*) AS base,
-             COUNTIF(back.uid IS NOT NULL) AS ret
-      FROM coh LEFT JOIN back ON back.uid = coh.uid
-      GROUP BY day ORDER BY day
+      SELECT coh.d0 AS day, back.rday AS rday, COUNT(DISTINCT coh.uid) AS ret
+      FROM coh JOIN back ON back.uid = coh.uid
+      GROUP BY day, rday
     """)
-    out["cohort_today"] = {
-        "on": f"{day[:4]}-{day[4:6]}-{day[6:]}",   # 복귀를 센 날(= 오늘). 대각선 위치를 이걸로 찾는다
-        "rows": [{"day": r["day"], "base": int(r["base"] or 0), "ret": int(r["ret"] or 0),
-                  "pct": round(100 * int(r["ret"] or 0) / int(r["base"]), 1)}
-                 for r in diag if int(r["base"] or 0) > 0],
-    }
+    base_q = q(f"""
+      SELECT FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%Y%m%d', MIN(_TABLE_SUFFIX))) AS d0,
+             COUNT(*) AS base
+      FROM (SELECT user_pseudo_id, MIN(_TABLE_SUFFIX) AS _TABLE_SUFFIX
+            FROM {TABLE}
+            WHERE _TABLE_SUFFIX IN ({cs}) AND event_name='first_open' AND {HAS_GEO}
+            GROUP BY user_pseudo_id)
+      GROUP BY d0
+    """)
+    bases = {r["d0"]: int(r["base"] or 0) for r in base_q}
+    today_s = f"{day[:4]}-{day[4:6]}-{day[6:]}"
+    rows = []
+    for r in prov:
+        b = bases.get(r["day"], 0)
+        if not b:
+            continue
+        rows.append({
+            "day": r["day"], "rday": r["rday"], "base": b, "ret": int(r["ret"] or 0),
+            "pct": round(100 * int(r["ret"] or 0) / b, 1),
+            # 오늘은 아직 안 끝나 더 오른다 → 화면에 + 를 붙인다. 지난 날은 값이 다 찼다.
+            "rising": r["rday"] == today_s,
+        })
+    out["cohort_prov"] = {"today": today_s, "rows": sorted(rows, key=lambda x: (x["day"], x["rday"]))}
 
     # ── 국가별 ─────────────────────────────────────────────────
     # 마케팅은 국가 단위로 돌리는데 퍼널은 전체 하나뿐이라 "어느 시장 설치가 값을 하나"를

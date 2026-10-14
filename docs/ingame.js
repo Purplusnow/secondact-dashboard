@@ -339,8 +339,8 @@
       const res = await fetch(`data/realtime.json?t=${Math.floor(Date.now() / 60000)}`, { cache: 'no-store' });
       if (!res.ok) return;
       const rt = await res.json();
-      if (rt && rt.cohort_today && (rt.cohort_today.rows || []).length) {
-        provisional = rt.cohort_today;
+      if (rt && rt.cohort_prov && (rt.cohort_prov.rows || []).length) {
+        provisional = rt.cohort_prov;
         const host = $('#ig-retention-cohort');
         if (host && host.children.length) renderRetentionCohort(window.__igData || {});
       }
@@ -353,13 +353,13 @@
     const c = d.retention_cohort;
     if (!c || !c.rows || !c.rows.length) { host.innerHTML = '<p class="card-sub">데이터 없음</p>'; return; }
     const N = c.n;
-    // 잠정 칸: d0 → {pct}. 대각선 위치는 (복귀를 센 날 − d0) 로 정해진다.
+    // 잠정 칸: "d0|n" → 값. 확정본이 없는 날이 복귀일인 칸은 여러 개라(보통 1~3개)
+    // 대각선 하나가 아니라 여러 줄이 찬다. 하나만 메우면 가운데가 구멍 난다.
     const prov = {};
     if (provisional) {
-      const on = Date.parse(provisional.on + 'T00:00:00Z');
       for (const r of provisional.rows) {
-        const n = Math.round((on - Date.parse(r.day + 'T00:00:00Z')) / 86400000);
-        if (n >= 1 && n <= N) prov[r.day] = { n, pct: r.pct, ret: r.ret, base: r.base };
+        const n = Math.round((Date.parse(r.rday + 'T00:00:00Z') - Date.parse(r.day + 'T00:00:00Z')) / 86400000);
+        if (n >= 1 && n <= N) prov[r.day + '|' + n] = r;
       }
     }
     // 리텐션 히트맵: 0%→옅은 노랑, 높을수록 주황→빨강(50%에서 포화). null=관측불가(회색).
@@ -376,16 +376,18 @@
     // 최신 코호트가 위로 오도록 역순
     c.rows.slice().reverse().forEach(r => {
       h += `<tr><td class="stick vt-ver">${esc(r.date)}</td><td class="num">${num(r.new)}</td>`;
-      const pv = prov[r.date];
       r.days.forEach((p, i) => {
-        // 확정값이 없고 그 자리가 오늘 대각선이면 잠정값으로 메운다.
-        const isProv = p == null && pv && pv.n === i + 1;
-        const v = isProv ? pv.pct : p;
+        // 확정값이 없으면 스트리밍 값으로 메운다. 복귀일이 오늘인 칸만 아직 오르는 중(+).
+        const pv = p == null ? prov[r.date + '|' + (i + 1)] : null;
+        const v = pv ? pv.pct : p;
         if (v == null) { h += '<td class="num coh-na">·</td>'; return; }
         const lg = 90 - 42 * Math.min(v / 50, 1);
-        const title = isProv ? ` title="잠정 — 오늘이 끝나지 않았습니다. ${pv.ret}/${pv.base}명, 여기서 오르기만 합니다"` : '';
-        h += `<td class="num fcell${isProv ? ' coh-prov' : ''}"${title}`
-          + ` style="background:${heat(v)};color:${lg < 55 ? '#fff' : '#333'}">${v}%${isProv ? '+' : ''}</td>`;
+        const title = pv
+          ? ` title="스트리밍 기준(확정 전) — ${pv.ret}/${pv.base}명`
+            + (pv.rising ? ' · 오늘이 안 끝나 여기서 오르기만 합니다"' : '"')
+          : '';
+        h += `<td class="num fcell${pv ? ' coh-prov' : ''}"${title}`
+          + ` style="background:${heat(v)};color:${lg < 55 ? '#fff' : '#333'}">${v}%${pv && pv.rising ? '+' : ''}</td>`;
       });
       h += '</tr>';
     });
@@ -394,7 +396,7 @@
     const scroll = el('div', 'table-scroll'); scroll.appendChild(tbl);
     host.appendChild(scroll);
     host.appendChild(el('p', 'chart-note', `설치일 코호트 × Day1~D${N} 복귀율 · 셀=그 코호트 중 정확히 n일 뒤 접속 비율 · `
-      + `<b>N%+</b>=오늘이 안 끝나 아직 오르는 중인 잠정값(스트리밍) · 회색(·)=아직 관측 불가 · 최신 설치일이 위`));
+      + `<i>기울임</i>=확정 전 스트리밍 값, <b>+</b>는 오늘이 안 끝나 아직 오르는 중 · 회색(·)=관측 불가 · 최신 설치일이 위`));
   }
 
   // ── 은퇴→환생 퍼널 + 원인 3분할 ───────────────────────────
