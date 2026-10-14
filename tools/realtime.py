@@ -466,13 +466,12 @@ def main() -> None:
       GROUP BY day, rday
     """)
     base_q = q(f"""
-      SELECT FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%Y%m%d', MIN(_TABLE_SUFFIX))) AS d0,
-             COUNT(*) AS base
-      FROM (SELECT user_pseudo_id, MIN(_TABLE_SUFFIX) AS _TABLE_SUFFIX
-            FROM {TABLE}
-            WHERE _TABLE_SUFFIX IN ({cs}) AND event_name='first_open' AND {HAS_GEO}
-            GROUP BY user_pseudo_id)
-      GROUP BY d0
+      SELECT d0, COUNT(*) AS base FROM (
+        SELECT FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%Y%m%d', MIN(_TABLE_SUFFIX))) AS d0
+        FROM {TABLE}
+        WHERE _TABLE_SUFFIX IN ({cs}) AND event_name='first_open' AND {HAS_GEO}
+        GROUP BY user_pseudo_id
+      ) GROUP BY d0
     """)
     bases = {r["d0"]: int(r["base"] or 0) for r in base_q}
     today_s = f"{day[:4]}-{day[4:6]}-{day[6:]}"
