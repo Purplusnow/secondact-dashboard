@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-14 09:21 KST",
+ "updated": "2026-10-14 09:29 KST",
  "stage_labels": [
   {
    "key": "new_game",
@@ -135,13 +135,13 @@
  "tables": [
   {
    "d": "20261014",
-   "users": 591,
-   "events": 22984
+   "users": 597,
+   "events": 23200
   }
  ],
  "day": "20261014",
  "summary": {
-  "users": 591,
+  "users": 597,
   "new_users": 78,
   "first_touch_today": 78,
   "purchases": 0,
@@ -4177,86 +4177,216 @@
    }
   ]
  },
- "cohort_today": {
-  "on": "2026-10-14",
+ "cohort_prov": {
+  "today": "2026-10-14",
   "rows": [
    {
     "day": "2026-09-30",
+    "rday": "2026-10-13",
+    "base": 399,
+    "ret": 35,
+    "pct": 8.8,
+    "rising": false
+   },
+   {
+    "day": "2026-09-30",
+    "rday": "2026-10-14",
     "base": 399,
     "ret": 19,
-    "pct": 4.8
+    "pct": 4.8,
+    "rising": true
    },
    {
     "day": "2026-10-01",
+    "rday": "2026-10-13",
+    "base": 405,
+    "ret": 33,
+    "pct": 8.1,
+    "rising": false
+   },
+   {
+    "day": "2026-10-01",
+    "rday": "2026-10-14",
     "base": 405,
     "ret": 25,
-    "pct": 6.2
+    "pct": 6.2,
+    "rising": true
    },
    {
     "day": "2026-10-02",
+    "rday": "2026-10-13",
+    "base": 342,
+    "ret": 29,
+    "pct": 8.5,
+    "rising": false
+   },
+   {
+    "day": "2026-10-02",
+    "rday": "2026-10-14",
     "base": 342,
     "ret": 15,
-    "pct": 4.4
+    "pct": 4.4,
+    "rising": true
    },
    {
     "day": "2026-10-03",
+    "rday": "2026-10-13",
+    "base": 429,
+    "ret": 38,
+    "pct": 8.9,
+    "rising": false
+   },
+   {
+    "day": "2026-10-03",
+    "rday": "2026-10-14",
     "base": 429,
     "ret": 22,
-    "pct": 5.1
+    "pct": 5.1,
+    "rising": true
    },
    {
     "day": "2026-10-04",
+    "rday": "2026-10-13",
+    "base": 407,
+    "ret": 36,
+    "pct": 8.8,
+    "rising": false
+   },
+   {
+    "day": "2026-10-04",
+    "rday": "2026-10-14",
     "base": 407,
     "ret": 22,
-    "pct": 5.4
+    "pct": 5.4,
+    "rising": true
    },
    {
     "day": "2026-10-05",
+    "rday": "2026-10-13",
+    "base": 354,
+    "ret": 49,
+    "pct": 13.8,
+    "rising": false
+   },
+   {
+    "day": "2026-10-05",
+    "rday": "2026-10-14",
     "base": 354,
     "ret": 28,
-    "pct": 7.9
+    "pct": 7.9,
+    "rising": true
    },
    {
     "day": "2026-10-06",
+    "rday": "2026-10-13",
+    "base": 240,
+    "ret": 28,
+    "pct": 11.7,
+    "rising": false
+   },
+   {
+    "day": "2026-10-06",
+    "rday": "2026-10-14",
     "base": 240,
     "ret": 16,
-    "pct": 6.7
+    "pct": 6.7,
+    "rising": true
    },
    {
     "day": "2026-10-07",
+    "rday": "2026-10-13",
+    "base": 53,
+    "ret": 8,
+    "pct": 15.1,
+    "rising": false
+   },
+   {
+    "day": "2026-10-07",
+    "rday": "2026-10-14",
     "base": 53,
     "ret": 2,
-    "pct": 3.8
+    "pct": 3.8,
+    "rising": true
    },
    {
     "day": "2026-10-08",
+    "rday": "2026-10-13",
     "base": 22,
     "ret": 3,
-    "pct": 13.6
+    "pct": 13.6,
+    "rising": false
+   },
+   {
+    "day": "2026-10-08",
+    "rday": "2026-10-14",
+    "base": 22,
+    "ret": 3,
+    "pct": 13.6,
+    "rising": true
    },
    {
     "day": "2026-10-09",
+    "rday": "2026-10-13",
+    "base": 24,
+    "ret": 3,
+    "pct": 12.5,
+    "rising": false
+   },
+   {
+    "day": "2026-10-09",
+    "rday": "2026-10-14",
     "base": 24,
     "ret": 2,
-    "pct": 8.3
+    "pct": 8.3,
+    "rising": true
    },
    {
     "day": "2026-10-10",
+    "rday": "2026-10-13",
     "base": 17,
     "ret": 1,
-    "pct": 5.9
+    "pct": 5.9,
+    "rising": false
+   },
+   {
+    "day": "2026-10-10",
+    "rday": "2026-10-14",
+    "base": 17,
+    "ret": 1,
+    "pct": 5.9,
+    "rising": true
    },
    {
     "day": "2026-10-11",
+    "rday": "2026-10-13",
+    "base": 23,
+    "ret": 6,
+    "pct": 26.1,
+    "rising": false
+   },
+   {
+    "day": "2026-10-11",
+    "rday": "2026-10-14",
     "base": 23,
     "ret": 2,
-    "pct": 8.7
+    "pct": 8.7,
+    "rising": true
    },
    {
     "day": "2026-10-12",
+    "rday": "2026-10-13",
+    "base": 19,
+    "ret": 3,
+    "pct": 15.8,
+    "rising": false
+   },
+   {
+    "day": "2026-10-12",
+    "rday": "2026-10-14",
     "base": 19,
     "ret": 1,
-    "pct": 5.3
+    "pct": 5.3,
+    "rising": true
    }
   ]
  },
@@ -4606,12 +4736,12 @@
   "dist": [
    {
     "cert": "dc0a72d0f17e769e",
-    "users": 519,
+    "users": 523,
     "ok": true
    },
    {
     "cert": "(미기록)",
-    "users": 71,
+    "users": 73,
     "ok": true
    },
    {
@@ -4633,7 +4763,7 @@
   ]
  },
  "city": {
-  "users": 34,
+  "users": 35,
   "enters": 1,
   "done": 0,
   "steps": [
@@ -4664,11 +4794,11 @@
   ]
  },
  "ads": {
-  "total": 329,
+  "total": 336,
   "by_result": [
    {
     "result": "earned",
-    "n": 281
+    "n": 288
    },
    {
     "result": "dismissed",
@@ -4683,8 +4813,8 @@
     "n": 0
    }
   ],
-  "finish_pct": 96.2,
-  "supply_pct": 11.2,
+  "finish_pct": 96.3,
+  "supply_pct": 11.0,
   "by_country": [
    {
     "country": "India",
@@ -4764,6 +4894,17 @@
     "supply_pct": 17.6
    },
    {
+    "country": "Vietnam",
+    "total": 17,
+    "earned": 16,
+    "dismissed": 1,
+    "no_ad": 0,
+    "failed": 0,
+    "users": 8,
+    "finish_pct": 94.1,
+    "supply_pct": 0.0
+   },
+   {
     "country": "Italy",
     "total": 17,
     "earned": 17,
@@ -4775,6 +4916,17 @@
     "supply_pct": 0.0
    },
    {
+    "country": "Germany",
+    "total": 14,
+    "earned": 13,
+    "dismissed": 1,
+    "no_ad": 0,
+    "failed": 0,
+    "users": 8,
+    "finish_pct": 92.9,
+    "supply_pct": 0.0
+   },
+   {
     "country": "Japan",
     "total": 13,
     "earned": 13,
@@ -4783,28 +4935,6 @@
     "failed": 0,
     "users": 8,
     "finish_pct": 100.0,
-    "supply_pct": 0.0
-   },
-   {
-    "country": "Germany",
-    "total": 13,
-    "earned": 12,
-    "dismissed": 1,
-    "no_ad": 0,
-    "failed": 0,
-    "users": 8,
-    "finish_pct": 92.3,
-    "supply_pct": 0.0
-   },
-   {
-    "country": "Vietnam",
-    "total": 11,
-    "earned": 10,
-    "dismissed": 1,
-    "no_ad": 0,
-    "failed": 0,
-    "users": 6,
-    "finish_pct": 90.9,
     "supply_pct": 0.0
    },
    {
@@ -4854,19 +4984,19 @@
    },
    {
     "placement": "boost",
-    "earned": 95,
+    "earned": 97,
     "dismissed": 9,
     "no_ad": 17,
     "failed": 0,
-    "total": 121
+    "total": 123
    },
    {
     "placement": "gem_ad",
-    "earned": 27,
+    "earned": 32,
     "dismissed": 0,
     "no_ad": 3,
     "failed": 0,
-    "total": 30
+    "total": 35
    },
    {
     "placement": "repair",
@@ -4878,6 +5008,6 @@
    }
   ]
  },
- "scan_mb": 204.0,
- "scan_note": "이번 실행 스캔 204.0MB. 매시간(24회/일)이면 월 143.44GB — 무료 구간은 월 1,024GB."
+ "scan_mb": 285.0,
+ "scan_note": "이번 실행 스캔 285.0MB. 매시간(24회/일)이면 월 200.39GB — 무료 구간은 월 1,024GB."
 }
