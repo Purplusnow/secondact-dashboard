@@ -356,11 +356,19 @@
     // 잠정 칸: "d0|n" → 값. 확정본이 없는 날이 복귀일인 칸은 여러 개라(보통 1~3개)
     // 대각선 하나가 아니라 여러 줄이 찬다. 하나만 메우면 가운데가 구멍 난다.
     const prov = {};
+    let rows = c.rows;
     if (provisional) {
       for (const r of provisional.rows) {
         const n = Math.round((Date.parse(r.rday + 'T00:00:00Z') - Date.parse(r.day + 'T00:00:00Z')) / 86400000);
         if (n >= 1 && n <= N) prov[r.day + '|' + n] = r;
       }
+      // 확정본에 아직 없는 설치일은 **행 자체가** 없다(어제·오늘 가입자). 스트리밍이 보내 준
+      // 코호트 크기로 행을 새로 만들어 붙인다 — 안 그러면 "어제 가입자는 왜 없냐"가 된다.
+      const have = new Set(rows.map(r => r.date));
+      const extra = (provisional.bases || [])
+        .filter(b => !have.has(b.day))
+        .map(b => ({ date: b.day, new: b.base, days: new Array(N).fill(null), prov: true }));
+      if (extra.length) rows = rows.concat(extra).sort((a, b) => a.date < b.date ? -1 : 1);
     }
     // 리텐션 히트맵: 0%→옅은 노랑, 높을수록 주황→빨강(50%에서 포화). null=관측불가(회색).
     const heat = p => {
@@ -374,8 +382,10 @@
     for (let n = 1; n <= N; n++) h += `<th>D${n}</th>`;
     h += '</tr></thead><tbody>';
     // 최신 코호트가 위로 오도록 역순
-    c.rows.slice().reverse().forEach(r => {
-      h += `<tr><td class="stick vt-ver">${esc(r.date)}</td><td class="num">${num(r.new)}</td>`;
+    rows.slice().reverse().forEach(r => {
+      // 신규 수까지 스트리밍에서 온 행은 기울임으로 — 확정되면 숫자가 조금 바뀔 수 있다.
+      h += `<tr><td class="stick vt-ver">${esc(r.date)}</td>`
+        + `<td class="num${r.prov ? ' coh-prov' : ''}">${num(r.new)}</td>`;
       r.days.forEach((p, i) => {
         // 확정값이 없으면 스트리밍 값으로 메운다. 복귀일이 오늘인 칸만 아직 오르는 중(+).
         const pv = p == null ? prov[r.date + '|' + (i + 1)] : null;

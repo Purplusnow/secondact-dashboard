@@ -447,14 +447,20 @@ def main() -> None:
     # GA4 는 그날 확정본이 떨어지면 intraday 를 지운다 — 즉 **남아 있는 intraday 테이블의
     # 집합이 곧 '아직 확정 안 된 날'** 이다. 그래서 그걸 그대로 복귀일 목록으로 쓴다.
     # 오늘(=최신 intraday)만 아직 안 끝나서 더 오르므로, 거기에만 화면에서 + 를 붙인다.
-    cdays = [(_d0 - timedelta(days=i)).strftime("%Y%m%d") for i in range(1, 15)]
-    cs = ", ".join("'" + x + "'" for x in cdays)
+    cdays = [(_d0 - timedelta(days=i)).strftime("%Y%m%d") for i in range(0, 15)]
+    # 확정본과 스트리밍을 **둘 다** 코호트 소스로 쓴다. 확정본만 보면 아직 확정 안 된
+    # 날(10/13·10/14)의 가입자는 행 자체가 안 생겨서, 칸을 메우는 것만으로는 표에 못 나온다.
+    # 접미사가 '20261013' 과 'intraday_20261013' 두 모양이라 날짜로 정규화해서 MIN 한다
+    # (문자열로 MIN 하면 intraday 가 뒤로 밀리고 PARSE_DATE 도 깨진다).
+    SUF_IN = " OR ".join(
+        [f"_TABLE_SUFFIX IN ({', '.join(chr(39) + x + chr(39) for x in cdays)})", INTRADAY_ANY])
+    SUF_DATE = ("PARSE_DATE('%Y%m%d', IF(STARTS_WITH(_TABLE_SUFFIX, 'intraday_'),"
+                " SUBSTR(_TABLE_SUFFIX, 10), _TABLE_SUFFIX))")
     prov = q(f"""
       WITH coh AS (
-        SELECT user_pseudo_id AS uid,
-               FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%Y%m%d', MIN(_TABLE_SUFFIX))) AS d0
+        SELECT user_pseudo_id AS uid, FORMAT_DATE('%Y-%m-%d', MIN({SUF_DATE})) AS d0
         FROM {TABLE}
-        WHERE _TABLE_SUFFIX IN ({cs}) AND event_name='first_open' AND {HAS_GEO}
+        WHERE ({SUF_IN}) AND event_name='first_open' AND {HAS_GEO}
         GROUP BY uid
       ), back AS (
         SELECT DISTINCT user_pseudo_id AS uid,
@@ -467,9 +473,9 @@ def main() -> None:
     """)
     base_q = q(f"""
       SELECT d0, COUNT(*) AS base FROM (
-        SELECT FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%Y%m%d', MIN(_TABLE_SUFFIX))) AS d0
+        SELECT FORMAT_DATE('%Y-%m-%d', MIN({SUF_DATE})) AS d0
         FROM {TABLE}
-        WHERE _TABLE_SUFFIX IN ({cs}) AND event_name='first_open' AND {HAS_GEO}
+        WHERE ({SUF_IN}) AND event_name='first_open' AND {HAS_GEO}
         GROUP BY user_pseudo_id
       ) GROUP BY d0
     """)
@@ -486,7 +492,13 @@ def main() -> None:
             # 오늘은 아직 안 끝나 더 오른다 → 화면에 + 를 붙인다. 지난 날은 값이 다 찼다.
             "rising": r["rday"] == today_s,
         })
-    out["cohort_prov"] = {"today": today_s, "rows": sorted(rows, key=lambda x: (x["day"], x["rday"]))}
+    out["cohort_prov"] = {
+        "today": today_s,
+        "rows": sorted(rows, key=lambda x: (x["day"], x["rday"])),
+        # 코호트 크기도 같이 보낸다. 확정본에 아직 없는 날(오늘·어제)은 **행 자체가** 없어서,
+        # 칸만 메워서는 표에 안 나타난다 — 화면이 이 값으로 행을 새로 만든다.
+        "bases": [{"day": d, "base": b} for d, b in sorted(bases.items()) if b],
+    }
 
     # ── 국가별 ─────────────────────────────────────────────────
     # 마케팅은 국가 단위로 돌리는데 퍼널은 전체 하나뿐이라 "어느 시장 설치가 값을 하나"를
