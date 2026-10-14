@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-14 22:51 KST",
+ "updated": "2026-10-15 00:02 KST",
  "stage_labels": [
   {
    "key": "new_game",
@@ -134,48 +134,48 @@
  ],
  "tables": [
   {
-   "d": "20261014",
-   "users": 999,
-   "events": 60045
+   "d": "20261015",
+   "users": 7,
+   "events": 33
   }
  ],
- "day": "20261014",
+ "day": "20261015",
  "summary": {
-  "users": 989,
-  "new_users": 166,
-  "first_touch_today": 166,
-  "purchases": 2,
+  "users": 7,
+  "new_users": 0,
+  "first_touch_today": 0,
+  "purchases": 0,
   "exceptions": 0,
-  "first_at": "2026-10-14 00:00",
-  "last_at": "2026-10-14 22:51"
+  "first_at": "2026-10-15 00:00",
+  "last_at": "2026-10-15 00:01"
  },
  "users": [
   {
-   "tag": "9559e9",
-   "joined": "22:33",
-   "last_seen": "22:43",
-   "mins": 10.4,
-   "span": 10,
+   "tag": "c371b0",
+   "joined": "10/14 23:59",
+   "last_seen": "00:00",
+   "mins": 0.8,
+   "span": 0,
    "sessions": 1,
    "off": 0,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 50,
+   "events": 21,
    "ver": "1.0 (v977)",
-   "country": "Germany",
+   "country": "Vietnam",
    "reached": [
     1,
     1,
     1,
     1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
     0,
     0,
     0,
@@ -191,12 +191,56 @@
     0,
     0
    ],
-   "far": 11,
-   "far_label": "부동산3"
+   "far": 3,
+   "far_label": "디자인"
+  },
+  {
+   "tag": "9559e9",
+   "joined": "10/14 22:33",
+   "last_seen": "23:43",
+   "mins": 52.0,
+   "span": 70,
+   "sessions": 1,
+   "off": 0,
+   "off_boost": 0,
+   "prog": 0.0,
+   "events": 146,
+   "ver": "1.0 (v977)",
+   "country": "Germany",
+   "reached": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1
+   ],
+   "far": 16,
+   "far_label": "신분2"
   },
   {
    "tag": "6f1231",
-   "joined": "22:32",
+   "joined": "10/14 22:32",
    "last_seen": "22:34",
    "mins": 1.3,
    "span": 1,
@@ -240,7 +284,7 @@
   },
   {
    "tag": "c93b7a",
-   "joined": "22:23",
+   "joined": "10/14 22:23",
    "last_seen": "22:31",
    "mins": 4.8,
    "span": 8,
@@ -284,18 +328,32 @@
   },
   {
    "tag": "a78cd1",
-   "joined": "22:08",
-   "last_seen": "22:08",
-   "mins": 0.0,
-   "span": 0,
+   "joined": "10/14 22:08",
+   "last_seen": "23:10",
+   "mins": 42.8,
+   "span": 62,
    "sessions": 1,
-   "off": 0,
+   "off": 2,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 14,
+   "events": 127,
    "ver": "1.0 (v977)",
    "country": "India",
    "reached": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
     1,
     0,
     0,
@@ -305,30 +363,16 @@
     0,
     0,
     0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    1,
+    1,
     0
    ],
-   "far": 0,
-   "far_label": "새게임"
+   "far": 14,
+   "far_label": "은퇴"
   },
   {
    "tag": "d3c751",
-   "joined": "21:13",
+   "joined": "10/14 21:13",
    "last_seen": "21:50",
    "mins": 22.6,
    "span": 37,
@@ -372,7 +416,7 @@
   },
   {
    "tag": "70672c",
-   "joined": "21:13",
+   "joined": "10/14 21:13",
    "last_seen": "21:16",
    "mins": 1.7,
    "span": 3,
@@ -416,7 +460,7 @@
   },
   {
    "tag": "7a1a82",
-   "joined": "21:03",
+   "joined": "10/14 21:03",
    "last_seen": "21:19",
    "mins": 15.7,
    "span": 16,
@@ -460,7 +504,7 @@
   },
   {
    "tag": "34ff70",
-   "joined": "20:57",
+   "joined": "10/14 20:57",
    "last_seen": "20:58",
    "mins": 0.7,
    "span": 0,
@@ -504,15 +548,15 @@
   },
   {
    "tag": "542785",
-   "joined": "20:52",
-   "last_seen": "21:15",
-   "mins": 14.9,
-   "span": 22,
-   "sessions": 1,
-   "off": 1,
+   "joined": "10/14 20:52",
+   "last_seen": "23:32",
+   "mins": 17.3,
+   "span": 159,
+   "sessions": 2,
+   "off": 3,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 119,
+   "events": 142,
    "ver": "1.0 (v977)",
    "country": "Türkiye",
    "reached": [
@@ -548,7 +592,7 @@
   },
   {
    "tag": "063279",
-   "joined": "20:44",
+   "joined": "10/14 20:44",
    "last_seen": "22:02",
    "mins": 24.6,
    "span": 77,
@@ -592,7 +636,7 @@
   },
   {
    "tag": "b8d0ec",
-   "joined": "20:44",
+   "joined": "10/14 20:44",
    "last_seen": "20:46",
    "mins": 2.0,
    "span": 2,
@@ -636,7 +680,7 @@
   },
   {
    "tag": "e511af",
-   "joined": "20:38",
+   "joined": "10/14 20:38",
    "last_seen": "21:01",
    "mins": 22.7,
    "span": 22,
@@ -680,7 +724,7 @@
   },
   {
    "tag": "fdc4f2",
-   "joined": "20:36",
+   "joined": "10/14 20:36",
    "last_seen": "20:38",
    "mins": 1.7,
    "span": 1,
@@ -724,7 +768,7 @@
   },
   {
    "tag": "e8102c",
-   "joined": "20:33",
+   "joined": "10/14 20:33",
    "last_seen": "22:26",
    "mins": 18.9,
    "span": 112,
@@ -768,7 +812,7 @@
   },
   {
    "tag": "47af65",
-   "joined": "20:26",
+   "joined": "10/14 20:26",
    "last_seen": "20:27",
    "mins": 0.0,
    "span": 1,
@@ -812,7 +856,7 @@
   },
   {
    "tag": "15f493",
-   "joined": "20:22",
+   "joined": "10/14 20:22",
    "last_seen": "20:39",
    "mins": 9.7,
    "span": 17,
@@ -856,15 +900,15 @@
   },
   {
    "tag": "182f18",
-   "joined": "20:22",
-   "last_seen": "22:38",
-   "mins": 135.0,
-   "span": 136,
+   "joined": "10/14 20:22",
+   "last_seen": "23:26",
+   "mins": 153.0,
+   "span": 183,
    "sessions": 1,
    "off": 0,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 203,
+   "events": 223,
    "ver": "1.0 (v977)",
    "country": "India",
    "reached": [
@@ -900,15 +944,15 @@
   },
   {
    "tag": "754db3",
-   "joined": "20:02",
-   "last_seen": "22:14",
-   "mins": 30.5,
-   "span": 132,
+   "joined": "10/14 20:02",
+   "last_seen": "22:15",
+   "mins": 31.8,
+   "span": 133,
    "sessions": 2,
    "off": 3,
    "off_boost": 3,
    "prog": 0.0,
-   "events": 213,
+   "events": 228,
    "ver": "1.0 (v977)",
    "country": "Vietnam",
    "reached": [
@@ -944,7 +988,7 @@
   },
   {
    "tag": "921011",
-   "joined": "19:59",
+   "joined": "10/14 19:59",
    "last_seen": "20:19",
    "mins": 19.8,
    "span": 19,
@@ -988,7 +1032,7 @@
   },
   {
    "tag": "c7e7cc",
-   "joined": "19:57",
+   "joined": "10/14 19:57",
    "last_seen": "20:02",
    "mins": 5.4,
    "span": 5,
@@ -1032,7 +1076,7 @@
   },
   {
    "tag": "9cea7f",
-   "joined": "19:55",
+   "joined": "10/14 19:55",
    "last_seen": "20:00",
    "mins": 5.1,
    "span": 5,
@@ -1076,7 +1120,7 @@
   },
   {
    "tag": "c0c8c6",
-   "joined": "19:54",
+   "joined": "10/14 19:54",
    "last_seen": "20:03",
    "mins": 5.7,
    "span": 9,
@@ -1120,7 +1164,7 @@
   },
   {
    "tag": "1b7698",
-   "joined": "19:53",
+   "joined": "10/14 19:53",
    "last_seen": "20:06",
    "mins": 11.9,
    "span": 12,
@@ -1164,7 +1208,7 @@
   },
   {
    "tag": "eed1e8",
-   "joined": "19:51",
+   "joined": "10/14 19:51",
    "last_seen": "20:08",
    "mins": 16.6,
    "span": 16,
@@ -1208,7 +1252,7 @@
   },
   {
    "tag": "04231c",
-   "joined": "19:51",
+   "joined": "10/14 19:51",
    "last_seen": "19:55",
    "mins": 3.8,
    "span": 4,
@@ -1252,7 +1296,7 @@
   },
   {
    "tag": "ec3312",
-   "joined": "19:49",
+   "joined": "10/14 19:49",
    "last_seen": "20:45",
    "mins": 16.1,
    "span": 56,
@@ -1296,15 +1340,15 @@
   },
   {
    "tag": "029ffc",
-   "joined": "19:48",
-   "last_seen": "20:24",
-   "mins": 14.5,
-   "span": 35,
-   "sessions": 1,
-   "off": 2,
+   "joined": "10/14 19:48",
+   "last_seen": "22:59",
+   "mins": 34.7,
+   "span": 191,
+   "sessions": 3,
+   "off": 5,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 66,
+   "events": 172,
    "ver": "1.0 (v977)",
    "country": "France",
    "reached": [
@@ -1320,27 +1364,27 @@
     1,
     1,
     1,
+    1,
+    1,
+    1,
+    1,
+    1,
     0,
     0,
     0,
     0,
     0,
     0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    1,
+    1,
     0
    ],
-   "far": 11,
-   "far_label": "부동산3"
+   "far": 16,
+   "far_label": "신분2"
   },
   {
    "tag": "a3d582",
-   "joined": "19:43",
+   "joined": "10/14 19:43",
    "last_seen": "19:55",
    "mins": 12.3,
    "span": 12,
@@ -1384,7 +1428,7 @@
   },
   {
    "tag": "e5d26b",
-   "joined": "19:42",
+   "joined": "10/14 19:42",
    "last_seen": "19:55",
    "mins": 13.6,
    "span": 13,
@@ -1428,7 +1472,7 @@
   },
   {
    "tag": "307806",
-   "joined": "19:41",
+   "joined": "10/14 19:41",
    "last_seen": "19:51",
    "mins": 8.9,
    "span": 9,
@@ -1472,15 +1516,15 @@
   },
   {
    "tag": "9f6ba3",
-   "joined": "19:41",
-   "last_seen": "19:56",
-   "mins": 15.7,
-   "span": 15,
-   "sessions": 1,
-   "off": 0,
-   "off_boost": 0,
+   "joined": "10/14 19:41",
+   "last_seen": "23:34",
+   "mins": 24.1,
+   "span": 233,
+   "sessions": 2,
+   "off": 1,
+   "off_boost": 1,
    "prog": 0.0,
-   "events": 75,
+   "events": 121,
    "ver": "1.0 (v977)",
    "country": "Brazil",
    "reached": [
@@ -1499,24 +1543,24 @@
     1,
     1,
     1,
+    1,
+    1,
     0,
     0,
     0,
     0,
     0,
     0,
+    1,
     0,
-    0,
-    0,
-    0,
-    0
+    1
    ],
-   "far": 14,
-   "far_label": "은퇴"
+   "far": 16,
+   "far_label": "신분2"
   },
   {
    "tag": "25945d",
-   "joined": "19:41",
+   "joined": "10/14 19:41",
    "last_seen": "20:09",
    "mins": 28.2,
    "span": 28,
@@ -1560,7 +1604,7 @@
   },
   {
    "tag": "bdd517",
-   "joined": "19:40",
+   "joined": "10/14 19:40",
    "last_seen": "19:47",
    "mins": 6.9,
    "span": 6,
@@ -1604,15 +1648,15 @@
   },
   {
    "tag": "c4c1db",
-   "joined": "19:37",
-   "last_seen": "21:45",
-   "mins": 23.1,
-   "span": 128,
-   "sessions": 2,
-   "off": 5,
+   "joined": "10/14 19:37",
+   "last_seen": "22:50",
+   "mins": 23.9,
+   "span": 193,
+   "sessions": 3,
+   "off": 6,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 134,
+   "events": 144,
    "ver": "1.0 (v977)",
    "country": "Japan",
    "reached": [
@@ -1632,7 +1676,7 @@
     1,
     1,
     1,
-    0,
+    1,
     0,
     0,
     0,
@@ -1643,12 +1687,12 @@
     1,
     0
    ],
-   "far": 15,
-   "far_label": "첫후원"
+   "far": 16,
+   "far_label": "신분2"
   },
   {
    "tag": "0f9241",
-   "joined": "19:36",
+   "joined": "10/14 19:36",
    "last_seen": "20:09",
    "mins": 22.1,
    "span": 32,
@@ -1692,15 +1736,15 @@
   },
   {
    "tag": "4e8aad",
-   "joined": "19:36",
-   "last_seen": "22:51",
-   "mins": 143.2,
-   "span": 194,
+   "joined": "10/14 19:36",
+   "last_seen": "23:04",
+   "mins": 147.6,
+   "span": 208,
    "sessions": 1,
-   "off": 9,
+   "off": 11,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 259,
+   "events": 275,
    "ver": "1.0 (v977)",
    "country": "South Korea",
    "reached": [
@@ -1720,7 +1764,7 @@
     1,
     1,
     1,
-    0,
+    1,
     0,
     0,
     0,
@@ -1731,20 +1775,20 @@
     1,
     1
    ],
-   "far": 15,
-   "far_label": "첫후원"
+   "far": 16,
+   "far_label": "신분2"
   },
   {
    "tag": "34cbd4",
-   "joined": "19:24",
-   "last_seen": "22:40",
+   "joined": "10/14 19:24",
+   "last_seen": "23:03",
    "mins": 12.3,
-   "span": 196,
+   "span": 218,
    "sessions": 3,
    "off": 5,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 106,
+   "events": 107,
    "ver": "1.0 (v977)",
    "country": "India",
    "reached": [
@@ -1780,7 +1824,7 @@
   },
   {
    "tag": "dc172a",
-   "joined": "19:20",
+   "joined": "10/14 19:20",
    "last_seen": "19:20",
    "mins": 0.2,
    "span": 0,
@@ -1824,7 +1868,7 @@
   },
   {
    "tag": "f7aadd",
-   "joined": "18:34",
+   "joined": "10/14 18:34",
    "last_seen": "21:54",
    "mins": 80.0,
    "span": 200,
@@ -1868,7 +1912,7 @@
   },
   {
    "tag": "aa2823",
-   "joined": "18:02",
+   "joined": "10/14 18:02",
    "last_seen": "18:03",
    "mins": 0.1,
    "span": 0,
@@ -1912,7 +1956,7 @@
   },
   {
    "tag": "8eb3ca",
-   "joined": "17:45",
+   "joined": "10/14 17:45",
    "last_seen": "17:52",
    "mins": 6.6,
    "span": 6,
@@ -1956,7 +2000,7 @@
   },
   {
    "tag": "f5be08",
-   "joined": "17:35",
+   "joined": "10/14 17:35",
    "last_seen": "17:57",
    "mins": 22.7,
    "span": 22,
@@ -2000,7 +2044,7 @@
   },
   {
    "tag": "cceff1",
-   "joined": "16:48",
+   "joined": "10/14 16:48",
    "last_seen": "16:54",
    "mins": 4.7,
    "span": 5,
@@ -2044,7 +2088,7 @@
   },
   {
    "tag": "e55dc0",
-   "joined": "16:45",
+   "joined": "10/14 16:45",
    "last_seen": "17:38",
    "mins": 38.3,
    "span": 52,
@@ -2088,7 +2132,7 @@
   },
   {
    "tag": "d28633",
-   "joined": "16:13",
+   "joined": "10/14 16:13",
    "last_seen": "16:14",
    "mins": 0.5,
    "span": 0,
@@ -2132,7 +2176,7 @@
   },
   {
    "tag": "afc306",
-   "joined": "15:08",
+   "joined": "10/14 15:08",
    "last_seen": "16:09",
    "mins": 1.7,
    "span": 60,
@@ -2176,7 +2220,7 @@
   },
   {
    "tag": "73ee62",
-   "joined": "14:58",
+   "joined": "10/14 14:58",
    "last_seen": "15:00",
    "mins": 1.4,
    "span": 1,
@@ -2220,15 +2264,15 @@
   },
   {
    "tag": "1ed85c",
-   "joined": "14:52",
-   "last_seen": "21:37",
+   "joined": "10/14 14:52",
+   "last_seen": "23:07",
    "mins": 92.1,
-   "span": 405,
+   "span": 494,
    "sessions": 3,
    "off": 3,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 160,
+   "events": 161,
    "ver": "1.0 (v977)",
    "country": "United States",
    "reached": [
@@ -2264,7 +2308,7 @@
   },
   {
    "tag": "441fe2",
-   "joined": "13:49",
+   "joined": "10/14 13:49",
    "last_seen": "13:49",
    "mins": 0.0,
    "span": 0,
@@ -2308,7 +2352,7 @@
   },
   {
    "tag": "5c5533",
-   "joined": "13:10",
+   "joined": "10/14 13:10",
    "last_seen": "20:16",
    "mins": 52.7,
    "span": 426,
@@ -2352,7 +2396,7 @@
   },
   {
    "tag": "157bf1",
-   "joined": "13:08",
+   "joined": "10/14 13:08",
    "last_seen": "13:20",
    "mins": 12.6,
    "span": 12,
@@ -2396,7 +2440,7 @@
   },
   {
    "tag": "6dcf78",
-   "joined": "12:45",
+   "joined": "10/14 12:45",
    "last_seen": "18:16",
    "mins": 4.4,
    "span": 330,
@@ -2440,7 +2484,7 @@
   },
   {
    "tag": "103677",
-   "joined": "12:27",
+   "joined": "10/14 12:27",
    "last_seen": "12:28",
    "mins": 1.1,
    "span": 1,
@@ -2484,7 +2528,7 @@
   },
   {
    "tag": "c11465",
-   "joined": "12:25",
+   "joined": "10/14 12:25",
    "last_seen": "19:49",
    "mins": 50.6,
    "span": 443,
@@ -2528,7 +2572,7 @@
   },
   {
    "tag": "c1e253",
-   "joined": "12:25",
+   "joined": "10/14 12:25",
    "last_seen": "12:26",
    "mins": 0.9,
    "span": 1,
@@ -2572,7 +2616,7 @@
   },
   {
    "tag": "25c391",
-   "joined": "12:20",
+   "joined": "10/14 12:20",
    "last_seen": "15:43",
    "mins": 67.9,
    "span": 203,
@@ -2616,7 +2660,7 @@
   },
   {
    "tag": "9d346e",
-   "joined": "12:17",
+   "joined": "10/14 12:17",
    "last_seen": "12:57",
    "mins": 40.4,
    "span": 40,
@@ -2660,7 +2704,7 @@
   },
   {
    "tag": "92aad1",
-   "joined": "12:15",
+   "joined": "10/14 12:15",
    "last_seen": "13:23",
    "mins": 24.5,
    "span": 68,
@@ -2704,61 +2748,17 @@
   },
   {
    "tag": "06134c",
-   "joined": "12:11",
-   "last_seen": "20:01",
-   "mins": 9.0,
-   "span": 470,
-   "sessions": 3,
-   "off": 2,
+   "joined": "10/14 12:11",
+   "last_seen": "23:42",
+   "mins": 13.7,
+   "span": 691,
+   "sessions": 4,
+   "off": 3,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 104,
+   "events": 140,
    "ver": "1.0 (v977)",
    "country": "South Korea",
-   "reached": [
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0
-   ],
-   "far": 14,
-   "far_label": "은퇴"
-  },
-  {
-   "tag": "1b4365",
-   "joined": "12:10",
-   "last_seen": "22:08",
-   "mins": 31.4,
-   "span": 598,
-   "sessions": 3,
-   "off": 2,
-   "off_boost": 2,
-   "prog": 0.0,
-   "events": 135,
-   "ver": "1.0 (v977)",
-   "country": "India",
    "reached": [
     1,
     1,
@@ -2791,8 +2791,52 @@
    "far_label": "신분2"
   },
   {
+   "tag": "1b4365",
+   "joined": "10/14 12:10",
+   "last_seen": "23:34",
+   "mins": 43.0,
+   "span": 684,
+   "sessions": 4,
+   "off": 3,
+   "off_boost": 3,
+   "prog": 0.0,
+   "events": 202,
+   "ver": "1.0 (v977)",
+   "country": "India",
+   "reached": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1
+   ],
+   "far": 16,
+   "far_label": "신분2"
+  },
+  {
    "tag": "6ff0c5",
-   "joined": "12:03",
+   "joined": "10/14 12:03",
    "last_seen": "12:05",
    "mins": 1.4,
    "span": 1,
@@ -2836,7 +2880,7 @@
   },
   {
    "tag": "e5fecd",
-   "joined": "12:00",
+   "joined": "10/14 12:00",
    "last_seen": "22:21",
    "mins": 22.0,
    "span": 621,
@@ -2880,7 +2924,7 @@
   },
   {
    "tag": "92fcd2",
-   "joined": "11:58",
+   "joined": "10/14 11:58",
    "last_seen": "17:07",
    "mins": 149.4,
    "span": 308,
@@ -2924,7 +2968,7 @@
   },
   {
    "tag": "e8e652",
-   "joined": "11:57",
+   "joined": "10/14 11:57",
    "last_seen": "20:43",
    "mins": 30.9,
    "span": 525,
@@ -2968,7 +3012,7 @@
   },
   {
    "tag": "2560d5",
-   "joined": "11:47",
+   "joined": "10/14 11:47",
    "last_seen": "20:52",
    "mins": 19.8,
    "span": 544,
@@ -3012,7 +3056,7 @@
   },
   {
    "tag": "9db9f0",
-   "joined": "11:43",
+   "joined": "10/14 11:43",
    "last_seen": "12:38",
    "mins": 21.8,
    "span": 54,
@@ -3056,7 +3100,7 @@
   },
   {
    "tag": "70f7ca",
-   "joined": "11:35",
+   "joined": "10/14 11:35",
    "last_seen": "11:54",
    "mins": 15.1,
    "span": 19,
@@ -3100,7 +3144,7 @@
   },
   {
    "tag": "725ec7",
-   "joined": "11:30",
+   "joined": "10/14 11:30",
    "last_seen": "11:34",
    "mins": 4.6,
    "span": 4,
@@ -3144,7 +3188,7 @@
   },
   {
    "tag": "50d04e",
-   "joined": "11:26",
+   "joined": "10/14 11:26",
    "last_seen": "11:40",
    "mins": 12.6,
    "span": 14,
@@ -3188,7 +3232,7 @@
   },
   {
    "tag": "b031e0",
-   "joined": "11:23",
+   "joined": "10/14 11:23",
    "last_seen": "11:38",
    "mins": 14.3,
    "span": 14,
@@ -3232,7 +3276,7 @@
   },
   {
    "tag": "ebdcd9",
-   "joined": "11:21",
+   "joined": "10/14 11:21",
    "last_seen": "12:01",
    "mins": 1.0,
    "span": 39,
@@ -3276,7 +3320,7 @@
   },
   {
    "tag": "d7101c",
-   "joined": "11:20",
+   "joined": "10/14 11:20",
    "last_seen": "11:33",
    "mins": 12.6,
    "span": 12,
@@ -3320,7 +3364,7 @@
   },
   {
    "tag": "188226",
-   "joined": "11:13",
+   "joined": "10/14 11:13",
    "last_seen": "11:15",
    "mins": 1.8,
    "span": 1,
@@ -3364,7 +3408,7 @@
   },
   {
    "tag": "7901cd",
-   "joined": "11:04",
+   "joined": "10/14 11:04",
    "last_seen": "11:20",
    "mins": 12.6,
    "span": 15,
@@ -3408,15 +3452,15 @@
   },
   {
    "tag": "4605a9",
-   "joined": "11:04",
-   "last_seen": "21:42",
-   "mins": 61.2,
-   "span": 637,
-   "sessions": 4,
-   "off": 6,
-   "off_boost": 5,
+   "joined": "10/14 11:04",
+   "last_seen": "00:00",
+   "mins": 68.0,
+   "span": 775,
+   "sessions": 5,
+   "off": 8,
+   "off_boost": 6,
    "prog": 0.0,
-   "events": 218,
+   "events": 244,
    "ver": "1.0 (v977)",
    "country": "Guyana",
    "reached": [
@@ -3443,7 +3487,7 @@
     0,
     0,
     0,
-    0,
+    1,
     1,
     1
    ],
@@ -3452,7 +3496,7 @@
   },
   {
    "tag": "a53e48",
-   "joined": "10:59",
+   "joined": "10/14 10:59",
    "last_seen": "11:05",
    "mins": 5.5,
    "span": 5,
@@ -3496,7 +3540,7 @@
   },
   {
    "tag": "14ed20",
-   "joined": "10:59",
+   "joined": "10/14 10:59",
    "last_seen": "11:02",
    "mins": 1.8,
    "span": 2,
@@ -3540,7 +3584,7 @@
   },
   {
    "tag": "aab941",
-   "joined": "10:48",
+   "joined": "10/14 10:48",
    "last_seen": "10:51",
    "mins": 2.1,
    "span": 2,
@@ -3584,7 +3628,7 @@
   },
   {
    "tag": "d74484",
-   "joined": "10:30",
+   "joined": "10/14 10:30",
    "last_seen": "19:39",
    "mins": 29.8,
    "span": 548,
@@ -3628,7 +3672,7 @@
   },
   {
    "tag": "ca8428",
-   "joined": "10:26",
+   "joined": "10/14 10:26",
    "last_seen": "10:32",
    "mins": 3.9,
    "span": 6,
@@ -3672,7 +3716,7 @@
   },
   {
    "tag": "8c2787",
-   "joined": "10:20",
+   "joined": "10/14 10:20",
    "last_seen": "20:16",
    "mins": 167.6,
    "span": 595,
@@ -3716,7 +3760,7 @@
   },
   {
    "tag": "19c54b",
-   "joined": "10:16",
+   "joined": "10/14 10:16",
    "last_seen": "10:16",
    "mins": 0.0,
    "span": 0,
@@ -3760,7 +3804,7 @@
   },
   {
    "tag": "807bd4",
-   "joined": "10:14",
+   "joined": "10/14 10:14",
    "last_seen": "10:28",
    "mins": 13.8,
    "span": 14,
@@ -3804,7 +3848,7 @@
   },
   {
    "tag": "a1acc8",
-   "joined": "09:52",
+   "joined": "10/14 09:52",
    "last_seen": "10:10",
    "mins": 18.3,
    "span": 18,
@@ -3848,7 +3892,7 @@
   },
   {
    "tag": "0e1d61",
-   "joined": "09:42",
+   "joined": "10/14 09:42",
    "last_seen": "09:44",
    "mins": 1.7,
    "span": 2,
@@ -3892,7 +3936,7 @@
   },
   {
    "tag": "a939e7",
-   "joined": "08:48",
+   "joined": "10/14 08:48",
    "last_seen": "08:59",
    "mins": 1.6,
    "span": 10,
@@ -3936,7 +3980,7 @@
   },
   {
    "tag": "d807ed",
-   "joined": "08:17",
+   "joined": "10/14 08:17",
    "last_seen": "08:18",
    "mins": 1.7,
    "span": 1,
@@ -3980,7 +4024,7 @@
   },
   {
    "tag": "44120f",
-   "joined": "07:45",
+   "joined": "10/14 07:45",
    "last_seen": "07:46",
    "mins": 1.4,
    "span": 1,
@@ -4024,15 +4068,15 @@
   },
   {
    "tag": "fb5ee3",
-   "joined": "07:10",
-   "last_seen": "22:19",
-   "mins": 59.1,
-   "span": 909,
-   "sessions": 7,
-   "off": 15,
+   "joined": "10/14 07:10",
+   "last_seen": "23:09",
+   "mins": 59.3,
+   "span": 958,
+   "sessions": 8,
+   "off": 16,
    "off_boost": 1,
-   "prog": 0.0,
-   "events": 391,
+   "prog": 0.1,
+   "events": 400,
    "ver": "1.0 (v977)",
    "country": "Colombia",
    "reached": [
@@ -4068,7 +4112,7 @@
   },
   {
    "tag": "3cc2a2",
-   "joined": "06:26",
+   "joined": "10/14 06:26",
    "last_seen": "06:26",
    "mins": 0.5,
    "span": 0,
@@ -4112,7 +4156,7 @@
   },
   {
    "tag": "44acc5",
-   "joined": "06:23",
+   "joined": "10/14 06:23",
    "last_seen": "08:11",
    "mins": 105.3,
    "span": 107,
@@ -4156,7 +4200,7 @@
   },
   {
    "tag": "071000",
-   "joined": "06:11",
+   "joined": "10/14 06:11",
    "last_seen": "12:54",
    "mins": 45.4,
    "span": 403,
@@ -4200,7 +4244,7 @@
   },
   {
    "tag": "55c097",
-   "joined": "05:41",
+   "joined": "10/14 05:41",
    "last_seen": "21:44",
    "mins": 61.1,
    "span": 963,
@@ -4244,7 +4288,7 @@
   },
   {
    "tag": "0a41a7",
-   "joined": "05:03",
+   "joined": "10/14 05:03",
    "last_seen": "17:05",
    "mins": 12.6,
    "span": 722,
@@ -4288,7 +4332,7 @@
   },
   {
    "tag": "2b320d",
-   "joined": "04:59",
+   "joined": "10/14 04:59",
    "last_seen": "05:26",
    "mins": 20.7,
    "span": 26,
@@ -4332,7 +4376,7 @@
   },
   {
    "tag": "4caddd",
-   "joined": "04:54",
+   "joined": "10/14 04:54",
    "last_seen": "05:04",
    "mins": 10.4,
    "span": 10,
@@ -4376,7 +4420,7 @@
   },
   {
    "tag": "cc7e6f",
-   "joined": "04:51",
+   "joined": "10/14 04:51",
    "last_seen": "20:25",
    "mins": 261.9,
    "span": 933,
@@ -4420,7 +4464,7 @@
   },
   {
    "tag": "f9a92c",
-   "joined": "04:50",
+   "joined": "10/14 04:50",
    "last_seen": "05:04",
    "mins": 1.7,
    "span": 13,
@@ -4464,7 +4508,7 @@
   },
   {
    "tag": "be9d95",
-   "joined": "04:33",
+   "joined": "10/14 04:33",
    "last_seen": "21:28",
    "mins": 40.6,
    "span": 1014,
@@ -4508,7 +4552,7 @@
   },
   {
    "tag": "594c21",
-   "joined": "04:18",
+   "joined": "10/14 04:18",
    "last_seen": "04:23",
    "mins": 4.6,
    "span": 4,
@@ -4552,7 +4596,7 @@
   },
   {
    "tag": "98df53",
-   "joined": "04:00",
+   "joined": "10/14 04:00",
    "last_seen": "21:52",
    "mins": 74.3,
    "span": 1071,
@@ -4596,7 +4640,7 @@
   },
   {
    "tag": "51b6d4",
-   "joined": "03:51",
+   "joined": "10/14 03:51",
    "last_seen": "16:37",
    "mins": 305.3,
    "span": 766,
@@ -4640,7 +4684,7 @@
   },
   {
    "tag": "c426fd",
-   "joined": "03:47",
+   "joined": "10/14 03:47",
    "last_seen": "04:06",
    "mins": 11.5,
    "span": 18,
@@ -4684,7 +4728,7 @@
   },
   {
    "tag": "4b79a2",
-   "joined": "03:42",
+   "joined": "10/14 03:42",
    "last_seen": "14:18",
    "mins": 1.2,
    "span": 635,
@@ -4728,7 +4772,7 @@
   },
   {
    "tag": "04f8ea",
-   "joined": "03:34",
+   "joined": "10/14 03:34",
    "last_seen": "19:51",
    "mins": 17.3,
    "span": 976,
@@ -4772,7 +4816,7 @@
   },
   {
    "tag": "9a7034",
-   "joined": "03:24",
+   "joined": "10/14 03:24",
    "last_seen": "06:33",
    "mins": 105.7,
    "span": 189,
@@ -4816,7 +4860,7 @@
   },
   {
    "tag": "1f7877",
-   "joined": "03:06",
+   "joined": "10/14 03:06",
    "last_seen": "03:07",
    "mins": 1.1,
    "span": 1,
@@ -4860,15 +4904,15 @@
   },
   {
    "tag": "7c8442",
-   "joined": "03:02",
-   "last_seen": "21:30",
-   "mins": 44.3,
-   "span": 1108,
-   "sessions": 4,
+   "joined": "10/14 03:02",
+   "last_seen": "22:52",
+   "mins": 44.5,
+   "span": 1190,
+   "sessions": 5,
    "off": 3,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 188,
+   "events": 191,
    "ver": "1.0 (v977)",
    "country": "India",
    "reached": [
@@ -4904,7 +4948,7 @@
   },
   {
    "tag": "2d3fef",
-   "joined": "02:52",
+   "joined": "10/14 02:52",
    "last_seen": "03:33",
    "mins": 14.9,
    "span": 40,
@@ -4948,7 +4992,7 @@
   },
   {
    "tag": "92f4bb",
-   "joined": "02:52",
+   "joined": "10/14 02:52",
    "last_seen": "02:58",
    "mins": 0.0,
    "span": 6,
@@ -4992,7 +5036,7 @@
   },
   {
    "tag": "b28060",
-   "joined": "02:49",
+   "joined": "10/14 02:49",
    "last_seen": "03:33",
    "mins": 37.9,
    "span": 43,
@@ -5036,7 +5080,7 @@
   },
   {
    "tag": "70e15c",
-   "joined": "02:44",
+   "joined": "10/14 02:44",
    "last_seen": "03:08",
    "mins": 4.6,
    "span": 24,
@@ -5080,15 +5124,15 @@
   },
   {
    "tag": "11884f",
-   "joined": "02:42",
-   "last_seen": "18:59",
-   "mins": 32.1,
-   "span": 977,
-   "sessions": 5,
-   "off": 9,
-   "off_boost": 2,
-   "prog": 1.1,
-   "events": 218,
+   "joined": "10/14 02:42",
+   "last_seen": "23:20",
+   "mins": 35.7,
+   "span": 1238,
+   "sessions": 6,
+   "off": 10,
+   "off_boost": 3,
+   "prog": 3.2,
+   "events": 294,
    "ver": "1.0 (v977)",
    "country": "France",
    "reached": [
@@ -5113,18 +5157,18 @@
     1,
     1,
     1,
-    0,
-    0,
+    1,
+    1,
     1,
     1,
     1
    ],
-   "far": 20,
-   "far_label": "신분6"
+   "far": 22,
+   "far_label": "첫환생"
   },
   {
    "tag": "f5795a",
-   "joined": "02:41",
+   "joined": "10/14 02:41",
    "last_seen": "02:41",
    "mins": 0.0,
    "span": 0,
@@ -5168,7 +5212,7 @@
   },
   {
    "tag": "3e2d4a",
-   "joined": "02:40",
+   "joined": "10/14 02:40",
    "last_seen": "11:38",
    "mins": 18.3,
    "span": 537,
@@ -5212,7 +5256,7 @@
   },
   {
    "tag": "ea4386",
-   "joined": "02:40",
+   "joined": "10/14 02:40",
    "last_seen": "03:05",
    "mins": 24.7,
    "span": 25,
@@ -5256,15 +5300,15 @@
   },
   {
    "tag": "ef5c3d",
-   "joined": "02:27",
-   "last_seen": "21:19",
-   "mins": 150.0,
-   "span": 1132,
-   "sessions": 9,
-   "off": 16,
+   "joined": "10/14 02:27",
+   "last_seen": "23:08",
+   "mins": 151.3,
+   "span": 1240,
+   "sessions": 11,
+   "off": 18,
    "off_boost": 0,
-   "prog": 0.5,
-   "events": 279,
+   "prog": 1.1,
+   "events": 301,
    "ver": "1.0 (v977)",
    "country": "Japan",
    "reached": [
@@ -5288,19 +5332,19 @@
     1,
     1,
     1,
-    0,
+    1,
     0,
     0,
     1,
     1,
     1
    ],
-   "far": 19,
-   "far_label": "신분5"
+   "far": 20,
+   "far_label": "신분6"
   },
   {
    "tag": "b8657d",
-   "joined": "02:26",
+   "joined": "10/14 02:26",
    "last_seen": "02:28",
    "mins": 1.0,
    "span": 1,
@@ -5344,7 +5388,7 @@
   },
   {
    "tag": "b87ff2",
-   "joined": "02:25",
+   "joined": "10/14 02:25",
    "last_seen": "03:15",
    "mins": 20.5,
    "span": 49,
@@ -5388,7 +5432,7 @@
   },
   {
    "tag": "dc852f",
-   "joined": "02:23",
+   "joined": "10/14 02:23",
    "last_seen": "21:13",
    "mins": 50.2,
    "span": 1129,
@@ -5432,7 +5476,7 @@
   },
   {
    "tag": "6cc916",
-   "joined": "02:21",
+   "joined": "10/14 02:21",
    "last_seen": "09:47",
    "mins": 13.8,
    "span": 446,
@@ -5476,7 +5520,7 @@
   },
   {
    "tag": "d892f1",
-   "joined": "02:17",
+   "joined": "10/14 02:17",
    "last_seen": "02:19",
    "mins": 1.7,
    "span": 1,
@@ -5520,15 +5564,15 @@
   },
   {
    "tag": "dca1bc",
-   "joined": "02:16",
-   "last_seen": "17:08",
-   "mins": 3.0,
-   "span": 892,
-   "sessions": 4,
+   "joined": "10/14 02:16",
+   "last_seen": "21:47",
+   "mins": 3.5,
+   "span": 1170,
+   "sessions": 6,
    "off": 0,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 64,
+   "events": 70,
    "ver": "1.0 (v977)",
    "country": "Thailand",
    "reached": [
@@ -5564,7 +5608,7 @@
   },
   {
    "tag": "91c808",
-   "joined": "02:16",
+   "joined": "10/14 02:16",
    "last_seen": "02:23",
    "mins": 5.8,
    "span": 7,
@@ -5608,7 +5652,7 @@
   },
   {
    "tag": "1a54de",
-   "joined": "02:15",
+   "joined": "10/14 02:15",
    "last_seen": "02:16",
    "mins": 0.9,
    "span": 1,
@@ -5652,7 +5696,7 @@
   },
   {
    "tag": "986fb1",
-   "joined": "02:10",
+   "joined": "10/14 02:10",
    "last_seen": "02:13",
    "mins": 1.6,
    "span": 2,
@@ -5696,7 +5740,7 @@
   },
   {
    "tag": "588fa5",
-   "joined": "02:09",
+   "joined": "10/14 02:09",
    "last_seen": "02:17",
    "mins": 6.3,
    "span": 7,
@@ -5740,7 +5784,7 @@
   },
   {
    "tag": "45cb80",
-   "joined": "02:09",
+   "joined": "10/14 02:09",
    "last_seen": "10:04",
    "mins": 25.1,
    "span": 474,
@@ -5784,7 +5828,7 @@
   },
   {
    "tag": "239945",
-   "joined": "02:04",
+   "joined": "10/14 02:04",
    "last_seen": "02:05",
    "mins": 1.5,
    "span": 1,
@@ -5828,7 +5872,7 @@
   },
   {
    "tag": "05b903",
-   "joined": "01:49",
+   "joined": "10/14 01:49",
    "last_seen": "01:51",
    "mins": 1.6,
    "span": 1,
@@ -5872,15 +5916,15 @@
   },
   {
    "tag": "673188",
-   "joined": "01:47",
-   "last_seen": "22:43",
-   "mins": 82.3,
-   "span": 1255,
+   "joined": "10/14 01:47",
+   "last_seen": "22:45",
+   "mins": 83.9,
+   "span": 1257,
    "sessions": 9,
-   "off": 9,
-   "off_boost": 6,
+   "off": 10,
+   "off_boost": 7,
    "prog": 3.2,
-   "events": 452,
+   "events": 471,
    "ver": "1.0 (v977)",
    "country": "Türkiye",
    "reached": [
@@ -5916,15 +5960,15 @@
   },
   {
    "tag": "d89a25",
-   "joined": "01:44",
-   "last_seen": "22:41",
-   "mins": 91.8,
-   "span": 1256,
+   "joined": "10/14 01:44",
+   "last_seen": "22:48",
+   "mins": 93.5,
+   "span": 1263,
    "sessions": 8,
-   "off": 28,
+   "off": 29,
    "off_boost": 0,
    "prog": 3.2,
-   "events": 561,
+   "events": 571,
    "ver": "1.0 (v977)",
    "country": "Colombia",
    "reached": [
@@ -5960,7 +6004,7 @@
   },
   {
    "tag": "d1c538",
-   "joined": "01:44",
+   "joined": "10/14 01:44",
    "last_seen": "02:10",
    "mins": 23.2,
    "span": 26,
@@ -6004,7 +6048,7 @@
   },
   {
    "tag": "d302d7",
-   "joined": "01:40",
+   "joined": "10/14 01:40",
    "last_seen": "01:48",
    "mins": 2.2,
    "span": 8,
@@ -6048,7 +6092,7 @@
   },
   {
    "tag": "954c33",
-   "joined": "01:38",
+   "joined": "10/14 01:38",
    "last_seen": "01:40",
    "mins": 0.0,
    "span": 1,
@@ -6092,7 +6136,7 @@
   },
   {
    "tag": "c1a421",
-   "joined": "01:37",
+   "joined": "10/14 01:37",
    "last_seen": "02:12",
    "mins": 22.5,
    "span": 35,
@@ -6135,8 +6179,52 @@
    "far_label": "신분2"
   },
   {
+   "tag": "3b41f1",
+   "joined": "10/14 01:36",
+   "last_seen": "23:54",
+   "mins": 14.9,
+   "span": 1337,
+   "sessions": 3,
+   "off": 4,
+   "off_boost": 0,
+   "prog": 0.0,
+   "events": 77,
+   "ver": "1.0 (v977)",
+   "country": "Canada",
+   "reached": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "far": 11,
+   "far_label": "부동산3"
+  },
+  {
    "tag": "710fe4",
-   "joined": "01:32",
+   "joined": "10/14 01:32",
    "last_seen": "19:20",
    "mins": 125.6,
    "span": 1068,
@@ -6180,15 +6268,15 @@
   },
   {
    "tag": "16e235",
-   "joined": "01:32",
-   "last_seen": "21:53",
-   "mins": 34.5,
-   "span": 1221,
-   "sessions": 5,
-   "off": 7,
+   "joined": "10/14 01:32",
+   "last_seen": "23:26",
+   "mins": 42.2,
+   "span": 1314,
+   "sessions": 6,
+   "off": 10,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 156,
+   "events": 212,
    "ver": "1.0 (v977)",
    "country": "India",
    "reached": [
@@ -6224,7 +6312,7 @@
   },
   {
    "tag": "0b3b05",
-   "joined": "01:31",
+   "joined": "10/14 01:31",
    "last_seen": "02:47",
    "mins": 42.6,
    "span": 75,
@@ -6268,7 +6356,7 @@
   },
   {
    "tag": "056d80",
-   "joined": "01:28",
+   "joined": "10/14 01:28",
    "last_seen": "02:33",
    "mins": 24.2,
    "span": 64,
@@ -6312,7 +6400,7 @@
   },
   {
    "tag": "84d1d3",
-   "joined": "01:24",
+   "joined": "10/14 01:24",
    "last_seen": "01:37",
    "mins": 12.6,
    "span": 12,
@@ -6356,7 +6444,7 @@
   },
   {
    "tag": "b88b14",
-   "joined": "01:21",
+   "joined": "10/14 01:21",
    "last_seen": "01:23",
    "mins": 1.7,
    "span": 1,
@@ -6400,7 +6488,7 @@
   },
   {
    "tag": "43c18d",
-   "joined": "01:20",
+   "joined": "10/14 01:20",
    "last_seen": "01:48",
    "mins": 27.6,
    "span": 27,
@@ -6444,7 +6532,7 @@
   },
   {
    "tag": "140e7a",
-   "joined": "01:19",
+   "joined": "10/14 01:19",
    "last_seen": "03:04",
    "mins": 4.2,
    "span": 105,
@@ -6488,7 +6576,7 @@
   },
   {
    "tag": "c835f7",
-   "joined": "01:15",
+   "joined": "10/14 01:15",
    "last_seen": "17:05",
    "mins": 3.8,
    "span": 950,
@@ -6532,7 +6620,7 @@
   },
   {
    "tag": "b66eb7",
-   "joined": "01:13",
+   "joined": "10/14 01:13",
    "last_seen": "01:44",
    "mins": 27.2,
    "span": 30,
@@ -6576,7 +6664,7 @@
   },
   {
    "tag": "09c484",
-   "joined": "01:11",
+   "joined": "10/14 01:11",
    "last_seen": "01:13",
    "mins": 1.7,
    "span": 1,
@@ -6620,7 +6708,7 @@
   },
   {
    "tag": "2147af",
-   "joined": "01:10",
+   "joined": "10/14 01:10",
    "last_seen": "19:59",
    "mins": 208.6,
    "span": 1129,
@@ -6664,7 +6752,7 @@
   },
   {
    "tag": "25a181",
-   "joined": "01:10",
+   "joined": "10/14 01:10",
    "last_seen": "01:10",
    "mins": 0.8,
    "span": 0,
@@ -6708,7 +6796,7 @@
   },
   {
    "tag": "337dbe",
-   "joined": "01:08",
+   "joined": "10/14 01:08",
    "last_seen": "09:20",
    "mins": 0.0,
    "span": 492,
@@ -6752,7 +6840,7 @@
   },
   {
    "tag": "601a5c",
-   "joined": "01:02",
+   "joined": "10/14 01:02",
    "last_seen": "01:07",
    "mins": 4.9,
    "span": 5,
@@ -6796,15 +6884,15 @@
   },
   {
    "tag": "c49913",
-   "joined": "00:57",
-   "last_seen": "16:44",
-   "mins": 87.8,
-   "span": 947,
-   "sessions": 3,
-   "off": 5,
+   "joined": "10/14 00:57",
+   "last_seen": "23:50",
+   "mins": 98.4,
+   "span": 1373,
+   "sessions": 4,
+   "off": 8,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 322,
+   "events": 368,
    "ver": "1.0 (v977)",
    "country": "India",
    "reached": [
@@ -6831,7 +6919,7 @@
     0,
     0,
     0,
-    0,
+    1,
     1,
     1
    ],
@@ -6840,7 +6928,7 @@
   },
   {
    "tag": "c76287",
-   "joined": "00:56",
+   "joined": "10/14 00:56",
    "last_seen": "00:58",
    "mins": 1.0,
    "span": 1,
@@ -6884,7 +6972,7 @@
   },
   {
    "tag": "c5bb30",
-   "joined": "00:56",
+   "joined": "10/14 00:56",
    "last_seen": "01:35",
    "mins": 39.1,
    "span": 39,
@@ -6928,7 +7016,7 @@
   },
   {
    "tag": "5bb0f2",
-   "joined": "00:52",
+   "joined": "10/14 00:52",
    "last_seen": "00:56",
    "mins": 4.8,
    "span": 4,
@@ -6972,7 +7060,7 @@
   },
   {
    "tag": "533392",
-   "joined": "00:45",
+   "joined": "10/14 00:45",
    "last_seen": "00:58",
    "mins": 12.7,
    "span": 12,
@@ -7016,15 +7104,15 @@
   },
   {
    "tag": "ce9ba7",
-   "joined": "00:43",
-   "last_seen": "20:08",
-   "mins": 55.1,
-   "span": 1164,
-   "sessions": 4,
-   "off": 5,
-   "off_boost": 1,
-   "prog": 0.0,
-   "events": 168,
+   "joined": "10/14 00:43",
+   "last_seen": "23:54",
+   "mins": 61.0,
+   "span": 1390,
+   "sessions": 5,
+   "off": 6,
+   "off_boost": 2,
+   "prog": 0.2,
+   "events": 213,
    "ver": "1.0 (v977)",
    "country": "India",
    "reached": [
@@ -7045,30 +7133,30 @@
     1,
     1,
     1,
-    0,
-    0,
-    0,
+    1,
+    1,
     0,
     0,
     0,
     0,
     1,
+    1,
     1
    ],
-   "far": 16,
-   "far_label": "신분2"
+   "far": 18,
+   "far_label": "신분4"
   },
   {
    "tag": "cccc29",
-   "joined": "00:41",
-   "last_seen": "22:36",
-   "mins": 43.3,
-   "span": 1314,
+   "joined": "10/14 00:41",
+   "last_seen": "23:06",
+   "mins": 43.8,
+   "span": 1344,
    "sessions": 10,
-   "off": 13,
+   "off": 14,
    "off_boost": 0,
-   "prog": 0.2,
-   "events": 287,
+   "prog": 0.3,
+   "events": 295,
    "ver": "1.0 (v977)",
    "country": "India",
    "reached": [
@@ -7104,15 +7192,15 @@
   },
   {
    "tag": "f828ab",
-   "joined": "00:35",
-   "last_seen": "21:16",
-   "mins": 183.3,
-   "span": 1240,
-   "sessions": 7,
-   "off": 7,
-   "off_boost": 1,
-   "prog": 1.1,
-   "events": 249,
+   "joined": "10/14 00:35",
+   "last_seen": "23:58",
+   "mins": 196.5,
+   "span": 1402,
+   "sessions": 9,
+   "off": 9,
+   "off_boost": 3,
+   "prog": 3.2,
+   "events": 354,
    "ver": "1.0 (v977)",
    "country": "Malaysia",
    "reached": [
@@ -7137,168 +7225,168 @@
     1,
     1,
     1,
-    0,
-    0,
+    1,
+    1,
     1,
     0,
     1
    ],
-   "far": 20,
-   "far_label": "신분6"
+   "far": 22,
+   "far_label": "첫환생"
   }
  ],
- "stay60": 139,
+ "stay60": 141,
  "funnel": [
   {
    "key": "new_game",
    "label": "새게임",
-   "n": 158,
-   "rec": 157,
+   "n": 160,
+   "rec": 159,
    "pct": 99.4,
    "kind": "spine"
   },
   {
    "key": "intro_done",
    "label": "인트로",
-   "n": 153,
-   "rec": 151,
-   "pct": 96.2,
+   "n": 156,
+   "rec": 154,
+   "pct": 96.9,
    "kind": "spine"
   },
   {
    "key": "dev_concept",
    "label": "기획",
-   "n": 147,
-   "rec": 147,
-   "pct": 92.5,
+   "n": 150,
+   "rec": 150,
+   "pct": 93.2,
    "kind": "spine"
   },
   {
    "key": "dev_design",
    "label": "디자인",
-   "n": 141,
-   "rec": 141,
-   "pct": 88.7,
+   "n": 144,
+   "rec": 144,
+   "pct": 89.4,
    "kind": "spine"
   },
   {
    "key": "dev_prototype",
    "label": "프로토",
-   "n": 129,
-   "rec": 129,
-   "pct": 81.1,
+   "n": 131,
+   "rec": 131,
+   "pct": 81.4,
    "kind": "spine"
   },
   {
    "key": "dev_alpha",
    "label": "알파",
-   "n": 120,
-   "rec": 120,
-   "pct": 75.5,
+   "n": 122,
+   "rec": 122,
+   "pct": 75.8,
    "kind": "spine"
   },
   {
    "key": "dev_beta",
    "label": "베타",
-   "n": 113,
-   "rec": 113,
-   "pct": 71.1,
+   "n": 115,
+   "rec": 115,
+   "pct": 71.4,
    "kind": "spine"
   },
   {
    "key": "dev_launch",
    "label": "출시",
-   "n": 111,
-   "rec": 111,
-   "pct": 69.8,
+   "n": 113,
+   "rec": 113,
+   "pct": 70.2,
    "kind": "spine"
   },
   {
    "key": "first_ops",
    "label": "첫운영",
-   "n": 110,
-   "rec": 108,
-   "pct": 69.2,
+   "n": 112,
+   "rec": 110,
+   "pct": 69.6,
    "kind": "spine"
   },
   {
    "key": "property_1",
    "label": "부동산1",
-   "n": 110,
-   "rec": 110,
-   "pct": 69.2,
+   "n": 112,
+   "rec": 112,
+   "pct": 69.6,
    "kind": "spine"
   },
   {
    "key": "property_2",
    "label": "부동산2",
-   "n": 95,
-   "rec": 95,
-   "pct": 59.7,
+   "n": 97,
+   "rec": 97,
+   "pct": 60.2,
    "kind": "spine"
   },
   {
    "key": "property_3",
    "label": "부동산3",
-   "n": 88,
-   "rec": 87,
-   "pct": 55.3,
+   "n": 90,
+   "rec": 89,
+   "pct": 55.9,
    "kind": "spine"
   },
   {
    "key": "property_4",
    "label": "부동산4",
-   "n": 84,
-   "rec": 83,
-   "pct": 52.8,
+   "n": 87,
+   "rec": 86,
+   "pct": 54.0,
    "kind": "spine"
   },
   {
    "key": "property_5",
    "label": "부동산5",
-   "n": 81,
-   "rec": 80,
-   "pct": 50.9,
+   "n": 84,
+   "rec": 83,
+   "pct": 52.2,
    "kind": "spine"
   },
   {
    "key": "game_sale",
    "label": "은퇴",
-   "n": 81,
-   "rec": 80,
-   "pct": 50.9,
+   "n": 84,
+   "rec": 83,
+   "pct": 52.2,
    "kind": "spine"
   },
   {
    "key": "first_donate",
    "label": "첫후원",
-   "n": 46,
-   "rec": 46,
-   "pct": 28.9,
+   "n": 50,
+   "rec": 50,
+   "pct": 31.1,
    "kind": "spine"
   },
   {
    "key": "class2",
    "label": "신분2",
-   "n": 42,
-   "rec": 42,
-   "pct": 26.4,
+   "n": 48,
+   "rec": 48,
+   "pct": 29.8,
    "kind": "spine"
   },
   {
    "key": "class3",
    "label": "신분3",
-   "n": 13,
-   "rec": 13,
-   "pct": 8.2,
+   "n": 14,
+   "rec": 14,
+   "pct": 8.7,
    "kind": "spine"
   },
   {
    "key": "class4",
    "label": "신분4",
-   "n": 9,
-   "rec": 9,
-   "pct": 5.7,
+   "n": 10,
+   "rec": 10,
+   "pct": 6.2,
    "kind": "spine"
   },
   {
@@ -7306,61 +7394,61 @@
    "label": "신분5",
    "n": 7,
    "rec": 7,
-   "pct": 4.4,
+   "pct": 4.3,
    "kind": "spine"
   },
   {
    "key": "class6",
    "label": "신분6",
-   "n": 6,
-   "rec": 6,
-   "pct": 3.8,
+   "n": 7,
+   "rec": 7,
+   "pct": 4.3,
    "kind": "spine"
   },
   {
    "key": "class7",
    "label": "신분7",
-   "n": 4,
-   "rec": 4,
-   "pct": 2.5,
+   "n": 6,
+   "rec": 6,
+   "pct": 3.7,
    "kind": "spine"
   },
   {
    "key": "first_rebirth",
    "label": "첫환생",
-   "n": 4,
-   "rec": 4,
-   "pct": 2.5,
+   "n": 6,
+   "rec": 6,
+   "pct": 3.7,
    "kind": "spine"
   },
   {
    "key": "first_manager",
    "label": "첫매니저",
-   "n": 58,
-   "rec": 58,
-   "pct": 36.5,
+   "n": 65,
+   "rec": 65,
+   "pct": 40.4,
    "kind": "side"
   },
   {
    "key": "first_finance",
    "label": "첫금융",
-   "n": 70,
-   "rec": 70,
-   "pct": 44.0,
+   "n": 73,
+   "rec": 73,
+   "pct": 45.3,
    "kind": "side"
   },
   {
    "key": "first_ad",
    "label": "첫광고",
-   "n": 40,
-   "rec": 40,
-   "pct": 25.2,
+   "n": 43,
+   "rec": 43,
+   "pct": 26.7,
    "kind": "side"
   }
  ],
- "cohort_n": 159,
+ "cohort_n": 161,
  "excluded_nogeo": 10,
- "excluded_build": 7,
+ "excluded_build": 6,
  "newest_build": "1.0 (v977)",
  "versions": {
   "live": [
@@ -7369,12 +7457,12 @@
   "rows": [
    {
     "ver": "1.0 (v977)",
-    "n": 159,
+    "n": 161,
     "live": true
    },
    {
     "ver": "1.0 (v971)",
-    "n": 3,
+    "n": 2,
     "live": false
    },
    {
@@ -7395,15 +7483,15 @@
   ]
  },
  "d1_live": {
-  "base": 58,
-  "ret": 9,
-  "pct": 15.5,
+  "base": 42,
+  "ret": 7,
+  "pct": 16.7,
   "rows": [
    {
     "ver": "1.0 (v971)",
-    "base": 34,
-    "ret": 7,
-    "pct": 20.6
+    "base": 20,
+    "ret": 5,
+    "pct": 25.0
    },
    {
     "ver": "1.0 (v973)",
@@ -7413,18 +7501,12 @@
    },
    {
     "ver": "1.0 (v976)",
-    "base": 5,
+    "base": 6,
     "ret": 1,
-    "pct": 20.0
+    "pct": 16.7
    }
   ],
   "by_day": [
-   {
-    "day": "2026-10-10",
-    "base": 17,
-    "ret": 2,
-    "pct": 11.8
-   },
    {
     "day": "2026-10-11",
     "base": 23,
@@ -7433,37 +7515,37 @@
    },
    {
     "day": "2026-10-12",
-    "base": 18,
+    "base": 19,
     "ret": 2,
-    "pct": 11.1
+    "pct": 10.5
    }
   ]
  },
  "cohort_prov": {
-  "today": "2026-10-14",
+  "today": "2026-10-15",
   "rows": [
-   {
-    "day": "2026-09-30",
-    "rday": "2026-10-14",
-    "base": 399,
-    "ret": 26,
-    "pct": 6.5,
-    "rising": true
-   },
    {
     "day": "2026-10-01",
     "rday": "2026-10-14",
     "base": 405,
     "ret": 33,
     "pct": 8.1,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-02",
     "rday": "2026-10-14",
     "base": 342,
-    "ret": 29,
-    "pct": 8.5,
+    "ret": 30,
+    "pct": 8.8,
+    "rising": false
+   },
+   {
+    "day": "2026-10-02",
+    "rday": "2026-10-15",
+    "base": 342,
+    "ret": 1,
+    "pct": 0.3,
     "rising": true
    },
    {
@@ -7472,15 +7554,15 @@
     "base": 429,
     "ret": 33,
     "pct": 7.7,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-04",
     "rday": "2026-10-14",
     "base": 407,
-    "ret": 33,
-    "pct": 8.1,
-    "rising": true
+    "ret": 36,
+    "pct": 8.8,
+    "rising": false
    },
    {
     "day": "2026-10-05",
@@ -7488,7 +7570,7 @@
     "base": 354,
     "ret": 44,
     "pct": 12.4,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-06",
@@ -7496,7 +7578,7 @@
     "base": 240,
     "ret": 24,
     "pct": 10.0,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-07",
@@ -7504,7 +7586,7 @@
     "base": 53,
     "ret": 4,
     "pct": 7.5,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-08",
@@ -7512,7 +7594,7 @@
     "base": 22,
     "ret": 4,
     "pct": 18.2,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-09",
@@ -7520,7 +7602,7 @@
     "base": 24,
     "ret": 2,
     "pct": 8.3,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-10",
@@ -7528,7 +7610,7 @@
     "base": 17,
     "ret": 1,
     "pct": 5.9,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-11",
@@ -7536,15 +7618,15 @@
     "base": 23,
     "ret": 3,
     "pct": 13.0,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-12",
     "rday": "2026-10-14",
     "base": 19,
-    "ret": 3,
-    "pct": 15.8,
-    "rising": true
+    "ret": 4,
+    "pct": 21.1,
+    "rising": false
    },
    {
     "day": "2026-10-13",
@@ -7552,22 +7634,34 @@
     "base": 18,
     "ret": 6,
     "pct": 33.3,
+    "rising": false
+   },
+   {
+    "day": "2026-10-13",
+    "rday": "2026-10-15",
+    "base": 18,
+    "ret": 1,
+    "pct": 5.6,
     "rising": true
    },
    {
     "day": "2026-10-14",
     "rday": "2026-10-14",
-    "base": 166,
-    "ret": 166,
+    "base": 167,
+    "ret": 167,
     "pct": 100.0,
+    "rising": false
+   },
+   {
+    "day": "2026-10-14",
+    "rday": "2026-10-15",
+    "base": 167,
+    "ret": 2,
+    "pct": 1.2,
     "rising": true
    }
   ],
   "bases": [
-   {
-    "day": "2026-09-30",
-    "base": 399
-   },
    {
     "day": "2026-10-01",
     "base": 405
@@ -7622,7 +7716,7 @@
    },
    {
     "day": "2026-10-14",
-    "base": 166
+    "base": 167
    }
   ]
  },
@@ -7649,14 +7743,14 @@
    {
     "country": "India",
     "n": 53,
-    "intro_done": 51,
-    "property_2": 33,
-    "game_sale": 28,
+    "intro_done": 52,
+    "property_2": 34,
+    "game_sale": 29,
     "first_rebirth": 1,
-    "med_min": 14.9,
-    "intro_done_pct": 96.2,
-    "property_2_pct": 62.3,
-    "game_sale_pct": 52.8,
+    "med_min": 17.3,
+    "intro_done_pct": 98.1,
+    "property_2_pct": 64.2,
+    "game_sale_pct": 54.7,
     "first_rebirth_pct": 1.9
    },
    {
@@ -7666,7 +7760,7 @@
     "property_2": 15,
     "game_sale": 14,
     "first_rebirth": 1,
-    "med_min": 18.3,
+    "med_min": 19.8,
     "intro_done_pct": 95.0,
     "property_2_pct": 75.0,
     "game_sale_pct": 70.0,
@@ -7687,15 +7781,15 @@
    },
    {
     "country": "Vietnam",
-    "n": 11,
-    "intro_done": 10,
+    "n": 12,
+    "intro_done": 11,
     "property_2": 7,
     "game_sale": 6,
     "first_rebirth": 0,
     "med_min": 16.6,
-    "intro_done_pct": 90.9,
-    "property_2_pct": 63.6,
-    "game_sale_pct": 54.5,
+    "intro_done_pct": 91.7,
+    "property_2_pct": 58.3,
+    "game_sale_pct": 50.0,
     "first_rebirth_pct": 0.0
    },
    {
@@ -7768,12 +7862,12 @@
     "n": 5,
     "intro_done": 5,
     "property_2": 3,
-    "game_sale": 2,
+    "game_sale": 3,
     "first_rebirth": 0,
-    "med_min": 10.4,
+    "med_min": 13.8,
     "intro_done_pct": 100.0,
     "property_2_pct": 60.0,
-    "game_sale_pct": 40.0,
+    "game_sale_pct": 60.0,
     "first_rebirth_pct": 0.0
    },
    {
@@ -7794,13 +7888,13 @@
     "n": 3,
     "intro_done": 3,
     "property_2": 3,
-    "game_sale": 2,
-    "first_rebirth": 0,
-    "med_min": 14.5,
+    "game_sale": 3,
+    "first_rebirth": 1,
+    "med_min": 34.7,
     "intro_done_pct": 100.0,
     "property_2_pct": 100.0,
-    "game_sale_pct": 66.7,
-    "first_rebirth_pct": 0.0
+    "game_sale_pct": 100.0,
+    "first_rebirth_pct": 33.3
    },
    {
     "country": "Malaysia",
@@ -7808,12 +7902,12 @@
     "intro_done": 3,
     "property_2": 2,
     "game_sale": 2,
-    "first_rebirth": 0,
+    "first_rebirth": 1,
     "med_min": 18.9,
     "intro_done_pct": 100.0,
     "property_2_pct": 66.7,
     "game_sale_pct": 66.7,
-    "first_rebirth_pct": 0.0
+    "first_rebirth_pct": 33.3
    },
    {
     "country": "Indonesia",
@@ -7868,13 +7962,26 @@
     "first_rebirth_pct": 0.0
    },
    {
+    "country": "Canada",
+    "n": 1,
+    "intro_done": 1,
+    "property_2": 1,
+    "game_sale": 0,
+    "first_rebirth": 0,
+    "med_min": 14.9,
+    "intro_done_pct": 100.0,
+    "property_2_pct": 100.0,
+    "game_sale_pct": 0.0,
+    "first_rebirth_pct": 0.0
+   },
+   {
     "country": "Guyana",
     "n": 1,
     "intro_done": 1,
     "property_2": 1,
     "game_sale": 1,
     "first_rebirth": 0,
-    "med_min": 61.2,
+    "med_min": 68.0,
     "intro_done_pct": 100.0,
     "property_2_pct": 100.0,
     "game_sale_pct": 100.0,
@@ -7923,16 +8030,16 @@
   "tiers": [
    {
     "country": "T1",
-    "n": 29,
-    "intro_done": 29,
-    "property_2": 18,
-    "game_sale": 15,
-    "first_rebirth": 0,
-    "med_min": 12.6,
+    "n": 30,
+    "intro_done": 30,
+    "property_2": 19,
+    "game_sale": 17,
+    "first_rebirth": 1,
+    "med_min": 13.8,
     "intro_done_pct": 100.0,
-    "property_2_pct": 62.1,
-    "game_sale_pct": 51.7,
-    "first_rebirth_pct": 0.0
+    "property_2_pct": 63.3,
+    "game_sale_pct": 56.7,
+    "first_rebirth_pct": 3.3
    },
    {
     "country": "T2",
@@ -7940,381 +8047,144 @@
     "intro_done": 51,
     "property_2": 30,
     "game_sale": 26,
-    "first_rebirth": 3,
+    "first_rebirth": 4,
     "med_min": 12.6,
     "intro_done_pct": 94.4,
     "property_2_pct": 55.6,
     "game_sale_pct": 48.1,
-    "first_rebirth_pct": 5.6
+    "first_rebirth_pct": 7.4
    },
    {
     "country": "T3",
-    "n": 76,
-    "intro_done": 73,
-    "property_2": 47,
-    "game_sale": 40,
+    "n": 77,
+    "intro_done": 75,
+    "property_2": 48,
+    "game_sale": 41,
     "first_rebirth": 1,
     "med_min": 16.1,
-    "intro_done_pct": 96.1,
-    "property_2_pct": 61.8,
-    "game_sale_pct": 52.6,
+    "intro_done_pct": 97.4,
+    "property_2_pct": 62.3,
+    "game_sale_pct": 53.2,
     "first_rebirth_pct": 1.3
    }
   ]
  },
  "apk_cert": {
   "good": "dc0a72d0f17e769e",
-  "events": 12,
-  "users": 1,
+  "events": 0,
+  "users": 0,
   "false_pos": 0,
-  "unknown": 1,
+  "unknown": 0,
   "known_bad": 0,
   "dist": [
    {
     "cert": "dc0a72d0f17e769e",
-    "users": 833,
+    "users": 6,
     "ok": true
    },
    {
     "cert": "(미기록)",
-    "users": 165,
-    "ok": true
-   },
-   {
-    "cert": "a40da80a59d170ca",
     "users": 1,
-    "ok": false
+    "ok": true
    }
   ],
-  "blocked": [
-   {
-    "tag": "d892f1",
-    "events": 12,
-    "cert": "a40da80a59d170ca",
-    "country": "Indonesia",
-    "ver": "1.0 (v977)",
-    "seen": "02:17",
-    "kind": "판단 보류"
-   }
-  ]
+  "blocked": []
  },
  "city": {
-  "users": 45,
-  "enters": 6,
+  "users": 1,
+  "enters": 0,
   "done": 0,
   "steps": [
    {
     "key": "first_conquer",
     "label": "첫 인수",
-    "n": 6,
-    "pct": 13.3
+    "n": 0,
+    "pct": 0.0
    },
    {
     "key": "first_upgrade",
     "label": "첫 업그레이드",
-    "n": 6,
-    "pct": 13.3
+    "n": 0,
+    "pct": 0.0
    },
    {
     "key": "first_rent",
     "label": "첫 월세",
-    "n": 6,
-    "pct": 13.3
+    "n": 0,
+    "pct": 0.0
    },
    {
     "key": "first_event",
     "label": "첫 라이브이벤트",
-    "n": 6,
-    "pct": 13.3
+    "n": 0,
+    "pct": 0.0
    }
   ]
  },
  "ads": {
-  "total": 1035,
+  "total": 3,
   "by_result": [
    {
     "result": "earned",
-    "n": 873
+    "n": 3
    },
    {
     "result": "dismissed",
-    "n": 31
+    "n": 0
    },
    {
     "result": "no_ad",
-    "n": 130
+    "n": 0
    },
    {
     "result": "failed",
-    "n": 1
+    "n": 0
    }
   ],
-  "finish_pct": 96.6,
-  "supply_pct": 12.7,
+  "finish_pct": 100.0,
+  "supply_pct": 0.0,
   "by_country": [
    {
-    "country": "India",
-    "total": 146,
-    "earned": 112,
-    "dismissed": 6,
-    "no_ad": 27,
-    "failed": 1,
-    "users": 43,
-    "finish_pct": 94.9,
-    "supply_pct": 19.2
-   },
-   {
-    "country": "Vietnam",
-    "total": 94,
-    "earned": 87,
-    "dismissed": 4,
-    "no_ad": 3,
-    "failed": 0,
-    "users": 22,
-    "finish_pct": 95.6,
-    "supply_pct": 3.2
-   },
-   {
-    "country": "Brazil",
-    "total": 91,
-    "earned": 81,
-    "dismissed": 4,
-    "no_ad": 6,
-    "failed": 0,
-    "users": 28,
-    "finish_pct": 95.3,
-    "supply_pct": 6.6
-   },
-   {
-    "country": "France",
-    "total": 75,
-    "earned": 66,
-    "dismissed": 3,
-    "no_ad": 6,
-    "failed": 0,
-    "users": 14,
-    "finish_pct": 95.7,
-    "supply_pct": 8.0
-   },
-   {
-    "country": "Thailand",
-    "total": 75,
-    "earned": 57,
-    "dismissed": 3,
-    "no_ad": 15,
-    "failed": 0,
-    "users": 17,
-    "finish_pct": 95.0,
-    "supply_pct": 20.0
-   },
-   {
-    "country": "Indonesia",
-    "total": 64,
-    "earned": 44,
-    "dismissed": 1,
-    "no_ad": 19,
-    "failed": 0,
-    "users": 13,
-    "finish_pct": 97.8,
-    "supply_pct": 29.7
-   },
-   {
-    "country": "Colombia",
-    "total": 62,
-    "earned": 48,
-    "dismissed": 0,
-    "no_ad": 14,
-    "failed": 0,
-    "users": 10,
-    "finish_pct": 100.0,
-    "supply_pct": 22.6
-   },
-   {
-    "country": "Taiwan",
-    "total": 60,
-    "earned": 60,
-    "dismissed": 0,
-    "no_ad": 0,
-    "failed": 0,
-    "users": 11,
-    "finish_pct": 100.0,
-    "supply_pct": 0.0
-   },
-   {
-    "country": "Türkiye",
-    "total": 51,
-    "earned": 43,
-    "dismissed": 5,
-    "no_ad": 3,
-    "failed": 0,
-    "users": 15,
-    "finish_pct": 89.6,
-    "supply_pct": 5.9
-   },
-   {
-    "country": "South Korea",
-    "total": 47,
-    "earned": 42,
-    "dismissed": 0,
-    "no_ad": 5,
-    "failed": 0,
-    "users": 11,
-    "finish_pct": 100.0,
-    "supply_pct": 10.6
-   },
-   {
-    "country": "Germany",
-    "total": 44,
-    "earned": 42,
-    "dismissed": 1,
-    "no_ad": 1,
-    "failed": 0,
-    "users": 11,
-    "finish_pct": 97.7,
-    "supply_pct": 2.3
-   },
-   {
-    "country": "Japan",
-    "total": 41,
-    "earned": 35,
-    "dismissed": 2,
-    "no_ad": 4,
-    "failed": 0,
-    "users": 16,
-    "finish_pct": 94.6,
-    "supply_pct": 9.8
-   },
-   {
-    "country": "Italy",
-    "total": 37,
-    "earned": 36,
-    "dismissed": 0,
-    "no_ad": 1,
-    "failed": 0,
-    "users": 6,
-    "finish_pct": 100.0,
-    "supply_pct": 2.7
-   },
-   {
-    "country": "Philippines",
-    "total": 22,
-    "earned": 16,
-    "dismissed": 0,
-    "no_ad": 6,
-    "failed": 0,
-    "users": 10,
-    "finish_pct": 100.0,
-    "supply_pct": 27.3
-   },
-   {
-    "country": "Argentina",
-    "total": 19,
-    "earned": 18,
-    "dismissed": 0,
-    "no_ad": 1,
-    "failed": 0,
-    "users": 5,
-    "finish_pct": 100.0,
-    "supply_pct": 5.3
-   },
-   {
-    "country": "Malaysia",
-    "total": 19,
-    "earned": 14,
-    "dismissed": 0,
-    "no_ad": 5,
-    "failed": 0,
-    "users": 6,
-    "finish_pct": 100.0,
-    "supply_pct": 26.3
-   },
-   {
-    "country": "United States",
-    "total": 14,
-    "earned": 7,
-    "dismissed": 2,
-    "no_ad": 5,
-    "failed": 0,
-    "users": 7,
-    "finish_pct": 77.8,
-    "supply_pct": 35.7
-   },
-   {
-    "country": "Algeria",
-    "total": 10,
-    "earned": 10,
-    "dismissed": 0,
-    "no_ad": 0,
-    "failed": 0,
-    "users": 1,
-    "finish_pct": 100.0,
-    "supply_pct": 0.0
-   },
-   {
     "country": "기타(요청 10회 미만)",
-    "total": 64,
-    "earned": 55,
+    "total": 3,
+    "earned": 3,
     "dismissed": 0,
-    "no_ad": 9,
+    "no_ad": 0,
     "failed": 0,
-    "users": 26,
-    "lumped": 16,
+    "users": 2,
+    "lumped": 2,
     "finish_pct": 100.0,
-    "supply_pct": 14.1
+    "supply_pct": 0.0
    }
   ],
-  "viewers": 158,
+  "viewers": 1,
   "by_placement": [
    {
-    "placement": "offline",
-    "earned": 467,
-    "dismissed": 12,
-    "no_ad": 58,
-    "failed": 0,
-    "total": 537
-   },
-   {
     "placement": "boost",
-    "earned": 245,
-    "dismissed": 17,
-    "no_ad": 59,
-    "failed": 1,
-    "total": 322
+    "earned": 1,
+    "dismissed": 0,
+    "no_ad": 0,
+    "failed": 0,
+    "total": 1
    },
    {
     "placement": "gem_ad",
-    "earned": 138,
-    "dismissed": 1,
-    "no_ad": 11,
-    "failed": 0,
-    "total": 150
-   },
-   {
-    "placement": "repair",
-    "earned": 17,
+    "earned": 1,
     "dismissed": 0,
-    "no_ad": 2,
+    "no_ad": 0,
     "failed": 0,
-    "total": 19
+    "total": 1
    },
    {
     "placement": "city_supply",
-    "earned": 5,
+    "earned": 1,
     "dismissed": 0,
     "no_ad": 0,
     "failed": 0,
-    "total": 5
-   },
-   {
-    "placement": "city_speedup",
-    "earned": 1,
-    "dismissed": 1,
-    "no_ad": 0,
-    "failed": 0,
-    "total": 2
+    "total": 1
    }
   ]
  },
- "scan_mb": 359.0,
- "scan_note": "이번 실행 스캔 359.0MB. 매시간(24회/일)이면 월 252.42GB — 무료 구간은 월 1,024GB."
+ "scan_mb": 200.0,
+ "scan_note": "이번 실행 스캔 200.0MB. 매시간(24회/일)이면 월 140.62GB — 무료 구간은 월 1,024GB."
 }
