@@ -11,6 +11,11 @@ on:
   schedule:
     - cron: '7 * * * *'          # 매시 7분 (UTC). AdMob 수집용
   workflow_dispatch:
+    inputs:
+      days:
+        description: 'AdMob 조회 일수 (기본 3 · 과거 메울 땐 60 같은 큰 값)'
+        required: false
+        default: '3'
   repository_dispatch:
     types: [ads-cost]
 
@@ -55,12 +60,13 @@ jobs:
 
       - name: 광고매출 수집
         if: env.ADMOB_REFRESH_TOKEN != ''
-        run: python3 tools/sync.py --admob --days 3
+        run: python3 tools/sync.py --admob --days "${{ inputs.days || 3 }}"
 
       - name: 커밋
         env:
           ADS_ROWS: ${{ toJSON(github.event.client_payload.rows) }}
           EV: ${{ github.event_name }}
+          DAYS: ${{ inputs.days || 3 }}
         run: |
           git config user.name  "secondact-bot"
           git config user.email "34591718+Purplusnow@users.noreply.github.com"
@@ -88,6 +94,6 @@ jobs:
           # 되감은 뒤 다시 돌릴 수집 — 이 잡이 원래 한 일을 그대로 반복한다.
           recollect() {
             if [ "$EV" = "repository_dispatch" ]; then python3 tools/sync.py --ads-json "$ADS_ROWS"; fi
-            if [ -n "$ADMOB_REFRESH_TOKEN" ]; then python3 tools/sync.py --admob --days 3; fi
+            if [ -n "$ADMOB_REFRESH_TOKEN" ]; then python3 tools/sync.py --admob --days "$DAYS"; fi
           }
           push_or_recollect recollect
