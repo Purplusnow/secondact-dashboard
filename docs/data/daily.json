@@ -619,7 +619,13 @@
       "iap": {
         "USD": 20.96
       },
-      "iap_src": "ga4"
+      "iap_src": "ga4",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 5.54,
+        "FaceLapse: AI Face Age": 0.15,
+        "Plop Cat: Slide & Jigsaw": 0.09,
+        "Private Camera - Photo Vault": 0.02
+      }
     },
     {
       "date": "2026-10-14",
@@ -630,19 +636,27 @@
       "iap": {
         "BRL": 13.58
       },
-      "iap_src": "ga4"
+      "iap_src": "ga4",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 6.65,
+        "Plop Cat: Slide & Jigsaw": 0.2
+      }
     },
     {
       "date": "2026-10-15",
       "ads": 27485,
       "admob": {
-        "USD": 3.69
+        "USD": 4.0
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 3.97,
+        "Plop Cat: Slide & Jigsaw": 0.03
       }
     }
   ],
   "synced": {
     "iap": "2026-10-14T13:46:32+09:00",
     "ads": "2026-10-15T11:32:49+09:00",
-    "admob": "2026-10-15T11:32:49+09:00"
+    "admob": "2026-10-15T12:29:26+09:00"
   }
 }
