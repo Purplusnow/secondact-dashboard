@@ -104,6 +104,10 @@
     put('오늘(잠정)', last && imp[last] ? '₩' + num(rev[last] || 0) : '—',
       last && ecpm(last) != null ? `eCPM ₩${num(ecpm(last))}` : '집계 진행 중');
 
+    // 앱별 — AdMob 리포트는 퍼블리셔 계정 단위라 **다른 앱이 섞여 들어온다.**
+    // 합계만 보면 그걸 영영 모르므로 여기서 쪼개 둔다(인생 2막이 99% 대지만 0 이 아니다).
+    apps($('#ad-apps'), rows.slice(-14), krw);
+
     const t = $('#ad-rev-table');
     t.textContent = '';
     const hr = t.createTHead().insertRow();
@@ -134,6 +138,45 @@
       const track = document.createElement('span'); track.className = 'pg';
       const fill = document.createElement('i'); fill.style.width = ((rev[d] || 0) / top * 100) + '%';
       if (a.partial) fill.style.opacity = '.45';
+      track.appendChild(fill);
+      bar.appendChild(track);
+    }
+  }
+
+  /* 앱별 광고매출. 이 대시보드는 '인생 2막' 하나를 보는 자리인데 AdMob 리포트는
+     계정 전체를 준다 — 섞인 몫이 얼마인지 눈에 보여야 수지를 믿을 수 있다. */
+  function apps(t, rows, krw) {
+    t.textContent = '';
+    const sum = {};
+    for (const r of rows) {
+      for (const [name, usd] of Object.entries(r.admob_apps || {})) {
+        sum[name] = (sum[name] || 0) + usd;
+      }
+    }
+    const list = Object.entries(sum).sort((a, b) => b[1] - a[1]);
+    if (!list.length) return;
+    const total = list.reduce((s, x) => s + x[1], 0) || 1;
+    const hr = t.createTHead().insertRow();
+    ['앱', '광고매출', '비중', ''].forEach((h, i) => {
+      const th = document.createElement('th');
+      if (!i) th.className = 'date';
+      th.textContent = h;
+      hr.appendChild(th);
+    });
+    const tb = t.createTBody();
+    for (const [name, usd] of list) {
+      const pct = 100 * usd / total;
+      const tr = tb.insertRow();
+      const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
+      c(name, 'date');
+      c('₩' + num(krw({ USD: usd })));
+      // 1% 미만은 눌러 둔다 — 줄은 있어야 '섞였다'가 보이지만 눈이 거기 가면 안 된다.
+      const pc = c(pct >= 0.1 ? pct.toFixed(1) + '%' : '<0.1%');
+      if (pct < 1) pc.className = 'dim';
+      const bar = tr.insertCell();
+      const track = document.createElement('span'); track.className = 'pg';
+      const fill = document.createElement('i');
+      fill.style.width = Math.max(1, pct) + '%';
       track.appendChild(fill);
       bar.appendChild(track);
     }
