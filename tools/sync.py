@@ -108,7 +108,9 @@ def apply_admob(days: int) -> None:
             "startDate": {"year": start.year, "month": start.month, "day": start.day},
             "endDate": {"year": end.year, "month": end.month, "day": end.day},
         },
-        "dimensions": ["DATE"],
+        # ⚠ APP 을 빼면 **계정의 모든 앱이 합산**된다. 이 대시보드는 '인생 2막' 하나를
+        # 보는 자리라, 다른 앱 매출이 섞이면 수지가 통째로 거짓이 된다.
+        "dimensions": ["DATE", "APP"],
         "metrics": ["ESTIMATED_EARNINGS"],
         "localizationSettings": {"currencyCode": "USD"},
     }}
@@ -118,23 +120,35 @@ def apply_admob(days: int) -> None:
                {"Authorization": "Bearer " + admob_token(),
                 "Content-Type": "application/json"})
 
-    data = load()
-    changed = []
+    # 날짜 × 앱으로 모은다. 앱 이름은 displayLabel(없으면 앱 ID)로 잡는다.
+    per: dict[str, dict[str, float]] = {}
     for entry in out if isinstance(out, list) else [out]:
         r = entry.get("row")
         if not r:
             continue
-        raw = r["dimensionValues"]["DATE"]["value"]          # 20260908
+        dv = r["dimensionValues"]
+        raw = dv["DATE"]["value"]                            # 20260908
         date = f"{raw[:4]}-{raw[4:6]}-{raw[6:]}"
-        micros = int(r["metricValues"]["ESTIMATED_EARNINGS"].get("microsValue", 0))
-        usd = round(micros / 1e6, 2)
+        app = dv.get("APP", {})
+        name = app.get("displayLabel") or app.get("value") or "(미상)"
+        usd = round(int(r["metricValues"]["ESTIMATED_EARNINGS"].get("microsValue", 0)) / 1e6, 2)
         if usd <= 0:
             continue
+        per.setdefault(date, {})[name] = per.setdefault(date, {}).get(name, 0.0) + usd
+
+    data = load()
+    changed = []
+    for date, apps in sorted(per.items()):
         row = row_for(data, date)
+        total = round(sum(apps.values()), 2)
         before = (row.get("admob") or {}).get("USD")
-        if before != usd:
-            changed.append(f"{date} 광고매출 ${before or 0}→${usd}")
-            row["admob"] = {"USD": usd}
+        if before != total:
+            changed.append(f"{date} 광고매출 ${before or 0}→${total}")
+        row["admob"] = {"USD": total}
+        # 앱별 내역도 남긴다 — 어느 앱이 얼마를 벌었는지 화면에서 쪼개 보기 위함이고,
+        # 합계만 두면 '다른 앱이 섞였다'를 영영 모른다.
+        row["admob_apps"] = {k: round(v, 2) for k, v in sorted(apps.items(), key=lambda x: -x[1])}
+        print(f"  {date}  " + " · ".join(f"{k} ${v:.2f}" for k, v in row["admob_apps"].items()))
     stamp(data, "admob")
     save(data, changed)
 
