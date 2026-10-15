@@ -106,7 +106,7 @@
 
     // 앱별 — AdMob 리포트는 퍼블리셔 계정 단위라 **다른 앱이 섞여 들어온다.**
     // 합계만 보면 그걸 영영 모르므로 여기서 쪼개 둔다(인생 2막이 99% 대지만 0 이 아니다).
-    apps($('#ad-apps'), rows.slice(-14), krw);
+    apps($('#ad-apps'), rows.slice(-30), krw);
 
     const t = $('#ad-rev-table');
     t.textContent = '';
@@ -143,34 +143,54 @@
     }
   }
 
-  /* 앱별 광고매출. 이 대시보드는 '인생 2막' 하나를 보는 자리인데 AdMob 리포트는
-     계정 전체를 준다 — 섞인 몫이 얼마인지 눈에 보여야 수지를 믿을 수 있다. */
+  /* 앱별 광고매출. 이 보드는 여러 앱을 함께 보는 쪽으로 가고 있고(2026-10-15), 광고가
+     그 첫 축이다. AdMob 리포트는 원래 퍼블리셔 계정 단위라 앱별이 공짜로 나온다.
+
+     창을 셋(어제·7일·30일) 두는 건 규모가 극단적으로 달라서다 — 한 앱이 99%면
+     하루치만 봐서는 나머지가 0 으로 보이고, 30일만 봐서는 어제 뜬 앱을 놓친다.
+
+     ⚠ eCPM 은 여기 못 붙인다. 매출은 AdMob(앱별)이지만 노출은 GA4 BigQuery 이고,
+     그 export 는 인생 2막 것만 있다. 다른 앱의 eCPM 을 보려면 그 앱들도 BigQuery
+     export 를 켜야 한다 — 지금은 매출까지만. */
+  const WINDOWS = [['어제', 1], ['최근 7일', 7], ['최근 30일', 30]];
+
   function apps(t, rows, krw) {
     t.textContent = '';
-    const sum = {};
-    for (const r of rows) {
-      for (const [name, usd] of Object.entries(r.admob_apps || {})) {
-        sum[name] = (sum[name] || 0) + usd;
+    // rows 는 날짜 오름차순. 창마다 꼬리에서 N일을 떼어 앱별로 더한다.
+    const byWin = WINDOWS.map(([, n]) => {
+      const sum = {};
+      for (const r of rows.slice(-n)) {
+        for (const [name, usd] of Object.entries(r.admob_apps || {})) {
+          sum[name] = (sum[name] || 0) + usd;
+        }
       }
-    }
-    const list = Object.entries(sum).sort((a, b) => b[1] - a[1]);
-    if (!list.length) return;
-    const total = list.reduce((s, x) => s + x[1], 0) || 1;
+      return sum;
+    });
+    const names = [...new Set(byWin.flatMap(w => Object.keys(w)))];
+    if (!names.length) return;
+    const last = byWin[byWin.length - 1];
+    names.sort((a, b) => (last[b] || 0) - (last[a] || 0));
+    const total30 = names.reduce((s, n) => s + (last[n] || 0), 0) || 1;
+
     const hr = t.createTHead().insertRow();
-    ['앱', '광고매출', '비중', ''].forEach((h, i) => {
+    ['앱', ...WINDOWS.map(w => w[0]), '비중', ''].forEach((h, i) => {
       const th = document.createElement('th');
       if (!i) th.className = 'date';
       th.textContent = h;
       hr.appendChild(th);
     });
     const tb = t.createTBody();
-    for (const [name, usd] of list) {
-      const pct = 100 * usd / total;
+    for (const name of names) {
+      const pct = 100 * (last[name] || 0) / total30;
       const tr = tb.insertRow();
       const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
       c(name, 'date');
-      c('₩' + num(krw({ USD: usd })));
-      // 1% 미만은 눌러 둔다 — 줄은 있어야 '섞였다'가 보이지만 눈이 거기 가면 안 된다.
+      byWin.forEach(w => {
+        const v = w[name] || 0;
+        const cell = c(v ? '₩' + num(krw({ USD: v })) : '—');
+        if (!v) cell.className = 'dim';
+      });
+      // 1% 미만은 눌러 둔다 — 줄은 있어야 포트폴리오가 보이지만 눈이 거기 가면 안 된다.
       const pc = c(pct >= 0.1 ? pct.toFixed(1) + '%' : '<0.1%');
       if (pct < 1) pc.className = 'dim';
       const bar = tr.insertCell();
