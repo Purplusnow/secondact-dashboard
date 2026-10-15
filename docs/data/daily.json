@@ -3,9 +3,51 @@
   "note": "하루 한 줄. 숫자면 원화, {\"USD\": 8.97}이면 그날 환율로 환산. 날짜는 모두 KST 기준.",
   "daily": [
     {
+      "date": "2026-08-17",
+      "admob": {
+        "USD": 0.01
+      },
+      "admob_apps": {
+        "Pocket Arcade - Offline Games": 0.01
+      }
+    },
+    {
+      "date": "2026-08-18",
+      "admob": {
+        "USD": 0.04
+      },
+      "admob_apps": {
+        "Private Camera - Photo Vault": 0.03,
+        "Pocket Arcade - Offline Games": 0.01
+      }
+    },
+    {
+      "date": "2026-08-20",
+      "admob": {
+        "USD": 0.01
+      },
+      "admob_apps": {
+        "Pocket Arcade - Offline Games": 0.01
+      }
+    },
+    {
+      "date": "2026-08-21",
+      "admob": {
+        "USD": 0.02
+      },
+      "admob_apps": {
+        "Pocket Arcade - Offline Games": 0.02
+      }
+    },
+    {
       "date": "2026-08-22",
       "admob": {
         "USD": 0.06
+      },
+      "admob_apps": {
+        "Pocket Arcade - Offline Games": 0.03,
+        "FaceLapse: AI Face Age": 0.02,
+        "Second Act: Property Tycoon": 0.01
       }
     },
     {
@@ -13,6 +55,10 @@
       "ads": 333,
       "admob": {
         "USD": 0.09
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.08,
+        "Pocket Arcade - Offline Games": 0.01
       }
     },
     {
@@ -20,13 +66,19 @@
       "ads": 2288,
       "admob": {
         "USD": 0.04
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.04
       }
     },
     {
       "date": "2026-08-25",
       "ads": 1133,
       "admob": {
-        "USD": 0.04
+        "USD": 0.03
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.03
       }
     },
     {
@@ -34,13 +86,19 @@
       "ads": 4659,
       "admob": {
         "USD": 0.02
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.02
       }
     },
     {
       "date": "2026-08-27",
       "ads": 4867,
       "admob": {
-        "USD": 0.05
+        "USD": 0.04
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.04
       }
     },
     {
@@ -48,6 +106,11 @@
       "ads": 4486,
       "admob": {
         "USD": 0.11
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.06,
+        "Private Camera - Photo Vault": 0.04,
+        "Pocket Arcade - Offline Games": 0.01
       }
     },
     {
@@ -55,6 +118,10 @@
       "ads": 24423,
       "admob": {
         "USD": 0.12
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.1,
+        "Pocket Arcade - Offline Games": 0.02
       }
     },
     {
@@ -62,6 +129,11 @@
       "ads": 6585,
       "admob": {
         "USD": 0.4
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.34,
+        "Private Camera - Photo Vault": 0.04,
+        "Pocket Arcade - Offline Games": 0.02
       }
     },
     {
@@ -69,33 +141,50 @@
       "ads": 9053,
       "admob": {
         "USD": 0.47
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.45,
+        "Private Camera - Photo Vault": 0.02
       }
     },
     {
       "date": "2026-09-01",
       "ads": 8855,
       "admob": {
-        "USD": 0.65
+        "USD": 0.64
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.63,
+        "Private Camera - Photo Vault": 0.01
       }
     },
     {
       "date": "2026-09-02",
       "ads": 41738,
       "admob": {
-        "USD": 2.28
+        "USD": 2.29
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 2.27,
+        "Pocket Arcade - Offline Games": 0.01,
+        "Private Camera - Photo Vault": 0.01
       }
     },
     {
       "date": "2026-09-03",
       "ads": 50610,
       "admob": {
-        "USD": 4.33
+        "USD": 4.32
       },
       "iap": {
         "TWD": 120,
         "USD": 1.79
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 4.29,
+        "Pocket Arcade - Offline Games": 0.03
+      }
     },
     {
       "date": "2026-09-04",
@@ -107,7 +196,10 @@
         "USD": 2.52,
         "JPY": 320
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 5.44
+      }
     },
     {
       "date": "2026-09-05",
@@ -119,12 +211,17 @@
         "USD": 4.37
       },
       "ads": 57811,
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 15.1,
+        "Pocket Arcade - Offline Games": 0.11,
+        "Ad Revenue Dashboard": 0.01
+      }
     },
     {
       "date": "2026-09-06",
       "admob": {
-        "USD": 29.14
+        "USD": 29.27
       },
       "iap": {
         "VND": 52222,
@@ -133,12 +230,17 @@
         "JPY": 320
       },
       "ads": 56820,
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 29.25,
+        "Pocket Arcade - Offline Games": 0.01,
+        "Private Camera - Photo Vault": 0.01
+      }
     },
     {
       "date": "2026-09-07",
       "admob": {
-        "USD": 36.53
+        "USD": 36.54
       },
       "iap": {
         "KRW": 2500,
@@ -147,7 +249,12 @@
         "BRL": 9.49
       },
       "ads": 55200,
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 36.43,
+        "Private Camera - Photo Vault": 0.09,
+        "Pocket Arcade - Offline Games": 0.02
+      }
     },
     {
       "date": "2026-09-08",
@@ -161,19 +268,28 @@
         "VND": 52222,
         "TWD": 60
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 31.75,
+        "FaceLapse: AI Face Age": 0.15,
+        "Pocket Arcade - Offline Games": 0.01
+      }
     },
     {
       "date": "2026-09-09",
       "admob": {
-        "USD": 28.4
+        "USD": 28.37
       },
       "iap": {
         "KRW": 2500,
         "TWD": 60
       },
       "ads": 28297,
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 28.36,
+        "Pocket Arcade - Offline Games": 0.01
+      }
     },
     {
       "date": "2026-09-10",
@@ -187,7 +303,11 @@
         "BRL": 9.49,
         "THB": 63
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 27.48,
+        "Pocket Arcade - Offline Games": 0.06
+      }
     },
     {
       "date": "2026-09-11",
@@ -201,20 +321,28 @@
         "KRW": 7500,
         "TWD": 60
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 21.37,
+        "FaceLapse: AI Face Age": 0.01,
+        "Ad Revenue Dashboard": 0.01
+      }
     },
     {
       "date": "2026-09-12",
       "ads": 31486,
       "admob": {
-        "USD": 23.13
+        "USD": 23.12
       },
       "iap": {
         "BRL": 9.49,
         "USD": 16.99,
         "KRW": 2500
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 23.12
+      }
     },
     {
       "date": "2026-09-13",
@@ -228,7 +356,12 @@
         "BRL": 28.47,
         "NZD": 3.49
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 27.3,
+        "Private Camera - Photo Vault": 0.03,
+        "Pocket Arcade - Offline Games": 0.01
+      }
     },
     {
       "date": "2026-09-14",
@@ -241,13 +374,17 @@
         "BRL": 9.49,
         "JPY": 320
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 23.63,
+        "FaceLapse: AI Face Age": 0.01
+      }
     },
     {
       "date": "2026-09-15",
       "ads": 137666,
       "admob": {
-        "USD": 34.36
+        "USD": 34.35
       },
       "iap": {
         "BRL": 18.98,
@@ -257,7 +394,11 @@
         "KRW": 7500,
         "TWD": 60
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 34.34,
+        "Private Camera - Photo Vault": 0.01
+      }
     },
     {
       "date": "2026-09-16",
@@ -274,13 +415,16 @@
         "MXN": 35,
         "INR": 1190
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 37.35
+      }
     },
     {
       "date": "2026-09-17",
       "ads": 86523,
       "admob": {
-        "USD": 38.88
+        "USD": 38.82
       },
       "iap": {
         "AUD": 2.79,
@@ -289,7 +433,11 @@
         "IDR": 35520,
         "KRW": 2500
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 38.8,
+        "Pocket Arcade - Offline Games": 0.02
+      }
     },
     {
       "date": "2026-09-18",
@@ -304,19 +452,27 @@
         "TWD": 60,
         "BRL": 9.49
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 37.6
+      }
     },
     {
       "date": "2026-09-19",
       "ads": 86715,
       "admob": {
-        "USD": 37.23
+        "USD": 37.24
       },
       "iap": {
         "TWD": 62,
         "VND": 189999
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 37.15,
+        "Private Camera - Photo Vault": 0.08,
+        "Pocket Arcade - Offline Games": 0.01
+      }
     },
     {
       "date": "2026-09-20",
@@ -329,7 +485,12 @@
         "TWD": 26,
         "BRL": 9.49
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 39.62,
+        "Pocket Arcade - Offline Games": 0.08,
+        "Ad Revenue Dashboard": 0.02
+      }
     },
     {
       "date": "2026-09-21",
@@ -343,13 +504,17 @@
         "EUR": 3.88,
         "TWD": 60
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 38.02,
+        "Pocket Arcade - Offline Games": 0.01
+      }
     },
     {
       "date": "2026-09-22",
       "ads": 91999,
       "admob": {
-        "USD": 37.76
+        "USD": 37.75
       },
       "iap": {
         "GBP": 0.69,
@@ -357,13 +522,16 @@
         "BRL": 9.49,
         "JPY": 450
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 37.75
+      }
     },
     {
       "date": "2026-09-23",
       "ads": 80234,
       "admob": {
-        "USD": 36.17
+        "USD": 36.16
       },
       "iap": {
         "EUR": 3.18,
@@ -371,7 +539,10 @@
         "TRY": 229.99,
         "COP": 2500
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 36.16
+      }
     },
     {
       "date": "2026-09-24",
@@ -383,13 +554,17 @@
         "COP": 26500,
         "USD": 2.74
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 38.46,
+        "Private Camera - Photo Vault": 0.03
+      }
     },
     {
       "date": "2026-09-25",
       "ads": 26790,
       "admob": {
-        "USD": 36.06
+        "USD": 36.03
       },
       "iap": {
         "JPY": 320,
@@ -397,19 +572,25 @@
         "THB": 242,
         "USD": 4.23
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 36.03
+      }
     },
     {
       "date": "2026-09-26",
       "ads": 26272,
       "admob": {
-        "USD": 25.69
+        "USD": 25.68
       },
       "iap": {
         "KRW": 2500,
         "GBP": 0.69
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 25.68
+      }
     },
     {
       "date": "2026-09-27",
@@ -422,13 +603,17 @@
         "MXN": 95,
         "EUR": 1.89
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 24.31,
+        "Pocket Arcade - Offline Games": 0.02
+      }
     },
     {
       "date": "2026-09-28",
       "ads": 36926,
       "admob": {
-        "USD": 23.58
+        "USD": 23.57
       },
       "iap": {
         "JPY": 370,
@@ -436,7 +621,10 @@
         "IDR": 15540,
         "USD": 0.79
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 23.57
+      }
     },
     {
       "date": "2026-09-29",
@@ -448,13 +636,16 @@
         "USD": 0.84,
         "CAD": 4.51
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 23.39
+      }
     },
     {
       "date": "2026-09-30",
       "ads": 44016,
       "admob": {
-        "USD": 21.53
+        "USD": 21.54
       },
       "iap": {
         "KRW": 2900,
@@ -462,20 +653,29 @@
         "VND": 23333,
         "THB": 28
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 21.44,
+        "Private Camera - Photo Vault": 0.1
+      }
     },
     {
       "date": "2026-10-01",
       "ads": 57209,
       "admob": {
-        "USD": 18.68
+        "USD": 18.69
       },
       "iap": {
         "USD": 4.25,
         "EUR": 16.99,
         "JPY": 490
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 18.66,
+        "Pocket Arcade - Offline Games": 0.02,
+        "Private Camera - Photo Vault": 0.01
+      }
     },
     {
       "date": "2026-10-02",
@@ -490,26 +690,36 @@
         "TWD": 1180,
         "KRW": 2500
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 18.72,
+        "Pocket Arcade - Offline Games": 0.03
+      }
     },
     {
       "date": "2026-10-03",
       "ads": 78741,
       "admob": {
-        "USD": 16.06
+        "USD": 16.07
       },
       "iap": {
         "EUR": 2.68,
         "BRL": 11.99,
         "INR": 90
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 15.96,
+        "FaceLapse: AI Face Age": 0.08,
+        "Pocket Arcade - Offline Games": 0.02,
+        "Ad Revenue Dashboard": 0.01
+      }
     },
     {
       "date": "2026-10-04",
       "ads": 74793,
       "admob": {
-        "USD": 19.78
+        "USD": 19.76
       },
       "iap": {
         "TRY": 45.99,
@@ -517,7 +727,10 @@
         "KRW": 2200,
         "EUR": 4.09
       },
-      "iap_src": "ga4"
+      "iap_src": "ga4",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 19.76
+      }
     },
     {
       "date": "2026-10-05",
@@ -528,7 +741,10 @@
       "iap": {
         "EUR": 4.78
       },
-      "iap_src": "ga4"
+      "iap_src": "ga4",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 15.79
+      }
     },
     {
       "date": "2026-10-06",
@@ -542,7 +758,10 @@
         "INR": 90,
         "BRL": 9.49
       },
-      "iap_src": "manual"
+      "iap_src": "manual",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 14.85
+      }
     },
     {
       "date": "2026-10-07",
@@ -553,40 +772,57 @@
       "iap": {
         "BRL": 26.99
       },
-      "iap_src": "ga4"
+      "iap_src": "ga4",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 13.69,
+        "Plop Cat: Slide & Jigsaw": 0.82
+      }
     },
     {
       "date": "2026-10-08",
       "ads": 92,
       "admob": {
-        "USD": 12.01
+        "USD": 12.0
       },
       "iap": {
         "EUR": 2.19
       },
-      "iap_src": "ga4"
+      "iap_src": "ga4",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 11.74,
+        "Plop Cat: Slide & Jigsaw": 0.14,
+        "Private Camera - Photo Vault": 0.12
+      }
     },
     {
       "date": "2026-10-09",
       "ads": 0,
       "admob": {
-        "USD": 10.91
+        "USD": 10.9
       },
       "iap": {
         "EUR": 2.19
       },
-      "iap_src": "ga4"
+      "iap_src": "ga4",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 10.89,
+        "Pocket Arcade - Offline Games": 0.01
+      }
     },
     {
       "date": "2026-10-10",
       "ads": 186031,
       "admob": {
-        "USD": 8.38
+        "USD": 8.39
       },
       "iap": {
         "TRY": 124.99
       },
-      "iap_src": "ga4"
+      "iap_src": "ga4",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 8.37,
+        "Pocket Arcade - Offline Games": 0.02
+      }
     },
     {
       "date": "2026-10-11",
@@ -597,18 +833,27 @@
       "iap": {
         "USD": 2.19
       },
-      "iap_src": "ga4"
+      "iap_src": "ga4",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 9.11,
+        "Plop Cat: Slide & Jigsaw": 0.15
+      }
     },
     {
       "date": "2026-10-12",
       "ads": 19126,
       "admob": {
-        "USD": 7.77
+        "USD": 7.76
       },
       "iap": {
         "USD": 2.89
       },
-      "iap_src": "ga4"
+      "iap_src": "ga4",
+      "admob_apps": {
+        "Second Act: Property Tycoon": 7.47,
+        "Plop Cat: Slide & Jigsaw": 0.26,
+        "Crown and Coin": 0.03
+      }
     },
     {
       "date": "2026-10-13",
@@ -657,6 +902,6 @@
   "synced": {
     "iap": "2026-10-14T13:46:32+09:00",
     "ads": "2026-10-15T11:32:49+09:00",
-    "admob": "2026-10-15T12:29:26+09:00"
+    "admob": "2026-10-15T12:30:29+09:00"
   }
 }
