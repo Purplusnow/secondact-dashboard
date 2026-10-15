@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-15 23:56 KST",
+ "updated": "2026-10-16 00:04 KST",
  "stage_labels": [
   {
    "key": "new_game",
@@ -134,25 +134,25 @@
  ],
  "tables": [
   {
-   "d": "20261015",
-   "users": 1010,
-   "events": 65954
+   "d": "20261016",
+   "users": 9,
+   "events": 48
   }
  ],
- "day": "20261015",
+ "day": "20261016",
  "summary": {
-  "users": 1010,
-  "new_users": 142,
-  "first_touch_today": 142,
-  "purchases": 1,
+  "users": 9,
+  "new_users": 0,
+  "first_touch_today": 0,
+  "purchases": 0,
   "exceptions": 0,
-  "first_at": "2026-10-15 00:00",
-  "last_at": "2026-10-15 23:56"
+  "first_at": "2026-10-16 00:00",
+  "last_at": "2026-10-16 00:04"
  },
  "users": [
   {
    "tag": "d8db07",
-   "joined": "23:35",
+   "joined": "10/15 23:35",
    "last_seen": "23:36",
    "mins": 1.3,
    "span": 1,
@@ -196,7 +196,7 @@
   },
   {
    "tag": "99f7f7",
-   "joined": "21:58",
+   "joined": "10/15 21:58",
    "last_seen": "22:12",
    "mins": 14.6,
    "span": 14,
@@ -240,7 +240,7 @@
   },
   {
    "tag": "49f3c5",
-   "joined": "20:24",
+   "joined": "10/15 20:24",
    "last_seen": "22:13",
    "mins": 25.2,
    "span": 108,
@@ -284,7 +284,7 @@
   },
   {
    "tag": "f0cc96",
-   "joined": "20:17",
+   "joined": "10/15 20:17",
    "last_seen": "20:17",
    "mins": 0.0,
    "span": 0,
@@ -328,7 +328,7 @@
   },
   {
    "tag": "cde6f5",
-   "joined": "19:16",
+   "joined": "10/15 19:16",
    "last_seen": "19:25",
    "mins": 9.2,
    "span": 9,
@@ -372,7 +372,7 @@
   },
   {
    "tag": "f1b217",
-   "joined": "19:11",
+   "joined": "10/15 19:11",
    "last_seen": "19:52",
    "mins": 20.8,
    "span": 40,
@@ -416,7 +416,7 @@
   },
   {
    "tag": "e70b9f",
-   "joined": "19:09",
+   "joined": "10/15 19:09",
    "last_seen": "19:11",
    "mins": 1.3,
    "span": 1,
@@ -460,7 +460,7 @@
   },
   {
    "tag": "f32efd",
-   "joined": "17:54",
+   "joined": "10/15 17:54",
    "last_seen": "18:37",
    "mins": 42.8,
    "span": 42,
@@ -504,7 +504,7 @@
   },
   {
    "tag": "8cc8e1",
-   "joined": "17:23",
+   "joined": "10/15 17:23",
    "last_seen": "19:33",
    "mins": 13.4,
    "span": 130,
@@ -548,7 +548,7 @@
   },
   {
    "tag": "21b289",
-   "joined": "17:09",
+   "joined": "10/15 17:09",
    "last_seen": "17:38",
    "mins": 27.5,
    "span": 29,
@@ -592,7 +592,7 @@
   },
   {
    "tag": "8f22bc",
-   "joined": "15:05",
+   "joined": "10/15 15:05",
    "last_seen": "15:05",
    "mins": 0.5,
    "span": 0,
@@ -636,7 +636,7 @@
   },
   {
    "tag": "2a2d53",
-   "joined": "13:59",
+   "joined": "10/15 13:59",
    "last_seen": "15:10",
    "mins": 0.9,
    "span": 70,
@@ -680,7 +680,7 @@
   },
   {
    "tag": "c2cd7e",
-   "joined": "13:51",
+   "joined": "10/15 13:51",
    "last_seen": "21:41",
    "mins": 29.5,
    "span": 469,
@@ -724,7 +724,7 @@
   },
   {
    "tag": "879ef1",
-   "joined": "12:41",
+   "joined": "10/15 12:41",
    "last_seen": "12:43",
    "mins": 1.8,
    "span": 1,
@@ -768,7 +768,7 @@
   },
   {
    "tag": "cf9b07",
-   "joined": "12:36",
+   "joined": "10/15 12:36",
    "last_seen": "12:54",
    "mins": 17.8,
    "span": 17,
@@ -812,15 +812,15 @@
   },
   {
    "tag": "440821",
-   "joined": "12:05",
-   "last_seen": "22:40",
-   "mins": 161.9,
-   "span": 635,
+   "joined": "10/15 12:05",
+   "last_seen": "22:42",
+   "mins": 163.6,
+   "span": 636,
    "sessions": 4,
-   "off": 25,
-   "off_boost": 22,
+   "off": 26,
+   "off_boost": 23,
    "prog": 3.2,
-   "events": 929,
+   "events": 947,
    "ver": "1.0 (v977)",
    "country": "Vietnam",
    "reached": [
@@ -856,7 +856,7 @@
   },
   {
    "tag": "b1600f",
-   "joined": "11:55",
+   "joined": "10/15 11:55",
    "last_seen": "11:55",
    "mins": 0.1,
    "span": 0,
@@ -900,7 +900,7 @@
   },
   {
    "tag": "fd7256",
-   "joined": "11:44",
+   "joined": "10/15 11:44",
    "last_seen": "13:44",
    "mins": 11.9,
    "span": 120,
@@ -944,7 +944,7 @@
   },
   {
    "tag": "7bee29",
-   "joined": "11:06",
+   "joined": "10/15 11:06",
    "last_seen": "18:36",
    "mins": 13.0,
    "span": 449,
@@ -988,7 +988,7 @@
   },
   {
    "tag": "131caa",
-   "joined": "10:44",
+   "joined": "10/15 10:44",
    "last_seen": "19:07",
    "mins": 41.8,
    "span": 503,
@@ -1032,7 +1032,7 @@
   },
   {
    "tag": "e511db",
-   "joined": "10:32",
+   "joined": "10/15 10:32",
    "last_seen": "10:33",
    "mins": 0.8,
    "span": 0,
@@ -1076,7 +1076,7 @@
   },
   {
    "tag": "a370fa",
-   "joined": "10:24",
+   "joined": "10/15 10:24",
    "last_seen": "22:19",
    "mins": 20.2,
    "span": 715,
@@ -1120,7 +1120,7 @@
   },
   {
    "tag": "7c97d2",
-   "joined": "10:15",
+   "joined": "10/15 10:15",
    "last_seen": "12:02",
    "mins": 46.0,
    "span": 107,
@@ -1164,7 +1164,7 @@
   },
   {
    "tag": "ddf580",
-   "joined": "10:03",
+   "joined": "10/15 10:03",
    "last_seen": "22:11",
    "mins": 50.7,
    "span": 727,
@@ -1208,7 +1208,7 @@
   },
   {
    "tag": "ff408f",
-   "joined": "09:57",
+   "joined": "10/15 09:57",
    "last_seen": "09:59",
    "mins": 1.3,
    "span": 1,
@@ -1252,7 +1252,7 @@
   },
   {
    "tag": "5f2598",
-   "joined": "09:37",
+   "joined": "10/15 09:37",
    "last_seen": "10:05",
    "mins": 27.6,
    "span": 27,
@@ -1296,7 +1296,7 @@
   },
   {
    "tag": "5b96b8",
-   "joined": "09:13",
+   "joined": "10/15 09:13",
    "last_seen": "09:36",
    "mins": 23.3,
    "span": 23,
@@ -1340,7 +1340,7 @@
   },
   {
    "tag": "02db34",
-   "joined": "09:11",
+   "joined": "10/15 09:11",
    "last_seen": "09:53",
    "mins": 41.0,
    "span": 41,
@@ -1384,7 +1384,7 @@
   },
   {
    "tag": "eb7c49",
-   "joined": "09:11",
+   "joined": "10/15 09:11",
    "last_seen": "09:37",
    "mins": 16.2,
    "span": 25,
@@ -1428,7 +1428,7 @@
   },
   {
    "tag": "30dfe3",
-   "joined": "09:10",
+   "joined": "10/15 09:10",
    "last_seen": "09:17",
    "mins": 6.6,
    "span": 6,
@@ -1472,7 +1472,7 @@
   },
   {
    "tag": "fde1dc",
-   "joined": "09:07",
+   "joined": "10/15 09:07",
    "last_seen": "09:49",
    "mins": 41.9,
    "span": 42,
@@ -1516,7 +1516,7 @@
   },
   {
    "tag": "f1a0ed",
-   "joined": "08:56",
+   "joined": "10/15 08:56",
    "last_seen": "23:14",
    "mins": 175.5,
    "span": 857,
@@ -1560,7 +1560,7 @@
   },
   {
    "tag": "b8aaf7",
-   "joined": "08:55",
+   "joined": "10/15 08:55",
    "last_seen": "08:58",
    "mins": 2.2,
    "span": 2,
@@ -1604,7 +1604,7 @@
   },
   {
    "tag": "526ab1",
-   "joined": "08:55",
+   "joined": "10/15 08:55",
    "last_seen": "10:08",
    "mins": 5.2,
    "span": 73,
@@ -1648,7 +1648,7 @@
   },
   {
    "tag": "0a569d",
-   "joined": "08:48",
+   "joined": "10/15 08:48",
    "last_seen": "08:49",
    "mins": 1.5,
    "span": 1,
@@ -1692,7 +1692,7 @@
   },
   {
    "tag": "f04ada",
-   "joined": "08:47",
+   "joined": "10/15 08:47",
    "last_seen": "08:54",
    "mins": 6.9,
    "span": 6,
@@ -1736,7 +1736,7 @@
   },
   {
    "tag": "e0a05d",
-   "joined": "08:38",
+   "joined": "10/15 08:38",
    "last_seen": "09:02",
    "mins": 22.7,
    "span": 23,
@@ -1780,7 +1780,7 @@
   },
   {
    "tag": "747a17",
-   "joined": "08:33",
+   "joined": "10/15 08:33",
    "last_seen": "08:40",
    "mins": 6.5,
    "span": 7,
@@ -1824,7 +1824,7 @@
   },
   {
    "tag": "f26728",
-   "joined": "08:33",
+   "joined": "10/15 08:33",
    "last_seen": "08:59",
    "mins": 8.0,
    "span": 26,
@@ -1868,7 +1868,7 @@
   },
   {
    "tag": "f09ef5",
-   "joined": "08:25",
+   "joined": "10/15 08:25",
    "last_seen": "15:00",
    "mins": 27.6,
    "span": 394,
@@ -1912,7 +1912,7 @@
   },
   {
    "tag": "c028e5",
-   "joined": "08:09",
+   "joined": "10/15 08:09",
    "last_seen": "08:12",
    "mins": 2.7,
    "span": 2,
@@ -1956,7 +1956,7 @@
   },
   {
    "tag": "8a97e3",
-   "joined": "08:07",
+   "joined": "10/15 08:07",
    "last_seen": "12:05",
    "mins": 11.8,
    "span": 237,
@@ -2000,7 +2000,7 @@
   },
   {
    "tag": "d8e89c",
-   "joined": "08:05",
+   "joined": "10/15 08:05",
    "last_seen": "22:41",
    "mins": 20.7,
    "span": 876,
@@ -2044,7 +2044,7 @@
   },
   {
    "tag": "0c3320",
-   "joined": "08:03",
+   "joined": "10/15 08:03",
    "last_seen": "08:40",
    "mins": 18.9,
    "span": 36,
@@ -2088,7 +2088,7 @@
   },
   {
    "tag": "5ab4bb",
-   "joined": "07:59",
+   "joined": "10/15 07:59",
    "last_seen": "08:01",
    "mins": 1.8,
    "span": 1,
@@ -2132,7 +2132,7 @@
   },
   {
    "tag": "cfa657",
-   "joined": "07:46",
+   "joined": "10/15 07:46",
    "last_seen": "07:51",
    "mins": 1.7,
    "span": 4,
@@ -2176,7 +2176,7 @@
   },
   {
    "tag": "02fa17",
-   "joined": "07:46",
+   "joined": "10/15 07:46",
    "last_seen": "10:03",
    "mins": 12.8,
    "span": 137,
@@ -2220,7 +2220,7 @@
   },
   {
    "tag": "4c9a72",
-   "joined": "07:46",
+   "joined": "10/15 07:46",
    "last_seen": "07:48",
    "mins": 0.2,
    "span": 2,
@@ -2264,7 +2264,7 @@
   },
   {
    "tag": "919fae",
-   "joined": "07:44",
+   "joined": "10/15 07:44",
    "last_seen": "08:14",
    "mins": 29.0,
    "span": 29,
@@ -2308,7 +2308,7 @@
   },
   {
    "tag": "43d20f",
-   "joined": "07:34",
+   "joined": "10/15 07:34",
    "last_seen": "22:53",
    "mins": 27.5,
    "span": 919,
@@ -2352,7 +2352,7 @@
   },
   {
    "tag": "6af547",
-   "joined": "07:19",
+   "joined": "10/15 07:19",
    "last_seen": "20:43",
    "mins": 44.0,
    "span": 803,
@@ -2396,7 +2396,7 @@
   },
   {
    "tag": "08ee96",
-   "joined": "07:17",
+   "joined": "10/15 07:17",
    "last_seen": "13:37",
    "mins": 24.1,
    "span": 379,
@@ -2440,7 +2440,7 @@
   },
   {
    "tag": "288b2a",
-   "joined": "07:13",
+   "joined": "10/15 07:13",
    "last_seen": "07:21",
    "mins": 7.9,
    "span": 8,
@@ -2484,7 +2484,7 @@
   },
   {
    "tag": "9bfce8",
-   "joined": "07:11",
+   "joined": "10/15 07:11",
    "last_seen": "09:37",
    "mins": 63.8,
    "span": 145,
@@ -2528,7 +2528,7 @@
   },
   {
    "tag": "51cf62",
-   "joined": "07:08",
+   "joined": "10/15 07:08",
    "last_seen": "07:40",
    "mins": 8.8,
    "span": 32,
@@ -2572,7 +2572,7 @@
   },
   {
    "tag": "8644e9",
-   "joined": "06:57",
+   "joined": "10/15 06:57",
    "last_seen": "06:57",
    "mins": 0.1,
    "span": 0,
@@ -2616,7 +2616,7 @@
   },
   {
    "tag": "afb59a",
-   "joined": "06:52",
+   "joined": "10/15 06:52",
    "last_seen": "12:46",
    "mins": 28.4,
    "span": 353,
@@ -2660,7 +2660,7 @@
   },
   {
    "tag": "0b1a21",
-   "joined": "06:51",
+   "joined": "10/15 06:51",
    "last_seen": "16:22",
    "mins": 36.9,
    "span": 571,
@@ -2704,7 +2704,7 @@
   },
   {
    "tag": "8f131c",
-   "joined": "06:50",
+   "joined": "10/15 06:50",
    "last_seen": "06:53",
    "mins": 1.4,
    "span": 3,
@@ -2748,7 +2748,7 @@
   },
   {
    "tag": "cc892e",
-   "joined": "06:40",
+   "joined": "10/15 06:40",
    "last_seen": "20:25",
    "mins": 6.6,
    "span": 825,
@@ -2792,7 +2792,7 @@
   },
   {
    "tag": "c86d03",
-   "joined": "06:34",
+   "joined": "10/15 06:34",
    "last_seen": "16:51",
    "mins": 48.8,
    "span": 617,
@@ -2836,7 +2836,7 @@
   },
   {
    "tag": "5abb0e",
-   "joined": "06:21",
+   "joined": "10/15 06:21",
    "last_seen": "23:37",
    "mins": 19.6,
    "span": 1035,
@@ -2880,7 +2880,7 @@
   },
   {
    "tag": "42e941",
-   "joined": "06:14",
+   "joined": "10/15 06:14",
    "last_seen": "06:24",
    "mins": 8.9,
    "span": 9,
@@ -2924,15 +2924,15 @@
   },
   {
    "tag": "81260a",
-   "joined": "06:11",
-   "last_seen": "23:56",
-   "mins": 255.3,
-   "span": 1064,
+   "joined": "10/15 06:11",
+   "last_seen": "00:01",
+   "mins": 258.3,
+   "span": 1069,
    "sessions": 5,
-   "off": 10,
-   "off_boost": 3,
-   "prog": 0.0,
-   "events": 324,
+   "off": 11,
+   "off_boost": 4,
+   "prog": 0.5,
+   "events": 355,
    "ver": "1.0 (v977)",
    "country": "France",
    "reached": [
@@ -2953,9 +2953,9 @@
     1,
     1,
     1,
-    0,
-    0,
-    0,
+    1,
+    1,
+    1,
     0,
     0,
     0,
@@ -2963,12 +2963,12 @@
     1,
     1
    ],
-   "far": 16,
-   "far_label": "신분2"
+   "far": 19,
+   "far_label": "신분5"
   },
   {
    "tag": "6130f5",
-   "joined": "06:10",
+   "joined": "10/15 06:10",
    "last_seen": "06:31",
    "mins": 18.0,
    "span": 20,
@@ -3012,7 +3012,7 @@
   },
   {
    "tag": "f518ff",
-   "joined": "06:08",
+   "joined": "10/15 06:08",
    "last_seen": "17:27",
    "mins": 11.1,
    "span": 678,
@@ -3056,7 +3056,7 @@
   },
   {
    "tag": "1fc7c3",
-   "joined": "06:08",
+   "joined": "10/15 06:08",
    "last_seen": "06:09",
    "mins": 0.9,
    "span": 1,
@@ -3100,7 +3100,7 @@
   },
   {
    "tag": "f1ec40",
-   "joined": "06:07",
+   "joined": "10/15 06:07",
    "last_seen": "12:02",
    "mins": 25.5,
    "span": 354,
@@ -3144,7 +3144,7 @@
   },
   {
    "tag": "dd3a97",
-   "joined": "06:05",
+   "joined": "10/15 06:05",
    "last_seen": "19:41",
    "mins": 13.2,
    "span": 815,
@@ -3188,7 +3188,7 @@
   },
   {
    "tag": "6bfdbb",
-   "joined": "05:56",
+   "joined": "10/15 05:56",
    "last_seen": "06:41",
    "mins": 45.5,
    "span": 45,
@@ -3232,7 +3232,7 @@
   },
   {
    "tag": "783185",
-   "joined": "05:50",
+   "joined": "10/15 05:50",
    "last_seen": "08:05",
    "mins": 134.0,
    "span": 135,
@@ -3276,7 +3276,7 @@
   },
   {
    "tag": "18a885",
-   "joined": "05:48",
+   "joined": "10/15 05:48",
    "last_seen": "18:50",
    "mins": 36.3,
    "span": 782,
@@ -3320,7 +3320,7 @@
   },
   {
    "tag": "5cc574",
-   "joined": "05:07",
+   "joined": "10/15 05:07",
    "last_seen": "05:21",
    "mins": 12.8,
    "span": 13,
@@ -3364,7 +3364,7 @@
   },
   {
    "tag": "11d91f",
-   "joined": "05:00",
+   "joined": "10/15 05:00",
    "last_seen": "23:29",
    "mins": 209.6,
    "span": 1109,
@@ -3408,7 +3408,7 @@
   },
   {
    "tag": "8bdac4",
-   "joined": "04:37",
+   "joined": "10/15 04:37",
    "last_seen": "23:26",
    "mins": 13.4,
    "span": 1128,
@@ -3452,7 +3452,7 @@
   },
   {
    "tag": "0e932e",
-   "joined": "04:32",
+   "joined": "10/15 04:32",
    "last_seen": "04:35",
    "mins": 1.8,
    "span": 2,
@@ -3496,15 +3496,15 @@
   },
   {
    "tag": "9ece14",
-   "joined": "04:31",
-   "last_seen": "06:38",
+   "joined": "10/15 04:31",
+   "last_seen": "23:58",
    "mins": 21.5,
-   "span": 126,
-   "sessions": 2,
+   "span": 1166,
+   "sessions": 3,
    "off": 1,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 78,
+   "events": 79,
    "ver": "1.0 (v977)",
    "country": "Brazil",
    "reached": [
@@ -3540,7 +3540,7 @@
   },
   {
    "tag": "30eca6",
-   "joined": "04:03",
+   "joined": "10/15 04:03",
    "last_seen": "11:37",
    "mins": 18.5,
    "span": 454,
@@ -3584,7 +3584,7 @@
   },
   {
    "tag": "71ba09",
-   "joined": "04:02",
+   "joined": "10/15 04:02",
    "last_seen": "04:16",
    "mins": 13.2,
    "span": 13,
@@ -3628,7 +3628,7 @@
   },
   {
    "tag": "834dd5",
-   "joined": "03:55",
+   "joined": "10/15 03:55",
    "last_seen": "20:47",
    "mins": 36.7,
    "span": 1012,
@@ -3672,7 +3672,7 @@
   },
   {
    "tag": "803273",
-   "joined": "03:50",
+   "joined": "10/15 03:50",
    "last_seen": "12:16",
    "mins": 17.0,
    "span": 506,
@@ -3716,7 +3716,7 @@
   },
   {
    "tag": "0bd7b1",
-   "joined": "03:38",
+   "joined": "10/15 03:38",
    "last_seen": "18:13",
    "mins": 10.2,
    "span": 874,
@@ -3760,7 +3760,7 @@
   },
   {
    "tag": "37e738",
-   "joined": "03:37",
+   "joined": "10/15 03:37",
    "last_seen": "03:39",
    "mins": 1.9,
    "span": 2,
@@ -3804,7 +3804,7 @@
   },
   {
    "tag": "871d16",
-   "joined": "03:36",
+   "joined": "10/15 03:36",
    "last_seen": "18:01",
    "mins": 28.1,
    "span": 864,
@@ -3848,7 +3848,7 @@
   },
   {
    "tag": "c54874",
-   "joined": "03:33",
+   "joined": "10/15 03:33",
    "last_seen": "17:00",
    "mins": 28.9,
    "span": 807,
@@ -3892,7 +3892,7 @@
   },
   {
    "tag": "dd64c8",
-   "joined": "03:32",
+   "joined": "10/15 03:32",
    "last_seen": "23:32",
    "mins": 31.8,
    "span": 1200,
@@ -3936,7 +3936,7 @@
   },
   {
    "tag": "ef4af4",
-   "joined": "03:26",
+   "joined": "10/15 03:26",
    "last_seen": "19:24",
    "mins": 47.0,
    "span": 957,
@@ -3980,15 +3980,15 @@
   },
   {
    "tag": "956ee2",
-   "joined": "03:26",
-   "last_seen": "18:50",
-   "mins": 10.4,
-   "span": 923,
-   "sessions": 3,
-   "off": 3,
+   "joined": "10/15 03:26",
+   "last_seen": "23:39",
+   "mins": 11.8,
+   "span": 1212,
+   "sessions": 4,
+   "off": 4,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 92,
+   "events": 101,
    "ver": "1.0 (v977)",
    "country": "France",
    "reached": [
@@ -4024,15 +4024,15 @@
   },
   {
    "tag": "495d9b",
-   "joined": "03:24",
-   "last_seen": "22:56",
-   "mins": 48.0,
-   "span": 1172,
+   "joined": "10/15 03:24",
+   "last_seen": "22:58",
+   "mins": 50.0,
+   "span": 1174,
    "sessions": 6,
    "off": 12,
    "off_boost": 9,
-   "prog": 2.2,
-   "events": 235,
+   "prog": 3.2,
+   "events": 275,
    "ver": "1.0 (v977)",
    "country": "Germany",
    "reached": [
@@ -4058,17 +4058,17 @@
     1,
     1,
     1,
-    0,
+    1,
     1,
     0,
     1
    ],
-   "far": 21,
-   "far_label": "신분7"
+   "far": 22,
+   "far_label": "첫환생"
   },
   {
    "tag": "1f6aba",
-   "joined": "03:22",
+   "joined": "10/15 03:22",
    "last_seen": "03:23",
    "mins": 0.3,
    "span": 1,
@@ -4112,7 +4112,7 @@
   },
   {
    "tag": "659a53",
-   "joined": "03:17",
+   "joined": "10/15 03:17",
    "last_seen": "03:21",
    "mins": 3.9,
    "span": 4,
@@ -4156,15 +4156,15 @@
   },
   {
    "tag": "38ec0a",
-   "joined": "03:15",
+   "joined": "10/15 03:15",
    "last_seen": "22:06",
-   "mins": 26.4,
+   "mins": 27.5,
    "span": 1130,
    "sessions": 4,
-   "off": 6,
+   "off": 7,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 141,
+   "events": 145,
    "ver": "1.0 (v977)",
    "country": "Argentina",
    "reached": [
@@ -4200,15 +4200,15 @@
   },
   {
    "tag": "652524",
-   "joined": "03:14",
-   "last_seen": "20:21",
+   "joined": "10/15 03:14",
+   "last_seen": "00:01",
    "mins": 91.0,
-   "span": 1027,
-   "sessions": 6,
+   "span": 1246,
+   "sessions": 7,
    "off": 8,
    "off_boost": 7,
    "prog": 3.2,
-   "events": 472,
+   "events": 474,
    "ver": "1.0 (v977)",
    "country": "Türkiye",
    "reached": [
@@ -4244,7 +4244,7 @@
   },
   {
    "tag": "98d7fa",
-   "joined": "03:10",
+   "joined": "10/15 03:10",
    "last_seen": "17:09",
    "mins": 77.3,
    "span": 839,
@@ -4288,7 +4288,7 @@
   },
   {
    "tag": "882e5b",
-   "joined": "03:09",
+   "joined": "10/15 03:09",
    "last_seen": "21:46",
    "mins": 112.8,
    "span": 1117,
@@ -4332,7 +4332,7 @@
   },
   {
    "tag": "3ae39b",
-   "joined": "03:08",
+   "joined": "10/15 03:08",
    "last_seen": "18:06",
    "mins": 26.9,
    "span": 897,
@@ -4376,7 +4376,7 @@
   },
   {
    "tag": "cce1ae",
-   "joined": "03:06",
+   "joined": "10/15 03:06",
    "last_seen": "17:25",
    "mins": 542.8,
    "span": 858,
@@ -4420,7 +4420,7 @@
   },
   {
    "tag": "6724b6",
-   "joined": "03:06",
+   "joined": "10/15 03:06",
    "last_seen": "03:16",
    "mins": 9.5,
    "span": 9,
@@ -4464,7 +4464,7 @@
   },
   {
    "tag": "66cc54",
-   "joined": "03:06",
+   "joined": "10/15 03:06",
    "last_seen": "22:10",
    "mins": 194.6,
    "span": 1144,
@@ -4508,7 +4508,7 @@
   },
   {
    "tag": "28d784",
-   "joined": "03:04",
+   "joined": "10/15 03:04",
    "last_seen": "05:18",
    "mins": 133.6,
    "span": 134,
@@ -4552,7 +4552,7 @@
   },
   {
    "tag": "226121",
-   "joined": "03:00",
+   "joined": "10/15 03:00",
    "last_seen": "03:01",
    "mins": 0.7,
    "span": 0,
@@ -4596,7 +4596,7 @@
   },
   {
    "tag": "e592b5",
-   "joined": "02:58",
+   "joined": "10/15 02:58",
    "last_seen": "04:03",
    "mins": 6.9,
    "span": 64,
@@ -4640,7 +4640,7 @@
   },
   {
    "tag": "b5f240",
-   "joined": "02:57",
+   "joined": "10/15 02:57",
    "last_seen": "03:12",
    "mins": 14.4,
    "span": 14,
@@ -4684,7 +4684,7 @@
   },
   {
    "tag": "0d54c1",
-   "joined": "02:57",
+   "joined": "10/15 02:57",
    "last_seen": "05:02",
    "mins": 123.6,
    "span": 125,
@@ -4728,7 +4728,7 @@
   },
   {
    "tag": "ea9f64",
-   "joined": "02:51",
+   "joined": "10/15 02:51",
    "last_seen": "04:53",
    "mins": 2.5,
    "span": 121,
@@ -4772,7 +4772,7 @@
   },
   {
    "tag": "69588e",
-   "joined": "02:50",
+   "joined": "10/15 02:50",
    "last_seen": "02:52",
    "mins": 0.9,
    "span": 2,
@@ -4816,7 +4816,7 @@
   },
   {
    "tag": "d16869",
-   "joined": "02:45",
+   "joined": "10/15 02:45",
    "last_seen": "03:03",
    "mins": 7.9,
    "span": 18,
@@ -4860,7 +4860,7 @@
   },
   {
    "tag": "956b99",
-   "joined": "02:40",
+   "joined": "10/15 02:40",
    "last_seen": "02:54",
    "mins": 12.2,
    "span": 13,
@@ -4904,7 +4904,7 @@
   },
   {
    "tag": "0fdd78",
-   "joined": "02:39",
+   "joined": "10/15 02:39",
    "last_seen": "03:05",
    "mins": 20.7,
    "span": 25,
@@ -4948,7 +4948,7 @@
   },
   {
    "tag": "5daeb1",
-   "joined": "02:37",
+   "joined": "10/15 02:37",
    "last_seen": "02:38",
    "mins": 0.5,
    "span": 0,
@@ -4992,7 +4992,7 @@
   },
   {
    "tag": "d67e42",
-   "joined": "02:37",
+   "joined": "10/15 02:37",
    "last_seen": "02:52",
    "mins": 14.9,
    "span": 15,
@@ -5036,7 +5036,7 @@
   },
   {
    "tag": "1f332a",
-   "joined": "02:35",
+   "joined": "10/15 02:35",
    "last_seen": "02:41",
    "mins": 6.3,
    "span": 6,
@@ -5080,7 +5080,7 @@
   },
   {
    "tag": "fc0083",
-   "joined": "02:28",
+   "joined": "10/15 02:28",
    "last_seen": "08:53",
    "mins": 2.5,
    "span": 385,
@@ -5124,7 +5124,7 @@
   },
   {
    "tag": "a5689c",
-   "joined": "02:19",
+   "joined": "10/15 02:19",
    "last_seen": "02:25",
    "mins": 3.0,
    "span": 5,
@@ -5168,7 +5168,7 @@
   },
   {
    "tag": "fc99d7",
-   "joined": "02:18",
+   "joined": "10/15 02:18",
    "last_seen": "02:24",
    "mins": 6.4,
    "span": 6,
@@ -5212,7 +5212,7 @@
   },
   {
    "tag": "4081e1",
-   "joined": "02:18",
+   "joined": "10/15 02:18",
    "last_seen": "02:18",
    "mins": 0.1,
    "span": 0,
@@ -5256,7 +5256,7 @@
   },
   {
    "tag": "4328ea",
-   "joined": "02:17",
+   "joined": "10/15 02:17",
    "last_seen": "02:26",
    "mins": 8.7,
    "span": 9,
@@ -5300,7 +5300,7 @@
   },
   {
    "tag": "33cabd",
-   "joined": "02:15",
+   "joined": "10/15 02:15",
    "last_seen": "02:29",
    "mins": 8.2,
    "span": 13,
@@ -5344,7 +5344,7 @@
   },
   {
    "tag": "21d6a8",
-   "joined": "02:11",
+   "joined": "10/15 02:11",
    "last_seen": "13:38",
    "mins": 91.5,
    "span": 687,
@@ -5388,7 +5388,7 @@
   },
   {
    "tag": "5f8c0e",
-   "joined": "02:11",
+   "joined": "10/15 02:11",
    "last_seen": "02:39",
    "mins": 23.9,
    "span": 28,
@@ -5432,7 +5432,7 @@
   },
   {
    "tag": "78e325",
-   "joined": "02:04",
+   "joined": "10/15 02:04",
    "last_seen": "02:06",
    "mins": 0.3,
    "span": 1,
@@ -5476,7 +5476,7 @@
   },
   {
    "tag": "0a045b",
-   "joined": "02:02",
+   "joined": "10/15 02:02",
    "last_seen": "02:02",
    "mins": 0.7,
    "span": 0,
@@ -5520,7 +5520,7 @@
   },
   {
    "tag": "88dcff",
-   "joined": "02:02",
+   "joined": "10/15 02:02",
    "last_seen": "02:04",
    "mins": 2.0,
    "span": 2,
@@ -5564,7 +5564,7 @@
   },
   {
    "tag": "65a5d1",
-   "joined": "02:00",
+   "joined": "10/15 02:00",
    "last_seen": "02:15",
    "mins": 13.7,
    "span": 15,
@@ -5608,7 +5608,7 @@
   },
   {
    "tag": "6ebe0a",
-   "joined": "01:58",
+   "joined": "10/15 01:58",
    "last_seen": "23:53",
    "mins": 20.1,
    "span": 1315,
@@ -5652,7 +5652,7 @@
   },
   {
    "tag": "4170a2",
-   "joined": "01:58",
+   "joined": "10/15 01:58",
    "last_seen": "02:47",
    "mins": 47.3,
    "span": 49,
@@ -5696,7 +5696,7 @@
   },
   {
    "tag": "b96fa8",
-   "joined": "01:56",
+   "joined": "10/15 01:56",
    "last_seen": "22:34",
    "mins": 97.8,
    "span": 1238,
@@ -5740,7 +5740,7 @@
   },
   {
    "tag": "c814a7",
-   "joined": "01:55",
+   "joined": "10/15 01:55",
    "last_seen": "22:39",
    "mins": 136.1,
    "span": 1243,
@@ -5784,7 +5784,7 @@
   },
   {
    "tag": "9c4be3",
-   "joined": "01:52",
+   "joined": "10/15 01:52",
    "last_seen": "12:51",
    "mins": 3.3,
    "span": 658,
@@ -5828,7 +5828,7 @@
   },
   {
    "tag": "5bed5b",
-   "joined": "01:50",
+   "joined": "10/15 01:50",
    "last_seen": "02:21",
    "mins": 5.3,
    "span": 31,
@@ -5872,7 +5872,7 @@
   },
   {
    "tag": "b98a19",
-   "joined": "01:39",
+   "joined": "10/15 01:39",
    "last_seen": "01:59",
    "mins": 19.8,
    "span": 19,
@@ -5916,7 +5916,7 @@
   },
   {
    "tag": "52ddc8",
-   "joined": "01:38",
+   "joined": "10/15 01:38",
    "last_seen": "20:55",
    "mins": 47.4,
    "span": 1157,
@@ -5960,7 +5960,7 @@
   },
   {
    "tag": "f633f2",
-   "joined": "01:36",
+   "joined": "10/15 01:36",
    "last_seen": "23:18",
    "mins": 25.4,
    "span": 1301,
@@ -6004,7 +6004,7 @@
   },
   {
    "tag": "85e048",
-   "joined": "01:36",
+   "joined": "10/15 01:36",
    "last_seen": "01:44",
    "mins": 7.9,
    "span": 7,
@@ -6048,7 +6048,7 @@
   },
   {
    "tag": "8f8194",
-   "joined": "01:34",
+   "joined": "10/15 01:34",
    "last_seen": "01:35",
    "mins": 0.8,
    "span": 0,
@@ -6092,7 +6092,7 @@
   },
   {
    "tag": "748731",
-   "joined": "01:33",
+   "joined": "10/15 01:33",
    "last_seen": "01:35",
    "mins": 1.6,
    "span": 1,
@@ -6136,7 +6136,7 @@
   },
   {
    "tag": "4dbc7c",
-   "joined": "00:58",
+   "joined": "10/15 00:58",
    "last_seen": "01:09",
    "mins": 3.6,
    "span": 11,
@@ -6180,7 +6180,7 @@
   },
   {
    "tag": "b65cfd",
-   "joined": "00:44",
+   "joined": "10/15 00:44",
    "last_seen": "01:02",
    "mins": 16.5,
    "span": 18,
@@ -6224,7 +6224,7 @@
   },
   {
    "tag": "55366e",
-   "joined": "00:37",
+   "joined": "10/15 00:37",
    "last_seen": "13:21",
    "mins": 30.9,
    "span": 763,
@@ -6265,212 +6265,168 @@
    ],
    "far": 14,
    "far_label": "은퇴"
-  },
-  {
-   "tag": "c371b0",
-   "joined": "10/14 23:59",
-   "last_seen": "20:57",
-   "mins": 52.4,
-   "span": 1258,
-   "sessions": 4,
-   "off": 3,
-   "off_boost": 2,
-   "prog": 0.0,
-   "events": 179,
-   "ver": "1.0 (v977)",
-   "country": "Vietnam",
-   "reached": [
-    1,
-    1,
-    0,
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    1,
-    1
-   ],
-   "far": 16,
-   "far_label": "신분2"
   }
  ],
- "stay60": 126,
+ "stay60": 125,
  "funnel": [
   {
    "key": "new_game",
    "label": "새게임",
-   "n": 138,
-   "rec": 138,
+   "n": 137,
+   "rec": 137,
    "pct": 98.6,
    "kind": "spine"
   },
   {
    "key": "intro_done",
    "label": "인트로",
-   "n": 135,
-   "rec": 135,
+   "n": 134,
+   "rec": 134,
    "pct": 96.4,
    "kind": "spine"
   },
   {
    "key": "dev_concept",
    "label": "기획",
-   "n": 131,
+   "n": 130,
    "rec": 130,
-   "pct": 93.6,
+   "pct": 93.5,
    "kind": "spine"
   },
   {
    "key": "dev_design",
    "label": "디자인",
-   "n": 123,
+   "n": 122,
    "rec": 122,
-   "pct": 87.9,
+   "pct": 87.8,
    "kind": "spine"
   },
   {
    "key": "dev_prototype",
    "label": "프로토",
-   "n": 119,
-   "rec": 119,
-   "pct": 85.0,
+   "n": 118,
+   "rec": 118,
+   "pct": 84.9,
    "kind": "spine"
   },
   {
    "key": "dev_alpha",
    "label": "알파",
-   "n": 111,
-   "rec": 111,
-   "pct": 79.3,
+   "n": 110,
+   "rec": 110,
+   "pct": 79.1,
    "kind": "spine"
   },
   {
    "key": "dev_beta",
    "label": "베타",
-   "n": 109,
-   "rec": 109,
-   "pct": 77.9,
+   "n": 108,
+   "rec": 108,
+   "pct": 77.7,
    "kind": "spine"
   },
   {
    "key": "dev_launch",
    "label": "출시",
-   "n": 104,
-   "rec": 104,
-   "pct": 74.3,
+   "n": 103,
+   "rec": 103,
+   "pct": 74.1,
    "kind": "spine"
   },
   {
    "key": "first_ops",
    "label": "첫운영",
-   "n": 104,
-   "rec": 101,
-   "pct": 74.3,
+   "n": 103,
+   "rec": 100,
+   "pct": 74.1,
    "kind": "spine"
   },
   {
    "key": "property_1",
    "label": "부동산1",
-   "n": 104,
-   "rec": 104,
-   "pct": 74.3,
+   "n": 103,
+   "rec": 103,
+   "pct": 74.1,
    "kind": "spine"
   },
   {
    "key": "property_2",
    "label": "부동산2",
-   "n": 85,
-   "rec": 85,
-   "pct": 60.7,
+   "n": 84,
+   "rec": 84,
+   "pct": 60.4,
    "kind": "spine"
   },
   {
    "key": "property_3",
    "label": "부동산3",
-   "n": 81,
-   "rec": 81,
-   "pct": 57.9,
+   "n": 80,
+   "rec": 80,
+   "pct": 57.6,
    "kind": "spine"
   },
   {
    "key": "property_4",
    "label": "부동산4",
-   "n": 78,
-   "rec": 78,
-   "pct": 55.7,
+   "n": 77,
+   "rec": 77,
+   "pct": 55.4,
    "kind": "spine"
   },
   {
    "key": "property_5",
    "label": "부동산5",
-   "n": 77,
-   "rec": 77,
-   "pct": 55.0,
+   "n": 76,
+   "rec": 76,
+   "pct": 54.7,
    "kind": "spine"
   },
   {
    "key": "game_sale",
    "label": "은퇴",
-   "n": 76,
-   "rec": 76,
-   "pct": 54.3,
+   "n": 75,
+   "rec": 75,
+   "pct": 54.0,
    "kind": "spine"
   },
   {
    "key": "first_donate",
    "label": "첫후원",
-   "n": 44,
-   "rec": 44,
-   "pct": 31.4,
+   "n": 43,
+   "rec": 43,
+   "pct": 30.9,
    "kind": "spine"
   },
   {
    "key": "class2",
    "label": "신분2",
-   "n": 42,
-   "rec": 42,
-   "pct": 30.0,
+   "n": 41,
+   "rec": 41,
+   "pct": 29.5,
    "kind": "spine"
   },
   {
    "key": "class3",
    "label": "신분3",
-   "n": 14,
-   "rec": 14,
-   "pct": 10.0,
+   "n": 15,
+   "rec": 15,
+   "pct": 10.8,
    "kind": "spine"
   },
   {
    "key": "class4",
    "label": "신분4",
-   "n": 13,
-   "rec": 13,
-   "pct": 9.3,
+   "n": 14,
+   "rec": 14,
+   "pct": 10.1,
    "kind": "spine"
   },
   {
    "key": "class5",
    "label": "신분5",
-   "n": 12,
-   "rec": 12,
-   "pct": 8.6,
+   "n": 13,
+   "rec": 13,
+   "pct": 9.4,
    "kind": "spine"
   },
   {
@@ -6486,43 +6442,43 @@
    "label": "신분7",
    "n": 9,
    "rec": 9,
-   "pct": 6.4,
+   "pct": 6.5,
    "kind": "spine"
   },
   {
    "key": "first_rebirth",
    "label": "첫환생",
-   "n": 5,
-   "rec": 5,
-   "pct": 3.6,
+   "n": 6,
+   "rec": 6,
+   "pct": 4.3,
    "kind": "spine"
   },
   {
    "key": "first_manager",
    "label": "첫매니저",
-   "n": 49,
-   "rec": 49,
-   "pct": 35.0,
+   "n": 48,
+   "rec": 48,
+   "pct": 34.5,
    "kind": "side"
   },
   {
    "key": "first_finance",
    "label": "첫금융",
-   "n": 56,
-   "rec": 56,
-   "pct": 40.0,
+   "n": 55,
+   "rec": 55,
+   "pct": 39.6,
    "kind": "side"
   },
   {
    "key": "first_ad",
    "label": "첫광고",
-   "n": 47,
-   "rec": 47,
-   "pct": 33.6,
+   "n": 46,
+   "rec": 46,
+   "pct": 33.1,
    "kind": "side"
   }
  ],
- "cohort_n": 140,
+ "cohort_n": 139,
  "excluded_nogeo": 0,
  "excluded_build": 3,
  "newest_build": "1.0 (v977)",
@@ -6533,7 +6489,7 @@
   "rows": [
    {
     "ver": "1.0 (v977)",
-    "n": 140,
+    "n": 139,
     "live": true
    },
    {
@@ -6549,16 +6505,10 @@
   ]
  },
  "d1_live": {
-  "base": 61,
-  "ret": 13,
-  "pct": 21.3,
+  "base": 38,
+  "ret": 8,
+  "pct": 21.1,
   "rows": [
-   {
-    "ver": "1.0 (v971)",
-    "base": 22,
-    "ret": 6,
-    "pct": 27.3
-   },
    {
     "ver": "1.0 (v977)",
     "base": 12,
@@ -6566,25 +6516,25 @@
     "pct": 25.0
    },
    {
-    "ver": "1.0 (v973)",
-    "base": 11,
-    "ret": 1,
-    "pct": 9.1
-   },
-   {
     "ver": "1.0 (v976)",
     "base": 9,
     "ret": 3,
     "pct": 33.3
+   },
+   {
+    "ver": "1.0 (v973)",
+    "base": 7,
+    "ret": 0,
+    "pct": 0.0
+   },
+   {
+    "ver": "1.0 (v971)",
+    "base": 6,
+    "ret": 2,
+    "pct": 33.3
    }
   ],
   "by_day": [
-   {
-    "day": "2026-10-11",
-    "base": 23,
-    "ret": 5,
-    "pct": 21.7
-   },
    {
     "day": "2026-10-12",
     "base": 20,
@@ -6600,23 +6550,15 @@
   ]
  },
  "cohort_prov": {
-  "today": "2026-10-15",
+  "today": "2026-10-16",
   "rows": [
-   {
-    "day": "2026-10-01",
-    "rday": "2026-10-15",
-    "base": 405,
-    "ret": 39,
-    "pct": 9.6,
-    "rising": true
-   },
    {
     "day": "2026-10-02",
     "rday": "2026-10-15",
     "base": 342,
     "ret": 29,
     "pct": 8.5,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-03",
@@ -6624,7 +6566,7 @@
     "base": 429,
     "ret": 35,
     "pct": 8.2,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-04",
@@ -6632,6 +6574,14 @@
     "base": 407,
     "ret": 28,
     "pct": 6.9,
+    "rising": false
+   },
+   {
+    "day": "2026-10-04",
+    "rday": "2026-10-16",
+    "base": 407,
+    "ret": 1,
+    "pct": 0.2,
     "rising": true
    },
    {
@@ -6640,7 +6590,7 @@
     "base": 354,
     "ret": 41,
     "pct": 11.6,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-06",
@@ -6648,7 +6598,7 @@
     "base": 240,
     "ret": 23,
     "pct": 9.6,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-07",
@@ -6656,7 +6606,7 @@
     "base": 53,
     "ret": 4,
     "pct": 7.5,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-08",
@@ -6664,7 +6614,7 @@
     "base": 22,
     "ret": 4,
     "pct": 18.2,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-09",
@@ -6672,7 +6622,7 @@
     "base": 24,
     "ret": 2,
     "pct": 8.3,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-10",
@@ -6680,11 +6630,19 @@
     "base": 17,
     "ret": 1,
     "pct": 5.9,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-11",
     "rday": "2026-10-15",
+    "base": 23,
+    "ret": 1,
+    "pct": 4.3,
+    "rising": false
+   },
+   {
+    "day": "2026-10-11",
+    "rday": "2026-10-16",
     "base": 23,
     "ret": 1,
     "pct": 4.3,
@@ -6696,7 +6654,7 @@
     "base": 20,
     "ret": 4,
     "pct": 20.0,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-13",
@@ -6704,6 +6662,14 @@
     "base": 18,
     "ret": 5,
     "pct": 27.8,
+    "rising": false
+   },
+   {
+    "day": "2026-10-13",
+    "rday": "2026-10-16",
+    "base": 18,
+    "ret": 1,
+    "pct": 5.6,
     "rising": true
    },
    {
@@ -6712,7 +6678,7 @@
     "base": 167,
     "ret": 56,
     "pct": 33.5,
-    "rising": true
+    "rising": false
    },
    {
     "day": "2026-10-15",
@@ -6720,14 +6686,18 @@
     "base": 142,
     "ret": 142,
     "pct": 100.0,
+    "rising": false
+   },
+   {
+    "day": "2026-10-15",
+    "rday": "2026-10-16",
+    "base": 142,
+    "ret": 2,
+    "pct": 1.4,
     "rising": true
    }
   ],
   "bases": [
-   {
-    "day": "2026-10-01",
-    "base": 405
-   },
    {
     "day": "2026-10-02",
     "base": 342
@@ -6847,16 +6817,16 @@
    },
    {
     "country": "Vietnam",
-    "n": 10,
-    "intro_done": 10,
-    "property_2": 8,
-    "game_sale": 8,
+    "n": 9,
+    "intro_done": 9,
+    "property_2": 7,
+    "game_sale": 7,
     "first_rebirth": 1,
-    "med_min": 17.0,
+    "med_min": 16.5,
     "intro_done_pct": 100.0,
-    "property_2_pct": 80.0,
-    "game_sale_pct": 80.0,
-    "first_rebirth_pct": 10.0
+    "property_2_pct": 77.8,
+    "game_sale_pct": 77.8,
+    "first_rebirth_pct": 11.1
    },
    {
     "country": "Thailand",
@@ -6878,7 +6848,7 @@
     "property_2": 4,
     "game_sale": 2,
     "first_rebirth": 0,
-    "med_min": 10.4,
+    "med_min": 11.8,
     "intro_done_pct": 100.0,
     "property_2_pct": 66.7,
     "game_sale_pct": 33.3,
@@ -6903,12 +6873,12 @@
     "intro_done": 5,
     "property_2": 4,
     "game_sale": 4,
-    "first_rebirth": 0,
+    "first_rebirth": 1,
     "med_min": 23.3,
     "intro_done_pct": 100.0,
     "property_2_pct": 80.0,
     "game_sale_pct": 80.0,
-    "first_rebirth_pct": 0.0
+    "first_rebirth_pct": 20.0
    },
    {
     "country": "Malaysia",
@@ -6943,7 +6913,7 @@
     "property_2": 2,
     "game_sale": 2,
     "first_rebirth": 0,
-    "med_min": 26.4,
+    "med_min": 27.5,
     "intro_done_pct": 75.0,
     "property_2_pct": 50.0,
     "game_sale_pct": 50.0,
@@ -7139,12 +7109,12 @@
     "intro_done": 20,
     "property_2": 13,
     "game_sale": 11,
-    "first_rebirth": 0,
+    "first_rebirth": 1,
     "med_min": 19.8,
     "intro_done_pct": 95.2,
     "property_2_pct": 61.9,
     "game_sale_pct": 52.4,
-    "first_rebirth_pct": 0.0
+    "first_rebirth_pct": 4.8
    },
    {
     "country": "T2",
@@ -7161,392 +7131,122 @@
    },
    {
     "country": "T3",
-    "n": 47,
-    "intro_done": 46,
-    "property_2": 29,
-    "game_sale": 26,
+    "n": 46,
+    "intro_done": 45,
+    "property_2": 28,
+    "game_sale": 25,
     "first_rebirth": 3,
     "med_min": 14.9,
-    "intro_done_pct": 97.9,
-    "property_2_pct": 61.7,
-    "game_sale_pct": 55.3,
-    "first_rebirth_pct": 6.4
+    "intro_done_pct": 97.8,
+    "property_2_pct": 60.9,
+    "game_sale_pct": 54.3,
+    "first_rebirth_pct": 6.5
    }
   ]
  },
  "apk_cert": {
   "good": "dc0a72d0f17e769e",
-  "events": 20,
-  "users": 2,
+  "events": 0,
+  "users": 0,
   "false_pos": 0,
-  "unknown": 2,
+  "unknown": 0,
   "known_bad": 0,
   "dist": [
    {
     "cert": "dc0a72d0f17e769e",
-    "users": 858,
+    "users": 10,
     "ok": true
-   },
-   {
-    "cert": "(미기록)",
-    "users": 150,
-    "ok": true
-   },
-   {
-    "cert": "a40da80a59d170ca",
-    "users": 2,
-    "ok": false
    }
   ],
-  "blocked": [
-   {
-    "tag": "d8db07",
-    "events": 17,
-    "cert": "a40da80a59d170ca",
-    "country": "India",
-    "ver": "1.0 (v977)",
-    "seen": "23:35",
-    "kind": "판단 보류"
-   },
-   {
-    "tag": "6130f5",
-    "events": 3,
-    "cert": "a40da80a59d170ca",
-    "country": "India",
-    "ver": "1.0 (v977)",
-    "seen": "06:10",
-    "kind": "판단 보류"
-   }
-  ]
+  "blocked": []
  },
  "city": {
-  "users": 41,
-  "enters": 2,
+  "users": 0,
+  "enters": 0,
   "done": 0,
   "steps": [
    {
     "key": "first_conquer",
     "label": "첫 인수",
-    "n": 2,
-    "pct": 4.9
+    "n": 0,
+    "pct": 0
    },
    {
     "key": "first_upgrade",
     "label": "첫 업그레이드",
-    "n": 1,
-    "pct": 2.4
+    "n": 0,
+    "pct": 0
    },
    {
     "key": "first_rent",
     "label": "첫 월세",
-    "n": 1,
-    "pct": 2.4
+    "n": 0,
+    "pct": 0
    },
    {
     "key": "first_event",
     "label": "첫 라이브이벤트",
-    "n": 1,
-    "pct": 2.4
+    "n": 0,
+    "pct": 0
    }
   ]
  },
  "ads": {
-  "total": 1142,
+  "total": 2,
   "by_result": [
    {
     "result": "earned",
-    "n": 975
+    "n": 2
    },
    {
     "result": "dismissed",
-    "n": 31
+    "n": 0
    },
    {
     "result": "no_ad",
-    "n": 135
+    "n": 0
    },
    {
     "result": "failed",
-    "n": 1
+    "n": 0
    }
   ],
-  "finish_pct": 96.9,
-  "supply_pct": 11.9,
+  "finish_pct": 100.0,
+  "supply_pct": 0.0,
   "by_country": [
    {
-    "country": "India",
-    "total": 163,
-    "earned": 122,
-    "dismissed": 5,
-    "no_ad": 36,
-    "failed": 0,
-    "users": 47,
-    "finish_pct": 96.1,
-    "supply_pct": 22.1
-   },
-   {
-    "country": "Vietnam",
-    "total": 142,
-    "earned": 135,
-    "dismissed": 2,
-    "no_ad": 5,
-    "failed": 0,
-    "users": 26,
-    "finish_pct": 98.5,
-    "supply_pct": 3.5
-   },
-   {
-    "country": "Brazil",
-    "total": 90,
-    "earned": 69,
-    "dismissed": 3,
-    "no_ad": 18,
-    "failed": 0,
-    "users": 33,
-    "finish_pct": 95.8,
-    "supply_pct": 20.0
-   },
-   {
-    "country": "Thailand",
-    "total": 82,
-    "earned": 68,
-    "dismissed": 2,
-    "no_ad": 11,
-    "failed": 1,
-    "users": 21,
-    "finish_pct": 97.1,
-    "supply_pct": 14.6
-   },
-   {
-    "country": "Türkiye",
-    "total": 74,
-    "earned": 68,
-    "dismissed": 3,
-    "no_ad": 3,
-    "failed": 0,
-    "users": 17,
-    "finish_pct": 95.8,
-    "supply_pct": 4.1
-   },
-   {
-    "country": "France",
-    "total": 70,
-    "earned": 66,
-    "dismissed": 2,
-    "no_ad": 2,
-    "failed": 0,
-    "users": 17,
-    "finish_pct": 97.1,
-    "supply_pct": 2.9
-   },
-   {
-    "country": "Germany",
-    "total": 64,
-    "earned": 55,
-    "dismissed": 5,
-    "no_ad": 4,
-    "failed": 0,
-    "users": 17,
-    "finish_pct": 91.7,
-    "supply_pct": 6.2
-   },
-   {
-    "country": "Indonesia",
-    "total": 57,
-    "earned": 46,
-    "dismissed": 1,
-    "no_ad": 10,
-    "failed": 0,
-    "users": 17,
-    "finish_pct": 97.9,
-    "supply_pct": 17.5
-   },
-   {
-    "country": "Taiwan",
-    "total": 57,
-    "earned": 56,
-    "dismissed": 1,
-    "no_ad": 0,
-    "failed": 0,
-    "users": 12,
-    "finish_pct": 98.2,
-    "supply_pct": 0.0
-   },
-   {
-    "country": "Colombia",
-    "total": 55,
-    "earned": 37,
-    "dismissed": 0,
-    "no_ad": 18,
-    "failed": 0,
-    "users": 10,
-    "finish_pct": 100.0,
-    "supply_pct": 32.7
-   },
-   {
-    "country": "South Korea",
-    "total": 53,
-    "earned": 52,
-    "dismissed": 1,
-    "no_ad": 0,
-    "failed": 0,
-    "users": 10,
-    "finish_pct": 98.1,
-    "supply_pct": 0.0
-   },
-   {
-    "country": "Japan",
-    "total": 38,
-    "earned": 34,
-    "dismissed": 1,
-    "no_ad": 3,
-    "failed": 0,
-    "users": 12,
-    "finish_pct": 97.1,
-    "supply_pct": 7.9
-   },
-   {
-    "country": "Malaysia",
-    "total": 27,
-    "earned": 25,
-    "dismissed": 0,
-    "no_ad": 2,
-    "failed": 0,
-    "users": 4,
-    "finish_pct": 100.0,
-    "supply_pct": 7.4
-   },
-   {
-    "country": "Italy",
-    "total": 25,
-    "earned": 24,
-    "dismissed": 1,
-    "no_ad": 0,
-    "failed": 0,
-    "users": 3,
-    "finish_pct": 96.0,
-    "supply_pct": 0.0
-   },
-   {
-    "country": "Argentina",
-    "total": 24,
-    "earned": 23,
-    "dismissed": 0,
-    "no_ad": 1,
-    "failed": 0,
-    "users": 7,
-    "finish_pct": 100.0,
-    "supply_pct": 4.2
-   },
-   {
-    "country": "United States",
-    "total": 22,
-    "earned": 20,
-    "dismissed": 1,
-    "no_ad": 1,
-    "failed": 0,
-    "users": 8,
-    "finish_pct": 95.2,
-    "supply_pct": 4.5
-   },
-   {
-    "country": "Philippines",
-    "total": 20,
-    "earned": 18,
-    "dismissed": 1,
-    "no_ad": 1,
-    "failed": 0,
-    "users": 9,
-    "finish_pct": 94.7,
-    "supply_pct": 5.0
-   },
-   {
-    "country": "Mexico",
-    "total": 11,
-    "earned": 10,
-    "dismissed": 1,
-    "no_ad": 0,
-    "failed": 0,
-    "users": 5,
-    "finish_pct": 90.9,
-    "supply_pct": 0.0
-   },
-   {
-    "country": "Ukraine",
-    "total": 11,
-    "earned": 11,
+    "country": "기타(요청 10회 미만)",
+    "total": 2,
+    "earned": 2,
     "dismissed": 0,
     "no_ad": 0,
     "failed": 0,
     "users": 2,
+    "lumped": 2,
     "finish_pct": 100.0,
     "supply_pct": 0.0
-   },
-   {
-    "country": "기타(요청 10회 미만)",
-    "total": 57,
-    "earned": 36,
-    "dismissed": 1,
-    "no_ad": 20,
-    "failed": 0,
-    "users": 27,
-    "lumped": 18,
-    "finish_pct": 97.3,
-    "supply_pct": 35.1
    }
   ],
-  "viewers": 177,
+  "viewers": 1,
   "by_placement": [
    {
-    "placement": "offline",
-    "earned": 547,
-    "dismissed": 8,
-    "no_ad": 57,
-    "failed": 1,
-    "total": 613
-   },
-   {
     "placement": "boost",
-    "earned": 284,
-    "dismissed": 19,
-    "no_ad": 47,
-    "failed": 0,
-    "total": 350
-   },
-   {
-    "placement": "gem_ad",
-    "earned": 136,
-    "dismissed": 3,
-    "no_ad": 29,
-    "failed": 0,
-    "total": 168
-   },
-   {
-    "placement": "city_supply",
-    "earned": 6,
+    "earned": 1,
     "dismissed": 0,
     "no_ad": 0,
     "failed": 0,
-    "total": 6
+    "total": 1
    },
    {
-    "placement": "repair",
-    "earned": 2,
-    "dismissed": 1,
-    "no_ad": 1,
-    "failed": 0,
-    "total": 4
-   },
-   {
-    "placement": "city_speedup",
-    "earned": 0,
+    "placement": "offline",
+    "earned": 1,
     "dismissed": 0,
-    "no_ad": 1,
+    "no_ad": 0,
     "failed": 0,
     "total": 1
    }
   ]
  },
- "scan_mb": 371.0,
- "scan_note": "이번 실행 스캔 371.0MB. 매시간(24회/일)이면 월 260.86GB — 무료 구간은 월 1,024GB."
+ "scan_mb": 191.0,
+ "scan_note": "이번 실행 스캔 191.0MB. 매시간(24회/일)이면 월 134.30GB — 무료 구간은 월 1,024GB."
 }
