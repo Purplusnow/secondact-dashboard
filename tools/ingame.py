@@ -516,6 +516,21 @@ def main() -> None:
         "median_days": (int(x["median_days"]) if x["median_days"] is not None else None),
     } for x in cpace]
 
+    # ── DAU 시계열 ────────────────────────────────────────────────
+    # KPI 의 dau 는 '마지막 하루' 한 점뿐이라 추세가 안 보인다. 마케팅을 켜고 끌 때
+    # 며칠 뒤에 어떻게 움직이는지가 이 보드의 핵심 질문이라 계열로 따로 뽑는다.
+    # 신규(first_open)를 같이 내보내 'DAU 가 준 게 유입 탓인가 이탈 탓인가'를 가른다.
+    dr = q(f"""
+      SELECT
+        FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%Y%m%d', _TABLE_SUFFIX)) AS d,
+        COUNT(DISTINCT user_pseudo_id) AS dau,
+        COUNT(DISTINCT IF(event_name='first_open', user_pseudo_id, NULL)) AS new_users
+      FROM {TABLE}
+      WHERE {suffix_daily(f"_TABLE_SUFFIX BETWEEN '{win_start}' AND '{end_s}'")}
+      GROUP BY d ORDER BY d
+    """)
+    out["dau_daily"] = [{"date": x["d"], "dau": int(x["dau"]), "new": int(x["new_users"])} for x in dr]
+
     # ── 광고: 일별 노출·완주·공급실패 + DAU ───────────────────────────
     # 실시간 수집(realtime.py)은 스트리밍 테이블만 봐서 '오늘'밖에 없다. eCPM 추이를 보려면
     # 확정본에서 일별로 모아 둬야 한다(AdMob 매출은 daily.json 에 이미 일별로 쌓인다).
@@ -548,7 +563,7 @@ def main() -> None:
           f"pacing={len(out['pacing'])} versions={len(out['by_version'])} "
           f"onb_versions={len(out['onb_versions'])} reach_versions={len(out['reach_versions']['versions'])} "
           f"city_entered={ce} city_complete={out['city_kpi']['completed']} city_deci={len(out['city_deci_curve'])} "
-          f"last_table={out['last_table']} ads_daily={len(out['ads_daily'])}")
+          f"last_table={out['last_table']} ads_daily={len(out['ads_daily'])} dau={len(out['dau_daily'])}")
 
 
 if __name__ == "__main__":

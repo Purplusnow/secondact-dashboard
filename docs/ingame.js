@@ -128,7 +128,7 @@
     _data = d;
     renderKpi(d); renderFunnel(d); renderVersions(d); renderPacing(d); renderGate(d);
     window.__igData = d;   // 스트리밍 잠정값이 늦게 도착하면 이 데이터로 다시 그린다
-    renderRetentionCohort(d); renderProgressHeatmap(d);
+    renderDau(d); renderRetentionCohort(d); renderProgressHeatmap(d);
     renderCityKpi(d); renderCityFunnel(d); renderCityDeci(d); renderCityPacing(d);
     renderVersionViews(d);
     buildAllToggles();
@@ -464,6 +464,62 @@
       host.appendChild(grid);
     }
   }
+
+  /* DAU 추이. KPI 의 dau 는 마지막 하루 한 점뿐이라 추세가 안 보인다 —
+     마케팅을 켜고 끌 때 며칠 뒤 어떻게 움직이는지가 이 보드의 핵심 질문이다.
+
+     선 둘(DAU·신규)에 마케팅비를 막대로 깐다. 셋을 겹쳐야 "DAU 가 준 게 유입 탓인가
+     이탈 탓인가"가 갈린다 — 신규가 먼저 꺾이고 DAU 가 며칠 뒤 따라 내려가면 유입 탓이다.
+     축은 좌(사람)·우(원) 둘이고, 돈과 사람을 같은 눈금에 올리지 않는다. */
+  function renderDau(d) {
+    const host = $('#ig-dau'); if (!host) return;
+    const rows = (d.dau_daily || []).slice(-45);
+    if (!rows.length) { $('#ig-dau-card').hidden = true; return; }
+    $('#ig-dau-card').hidden = false;
+
+    const W = 760, H = 220, PL = 46, PR = 52, PT = 16, PB = 26;
+    const n = rows.length;
+    const maxP = Math.max(...rows.map(r => r.dau), 1);
+    const maxM = Math.max(...rows.map(r => (spend[r.date] || 0)), 1);
+    const X = i => PL + (n === 1 ? 0 : i / (n - 1)) * (W - PL - PR);
+    const Y = v => H - PB - (v / maxP) * (H - PT - PB);
+    const YM = v => H - PB - (v / maxM) * (H - PT - PB);
+
+    const bars = rows.map((r, i) => {
+      const m = spend[r.date] || 0;
+      if (!m) return '';
+      const bw = Math.max(2, (W - PL - PR) / n * 0.55);
+      return `<rect x="${(X(i) - bw / 2).toFixed(1)}" y="${YM(m).toFixed(1)}" width="${bw.toFixed(1)}"`
+        + ` height="${(H - PB - YM(m)).toFixed(1)}" fill="rgba(120,120,120,.22)"><title>${esc(r.date)} 마케팅 ₩${num(m)}</title></rect>`;
+    }).join('');
+    const line = (key, color) => rows.map((r, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ',' + Y(r[key]).toFixed(1)).join(' ')
+      ? `<path d="${rows.map((r, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ',' + Y(r[key]).toFixed(1)).join(' ')}" fill="none" stroke="${color}" stroke-width="2"/>` : '';
+    // 값 읽기용 투명 히트존 — 선 위에 점을 다 찍으면 45일이 지저분해진다.
+    const hit = rows.map((r, i) => `<rect x="${(X(i) - 4).toFixed(1)}" y="${PT}" width="8" height="${H - PT - PB}" fill="transparent">`
+      + `<title>${esc(r.date)}\nDAU ${num(r.dau)} · 신규 ${num(r.new)}`
+      + (spend[r.date] ? ` · 마케팅 ₩${num(spend[r.date])}` : '') + `</title></rect>`).join('');
+
+    host.innerHTML = `<svg class="lc lc-tall" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img">`
+      + bars + line('dau', '#4b74e2') + line('new', '#e08a2b') + hit
+      + `<text x="${PL}" y="12" class="lc-ax">DAU ${num(maxP)}</text>`
+      + `<text x="${W - PR}" y="12" class="lc-ax" text-anchor="end">마케팅 ₩${num(maxM)}</text>`
+      + `<text x="${PL}" y="${H - 6}" class="lc-ax">${esc(rows[0].date.slice(5))}</text>`
+      + `<text x="${W - PR}" y="${H - 6}" class="lc-ax" text-anchor="end">${esc(rows[n - 1].date.slice(5))}</text>`
+      + `</svg>`;
+  }
+
+  /* 마케팅비는 daily.json(매출 뷰)에 있다. 인게임 뷰가 따로 읽어 DAU 위에 깐다 —
+     "돈을 언제 넣었나"를 같은 그림에 못 놓으면 DAU 가 왜 움직였는지 영영 못 읽는다. */
+  let spend = {};
+  (async () => {
+    try {
+      const res = await fetch(`data/daily.json?t=${Math.floor(Date.now() / 3600000)}`, { cache: 'no-store' });
+      if (!res.ok) return;
+      const dy = await res.json();
+      for (const r of (dy.daily || [])) if (r.ads) spend[r.date] = r.ads;
+      if (window.__igData) renderDau(window.__igData);
+    } catch { /* 없으면 선만 그린다 */ }
+  })();
 
   // ── 라인차트 헬퍼(인라인 SVG) ─────────────────────────────
   function lineChart(pts, { w = 640, h = 180, pad = 28, mark = -1, xlab = '', ylab = '' } = {}) {
