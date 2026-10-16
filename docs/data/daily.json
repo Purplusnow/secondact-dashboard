@@ -906,21 +906,27 @@
       "date": "2026-10-16",
       "ads": 15109,
       "admob": {
-        "USD": 7.67
+        "USD": 7.86
       },
       "admob_apps": {
-        "Second Act: Property Tycoon": 7.66,
+        "Second Act: Property Tycoon": 7.85,
         "Plop Cat: Slide & Jigsaw": 0.01
       }
     },
     {
       "date": "2026-10-17",
-      "ads": 0
+      "ads": 0,
+      "admob": {
+        "USD": 0.12
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.12
+      }
     }
   ],
   "synced": {
     "iap": "2026-10-15T13:29:23+09:00",
-    "ads": "2026-10-17T00:32:49+09:00",
-    "admob": "2026-10-17T00:32:49+09:00"
+    "ads": "2026-10-17T01:32:47+09:00",
+    "admob": "2026-10-17T01:32:47+09:00"
   }
 }
