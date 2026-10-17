@@ -473,7 +473,12 @@
      축은 좌(사람)·우(원) 둘이고, 돈과 사람을 같은 눈금에 올리지 않는다. */
   function renderDau(d) {
     const host = $('#ig-dau'); if (!host) return;
-    const rows = (d.dau_daily || []).slice(-45);
+    // 확정본은 하루 끝난 뒤 26~34시간 걸려서 마지막 이틀이 늘 비어 있다.
+    // 스트리밍(realtime.json)으로 이어 붙이고, 그 구간은 점선으로 그린다.
+    const conf = d.dau_daily || [];
+    const have = new Set(conf.map(r => r.date));
+    const tail = (dauProv || []).filter(r => !have.has(r.date)).map(r => ({ ...r, prov: true }));
+    const rows = conf.concat(tail).slice(-45);
     if (!rows.length) { $('#ig-dau-card').hidden = true; return; }
     $('#ig-dau-card').hidden = false;
 
@@ -492,11 +497,22 @@
       return `<rect x="${(X(i) - bw / 2).toFixed(1)}" y="${YM(m).toFixed(1)}" width="${bw.toFixed(1)}"`
         + ` height="${(H - PB - YM(m)).toFixed(1)}" fill="rgba(120,120,120,.22)"><title>${esc(r.date)} 마케팅 ₩${num(m)}</title></rect>`;
     }).join('');
-    const line = (key, color) => rows.map((r, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ',' + Y(r[key]).toFixed(1)).join(' ')
-      ? `<path d="${rows.map((r, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ',' + Y(r[key]).toFixed(1)).join(' ')}" fill="none" stroke="${color}" stroke-width="2"/>` : '';
+    // 확정 구간과 스트리밍 구간을 **같은 선 두께·색**으로 긋되 점선으로만 가른다 —
+    // 색까지 다르면 다른 지표로 읽힌다. 이음새는 마지막 확정점부터 시작한다.
+    const firstProv = rows.findIndex(r => r.prov);
+    const seg = (from, to, key, color, dash) => {
+      const part = rows.slice(from, to);
+      if (part.length < 2) return '';
+      const dd = part.map((r, k) => (k ? 'L' : 'M') + X(from + k).toFixed(1) + ',' + Y(r[key]).toFixed(1)).join(' ');
+      return `<path d="${dd}" fill="none" stroke="${color}" stroke-width="2"${dash ? ' stroke-dasharray="4 3"' : ''}/>`;
+    };
+    const line = (key, color) => firstProv < 0
+      ? seg(0, rows.length, key, color, false)
+      : seg(0, firstProv, key, color, false) + seg(firstProv - 1, rows.length, key, color, true);
     // 값 읽기용 투명 히트존 — 선 위에 점을 다 찍으면 45일이 지저분해진다.
     const hit = rows.map((r, i) => `<rect x="${(X(i) - 4).toFixed(1)}" y="${PT}" width="8" height="${H - PT - PB}" fill="transparent">`
-      + `<title>${esc(r.date)}\nDAU ${num(r.dau)} · 신규 ${num(r.new)}`
+      + `<title>${esc(r.date)}${r.prov ? (r.rising ? ' (오늘 · 진행 중)' : ' (확정 전)') : ''}`
+      + `\nDAU ${num(r.dau)} · 신규 ${num(r.new)}`
       + (spend[r.date] ? ` · 마케팅 ₩${num(spend[r.date])}` : '') + `</title></rect>`).join('');
 
     host.innerHTML = `<svg class="lc lc-tall" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img">`
@@ -510,15 +526,18 @@
 
   /* 마케팅비는 daily.json(매출 뷰)에 있다. 인게임 뷰가 따로 읽어 DAU 위에 깐다 —
      "돈을 언제 넣었나"를 같은 그림에 못 놓으면 DAU 가 왜 움직였는지 영영 못 읽는다. */
-  let spend = {};
+  let spend = {}, dauProv = [];
   (async () => {
-    try {
-      const res = await fetch(`data/daily.json?t=${Math.floor(Date.now() / 3600000)}`, { cache: 'no-store' });
-      if (!res.ok) return;
-      const dy = await res.json();
-      for (const r of (dy.daily || [])) if (r.ads) spend[r.date] = r.ads;
-      if (window.__igData) renderDau(window.__igData);
-    } catch { /* 없으면 선만 그린다 */ }
+    const get = async (f, bust) => {
+      try {
+        const res = await fetch(`data/${f}?t=${Math.floor(Date.now() / bust)}`, { cache: 'no-store' });
+        return res.ok ? await res.json() : null;
+      } catch { return null; }
+    };
+    const [dy, rt] = await Promise.all([get('daily.json', 3600000), get('realtime.json', 60000)]);
+    if (dy) for (const r of (dy.daily || [])) if (r.ads) spend[r.date] = r.ads;
+    if (rt && rt.dau_prov) dauProv = rt.dau_prov;
+    if (window.__igData) renderDau(window.__igData);
   })();
 
   // ── 라인차트 헬퍼(인라인 SVG) ─────────────────────────────

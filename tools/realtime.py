@@ -492,6 +492,20 @@ def main() -> None:
             # 오늘은 아직 안 끝나 더 오른다 → 화면에 + 를 붙인다. 지난 날은 값이 다 찼다.
             "rising": r["rday"] == today_s,
         })
+    # DAU 도 같은 이유로 메운다 — 확정본은 하루가 끝난 뒤 26~34시간 걸려서
+    # (실측 2026-10-08~15), **차트의 마지막 이틀이 늘 비어 있다.**
+    # intraday 테이블이 곧 '아직 확정 안 된 날'이므로 그걸 그대로 쓴다.
+    # 오늘은 하루가 안 끝났으니 아직 오르는 중 — rising 으로 표시해 점선으로 그린다.
+    dprov = q(f"""
+      SELECT FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%Y%m%d', SUBSTR(_TABLE_SUFFIX, 10))) AS d,
+             COUNT(DISTINCT user_pseudo_id) AS dau,
+             COUNT(DISTINCT IF(event_name='first_open', user_pseudo_id, NULL)) AS new_users
+      FROM {TABLE} WHERE {INTRADAY_ANY} AND {HAS_GEO}
+      GROUP BY d ORDER BY d
+    """)
+    out["dau_prov"] = [{"date": r["d"], "dau": int(r["dau"]), "new": int(r["new_users"]),
+                        "rising": r["d"] == today_s} for r in dprov]
+
     out["cohort_prov"] = {
         "today": today_s,
         "rows": sorted(rows, key=lambda x: (x["day"], x["rday"])),
