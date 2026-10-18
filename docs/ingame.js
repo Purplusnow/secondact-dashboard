@@ -378,14 +378,14 @@
       const lig = 90 - 42 * t;           // 옅음→진함
       return `hsl(${hue.toFixed(0)},95%,${lig.toFixed(0)}%)`;
     };
-    let h = '<thead><tr><th class="stick">설치일</th><th>신규</th>';
+    let h = '<thead><tr><th class="stick">설치일</th><th class="stick2">신규</th>';
     for (let n = 1; n <= N; n++) h += `<th>D${n}</th>`;
     h += '</tr></thead><tbody>';
     // 최신 코호트가 위로 오도록 역순
     rows.slice().reverse().forEach(r => {
       // 신규 수까지 스트리밍에서 온 행은 기울임으로 — 확정되면 숫자가 조금 바뀔 수 있다.
       h += `<tr><td class="stick vt-ver">${esc(r.date)}</td>`
-        + `<td class="num${r.prov ? ' coh-prov' : ''}">${num(r.new)}</td>`;
+        + `<td class="num stick2${r.prov ? ' coh-prov' : ''}">${num(r.new)}</td>`;
       r.days.forEach((p, i) => {
         // 확정값이 없으면 스트리밍 값으로 메운다. 복귀일이 오늘인 칸만 아직 오르는 중(+).
         const pv = p == null ? prov[r.date + '|' + (i + 1)] : null;

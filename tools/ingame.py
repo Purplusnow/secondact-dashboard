@@ -106,7 +106,9 @@ def main() -> None:
         })
     # 코호트 리텐션 삼각 — 설치일(d0) 행 × Day1..DayN 열. 셀=그 코호트 중 정확히 n일 뒤 복귀 비율.
     # d0+n > last(아직 안 지난 날)은 관측불가 → null. 최근 COHORT_DAYS일치 코호트 × Day1..COHORT_N.
-    COHORT_N = 14
+    # Day1~Day30. 14 였다가 넓혔다(형 지시 2026-10-18) — D7 까지는 유입 질을 보고,
+    # D14~D30 은 '이 게임을 계속 하는 사람'을 본다. 둘은 다른 질문이라 같이 봐야 한다.
+    COHORT_N = 30
     cohq = q(f"""
       SELECT d0, off, COUNT(DISTINCT uid) AS ret FROM (
         SELECT i.user_pseudo_id AS uid, i.d0 AS d0, DATE_DIFF(a.d, PARSE_DATE('%Y%m%d', i.d0), DAY) AS off
