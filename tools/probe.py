@@ -434,19 +434,33 @@ def mon(day: str | None) -> int:
         n, g = int(x["n"] or 0), int(x["gems"] or 0)
         print(f"{str(x['reason']):<14}{n:>8,}{int(x['users'] or 0):>8,}{g:>12,}{(g//n if n else 0):>8,}")
 
+    # 결제 시도가 성공의 10배다 — 어디서 깨지는지 사유로 갈라야 손댈 데가 보인다.
+    pf = rt.q(f"""
+      SELECT event_name AS ev, {rn} AS reason,
+             COUNT(*) AS n, COUNT(DISTINCT user_pseudo_id) AS users
+      FROM {rt.TABLE} WHERE {where} AND {rt.HAS_GEO}
+        AND event_name IN ('purchase_failed','purchase_anomaly')
+      GROUP BY ev, reason ORDER BY users DESC
+    """)
+    print(f"\n=== 결제가 깨진 사유 ===")
+    print(f"{'이벤트':<18}{'사유':<16}{'건수':>8}{'유저':>8}")
+    for x in pf:
+        print(f"{x['ev']:<18}{str(x['reason']):<16}{int(x['n'] or 0):>8,}{int(x['users'] or 0):>8,}")
+
+    # 광고 보상 한도는 **하루 5회**다. 전 기간으로 세면 여러 날이 합쳐져 의미가 없다.
     a = rt.q(f"""
       SELECT cnt, COUNT(*) AS users FROM (
-        SELECT user_pseudo_id, COUNT(*) AS cnt FROM {rt.TABLE}
+        SELECT user_pseudo_id, _TABLE_SUFFIX AS d, COUNT(*) AS cnt FROM {rt.TABLE}
         WHERE {where} AND {rt.HAS_GEO} AND event_name='ad_impression'
           AND {pl}='gem_ad' AND {rs}='earned'
-        GROUP BY user_pseudo_id)
+        GROUP BY user_pseudo_id, d)
       GROUP BY cnt ORDER BY cnt
     """)
-    print(f"\n=== 보석 광고 시청 횟수(일 5회 한도) ===")
+    print(f"\n=== 보석 광고 — 하루에 몇 번 봤나 (한도 5회) ===")
     tot = sum(int(x["users"] or 0) for x in a) or 1
     for x in a:
         c, n = int(x["cnt"] or 0), int(x["users"] or 0)
-        print(f"  {c}회  {n:>6,}명  {100*n/tot:5.1f}%" + ("   ← 한도 도달" if c >= 5 else ""))
+        print(f"  {c}회  {n:>6,}명·일  {100*n/tot:5.1f}%" + ("   ← 한도 소진" if c >= 5 else ""))
     return 0
 
 
