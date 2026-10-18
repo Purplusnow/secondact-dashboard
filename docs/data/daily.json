@@ -932,21 +932,31 @@
       "date": "2026-10-18",
       "ads": 30636,
       "admob": {
-        "USD": 8.96
+        "USD": 9.06
       },
       "admob_apps": {
-        "Second Act: Property Tycoon": 8.96
+        "Second Act: Property Tycoon": 9.06
       },
       "iap": {
         "INR": 90,
         "TRY": 109.99
       },
       "iap_src": "ga4"
+    },
+    {
+      "date": "2026-10-19",
+      "ads": 0,
+      "admob": {
+        "USD": 0.01
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.01
+      }
     }
   ],
   "synced": {
     "iap": "2026-10-18T18:36:06+09:00",
-    "ads": "2026-10-18T23:32:45+09:00",
-    "admob": "2026-10-19T00:07:42+09:00"
+    "ads": "2026-10-19T00:32:47+09:00",
+    "admob": "2026-10-19T00:32:48+09:00"
   }
 }
