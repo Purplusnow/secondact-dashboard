@@ -464,6 +464,33 @@ def mon(day: str | None) -> int:
     return 0
 
 
+def cohdiff() -> int:
+    """코호트 크기가 두 수집기에서 다르게 나온다 — 정의 차이를 한 자리에서 재 본다.
+
+    ingame.py: 확정본 **전 기간**에서 first_open 의 MIN(_TABLE_SUFFIX)
+    realtime.py: 확정본 **31일** + intraday 에서 first_open 의 MIN(날짜)
+    """
+    rows = rt.q(f"""
+      WITH fo AS (
+        SELECT user_pseudo_id AS uid, _TABLE_SUFFIX AS suf,
+               PARSE_DATE('%Y%m%d', IF(STARTS_WITH(_TABLE_SUFFIX,'intraday_'),
+                          SUBSTR(_TABLE_SUFFIX,10), _TABLE_SUFFIX)) AS dt,
+               STARTS_WITH(_TABLE_SUFFIX,'intraday_') AS is_intra
+        FROM {rt.TABLE} WHERE event_name='first_open' AND {rt.HAS_GEO}
+      )
+      SELECT FORMAT_DATE('%Y-%m-%d', dt) AS day,
+             COUNT(DISTINCT uid) AS any_fo,
+             COUNT(DISTINCT IF(NOT is_intra, uid, NULL)) AS confirmed_fo,
+             COUNT(DISTINCT IF(is_intra, uid, NULL)) AS intraday_fo
+      FROM fo WHERE dt >= DATE_SUB(CURRENT_DATE('Asia/Seoul'), INTERVAL 8 DAY)
+      GROUP BY day ORDER BY day
+    """)
+    print(f"{'설치일':<13}{'전체':>8}{'확정본':>8}{'스트리밍':>9}")
+    for r in rows:
+        print(f"{r['day']:<13}{int(r['any_fo']):>8,}{int(r['confirmed_fo']):>8,}{int(r['intraday_fo']):>9,}")
+    return 0
+
+
 def city(day: str | None) -> int:
     """2부 진입 자격자 수 — 관문이 실제로 몇 명에게 열려 있나.
 
@@ -649,6 +676,7 @@ def main() -> int:
     ap.add_argument("--pay", action="store_true", help="Play 에만 있는 결제를 역추적한다")
     ap.add_argument("--tables", action="store_true", help="GA4 export 가 어디까지 왔는지 본다")
     ap.add_argument("--mon", action="store_true", help="수익화 진단(결제 퍼널·보석 수급)")
+    ap.add_argument("--cohdiff", action="store_true", help="코호트 크기 정의 차이 진단")
     ap.add_argument("--country", default="", help="--pay 용 geo.country (예: Taiwan)")
     ap.add_argument("--cur", default="", help="--pay 용 통화코드 (예: TWD)")
     a = ap.parse_args()
@@ -661,6 +689,8 @@ def main() -> int:
         return city(a.day)
     if a.vercmp:
         return vercmp(a.day)
+    if a.cohdiff:
+        return cohdiff()
     if a.mon:
         return mon(a.day)
     if a.tables:
