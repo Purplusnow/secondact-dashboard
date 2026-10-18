@@ -471,16 +471,24 @@ def main() -> None:
       )
       -- GROUPING SETS 로 '코호트 크기'와 '복귀일별 복귀자'를 한 번에 낸다.
       -- 전에는 같은 31일을 두 쿼리가 각각 훑어서 스캔이 두 배였다(271→669MB).
-      SELECT coh.d0 AS day, back.rday AS rday, COUNT(DISTINCT coh.uid) AS n
+      --
+      -- ⚠ rday 가 NULL 인 줄은 **두 종류**다(2026-10-18 에 이걸 안 갈라서 분모가 틀렸다):
+      --    (1) (day) 집합이 만든 줄 = 코호트 전체 ← 우리가 원하는 분모
+      --    (2) (day, rday) 집합에서 LEFT JOIN 이 못 맞춘 줄 = **한 번도 안 돌아온 사람**
+      --   둘 다 rday IS NULL 이라 구분이 안 됐고, (2)를 분모로 써서 리텐션이 부풀었다
+      --   (10/17: 91/109 = 83.5% 로 찍혔는데 진짜는 91/200 = 45.5%).
+      --   GROUPING() 이 '그 집합에서 접힌 열인가'를 1/0 으로 알려 준다 — 그걸로 가른다.
+      SELECT coh.d0 AS day, back.rday AS rday,
+             GROUPING(back.rday) AS is_total,
+             COUNT(DISTINCT coh.uid) AS n
       FROM coh LEFT JOIN back ON back.uid = coh.uid
       GROUP BY GROUPING SETS ((day, rday), (day))
     """)
-    # rday 가 NULL 인 줄이 그 코호트 전체(= 크기)다. GROUPING SETS 가 그렇게 낸다.
-    bases = {r["day"]: int(r["n"] or 0) for r in prov if r["rday"] is None}
+    bases = {r["day"]: int(r["n"] or 0) for r in prov if int(r["is_total"] or 0) == 1}
     today_s = f"{day[:4]}-{day[4:6]}-{day[6:]}"
     rows = []
     for r in prov:
-        if r["rday"] is None:
+        if int(r["is_total"] or 0) == 1 or r["rday"] is None:
             continue
         b = bases.get(r["day"], 0)
         if not b:
