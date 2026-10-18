@@ -469,28 +469,25 @@ def main() -> None:
                FORMAT_DATE('%Y-%m-%d', PARSE_DATE('%Y%m%d', SUBSTR(_TABLE_SUFFIX, 10))) AS rday
         FROM {TABLE} WHERE {INTRADAY_ANY} AND {HAS_GEO}
       )
-      SELECT coh.d0 AS day, back.rday AS rday, COUNT(DISTINCT coh.uid) AS ret
-      FROM coh JOIN back ON back.uid = coh.uid
-      GROUP BY day, rday
+      -- GROUPING SETS 로 '코호트 크기'와 '복귀일별 복귀자'를 한 번에 낸다.
+      -- 전에는 같은 31일을 두 쿼리가 각각 훑어서 스캔이 두 배였다(271→669MB).
+      SELECT coh.d0 AS day, back.rday AS rday, COUNT(DISTINCT coh.uid) AS n
+      FROM coh LEFT JOIN back ON back.uid = coh.uid
+      GROUP BY GROUPING SETS ((day, rday), (day))
     """)
-    base_q = q(f"""
-      SELECT d0, COUNT(*) AS base FROM (
-        SELECT FORMAT_DATE('%Y-%m-%d', MIN({SUF_DATE})) AS d0
-        FROM {TABLE}
-        WHERE ({SUF_IN}) AND event_name='first_open' AND {HAS_GEO}
-        GROUP BY user_pseudo_id
-      ) GROUP BY d0
-    """)
-    bases = {r["d0"]: int(r["base"] or 0) for r in base_q}
+    # rday 가 NULL 인 줄이 그 코호트 전체(= 크기)다. GROUPING SETS 가 그렇게 낸다.
+    bases = {r["day"]: int(r["n"] or 0) for r in prov if r["rday"] is None}
     today_s = f"{day[:4]}-{day[4:6]}-{day[6:]}"
     rows = []
     for r in prov:
+        if r["rday"] is None:
+            continue
         b = bases.get(r["day"], 0)
         if not b:
             continue
         rows.append({
-            "day": r["day"], "rday": r["rday"], "base": b, "ret": int(r["ret"] or 0),
-            "pct": round(100 * int(r["ret"] or 0) / b, 1),
+            "day": r["day"], "rday": r["rday"], "base": b, "ret": int(r["n"] or 0),
+            "pct": round(100 * int(r["n"] or 0) / b, 1),
             # 오늘은 아직 안 끝나 더 오른다 → 화면에 + 를 붙인다. 지난 날은 값이 다 찼다.
             "rising": r["rday"] == today_s,
         })
