@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-18 21:43 KST",
+ "updated": "2026-10-18 21:47 KST",
  "stage_labels": [
   {
    "key": "new_game",
@@ -135,19 +135,19 @@
  "tables": [
   {
    "d": "20261018",
-   "users": 995,
-   "events": 73816
+   "users": 999,
+   "events": 74126
   }
  ],
  "day": "20261018",
  "summary": {
-  "users": 995,
+  "users": 999,
   "new_users": 186,
   "first_touch_today": 186,
   "purchases": 2,
   "exceptions": 0,
   "first_at": "2026-10-18 00:00",
-  "last_at": "2026-10-18 21:42"
+  "last_at": "2026-10-18 21:47"
  },
  "users": [
   {
@@ -2749,14 +2749,14 @@
   {
    "tag": "575151",
    "joined": "04:47",
-   "last_seen": "16:51",
-   "mins": 70.1,
-   "span": 724,
-   "sessions": 6,
-   "off": 14,
+   "last_seen": "21:47",
+   "mins": 71.6,
+   "span": 1020,
+   "sessions": 7,
+   "off": 16,
    "off_boost": 4,
    "prog": 0.0,
-   "events": 314,
+   "events": 329,
    "ver": "1.0 (v977)",
    "country": "Brazil",
    "reached": [
@@ -7457,14 +7457,14 @@
   {
    "tag": "665209",
    "joined": "01:40",
-   "last_seen": "14:24",
-   "mins": 135.7,
-   "span": 764,
-   "sessions": 2,
-   "off": 16,
+   "last_seen": "21:47",
+   "mins": 137.6,
+   "span": 1206,
+   "sessions": 3,
+   "off": 17,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 301,
+   "events": 311,
    "ver": "1.0 (v977)",
    "country": "France",
    "reached": [
@@ -8425,14 +8425,14 @@
   {
    "tag": "be97eb",
    "joined": "10/17 23:18",
-   "last_seen": "20:36",
-   "mins": 82.2,
-   "span": 1278,
-   "sessions": 9,
-   "off": 22,
+   "last_seen": "21:35",
+   "mins": 83.9,
+   "span": 1336,
+   "sessions": 10,
+   "off": 23,
    "off_boost": 0,
    "prog": 3.2,
-   "events": 415,
+   "events": 424,
    "ver": "1.0 (v977)",
    "country": "India",
    "reached": [
@@ -9081,172 +9081,128 @@
    ],
    "far": 1,
    "far_label": "인트로"
-  },
-  {
-   "tag": "cbe4c4",
-   "joined": "10/17 21:45",
-   "last_seen": "21:57",
-   "mins": 9.8,
-   "span": 12,
-   "sessions": 1,
-   "off": 0,
-   "off_boost": 0,
-   "prog": 0.0,
-   "events": 61,
-   "ver": "1.0 (v977)",
-   "country": "India",
-   "reached": [
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ],
-   "far": 14,
-   "far_label": "은퇴"
   }
  ],
- "stay60": 175,
+ "stay60": 174,
  "funnel": [
   {
    "key": "new_game",
    "label": "새게임",
-   "n": 199,
-   "rec": 199,
+   "n": 198,
+   "rec": 198,
    "pct": 97.5,
    "kind": "spine"
   },
   {
    "key": "intro_done",
    "label": "인트로",
-   "n": 194,
-   "rec": 193,
+   "n": 193,
+   "rec": 192,
    "pct": 95.1,
    "kind": "spine"
   },
   {
    "key": "dev_concept",
    "label": "기획",
-   "n": 185,
-   "rec": 182,
-   "pct": 90.7,
+   "n": 184,
+   "rec": 181,
+   "pct": 90.6,
    "kind": "spine"
   },
   {
    "key": "dev_design",
    "label": "디자인",
-   "n": 175,
-   "rec": 172,
-   "pct": 85.8,
+   "n": 174,
+   "rec": 171,
+   "pct": 85.7,
    "kind": "spine"
   },
   {
    "key": "dev_prototype",
    "label": "프로토",
-   "n": 165,
-   "rec": 162,
-   "pct": 80.9,
+   "n": 164,
+   "rec": 161,
+   "pct": 80.8,
    "kind": "spine"
   },
   {
    "key": "dev_alpha",
    "label": "알파",
-   "n": 154,
-   "rec": 152,
-   "pct": 75.5,
+   "n": 153,
+   "rec": 151,
+   "pct": 75.4,
    "kind": "spine"
   },
   {
    "key": "dev_beta",
    "label": "베타",
-   "n": 148,
-   "rec": 146,
-   "pct": 72.5,
+   "n": 147,
+   "rec": 145,
+   "pct": 72.4,
    "kind": "spine"
   },
   {
    "key": "dev_launch",
    "label": "출시",
-   "n": 147,
-   "rec": 145,
-   "pct": 72.1,
+   "n": 146,
+   "rec": 144,
+   "pct": 71.9,
    "kind": "spine"
   },
   {
    "key": "first_ops",
    "label": "첫운영",
-   "n": 147,
-   "rec": 141,
-   "pct": 72.1,
+   "n": 146,
+   "rec": 140,
+   "pct": 71.9,
    "kind": "spine"
   },
   {
    "key": "property_1",
    "label": "부동산1",
-   "n": 147,
-   "rec": 146,
-   "pct": 72.1,
+   "n": 146,
+   "rec": 145,
+   "pct": 71.9,
    "kind": "spine"
   },
   {
    "key": "property_2",
    "label": "부동산2",
-   "n": 124,
-   "rec": 122,
-   "pct": 60.8,
+   "n": 123,
+   "rec": 121,
+   "pct": 60.6,
    "kind": "spine"
   },
   {
    "key": "property_3",
    "label": "부동산3",
-   "n": 114,
-   "rec": 112,
-   "pct": 55.9,
+   "n": 113,
+   "rec": 111,
+   "pct": 55.7,
    "kind": "spine"
   },
   {
    "key": "property_4",
    "label": "부동산4",
-   "n": 112,
-   "rec": 112,
-   "pct": 54.9,
+   "n": 111,
+   "rec": 111,
+   "pct": 54.7,
    "kind": "spine"
   },
   {
    "key": "property_5",
    "label": "부동산5",
-   "n": 110,
-   "rec": 110,
-   "pct": 53.9,
+   "n": 109,
+   "rec": 109,
+   "pct": 53.7,
    "kind": "spine"
   },
   {
    "key": "game_sale",
    "label": "은퇴",
-   "n": 110,
-   "rec": 109,
-   "pct": 53.9,
+   "n": 109,
+   "rec": 108,
+   "pct": 53.7,
    "kind": "spine"
   },
   {
@@ -9254,7 +9210,7 @@
    "label": "첫후원",
    "n": 73,
    "rec": 73,
-   "pct": 35.8,
+   "pct": 36.0,
    "kind": "spine"
   },
   {
@@ -9262,7 +9218,7 @@
    "label": "신분2",
    "n": 66,
    "rec": 66,
-   "pct": 32.4,
+   "pct": 32.5,
    "kind": "spine"
   },
   {
@@ -9278,7 +9234,7 @@
    "label": "신분4",
    "n": 16,
    "rec": 16,
-   "pct": 7.8,
+   "pct": 7.9,
    "kind": "spine"
   },
   {
@@ -9318,7 +9274,7 @@
    "label": "첫매니저",
    "n": 72,
    "rec": 72,
-   "pct": 35.3,
+   "pct": 35.5,
    "kind": "side"
   },
   {
@@ -9326,7 +9282,7 @@
    "label": "첫금융",
    "n": 91,
    "rec": 91,
-   "pct": 44.6,
+   "pct": 44.8,
    "kind": "side"
   },
   {
@@ -9334,11 +9290,11 @@
    "label": "첫광고",
    "n": 78,
    "rec": 78,
-   "pct": 38.2,
+   "pct": 38.4,
    "kind": "side"
   }
  ],
- "cohort_n": 204,
+ "cohort_n": 203,
  "excluded_nogeo": 0,
  "excluded_build": 2,
  "newest_build": "1.0 (v977)",
@@ -9349,7 +9305,7 @@
   "rows": [
    {
     "ver": "1.0 (v977)",
-    "n": 204,
+    "n": 203,
     "live": true
    },
    {
@@ -9406,7 +9362,7 @@
  "dau_prov": [
   {
    "date": "2026-10-18",
-   "dau": 995,
+   "dau": 999,
    "new": 186,
    "rising": true
   }
@@ -9417,241 +9373,241 @@
    {
     "day": "2026-09-18",
     "rday": "2026-10-18",
-    "base": 760,
+    "base": 787,
     "ret": 27,
-    "pct": 3.6,
+    "pct": 3.4,
     "rising": true
    },
    {
     "day": "2026-09-19",
     "rday": "2026-10-18",
-    "base": 756,
+    "base": 780,
     "ret": 24,
-    "pct": 3.2,
+    "pct": 3.1,
     "rising": true
    },
    {
     "day": "2026-09-20",
     "rday": "2026-10-18",
-    "base": 769,
+    "base": 801,
     "ret": 32,
-    "pct": 4.2,
+    "pct": 4.0,
     "rising": true
    },
    {
     "day": "2026-09-21",
     "rday": "2026-10-18",
-    "base": 685,
+    "base": 720,
     "ret": 35,
-    "pct": 5.1,
+    "pct": 4.9,
     "rising": true
    },
    {
     "day": "2026-09-22",
     "rday": "2026-10-18",
-    "base": 719,
+    "base": 742,
     "ret": 23,
-    "pct": 3.2,
+    "pct": 3.1,
     "rising": true
    },
    {
     "day": "2026-09-23",
     "rday": "2026-10-18",
-    "base": 672,
+    "base": 699,
     "ret": 27,
-    "pct": 4.0,
+    "pct": 3.9,
     "rising": true
    },
    {
     "day": "2026-09-24",
     "rday": "2026-10-18",
-    "base": 356,
+    "base": 368,
     "ret": 12,
-    "pct": 3.4,
+    "pct": 3.3,
     "rising": true
    },
    {
     "day": "2026-09-25",
     "rday": "2026-10-18",
-    "base": 321,
+    "base": 337,
     "ret": 16,
-    "pct": 5.0,
+    "pct": 4.7,
     "rising": true
    },
    {
     "day": "2026-09-26",
     "rday": "2026-10-18",
-    "base": 313,
+    "base": 322,
     "ret": 9,
-    "pct": 2.9,
+    "pct": 2.8,
     "rising": true
    },
    {
     "day": "2026-09-27",
     "rday": "2026-10-18",
-    "base": 362,
+    "base": 373,
     "ret": 11,
-    "pct": 3.0,
+    "pct": 2.9,
     "rising": true
    },
    {
     "day": "2026-09-28",
     "rday": "2026-10-18",
-    "base": 402,
+    "base": 421,
     "ret": 19,
-    "pct": 4.7,
+    "pct": 4.5,
     "rising": true
    },
    {
     "day": "2026-09-29",
     "rday": "2026-10-18",
-    "base": 364,
+    "base": 380,
     "ret": 16,
-    "pct": 4.4,
+    "pct": 4.2,
     "rising": true
    },
    {
     "day": "2026-09-30",
     "rday": "2026-10-18",
-    "base": 378,
+    "base": 399,
     "ret": 21,
-    "pct": 5.6,
+    "pct": 5.3,
     "rising": true
    },
    {
     "day": "2026-10-01",
     "rday": "2026-10-18",
-    "base": 374,
+    "base": 405,
     "ret": 31,
-    "pct": 8.3,
+    "pct": 7.7,
     "rising": true
    },
    {
     "day": "2026-10-02",
     "rday": "2026-10-18",
-    "base": 320,
+    "base": 342,
     "ret": 22,
-    "pct": 6.9,
+    "pct": 6.4,
     "rising": true
    },
    {
     "day": "2026-10-03",
     "rday": "2026-10-18",
-    "base": 399,
+    "base": 429,
     "ret": 30,
-    "pct": 7.5,
+    "pct": 7.0,
     "rising": true
    },
    {
     "day": "2026-10-04",
     "rday": "2026-10-18",
-    "base": 375,
+    "base": 407,
     "ret": 32,
-    "pct": 8.5,
+    "pct": 7.9,
     "rising": true
    },
    {
     "day": "2026-10-05",
     "rday": "2026-10-18",
-    "base": 324,
+    "base": 354,
     "ret": 30,
-    "pct": 9.3,
+    "pct": 8.5,
     "rising": true
    },
    {
     "day": "2026-10-06",
     "rday": "2026-10-18",
-    "base": 221,
+    "base": 240,
     "ret": 19,
-    "pct": 8.6,
+    "pct": 7.9,
     "rising": true
    },
    {
     "day": "2026-10-07",
     "rday": "2026-10-18",
-    "base": 49,
+    "base": 53,
     "ret": 4,
-    "pct": 8.2,
+    "pct": 7.5,
     "rising": true
    },
    {
     "day": "2026-10-08",
     "rday": "2026-10-18",
-    "base": 21,
+    "base": 22,
     "ret": 1,
-    "pct": 4.8,
+    "pct": 4.5,
     "rising": true
    },
    {
     "day": "2026-10-09",
     "rday": "2026-10-18",
-    "base": 23,
+    "base": 24,
     "ret": 1,
-    "pct": 4.3,
+    "pct": 4.2,
     "rising": true
    },
    {
     "day": "2026-10-10",
     "rday": "2026-10-18",
-    "base": 15,
+    "base": 17,
     "ret": 2,
-    "pct": 13.3,
+    "pct": 11.8,
     "rising": true
    },
    {
     "day": "2026-10-11",
     "rday": "2026-10-18",
-    "base": 21,
+    "base": 23,
     "ret": 2,
-    "pct": 9.5,
+    "pct": 8.7,
     "rising": true
    },
    {
     "day": "2026-10-12",
     "rday": "2026-10-18",
-    "base": 17,
+    "base": 20,
     "ret": 3,
-    "pct": 17.6,
+    "pct": 15.0,
     "rising": true
    },
    {
     "day": "2026-10-13",
     "rday": "2026-10-18",
-    "base": 16,
+    "base": 18,
     "ret": 2,
-    "pct": 12.5,
+    "pct": 11.1,
     "rising": true
    },
    {
     "day": "2026-10-14",
     "rday": "2026-10-18",
-    "base": 140,
+    "base": 169,
     "ret": 29,
-    "pct": 20.7,
+    "pct": 17.2,
     "rising": true
    },
    {
     "day": "2026-10-15",
     "rday": "2026-10-18",
-    "base": 125,
-    "ret": 23,
-    "pct": 18.4,
+    "base": 148,
+    "ret": 25,
+    "pct": 16.9,
     "rising": true
    },
    {
     "day": "2026-10-16",
     "rday": "2026-10-18",
-    "base": 69,
+    "base": 92,
     "ret": 23,
-    "pct": 33.3,
+    "pct": 25.0,
     "rising": true
    },
    {
     "day": "2026-10-17",
     "rday": "2026-10-18",
-    "base": 109,
+    "base": 200,
     "ret": 91,
-    "pct": 83.5,
+    "pct": 45.5,
     "rising": true
    },
    {
@@ -9666,123 +9622,123 @@
   "bases": [
    {
     "day": "2026-09-18",
-    "base": 760
+    "base": 787
    },
    {
     "day": "2026-09-19",
-    "base": 756
+    "base": 780
    },
    {
     "day": "2026-09-20",
-    "base": 769
+    "base": 801
    },
    {
     "day": "2026-09-21",
-    "base": 685
+    "base": 720
    },
    {
     "day": "2026-09-22",
-    "base": 719
+    "base": 742
    },
    {
     "day": "2026-09-23",
-    "base": 672
+    "base": 699
    },
    {
     "day": "2026-09-24",
-    "base": 356
+    "base": 368
    },
    {
     "day": "2026-09-25",
-    "base": 321
+    "base": 337
    },
    {
     "day": "2026-09-26",
-    "base": 313
+    "base": 322
    },
    {
     "day": "2026-09-27",
-    "base": 362
+    "base": 373
    },
    {
     "day": "2026-09-28",
-    "base": 402
+    "base": 421
    },
    {
     "day": "2026-09-29",
-    "base": 364
+    "base": 380
    },
    {
     "day": "2026-09-30",
-    "base": 378
-   },
-   {
-    "day": "2026-10-01",
-    "base": 374
-   },
-   {
-    "day": "2026-10-02",
-    "base": 320
-   },
-   {
-    "day": "2026-10-03",
     "base": 399
    },
    {
+    "day": "2026-10-01",
+    "base": 405
+   },
+   {
+    "day": "2026-10-02",
+    "base": 342
+   },
+   {
+    "day": "2026-10-03",
+    "base": 429
+   },
+   {
     "day": "2026-10-04",
-    "base": 375
+    "base": 407
    },
    {
     "day": "2026-10-05",
-    "base": 324
+    "base": 354
    },
    {
     "day": "2026-10-06",
-    "base": 221
+    "base": 240
    },
    {
     "day": "2026-10-07",
-    "base": 49
+    "base": 53
    },
    {
     "day": "2026-10-08",
-    "base": 21
+    "base": 22
    },
    {
     "day": "2026-10-09",
-    "base": 23
+    "base": 24
    },
    {
     "day": "2026-10-10",
-    "base": 15
-   },
-   {
-    "day": "2026-10-11",
-    "base": 21
-   },
-   {
-    "day": "2026-10-12",
     "base": 17
    },
    {
+    "day": "2026-10-11",
+    "base": 23
+   },
+   {
+    "day": "2026-10-12",
+    "base": 20
+   },
+   {
     "day": "2026-10-13",
-    "base": 16
+    "base": 18
    },
    {
     "day": "2026-10-14",
-    "base": 140
+    "base": 169
    },
    {
     "day": "2026-10-15",
-    "base": 125
+    "base": 148
    },
    {
     "day": "2026-10-16",
-    "base": 69
+    "base": 92
    },
    {
     "day": "2026-10-17",
-    "base": 109
+    "base": 200
    },
    {
     "day": "2026-10-18",
@@ -9812,16 +9768,16 @@
   "rows": [
    {
     "country": "India",
-    "n": 58,
-    "intro_done": 57,
-    "property_2": 39,
-    "game_sale": 35,
+    "n": 57,
+    "intro_done": 56,
+    "property_2": 38,
+    "game_sale": 34,
     "first_rebirth": 6,
     "med_min": 13.6,
-    "intro_done_pct": 98.3,
-    "property_2_pct": 67.2,
-    "game_sale_pct": 60.3,
-    "first_rebirth_pct": 10.3
+    "intro_done_pct": 98.2,
+    "property_2_pct": 66.7,
+    "game_sale_pct": 59.6,
+    "first_rebirth_pct": 10.5
    },
    {
     "country": "Brazil",
@@ -10126,16 +10082,16 @@
    },
    {
     "country": "T3",
-    "n": 85,
-    "intro_done": 81,
-    "property_2": 57,
-    "game_sale": 52,
+    "n": 84,
+    "intro_done": 80,
+    "property_2": 56,
+    "game_sale": 51,
     "first_rebirth": 9,
-    "med_min": 14.4,
-    "intro_done_pct": 95.3,
-    "property_2_pct": 67.1,
-    "game_sale_pct": 61.2,
-    "first_rebirth_pct": 10.6
+    "med_min": 19.6,
+    "intro_done_pct": 95.2,
+    "property_2_pct": 66.7,
+    "game_sale_pct": 60.7,
+    "first_rebirth_pct": 10.7
    }
   ]
  },
@@ -10149,12 +10105,12 @@
   "dist": [
    {
     "cert": "dc0a72d0f17e769e",
-    "users": 891,
+    "users": 894,
     "ok": true
    },
    {
     "cert": "(미기록)",
-    "users": 102,
+    "users": 103,
     "ok": true
    },
    {
@@ -10216,11 +10172,11 @@
   ]
  },
  "ads": {
-  "total": 1223,
+  "total": 1224,
   "by_result": [
    {
     "result": "earned",
-    "n": 1017
+    "n": 1018
    },
    {
     "result": "dismissed",
@@ -10372,14 +10328,14 @@
    },
    {
     "country": "Taiwan",
-    "total": 35,
-    "earned": 25,
+    "total": 36,
+    "earned": 26,
     "dismissed": 1,
     "no_ad": 9,
     "failed": 0,
     "users": 6,
-    "finish_pct": 96.2,
-    "supply_pct": 25.7
+    "finish_pct": 96.3,
+    "supply_pct": 25.0
    },
    {
     "country": "Malaysia",
@@ -10453,11 +10409,11 @@
   "by_placement": [
    {
     "placement": "offline",
-    "earned": 588,
+    "earned": 589,
     "dismissed": 16,
     "no_ad": 75,
     "failed": 1,
-    "total": 680
+    "total": 681
    },
    {
     "placement": "boost",
