@@ -367,6 +367,89 @@ def tables() -> int:
     return 0
 
 
+def mon(day: str | None) -> int:
+    """수익화 진단 — "돈을 쓸 데가 있는 게임인가"를 데이터로 묻는다.
+
+    ⚠ 계측 공백: `_open_gem_panel()` 에 이벤트가 없어 **보석 상점 진입을 직접 못 센다.**
+      대신 `ad_impression placement='gem_ad'` 를 하한으로 쓴다 — 그 메뉴는 상점 패널
+      안에만 있으므로, 광고를 본 사람은 반드시 상점을 열었다. 실제 진입은 이보다 많다.
+      (빌드에 log_screen("gem_shop") 한 줄이면 정확해진다.)
+
+    보는 것 넷:
+      1. 결제 퍼널 — 활동 → 상점(하한) → 시도 → 성공
+      2. 보석 잔액 분포 — 쌓여만 있으면 '쓸 데가 없다'의 직접 증거다
+      3. 보석 소비 사유 — 어디로 빠지나
+      4. 광고 보상 한도 — 무료 수급이 상한에 닿나(닿으면 공급이 병목, 아니면 수요가 병목)
+    """
+    where = (f"_TABLE_SUFFIX = '{day}'" if day else "_TABLE_SUFFIX NOT LIKE 'intraday%'")
+    pl = "(SELECT value.string_value FROM UNNEST(event_params) WHERE key='placement')"
+    rs = "(SELECT value.string_value FROM UNNEST(event_params) WHERE key='result')"
+    rn = "(SELECT value.string_value FROM UNNEST(event_params) WHERE key='reason')"
+    bal = ("(SELECT COALESCE(value.int_value, CAST(value.double_value AS INT64))"
+           " FROM UNNEST(event_params) WHERE key='balance')")
+    val = ("(SELECT COALESCE(value.int_value, CAST(value.double_value AS INT64))"
+           " FROM UNNEST(event_params) WHERE key='value')")
+
+    f = rt.q(f"""
+      SELECT
+        COUNT(DISTINCT user_pseudo_id) AS users,
+        COUNT(DISTINCT IF(event_name='ad_impression' AND {pl}='gem_ad', user_pseudo_id, NULL)) AS shop,
+        COUNT(DISTINCT IF(event_name IN ('purchase','purchase_failed','purchase_anomaly'), user_pseudo_id, NULL)) AS tried,
+        COUNT(DISTINCT IF(event_name='purchase', user_pseudo_id, NULL)) AS paid,
+        COUNT(DISTINCT IF(event_name='spend_virtual_currency', user_pseudo_id, NULL)) AS spent
+      FROM {rt.TABLE} WHERE {where} AND {rt.HAS_GEO}
+    """)[0]
+    u = int(f["users"] or 0) or 1
+    print("=== 결제 퍼널 ===")
+    for lab, k in [("활동 유저", "users"), ("보석상점 진입(하한)", "shop"),
+                   ("보석 소비", "spent"), ("결제 시도", "tried"), ("결제 성공", "paid")]:
+        v = int(f[k] or 0)
+        print(f"  {lab:<20}{v:>8,}  {100*v/u:6.2f}%")
+
+    # 잔액 분포 — spend 이벤트의 balance(소비 직후 잔액). 유저별 최대값으로 본다.
+    b = rt.q(f"""
+      SELECT
+        APPROX_QUANTILES(mx, 100)[OFFSET(50)] AS p50,
+        APPROX_QUANTILES(mx, 100)[OFFSET(75)] AS p75,
+        APPROX_QUANTILES(mx, 100)[OFFSET(90)] AS p90,
+        APPROX_QUANTILES(mx, 100)[OFFSET(99)] AS p99,
+        MAX(mx) AS mx, COUNT(*) AS n
+      FROM (SELECT user_pseudo_id, MAX({bal}) AS mx FROM {rt.TABLE}
+            WHERE {where} AND {rt.HAS_GEO} AND event_name='spend_virtual_currency'
+              AND {bal} IS NOT NULL GROUP BY user_pseudo_id)
+    """)[0]
+    print(f"\n=== 보석 잔액(유저별 최고, 소비 시점) · {int(b['n'] or 0):,}명 ===")
+    print(f"  중앙값 {int(b['p50'] or 0):,}  ·  상위25% {int(b['p75'] or 0):,}"
+          f"  ·  상위10% {int(b['p90'] or 0):,}  ·  상위1% {int(b['p99'] or 0):,}  ·  최대 {int(b['mx'] or 0):,}")
+
+    r = rt.q(f"""
+      SELECT {rn} AS reason, COUNT(*) AS n,
+             COUNT(DISTINCT user_pseudo_id) AS users, SUM({val}) AS gems
+      FROM {rt.TABLE} WHERE {where} AND {rt.HAS_GEO} AND event_name='spend_virtual_currency'
+      GROUP BY reason ORDER BY gems DESC
+    """)
+    print(f"\n=== 보석 소비 사유 ===")
+    print(f"{'사유':<14}{'건수':>8}{'유저':>8}{'보석합':>12}{'건당':>8}")
+    for x in r:
+        n, g = int(x["n"] or 0), int(x["gems"] or 0)
+        print(f"{str(x['reason']):<14}{n:>8,}{int(x['users'] or 0):>8,}{g:>12,}{(g//n if n else 0):>8,}")
+
+    a = rt.q(f"""
+      SELECT cnt, COUNT(*) AS users FROM (
+        SELECT user_pseudo_id, COUNT(*) AS cnt FROM {rt.TABLE}
+        WHERE {where} AND {rt.HAS_GEO} AND event_name='ad_impression'
+          AND {pl}='gem_ad' AND {rs}='earned'
+        GROUP BY user_pseudo_id)
+      GROUP BY cnt ORDER BY cnt
+    """)
+    print(f"\n=== 보석 광고 시청 횟수(일 5회 한도) ===")
+    tot = sum(int(x["users"] or 0) for x in a) or 1
+    for x in a:
+        c, n = int(x["cnt"] or 0), int(x["users"] or 0)
+        print(f"  {c}회  {n:>6,}명  {100*n/tot:5.1f}%" + ("   ← 한도 도달" if c >= 5 else ""))
+    return 0
+
+
 def city(day: str | None) -> int:
     """2부 진입 자격자 수 — 관문이 실제로 몇 명에게 열려 있나.
 
@@ -551,6 +634,7 @@ def main() -> int:
     ap.add_argument("--vercmp", action="store_true", help="버전 코호트를 나이 맞춰 비교한다")
     ap.add_argument("--pay", action="store_true", help="Play 에만 있는 결제를 역추적한다")
     ap.add_argument("--tables", action="store_true", help="GA4 export 가 어디까지 왔는지 본다")
+    ap.add_argument("--mon", action="store_true", help="수익화 진단(결제 퍼널·보석 수급)")
     ap.add_argument("--country", default="", help="--pay 용 geo.country (예: Taiwan)")
     ap.add_argument("--cur", default="", help="--pay 용 통화코드 (예: TWD)")
     a = ap.parse_args()
@@ -563,6 +647,8 @@ def main() -> int:
         return city(a.day)
     if a.vercmp:
         return vercmp(a.day)
+    if a.mon:
+        return mon(a.day)
     if a.tables:
         return tables()
     if a.pay:
