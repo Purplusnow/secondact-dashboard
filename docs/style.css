@@ -356,9 +356,13 @@ a { color: #2a78d6; text-underline-offset: 2px; }
    필요하니, 칸을 좁혀 한 화면에 최대한 많이 들어오게 한다. 설치일·신규 두 칸은
    sticky 로 붙여 둬야 오른쪽으로 밀어도 어느 코호트인지 안 잃는다. */
 .coh-table td, .coh-table th { padding: 5px 5px; font-size: 11.5px; }
-.coh-table .stick2 { position: sticky; left: 92px; z-index: 1; background: var(--surface); box-shadow: 1px 0 0 var(--hair); }
+/* ⚠ stick2 의 left 는 **stick 의 실제 폭과 정확히 같아야** 한다(2026-10-20 버그).
+   left(92) > stick 폭(84) 이었더니, 스크롤하지 않아도 신규 칸이 8px 오른쪽으로
+   밀려 D1 숫자의 첫 자리를 덮었다("34.8%"가 "4.8%"로 보임). 둘을 한 값으로 묶는다. */
+.coh-table .stick  { position: sticky; left: 0;    width: 92px; min-width: 92px; }
+.coh-table .stick2 { position: sticky; left: 92px; width: 46px; min-width: 46px;
+  z-index: 1; background: var(--surface); box-shadow: 1px 0 0 var(--hair); }
 .coh-table thead .stick2 { z-index: 2; }
-.coh-table .stick { min-width: 84px; }
 .coh-na { color: var(--ink-3); opacity: .35; background: repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.03) 3px,rgba(0,0,0,.03) 6px); }
 .cell-na { color: var(--ink-3); background: repeating-linear-gradient(45deg, transparent, transparent 4px, color-mix(in srgb, var(--ink-3) 8%, transparent) 4px, color-mix(in srgb, var(--ink-3) 8%, transparent) 8px); }
 .vt-u { display: block; font-size: 10px; font-weight: 400; color: var(--ink-3); }
