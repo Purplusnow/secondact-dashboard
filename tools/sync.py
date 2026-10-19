@@ -108,8 +108,14 @@ def apply_admob(days: int) -> None:
             "startDate": {"year": start.year, "month": start.month, "day": start.day},
             "endDate": {"year": end.year, "month": end.month, "day": end.day},
         },
-        # ⚠ APP 을 빼면 **계정의 모든 앱이 합산**된다. 이 대시보드는 '인생 2막' 하나를
-        # 보는 자리라, 다른 앱 매출이 섞이면 수지가 통째로 거짓이 된다.
+        # APP 을 빼면 계정의 모든 앱이 합산된다. ★이 보드는 **통합 대시보드**로 간다
+        # (투자자 결정 2026-10-20) — purplusnow 계정의 앱 전부를 한 화면에서 보는 쪽이다.
+        # 그래서 합산은 **의도된 동작**이다. 앱별 내역은 admob_apps 에 남겨 어느 앱이
+        # 얼마를 벌었는지 쪼개 볼 수 있게 한다.
+        # ⚠ 아직 정리가 덜 된 상태다 — 화면 제목·문구는 여전히 '인생 2막' 하나를
+        #   말하고 있다. 앞으로 대시보드 하나에 모든 게임을 담는 방향으로 정리한다.
+        #   그때까지 '다른 앱이 섞였다'를 버그로 읽지 말 것(포크 쪽에서 실제로 그렇게
+        #   읽고 앱 필터를 넣을 뻔했다).
         "dimensions": ["DATE", "APP"],
         "metrics": ["ESTIMATED_EARNINGS"],
         "localizationSettings": {"currencyCode": "USD"},
@@ -146,7 +152,7 @@ def apply_admob(days: int) -> None:
             changed.append(f"{date} 광고매출 ${before or 0}→${total}")
         row["admob"] = {"USD": total}
         # 앱별 내역도 남긴다 — 어느 앱이 얼마를 벌었는지 화면에서 쪼개 보기 위함이고,
-        # 합계만 두면 '다른 앱이 섞였다'를 영영 모른다.
+        # 합계만 두면 어느 앱이 얼마를 벌었는지 영영 모른다(통합 보드라 더 중요하다).
         row["admob_apps"] = {k: round(v, 2) for k, v in sorted(apps.items(), key=lambda x: -x[1])}
         print(f"  {date}  " + " · ".join(f"{k} ${v:.2f}" for k, v in row["admob_apps"].items()))
     stamp(data, "admob")
