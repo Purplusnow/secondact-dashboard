@@ -25,6 +25,7 @@
   <button class="vtab" data-view="ingame" type="button">인게임</button>
   <button class="vtab" data-view="realtime" type="button">실시간</button>
   <button class="vtab" data-view="ads" type="button">광고</button>
+  <button class="vtab" data-view="geo" type="button">국가</button>
   <button class="vtab" data-view="users" type="button">전체 가입자</button>
 </nav>
 
@@ -382,6 +383,36 @@
   </section>
 </main>
 
+<main class="wrap" id="view-geo" hidden>
+
+  <p class="rt-warn">
+    <b>유저 수로 보면 거꾸로 읽습니다.</b> 유입 1위 국가가 결제 전환 최하위입니다 —
+    그래서 이 표의 기본 정렬은 유저 수가 아니라 <b>1천명당 결제자</b>입니다.
+    <b>광고비</b>는 Google Ads 계정 스크립트가 보내야 채워집니다. 국가별 합은 총액과 정확히
+    맞지 않습니다(위치를 특정 못 한 노출이 빠집니다) — 장부 기준은 매출 탭이고 여기는
+    <b>국가 간 비율</b>을 보는 자리입니다.
+  </p>
+
+  <p class="rt-meta" id="geo-meta"></p>
+  <p class="empty" id="geo-empty" hidden>국가별 데이터가 아직 없습니다.</p>
+  <p class="rt-warn" id="geo-nocost" hidden>
+    광고비가 아직 없습니다 — Google Ads → 도구 및 설정 → 일괄 작업 → 스크립트에
+    <code>tools/google-ads-script.js</code> 최신본을 붙여넣으면 매시간 들어옵니다.
+    그때 <b>CPI</b>와 <b>결제자당 비용</b> 열이 함께 열립니다.
+  </p>
+
+  <section class="card" id="geo-card" hidden>
+    <div class="card-head"><h2>국가별 효율</h2>
+      <p class="card-sub">유저 <b>100명 미만 국가는 제외</b>합니다 — 10명 중 1명만 결제해도
+        1천명당 100명이 되어 순위가 요동칩니다.
+        <b>1천명당 결제자</b>는 그 나라 유저의 값어치이고, <b>CPI</b>는 사 오는 값입니다.
+        둘을 같이 봐야 "비싸도 살 만한가"가 정해집니다.</p></div>
+    <section class="tiles" id="geo-tiles"></section>
+    <div class="table-scroll"><table class="ledger" id="geo-table"></table></div>
+  </section>
+
+</main>
+
 <main class="wrap" id="view-users" hidden>
 
   <p class="rt-warn">
@@ -416,5 +447,6 @@
 <script src="realtime.js?v=0427caf8"></script>
 <script src="ads.js?v=4b8256d1"></script>
 <script src="users.js?v=4ffd5a32"></script>
+<script src="geo.js?v=0268c9d2"></script>
 </body>
 </html>

@@ -566,3 +566,12 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 
 /* 오탐이 뜬 인증서 카드 — 다른 카드와 같은 무게로 보이면 안 된다 */
 .card.is-alarm { border-color: var(--bad); background: #fdeaea; }
+
+/* ── 국가 뷰 ─────────────────────────────────────────────────
+   1천명당 결제자는 절대값보다 '몇 배 차이냐'가 의사결정에 쓰인다. 숫자 뒤에 막대를
+   깔아 한눈에 보이게 한다(최고 효율 = 100%). 막대는 배경이라 숫자를 가리지 않는다. */
+.geo-flag { width: 28px; text-align: center; font-size: 15px; }
+.geo-bar { position: relative; min-width: 92px; }
+.geo-bar > i { position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  height: 16px; background: #7d9bec; opacity: .28; border-radius: 4px; }
+.geo-bar > b { position: relative; font-weight: 600; }
