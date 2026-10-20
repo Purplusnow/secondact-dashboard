@@ -2,6 +2,7 @@
 """daily.json 을 외부 소스에서 자동 갱신한다. GitHub Actions에서 돌린다.
 
   --ads-json '[{"date":"2026-09-09","cost":11800}, ...]'
+  --geo-json '[{"date":"2026-09-09","geo":"2410","cost":3200,"conv":2}, ...]'   # 국가별(선택)
       Google Ads 스크립트가 repository_dispatch 로 보낸 마케팅비. 스크립트는 매시간
       '오늘'과 '어제'를 함께 보낸다 — 구글이 확정 수치를 하루 뒤에 상향 조정하기 때문에
       어제 값도 계속 덮어써야 맞는다.
@@ -23,6 +24,8 @@ from datetime import datetime, timedelta, timezone
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DAILY = ROOT / "docs" / "data" / "daily.json"
+GEO = ROOT / "docs" / "data" / "geo_cost.json"
+GEOMAP = ROOT / "tools" / "geo_targets_countries.json"
 KST = timezone(timedelta(hours=9))
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 ADMOB_API = "https://admob.googleapis.com/v1"
@@ -85,6 +88,56 @@ def apply_ads(payload: str) -> None:
             row["ads"] = cost
     stamp(data, "ads")
     save(data, changed)
+
+
+def apply_geo(payload: str) -> None:
+    """국가별 비용·전환 → docs/data/geo_cost.json.
+
+    ★daily.json 에 넣지 않는다. 그 파일은 realtime(iap.py)과 공유라 동시쓰기 충돌을
+    피하려고 concurrency 그룹을 하나로 묶어 뒀다. 국가별은 성격이 달라(장부가 아니라 분석)
+    별도 파일로 두면 그 직렬화에 끼어들지 않는다.
+
+    ⚠총액(daily.ads)과 합이 정확히 맞지 않는다 — 위치를 특정 못 한 노출이 geographic_view
+    에서 빠진다. 장부 기준은 여전히 daily.ads 이고 여기는 **비율을 보는 용도**다.
+    """
+    rows = json.loads(payload) if payload else []
+    if isinstance(rows, dict):
+        rows = [rows]
+    if not rows:
+        print("국가별: 받은 행 없음 — 건너뜀")
+        return
+    gmap = json.loads(GEOMAP.read_text(encoding="utf-8"))
+    data = json.loads(GEO.read_text(encoding="utf-8")) if GEO.exists() else {"by_date": {}}
+    unknown = set()
+    n = 0
+    for it in rows:
+        date = it.get("date")
+        try:
+            datetime.strptime(date, "%Y-%m-%d")
+        except (TypeError, ValueError):
+            print(f"건너뜀(날짜 형식): {it}", file=sys.stderr)
+            continue
+        gid = str(it.get("geo", ""))
+        ent = gmap.get(gid)
+        if ent is None:
+            unknown.add(gid)
+            continue
+        day = data["by_date"].setdefault(date, {})
+        day[ent["cc"]] = {
+            "cost": int(round(float(it.get("cost", 0)))),
+            "conv": round(float(it.get("conv", 0)), 2),
+            "clicks": int(it.get("clicks", 0)),
+            "impr": int(it.get("impr", 0)),
+        }
+        n += 1
+    if unknown:
+        # 매핑표가 낡으면 조용히 유실된다. 반드시 눈에 띄게 남긴다.
+        print(f"⚠ 매핑에 없는 geo id {len(unknown)}개: {sorted(unknown)[:10]} "
+              f"— tools/geo_targets_countries.json 갱신 필요", file=sys.stderr)
+    data["updated"] = datetime.now(KST).isoformat(timespec="seconds")
+    GEO.write_text(json.dumps(data, ensure_ascii=False, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+    days = len(data["by_date"])
+    print(f"국가별: {n}행 반영 (누적 {days}일)")
 
 
 # ── 광고매출 ──────────────────────────────────────────
@@ -162,6 +215,7 @@ def apply_admob(days: int) -> None:
 def main() -> int:
     p = argparse.ArgumentParser(description="daily.json 자동 갱신")
     p.add_argument("--ads-json", help="[{date, cost}] 형태의 JSON 문자열")
+    p.add_argument("--geo-json", help="[{date, geo, cost, conv, clicks, impr}] 국가별(선택)")
     p.add_argument("--admob", action="store_true", help="AdMob API에서 광고매출 수집")
     p.add_argument("--days", type=int, default=3,
                    help="AdMob 조회 일수 (기본 3 — 사후 상향 조정을 따라잡기 위해 여유를 둔다)")
@@ -169,9 +223,11 @@ def main() -> int:
 
     if a.ads_json:
         apply_ads(a.ads_json)
+    if a.geo_json:
+        apply_geo(a.geo_json)
     if a.admob:
         apply_admob(a.days)
-    if not a.ads_json and not a.admob:
+    if not a.ads_json and not a.admob and not a.geo_json:
         p.error("--ads-json 또는 --admob 중 하나는 필요합니다")
     return 0
 
