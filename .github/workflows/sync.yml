@@ -56,7 +56,13 @@ jobs:
         if: github.event_name == 'repository_dispatch'
         env:
           ADS_ROWS: ${{ toJSON(github.event.client_payload.rows) }}
-        run: python3 tools/sync.py --ads-json "$ADS_ROWS"
+          GEO_ROWS: ${{ toJSON(github.event.client_payload.geo) }}
+        # 국가별(geo)은 선택 — 스크립트 구버전이 보내지 않으면 'null' 이 와서 조용히 건너뛴다.
+        run: |
+          python3 tools/sync.py --ads-json "$ADS_ROWS"
+          if [ "$GEO_ROWS" != "null" ] && [ -n "$GEO_ROWS" ]; then
+            python3 tools/sync.py --geo-json "$GEO_ROWS"
+          fi
 
       - name: 광고매출 수집
         if: env.ADMOB_REFRESH_TOKEN != ''
@@ -65,6 +71,7 @@ jobs:
       - name: 커밋
         env:
           ADS_ROWS: ${{ toJSON(github.event.client_payload.rows) }}
+          GEO_ROWS: ${{ toJSON(github.event.client_payload.geo) }}
           EV: ${{ github.event_name }}
           DAYS: ${{ inputs.days || 3 }}
         run: |
@@ -93,7 +100,12 @@ jobs:
           }
           # 되감은 뒤 다시 돌릴 수집 — 이 잡이 원래 한 일을 그대로 반복한다.
           recollect() {
-            if [ "$EV" = "repository_dispatch" ]; then python3 tools/sync.py --ads-json "$ADS_ROWS"; fi
+            if [ "$EV" = "repository_dispatch" ]; then
+              python3 tools/sync.py --ads-json "$ADS_ROWS"
+              if [ "$GEO_ROWS" != "null" ] && [ -n "$GEO_ROWS" ]; then
+                python3 tools/sync.py --geo-json "$GEO_ROWS"
+              fi
+            fi
             if [ -n "$ADMOB_REFRESH_TOKEN" ]; then python3 tools/sync.py --admob --days "$DAYS"; fi
           }
           push_or_recollect recollect
