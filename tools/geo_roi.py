@@ -22,6 +22,10 @@
   python3 tools/geo_roi.py --days 30
   python3 tools/geo_roi.py --write    # docs/data/geo_roi.json 으로도 저장
 """
+# ★로컬은 python3.9 인데 CI 는 3.12 다. `str | None`(PEP 604)은 3.10+ 라 이게 없으면
+# CI 에서만 돌고 손으로는 못 돌린다 — 검증을 못 하게 되는 쪽이 더 비싸다.
+from __future__ import annotations
+
 import argparse, json, pathlib, sys
 from datetime import datetime, timedelta, timezone
 
@@ -55,12 +59,20 @@ def name_to_iso() -> dict:
     return m
 
 
-def fetch_users(days: int) -> list[dict]:
+def fetch_users(days: int, cost_from: str | None, cost_to: str | None) -> list[dict]:
+    """국가별 유저·결제자(긴 창) + **비용 창 안의 신규 유저**(CPI 분모).
+
+    ★창을 섞으면 CPI 가 거짓말을 한다. 광고비는 스크립트를 붙인 날부터만 쌓이는데
+    유저는 60일치라, 그대로 나누면 '2일 비용 ÷ 60일 유저'가 되어 CPI 가 수십 분의 일로
+    찍힌다. 그래서 분모는 **비용이 있는 날짜 범위의 신규 유저**로 따로 센다.
+    한 쿼리에서 조건부 집계로 같이 뽑으므로 스캔은 늘지 않는다.
+    """
     from google.cloud import bigquery
     c = bigquery.Client(project=PROJECT, location=LOCATION)
+    win = ("AND u.first_date BETWEEN @cf AND @ct" if cost_from else "AND FALSE")
     q = f"""
     WITH ev AS (
-      SELECT user_pseudo_id, geo.country AS country, event_name, event_timestamp
+      SELECT user_pseudo_id, geo.country AS country, event_name, event_timestamp, event_date
       FROM `{PROJECT}.{DATASET}.events_*`
       WHERE _TABLE_SUFFIX BETWEEN FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE('Asia/Seoul'), INTERVAL {days} DAY))
                               AND FORMAT_DATE('%Y%m%d', CURRENT_DATE('Asia/Seoul'))
@@ -69,22 +81,30 @@ def fetch_users(days: int) -> list[dict]:
     u AS (
       SELECT user_pseudo_id,
              ARRAY_AGG(country IGNORE NULLS ORDER BY event_timestamp LIMIT 1)[SAFE_OFFSET(0)] AS c,
-             COUNTIF(event_name='purchase') > 0 AS payer
+             COUNTIF(event_name='purchase') > 0 AS payer,
+             MIN(event_date) AS first_date
       FROM ev GROUP BY user_pseudo_id
     )
-    SELECT c AS country, COUNT(*) AS users, COUNTIF(payer) AS payers
+    SELECT c AS country, COUNT(*) AS users, COUNTIF(payer) AS payers,
+           COUNTIF(TRUE {win}) AS win_users,
+           COUNTIF(payer {win}) AS win_payers
     FROM u GROUP BY country ORDER BY users DESC
     """
-    job = c.query(q)
+    cfg = bigquery.QueryJobConfig(query_parameters=[
+        bigquery.ScalarQueryParameter("cf", "STRING", (cost_from or "").replace("-", "")),
+        bigquery.ScalarQueryParameter("ct", "STRING", (cost_to or "").replace("-", "")),
+    ]) if cost_from else None
+    job = c.query(q, job_config=cfg)
     rows = [dict(r) for r in job]
     print(f"BigQuery 스캔 {job.total_bytes_billed/1e6:.0f}MB", file=sys.stderr)
     return rows
 
 
-def load_cost(days: int) -> dict:
-    """ISO → 누적 비용·전환. 파일이 없으면 빈 dict(아직 스크립트 미실행)."""
+def load_cost(days: int) -> tuple[dict, str | None, str | None]:
+    """ISO → 누적 비용·전환, 그리고 **비용이 실제로 있는 날짜 범위**.
+    범위를 같이 돌려주는 이유는 CPI 분모를 그 창으로 맞추기 위해서다(fetch_users 주석)."""
     if not GEO_COST.exists():
-        return {}
+        return {}, None, None
     data = json.loads(GEO_COST.read_text(encoding="utf-8")).get("by_date", {})
     since = (datetime.now(KST) - timedelta(days=days)).strftime("%Y-%m-%d")
     out: dict = {}
@@ -96,7 +116,8 @@ def load_cost(days: int) -> dict:
             a["cost"] += int(v.get("cost", 0))
             a["conv"] += float(v.get("conv", 0))
             a["clicks"] += int(v.get("clicks", 0))
-    return out
+    dates = sorted(d for d in data if d >= since)
+    return out, (dates[0] if dates else None), (dates[-1] if dates else None)
 
 
 def main() -> int:
@@ -107,8 +128,8 @@ def main() -> int:
     a = ap.parse_args()
 
     iso = name_to_iso()
-    users = fetch_users(a.days)
-    cost = load_cost(a.days)
+    cost, cfrom, cto = load_cost(a.days)
+    users = fetch_users(a.days, cfrom, cto)
     unmatched = []
 
     rows = []
@@ -122,8 +143,19 @@ def main() -> int:
             "country": r["country"], "cc": cc, "users": r["users"], "payers": r["payers"],
             "payers_per_1k": round(r["payers"] * 1000 / r["users"], 1) if r["users"] else 0.0,
             "cost": spend,
-            "cpi": round(spend / r["users"]) if spend and r["users"] else None,
-            "cost_per_payer": round(spend / r["payers"]) if spend and r["payers"] else None,
+            # ★분모는 비용 창 안의 신규 유저다. 전체 유저로 나누면 CPI 가 창 길이만큼 거짓이 된다.
+            "win_users": r.get("win_users", 0),
+            "win_payers": r.get("win_payers", 0),
+            "cpi": round(spend / r["win_users"]) if spend and r.get("win_users") else None,
+            "cost_per_payer": round(spend / r["win_payers"]) if spend and r.get("win_payers") else None,
+            # ★실제 의사결정 지표. CPI 만 보면 인도가 압도적(73원)이고 전환만 보면 한국이
+            # 압도적인데, 둘을 합치면 순서가 또 바뀐다 — 인도는 전환이 15배 나쁘지만 획득가가
+            # 13배 싸서 거의 상쇄된다(30,417원 vs 25,799원). 한쪽만 보면 반드시 오판한다.
+            # 분모는 **60일 전환율**을 쓴다. 비용 창 안의 결제자는 수가 너무 적어(대개 0)
+            # 그걸로 나누면 '-' 만 남는다.
+            "exp_cost_per_payer": (
+                round(spend / r["win_users"] / (r["payers"] / r["users"]))
+                if spend and r.get("win_users") and r["payers"] and r["users"] else None),
         })
 
     shown = [r for r in rows if r["users"] >= a.min_users]
@@ -131,7 +163,9 @@ def main() -> int:
     has_cost = any(r["cost"] for r in shown)
 
     print(f"\n최근 {a.days}일 · 유저 {a.min_users}명 이상 국가 {len(shown)}개"
-          + ("" if has_cost else "   ⚠광고비 없음 — Google Ads 스크립트를 아직 안 돌렸습니다"))
+          + (f"   광고비 {cfrom}~{cto}" if has_cost else "   ⚠광고비 없음 — Google Ads 스크립트를 아직 안 돌렸습니다"))
+    if has_cost:
+        print(f"  ※CPI 분모는 광고비 기간({cfrom}~{cto})의 신규 유저입니다 — 창을 맞춰야 맞는 수치입니다.")
     hdr = f"{'국가':<18}{'유저':>7}{'결제자':>7}{'1천명당':>8}"
     if has_cost:
         hdr += f"{'광고비':>10}{'CPI':>7}{'결제자당':>9}"
@@ -151,7 +185,8 @@ def main() -> int:
     if a.write:
         OUT.write_text(json.dumps(
             {"updated": datetime.now(KST).isoformat(timespec="seconds"),
-             "days": a.days, "has_cost": has_cost, "rows": rows},
+             "days": a.days, "has_cost": has_cost,
+             "cost_from": cfrom, "cost_to": cto, "rows": rows},
             ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         print(f"\n저장 {OUT.relative_to(ROOT)}")
     return 0

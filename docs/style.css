@@ -575,3 +575,5 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .geo-bar > i { position: absolute; left: 0; top: 50%; transform: translateY(-50%);
   height: 16px; background: #7d9bec; opacity: .28; border-radius: 4px; }
 .geo-bar > b { position: relative; font-weight: 600; }
+/* 표본이 얇아 순위 계산에서 뺀 행 — 숫자는 보여주되 믿지 말라는 표시 */
+.geo-weak { opacity: .45; }

@@ -36,6 +36,8 @@
   /* 최소 유저 수 — 이 아래는 1천명당 수치가 요동쳐서 순위가 무의미하다.
      (10명 중 1명이 결제하면 100명/1천명이 되어 한국을 3배 앞선다) */
   const MIN_USERS = 100;
+  /* 이 미만으로 쓴 국가는 CPI·예상치를 순위에 넣지 않는다(표에는 남긴다). */
+  const MIN_COST = 500;
 
   async function load() {
     let d;
@@ -45,14 +47,21 @@
       d = await res.json();
     } catch { $('#geo-empty').hidden = false; return; }
 
-    const rows = (d.rows || []).filter(r => r.users >= MIN_USERS)
-      .sort((a, b) => b.payers_per_1k - a.payers_per_1k);
+    /* ★비용이 있으면 '예상 결제자당' 오름차순이 의사결정 순서다.
+       CPI 만 보면 인도가 1위고 전환만 보면 한국이 1위인데, 합치면 또 다르다.
+       비용이 너무 적은 국가(MIN_COST 미만)는 CPI 가 요동쳐서 순위에서 뒤로 뺀다
+       — 인도네시아가 총 2원 써서 '결제자당 1,667원'으로 1위에 올라왔다. */
+    const rows = (d.rows || []).filter(r => r.users >= MIN_USERS);
+    const rank = r => (r.exp_cost_per_payer && r.cost >= MIN_COST) ? r.exp_cost_per_payer : Infinity;
+    if (d.has_cost) rows.sort((a, b) => rank(a) - rank(b) || b.payers_per_1k - a.payers_per_1k);
+    else rows.sort((a, b) => b.payers_per_1k - a.payers_per_1k);
     if (!rows.length) { $('#geo-empty').hidden = false; return; }
 
     const when = d.updated ? new Date(d.updated).toLocaleString('ko-KR', { hour12: false }) : '-';
     $('#geo-meta').textContent =
       `최근 ${d.days}일 · 유저 ${MIN_USERS}명 이상 ${rows.length}개국 · ${when} 기준`
-      + (d.has_cost ? '' : ' · 광고비 미수집');
+      + (d.has_cost ? ` · 광고비 ${d.cost_from}~${d.cost_to}` : ' · 광고비 미수집');
+    if (d.has_cost) $('#geo-window').hidden = false;
 
     if (!d.has_cost) $('#geo-nocost').hidden = false;
 
@@ -68,7 +77,7 @@
     // 최고 효율을 100%로 둔 막대 — 절대값보다 '몇 배 차이냐'가 의사결정에 쓰인다.
     const top = rows[0].payers_per_1k || 1;
     const head = ['', '국가', '유저', '결제자', '1천명당']
-      .concat(d.has_cost ? ['광고비', 'CPI', '결제자당'] : []);
+      .concat(d.has_cost ? ['광고비', 'CPI', '예상 결제자당'] : []);
     const body = rows.map(r => {
       const w = Math.max(2, Math.round(r.payers_per_1k / top * 100));
       const cells = [
@@ -78,10 +87,13 @@
         `<td class="n">${num(r.payers)}</td>`,
         `<td class="n geo-bar"><i style="width:${w}%"></i><b>${r.payers_per_1k.toFixed(1)}</b></td>`,
       ];
-      if (d.has_cost) cells.push(
-        `<td class="n">${r.cost ? num(r.cost) : '-'}</td>`,
-        `<td class="n">${r.cpi ? num(r.cpi) : '-'}</td>`,
-        `<td class="n">${r.cost_per_payer ? num(r.cost_per_payer) : '-'}</td>`);
+      if (d.has_cost) {
+        const weak = r.cost && r.cost < MIN_COST;   // 표본이 얇아 순위에 못 쓰는 행
+        cells.push(
+          `<td class="n">${r.cost ? num(r.cost) : '-'}</td>`,
+          `<td class="n">${r.cpi ? num(r.cpi) : '-'}</td>`,
+          `<td class="n${weak ? ' geo-weak' : ''}">${r.exp_cost_per_payer ? num(r.exp_cost_per_payer) : '-'}</td>`);
+      }
       return `<tr>${cells.join('')}</tr>`;
     }).join('');
     $('#geo-table').innerHTML =

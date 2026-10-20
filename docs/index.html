@@ -395,6 +395,12 @@
 
   <p class="rt-meta" id="geo-meta"></p>
   <p class="empty" id="geo-empty" hidden>국가별 데이터가 아직 없습니다.</p>
+  <p class="rt-warn" id="geo-window" hidden>
+    <b>예상 결제자당 = CPI ÷ 전환율.</b> 한쪽만 보면 반드시 오판합니다 —
+    CPI 만 보면 인도가 1위(73원)이고 전환만 보면 한국이 1위인데, 합치면 또 달라집니다.
+    CPI 는 <b>광고비가 있는 날짜의 신규 유저</b>로 나눈 값이고, 전환율은 60일치입니다.
+    광고비가 며칠 안 쌓였으면 CPI 는 아직 흔들립니다 — 1~2주는 보셔야 합니다.
+  </p>
   <p class="rt-warn" id="geo-nocost" hidden>
     광고비가 아직 없습니다 — Google Ads → 도구 및 설정 → 일괄 작업 → 스크립트에
     <code>tools/google-ads-script.js</code> 최신본을 붙여넣으면 매시간 들어옵니다.
@@ -447,6 +453,6 @@
 <script src="realtime.js?v=0427caf8"></script>
 <script src="ads.js?v=4b8256d1"></script>
 <script src="users.js?v=4ffd5a32"></script>
-<script src="geo.js?v=0268c9d2"></script>
+<script src="geo.js?v=5e746b90"></script>
 </body>
 </html>

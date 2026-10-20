@@ -1,7 +1,9 @@
 {
- "updated": "2026-10-20T13:58:39+09:00",
+ "updated": "2026-10-20T14:20:40+09:00",
  "days": 60,
- "has_cost": false,
+ "has_cost": true,
+ "cost_from": "2026-10-19",
+ "cost_to": "2026-10-20",
  "rows": [
   {
    "country": "India",
@@ -9,9 +11,12 @@
    "users": 2526,
    "payers": 6,
    "payers_per_1k": 2.4,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 3347,
+   "win_users": 46,
+   "win_payers": 0,
+   "cpi": 73,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 30632
   },
   {
    "country": "Vietnam",
@@ -19,9 +24,12 @@
    "users": 2022,
    "payers": 13,
    "payers_per_1k": 6.4,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 4046,
+   "win_users": 18,
+   "win_payers": 2,
+   "cpi": 225,
+   "cost_per_payer": 2023,
+   "exp_cost_per_payer": 34962
   },
   {
    "country": "Brazil",
@@ -29,9 +37,12 @@
    "users": 2000,
    "payers": 26,
    "payers_per_1k": 13.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 14868,
+   "win_users": 29,
+   "win_payers": 0,
+   "cpi": 513,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 39438
   },
   {
    "country": "Indonesia",
@@ -39,9 +50,12 @@
    "users": 1675,
    "payers": 2,
    "payers_per_1k": 1.2,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 2,
+   "win_users": 1,
+   "win_payers": 0,
+   "cpi": 2,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 1675
   },
   {
    "country": "Philippines",
@@ -49,9 +63,12 @@
    "users": 1122,
    "payers": 4,
    "payers_per_1k": 3.6,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 2231,
+   "win_users": 11,
+   "win_payers": 0,
+   "cpi": 203,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 56890
   },
   {
    "country": "South Korea",
@@ -59,9 +76,12 @@
    "users": 975,
    "payers": 36,
    "payers_per_1k": 36.9,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 4761,
+   "win_users": 5,
+   "win_payers": 0,
+   "cpi": 952,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 25789
   },
   {
    "country": "Taiwan",
@@ -69,9 +89,12 @@
    "users": 959,
    "payers": 11,
    "payers_per_1k": 11.5,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 7114,
+   "win_users": 9,
+   "win_payers": 0,
+   "cpi": 790,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 68912
   },
   {
    "country": "Türkiye",
@@ -79,9 +102,12 @@
    "users": 958,
    "payers": 7,
    "payers_per_1k": 7.3,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 2090,
+   "win_users": 13,
+   "win_payers": 0,
+   "cpi": 161,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 22002
   },
   {
    "country": "Thailand",
@@ -89,9 +115,12 @@
    "users": 790,
    "payers": 7,
    "payers_per_1k": 8.9,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 4311,
+   "win_users": 14,
+   "win_payers": 0,
+   "cpi": 308,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 34752
   },
   {
    "country": "United States",
@@ -99,9 +128,12 @@
    "users": 630,
    "payers": 13,
    "payers_per_1k": 20.6,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 8997,
+   "win_users": 16,
+   "win_payers": 0,
+   "cpi": 562,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 27251
   },
   {
    "country": "France",
@@ -109,9 +141,12 @@
    "users": 572,
    "payers": 6,
    "payers_per_1k": 10.5,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 2652,
+   "win_users": 4,
+   "win_payers": 0,
+   "cpi": 663,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 63206
   },
   {
    "country": "Japan",
@@ -119,9 +154,12 @@
    "users": 498,
    "payers": 8,
    "payers_per_1k": 16.1,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 7980,
+   "win_users": 10,
+   "win_payers": 1,
+   "cpi": 798,
+   "cost_per_payer": 7980,
+   "exp_cost_per_payer": 49676
   },
   {
    "country": "Spain",
@@ -130,8 +168,11 @@
    "payers": 4,
    "payers_per_1k": 8.2,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Argentina",
@@ -139,9 +180,12 @@
    "users": 472,
    "payers": 0,
    "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 1562,
+   "win_users": 4,
+   "win_payers": 0,
+   "cpi": 390,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Colombia",
@@ -149,9 +193,12 @@
    "users": 466,
    "payers": 2,
    "payers_per_1k": 4.3,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 1526,
+   "win_users": 7,
+   "win_payers": 0,
+   "cpi": 218,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 50794
   },
   {
    "country": "Germany",
@@ -159,9 +206,12 @@
    "users": 461,
    "payers": 10,
    "payers_per_1k": 21.7,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 1485,
+   "win_users": 2,
+   "win_payers": 0,
+   "cpi": 742,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 34229
   },
   {
    "country": "Italy",
@@ -170,8 +220,11 @@
    "payers": 4,
    "payers_per_1k": 8.8,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Mexico",
@@ -179,9 +232,12 @@
    "users": 334,
    "payers": 2,
    "payers_per_1k": 6.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 1020,
+   "win_users": 12,
+   "win_payers": 0,
+   "cpi": 85,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 14195
   },
   {
    "country": "United Kingdom",
@@ -189,9 +245,12 @@
    "users": 261,
    "payers": 3,
    "payers_per_1k": 11.5,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 1486,
+   "win_users": 1,
+   "win_payers": 0,
+   "cpi": 1486,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": 129282
   },
   {
    "country": "Malaysia",
@@ -199,9 +258,12 @@
    "users": 205,
    "payers": 0,
    "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 2089,
+   "win_users": 9,
+   "win_payers": 0,
+   "cpi": 232,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Canada",
@@ -209,9 +271,12 @@
    "users": 193,
    "payers": 1,
    "payers_per_1k": 5.2,
-   "cost": 0,
+   "cost": 977,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Peru",
@@ -219,9 +284,12 @@
    "users": 163,
    "payers": 0,
    "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 535,
+   "win_users": 2,
+   "win_payers": 0,
+   "cpi": 268,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Chile",
@@ -230,8 +298,11 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Pakistan",
@@ -239,9 +310,12 @@
    "users": 70,
    "payers": 0,
    "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 7,
+   "win_users": 1,
+   "win_payers": 0,
+   "cpi": 7,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Switzerland",
@@ -250,8 +324,11 @@
    "payers": 1,
    "payers_per_1k": 18.5,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Bangladesh",
@@ -259,19 +336,12 @@
    "users": 48,
    "payers": 0,
    "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "South Africa",
-   "cc": "ZA",
-   "users": 43,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 4,
+   "win_users": 2,
+   "win_payers": 0,
+   "cpi": 2,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Australia",
@@ -280,8 +350,24 @@
    "payers": 2,
    "payers_per_1k": 46.5,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "South Africa",
+   "cc": "ZA",
+   "users": 43,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 1,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "New Zealand",
@@ -289,9 +375,12 @@
    "users": 41,
    "payers": 1,
    "payers_per_1k": 24.4,
-   "cost": 0,
+   "cost": 99,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Hong Kong",
@@ -300,8 +389,11 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Kenya",
@@ -309,9 +401,12 @@
    "users": 36,
    "payers": 0,
    "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 5,
+   "win_users": 2,
+   "win_payers": 0,
+   "cpi": 2,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Nigeria",
@@ -319,9 +414,12 @@
    "users": 35,
    "payers": 0,
    "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 4,
+   "win_users": 1,
+   "win_payers": 0,
+   "cpi": 4,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Singapore",
@@ -329,9 +427,12 @@
    "users": 19,
    "payers": 0,
    "payers_per_1k": 0.0,
-   "cost": 0,
+   "cost": 247,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Zimbabwe",
@@ -340,8 +441,11 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Iran",
@@ -350,8 +454,11 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Ireland",
@@ -360,8 +467,11 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Nepal",
@@ -369,9 +479,12 @@
    "users": 12,
    "payers": 0,
    "payers_per_1k": 0.0,
-   "cost": 0,
+   "cost": 2,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Egypt",
@@ -380,8 +493,11 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Netherlands",
@@ -390,18 +506,11 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 1,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Ghana",
-   "cc": "GH",
-   "users": 9,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Uganda",
@@ -410,8 +519,24 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Ghana",
+   "cc": "GH",
+   "users": 9,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 1,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Romania",
@@ -420,18 +545,11 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Tanzania",
-   "cc": "TZ",
-   "users": 7,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Myanmar (Burma)",
@@ -440,8 +558,24 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Tanzania",
+   "cc": "TZ",
+   "users": 7,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Ukraine",
@@ -450,28 +584,11 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 1,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "China",
-   "cc": "CN",
-   "users": 5,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Iraq",
-   "cc": "IQ",
-   "users": 5,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Eswatini",
@@ -480,38 +597,37 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Jamaica",
-   "cc": "JM",
-   "users": 4,
+   "country": "Iraq",
+   "cc": "IQ",
+   "users": 5,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 2,
+   "win_users": 1,
+   "win_payers": 0,
+   "cpi": 2,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "China",
+   "cc": "CN",
+   "users": 5,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Austria",
-   "cc": "AT",
-   "users": 4,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Sri Lanka",
-   "cc": "LK",
-   "users": 4,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Poland",
@@ -520,48 +636,50 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Malawi",
-   "cc": "MW",
-   "users": 3,
+   "country": "Sri Lanka",
+   "cc": "LK",
+   "users": 4,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Tunisia",
-   "cc": "TN",
-   "users": 3,
+   "country": "Austria",
+   "cc": "AT",
+   "users": 4,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Hungary",
-   "cc": "HU",
-   "users": 3,
+   "country": "Jamaica",
+   "cc": "JM",
+   "users": 4,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Saudi Arabia",
-   "cc": "SA",
-   "users": 3,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Algeria",
@@ -569,9 +687,12 @@
    "users": 3,
    "payers": 0,
    "payers_per_1k": 0.0,
-   "cost": 0,
+   "cost": 1,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Czechia",
@@ -580,8 +701,11 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Morocco",
@@ -589,99 +713,64 @@
    "users": 3,
    "payers": 0,
    "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost": 2,
+   "win_users": 1,
+   "win_payers": 0,
+   "cpi": 2,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Moldova",
-   "cc": "MD",
-   "users": 2,
+   "country": "Tunisia",
+   "cc": "TN",
+   "users": 3,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 1,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Malawi",
+   "cc": "MW",
+   "users": 3,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Zambia",
-   "cc": "ZM",
-   "users": 2,
+   "country": "Hungary",
+   "cc": "HU",
+   "users": 3,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Mauritius",
-   "cc": "MU",
-   "users": 2,
+   "country": "Saudi Arabia",
+   "cc": "SA",
+   "users": 3,
    "payers": 0,
    "payers_per_1k": 0.0,
-   "cost": 0,
+   "cost": 1,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Burkina Faso",
-   "cc": "BF",
-   "users": 2,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Lesotho",
-   "cc": "LS",
-   "users": 2,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Liberia",
-   "cc": "LR",
-   "users": 2,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Russia",
-   "cc": "RU",
-   "users": 2,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Guatemala",
-   "cc": "GT",
-   "users": 2,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Somalia",
-   "cc": "SO",
-   "users": 2,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Sierra Leone",
@@ -690,48 +779,11 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Guinea",
-   "cc": "GN",
-   "users": 2,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Sweden",
-   "cc": "SE",
-   "users": 2,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Denmark",
-   "cc": "DK",
-   "users": 2,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Côte d’Ivoire",
-   "cc": "CI",
-   "users": 2,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Belgium",
@@ -740,8 +792,24 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Guinea",
+   "cc": "GN",
+   "users": 2,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Namibia",
@@ -750,8 +818,11 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Greece",
@@ -760,248 +831,167 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Cuba",
-   "cc": null,
-   "users": 1,
+   "country": "Sweden",
+   "cc": "SE",
+   "users": 2,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Libya",
-   "cc": "LY",
-   "users": 1,
+   "country": "Côte d’Ivoire",
+   "cc": "CI",
+   "users": 2,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Fiji",
-   "cc": "FJ",
-   "users": 1,
+   "country": "Denmark",
+   "cc": "DK",
+   "users": 2,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Albania",
-   "cc": "AL",
-   "users": 1,
+   "country": "Burkina Faso",
+   "cc": "BF",
+   "users": 2,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Guyana",
-   "cc": "GY",
-   "users": 1,
+   "country": "Lesotho",
+   "cc": "LS",
+   "users": 2,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Norway",
-   "cc": "NO",
-   "users": 1,
+   "country": "Liberia",
+   "cc": "LR",
+   "users": 2,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 1,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Somalia",
+   "cc": "SO",
+   "users": 2,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "St. Martin",
-   "cc": "MF",
-   "users": 1,
+   "country": "Moldova",
+   "cc": "MD",
+   "users": 2,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Seychelles",
-   "cc": "SC",
-   "users": 1,
+   "country": "Zambia",
+   "cc": "ZM",
+   "users": 2,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 2,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Russia",
+   "cc": "RU",
+   "users": 2,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "United Arab Emirates",
-   "cc": "AE",
-   "users": 1,
+   "country": "Guatemala",
+   "cc": "GT",
+   "users": 2,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Cameroon",
-   "cc": "CM",
-   "users": 1,
+   "country": "Mauritius",
+   "cc": "MU",
+   "users": 2,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Palestine",
-   "cc": "PS",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Kyrgyzstan",
-   "cc": "KG",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Uzbekistan",
-   "cc": "UZ",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Azerbaijan",
-   "cc": "AZ",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Brunei",
-   "cc": "BN",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Israel",
-   "cc": "IL",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Ecuador",
-   "cc": "EC",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Lithuania",
-   "cc": "LT",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Estonia",
-   "cc": "EE",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Mozambique",
-   "cc": "MZ",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Congo - Kinshasa",
-   "cc": "CD",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Gabon",
-   "cc": "GA",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Bosnia & Herzegovina",
-   "cc": "BA",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Montenegro",
-   "cc": "ME",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Qatar",
@@ -1010,48 +1000,37 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Réunion",
-   "cc": "RE",
+   "country": "Brunei",
+   "cc": "BN",
    "users": 1,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
-   "country": "Haiti",
-   "cc": "HT",
+   "country": "Ecuador",
+   "cc": "EC",
    "users": 1,
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Portugal",
-   "cc": "PT",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
-  },
-  {
-   "country": "Ethiopia",
-   "cc": "ET",
-   "users": 1,
-   "payers": 0,
-   "payers_per_1k": 0.0,
-   "cost": 0,
-   "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   },
   {
    "country": "Tajikistan",
@@ -1060,8 +1039,349 @@
    "payers": 0,
    "payers_per_1k": 0.0,
    "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
    "cpi": null,
-   "cost_per_payer": null
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Montenegro",
+   "cc": "ME",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Haiti",
+   "cc": "HT",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Ethiopia",
+   "cc": "ET",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Portugal",
+   "cc": "PT",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Israel",
+   "cc": "IL",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Gabon",
+   "cc": "GA",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Bosnia & Herzegovina",
+   "cc": "BA",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Réunion",
+   "cc": "RE",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Mozambique",
+   "cc": "MZ",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Congo - Kinshasa",
+   "cc": "CD",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 1,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Lithuania",
+   "cc": "LT",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Estonia",
+   "cc": "EE",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Norway",
+   "cc": "NO",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Cuba",
+   "cc": null,
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Libya",
+   "cc": "LY",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Azerbaijan",
+   "cc": "AZ",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "United Arab Emirates",
+   "cc": "AE",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Fiji",
+   "cc": "FJ",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Guyana",
+   "cc": "GY",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Albania",
+   "cc": "AL",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Kyrgyzstan",
+   "cc": "KG",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Uzbekistan",
+   "cc": "UZ",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Seychelles",
+   "cc": "SC",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Palestine",
+   "cc": "PS",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "Cameroon",
+   "cc": "CM",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
+  },
+  {
+   "country": "St. Martin",
+   "cc": "MF",
+   "users": 1,
+   "payers": 0,
+   "payers_per_1k": 0.0,
+   "cost": 0,
+   "win_users": 0,
+   "win_payers": 0,
+   "cpi": null,
+   "cost_per_payer": null,
+   "exp_cost_per_payer": null
   }
  ]
 }
