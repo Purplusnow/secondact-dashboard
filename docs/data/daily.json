@@ -977,12 +977,12 @@
     },
     {
       "date": "2026-10-21",
-      "ads": 53001,
+      "ads": 57213,
       "admob": {
-        "USD": 11.9
+        "USD": 12.18
       },
       "admob_apps": {
-        "Second Act: Property Tycoon": 11.85,
+        "Second Act: Property Tycoon": 12.13,
         "Crown & Coin: Idle Estate": 0.05
       },
       "iap": {
@@ -991,11 +991,21 @@
         "EUR": 0.79
       },
       "iap_src": "ga4"
+    },
+    {
+      "date": "2026-10-22",
+      "ads": 218,
+      "admob": {
+        "USD": 0.02
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.02
+      }
     }
   ],
   "synced": {
     "iap": "2026-10-21T21:12:30+09:00",
-    "ads": "2026-10-21T23:33:03+09:00",
-    "admob": "2026-10-22T00:06:33+09:00"
+    "ads": "2026-10-22T00:32:50+09:00",
+    "admob": "2026-10-22T00:32:50+09:00"
   }
 }
