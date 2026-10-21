@@ -171,6 +171,8 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .ledger td.date, .ledger th.date { text-align: left; color: var(--ink); }
 .ledger tr:hover td { background: var(--wash); }
 .ledger .pos { color: var(--good); }
+/* 진행 중인 달 — 합계가 덜 찼다는 걸 줄 자체로 알려 준다. */
+.mon-now td { background: var(--wash); font-style: italic; }
 .ledger .neg { color: var(--bad); }
 .ledger tfoot td { border-top: 1px solid var(--hair); border-bottom: none;
                    color: var(--ink); font-weight: 620; }

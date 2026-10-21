@@ -7,7 +7,7 @@
 <meta name="description" content="일별 광고매출·인앱매출·마케팅비를 누적으로 추적하는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=33786c81">
+<link rel="stylesheet" href="style.css?v=c04b0cd6">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -108,6 +108,15 @@
       </div>
       <div class="chart" id="chart-cum"></div>
       <div class="legend" id="legend-cum"></div>
+    </section>
+
+    <section class="card" id="monthly-card" hidden>
+      <div class="card-head">
+        <h2>월별</h2>
+        <p class="card-sub">위 기간 선택과 무관하게 <b>전체 월</b>을 보여줍니다 — 월별은 긴 흐름을 보는 자리라
+          기간을 자르면 뜻이 없습니다. <b>이번 달</b>은 아직 안 끝났으므로 일평균으로 비교하세요.</p>
+      </div>
+      <div class="table-scroll"><table class="ledger" id="monthly"></table></div>
     </section>
 
     <section class="card">
@@ -446,8 +455,8 @@
 </main>
 
 <script src="refresh.js?v=4816d6ee"></script>
-<script src="app.js?v=93c7bd62"></script>
-<script src="ingame.js?v=fa154a5f"></script>
+<script src="app.js?v=40bc84ff"></script>
+<script src="ingame.js?v=0f9b60c7"></script>
 <script src="anomaly.js?v=451736e7"></script>
 <script src="userrow.js?v=c3aab60d"></script>
 <script src="realtime.js?v=0427caf8"></script>

@@ -292,6 +292,7 @@ function render() {
   }
   drawDaily(rows);
   drawCum(rows);
+  renderMonthly(state.rows);
   renderLedger(rows);
 }
 
@@ -1010,6 +1011,64 @@ function legend(host, items) {
 
 
 /* ── 원장 ────────────────────────────────────────── */
+/* 월별 집계. 일별·누적 차트는 '지금 어떤가'를 보는 자리이고, 이건 '달마다 어떻게
+   달라졌나'를 보는 자리다. 그래서 상단 기간 선택을 따르지 않고 전체 월을 그린다 —
+   기간을 자르면 월별이라는 단위 자체가 뜻을 잃는다.
+
+   이번 달은 아직 안 끝났으므로 합계만 보면 늘 작아 보인다. 일수와 일평균을 같이
+   적어 '덜 찬 달'인지 '못한 달'인지 섞이지 않게 한다. */
+function renderMonthly(rows) {
+  const card = document.getElementById('monthly-card');
+  if (!rows.length) { card.hidden = true; return; }
+  card.hidden = false;
+  const { series } = state.cfg;
+  const rev = series.filter(s => s.type !== 'spend');
+  const spend = series.filter(s => s.type === 'spend');
+  const money = v => (Math.round(v) ? num(v) : '·');
+
+  const by = new Map();
+  for (const r of rows) {
+    const k = r.date.slice(0, 7);
+    let m = by.get(k);
+    if (!m) { m = { key: k, days: 0, val: {}, rev: 0, profit: 0 }; by.set(k, m); }
+    m.days += 1;
+    m.rev += r.rev;
+    m.profit += r.profit;
+    for (const s of series) m.val[s.key] = (m.val[s.key] || 0) + (r.val[s.key] || 0);
+  }
+  const months = [...by.values()].sort((a, b) => a.key < b.key ? 1 : -1);
+  const thisMonth = new Date().toISOString().slice(0, 7);
+
+  const t = document.getElementById('monthly');
+  t.textContent = '';
+  const thead = t.createTHead().insertRow();
+  ['월', ...rev.map(s => s.label), '매출 합계', ...spend.map(s => s.label),
+   '순이익', '일평균 순이익', '일수'].forEach((h, i) => {
+    const th = document.createElement('th');
+    if (!i) th.className = 'date';
+    th.textContent = h;
+    thead.appendChild(th);
+  });
+  const tb = t.createTBody();
+  for (const m of months) {
+    const tr = tb.insertRow();
+    const c = (txt, cls) => { const td = tr.insertCell(); if (cls) td.className = cls; td.textContent = txt; return td; };
+    const lab = c(m.key, 'date');
+    if (m.key === thisMonth) {
+      lab.textContent = m.key + ' (진행 중)';
+      lab.title = '이번 달은 아직 안 끝났습니다 — 합계가 아니라 일평균으로 비교하세요.';
+      tr.classList.add('mon-now');
+    }
+    rev.forEach(s => c(money(m.val[s.key] || 0)));
+    c(money(m.rev), 'sum');
+    spend.forEach(s => c(money(m.val[s.key] || 0)));
+    c(money(m.profit), m.profit >= 0 ? 'pos' : 'neg');
+    const avg = m.profit / m.days;
+    c(money(avg), avg >= 0 ? 'pos' : 'neg');
+    c(String(m.days));
+  }
+}
+
 function renderLedger(rows) {
   const { series } = state.cfg;
   const money = v => (Math.round(v) ? num(v) : '·');
