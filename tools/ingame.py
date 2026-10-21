@@ -359,16 +359,17 @@ def main() -> None:
     """, tag="버전별 온보딩+도달(합본)")
 
     # (version, maxpct) → version 으로 접어 온보딩 퍼널을 만든다.
-    from collections import defaultdict as _dd
+    # ⚠ 집계할 열은 s_* 만이 아니다 — 신분 단계는 c2~c7 로 온다(처음에 s_ 로만 걸러
+    #   KeyError: 'c2' 로 죽었다). version·maxpct·users 를 뺀 **나머지 전부**를 더한다.
+    _SKIP = {"version", "maxpct", "users"}
     _agg: dict = {}
     for x in vrows:
         a = _agg.setdefault(x["version"], {"users": 0})
         a["users"] += int(x["users"])
         for k, v in x.items():
-            if k.startswith("s_"):
+            if k not in _SKIP:
                 a[k] = a.get(k, 0) + int(v or 0)
-    ver_onb = [{"version": v, "users": a["users"], **{k: a[k] for k in a if k.startswith("s_")}}
-               for v, a in _agg.items() if a["users"] >= 30]
+    ver_onb = [dict(version=v, **a) for v, a in _agg.items() if a["users"] >= 30]
     ver_onb.sort(key=lambda x: x["version"], reverse=True)
     out["onb_versions"] = []
     for x in ver_onb:
