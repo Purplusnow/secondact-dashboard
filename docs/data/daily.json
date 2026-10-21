@@ -977,12 +977,12 @@
     },
     {
       "date": "2026-10-21",
-      "ads": 57213,
+      "ads": 57336,
       "admob": {
-        "USD": 12.18
+        "USD": 12.22
       },
       "admob_apps": {
-        "Second Act: Property Tycoon": 12.13,
+        "Second Act: Property Tycoon": 12.17,
         "Crown & Coin: Idle Estate": 0.05
       },
       "iap": {
@@ -994,18 +994,19 @@
     },
     {
       "date": "2026-10-22",
-      "ads": 218,
+      "ads": 382,
       "admob": {
-        "USD": 0.02
+        "USD": 0.61
       },
       "admob_apps": {
-        "Second Act: Property Tycoon": 0.02
+        "Second Act: Property Tycoon": 0.6,
+        "Pocket Arcade - Offline Games": 0.01
       }
     }
   ],
   "synced": {
     "iap": "2026-10-21T21:12:30+09:00",
-    "ads": "2026-10-22T00:32:50+09:00",
-    "admob": "2026-10-22T00:32:50+09:00"
+    "ads": "2026-10-22T01:32:47+09:00",
+    "admob": "2026-10-22T01:32:48+09:00"
   }
 }
