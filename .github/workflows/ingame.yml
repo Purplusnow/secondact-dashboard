@@ -14,6 +14,11 @@ on:
     - cron: '0 9 * * *'           # 18:00 KST — 보통 이때면 전날치가 들어와 있다
     - cron: '0 13 * * *'          # 22:00 KST — 늦게 들어오는 날을 당일 안에 잡는 보강
   workflow_dispatch:
+    inputs:
+      force:
+        description: '확정본이 그대로여도 강제로 다시 수집(스캔 ~18GB)'
+        required: false
+        default: 'false'
 
 permissions:
   contents: write
@@ -47,6 +52,8 @@ jobs:
       - name: 인게임 데이터 수집
         if: env.GCP_SA_KEY != ''
         run: python3 tools/ingame.py
+        env:
+          FORCE: ${{ inputs.force == 'true' && '1' || '' }}
 
       - name: 커밋
         if: env.GCP_SA_KEY != ''
