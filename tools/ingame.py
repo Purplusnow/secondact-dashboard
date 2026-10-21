@@ -37,8 +37,17 @@ WINDOW_DAYS = 45
 client = bigquery.Client(project=PROJECT, location=LOCATION)
 
 
+_billed = 0
+
+
 def q(sql: str) -> list[dict]:
-    return [dict(r) for r in client.query(sql).result()]
+    """쿼리 + 과금 바이트 누적. realtime.py 는 이미 재고 있었는데 여기만 안 쟀다 —
+    BigQuery 무료 구간(월 1TB)을 어디서 쓰는지 한쪽만 보면 알 수가 없다."""
+    global _billed
+    job = client.query(sql)
+    rows = [dict(r) for r in job.result()]
+    _billed += job.total_bytes_billed or 0
+    return rows
 
 
 def suffix_daily(cond: str) -> str:
@@ -558,6 +567,10 @@ def main() -> None:
         "viewers": int(x["viewers"]), "dau": int(x["dau"]),
     } for x in adr]
 
+    mb = _billed / 1024 / 1024
+    out["scan_mb"] = round(mb, 2)
+    out["scan_note"] = (f"이번 실행 스캔 {mb:.0f}MB. 하루 2회면 월 {mb * 2 * 30 / 1024:.1f}GB"
+                        f" — 무료 구간은 월 1,024GB(realtime 과 합산).")
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
     print(f"wrote {OUT}: retired={r['retired']} rebirth={r['rebirthed']} "
@@ -565,7 +578,8 @@ def main() -> None:
           f"pacing={len(out['pacing'])} versions={len(out['by_version'])} "
           f"onb_versions={len(out['onb_versions'])} reach_versions={len(out['reach_versions']['versions'])} "
           f"city_entered={ce} city_complete={out['city_kpi']['completed']} city_deci={len(out['city_deci_curve'])} "
-          f"last_table={out['last_table']} ads_daily={len(out['ads_daily'])} dau={len(out['dau_daily'])}")
+          f"last_table={out['last_table']} ads_daily={len(out['ads_daily'])} dau={len(out['dau_daily'])} "
+          f"scan={out['scan_mb']}MB")
 
 
 if __name__ == "__main__":
