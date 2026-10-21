@@ -339,20 +339,37 @@ def main() -> None:
 
     # ── (전체기간) 버전별 온보딩 퍼널 — 첫 등장 버전 코호트, all-time ──────
     # 대시보드 '버전 선택(체크박스)' 뷰용. 윈도우 없이 전 기간. 첫 등장 버전으로 코호트.
-    ver_onb = q(f"""
+    # ⚠ 아래 '버전별 최대 추월% 분포'와 **같은 스캔**이라 한 쿼리로 합쳤다(2026-10-22).
+    #   둘 다 유저별 (첫 버전 + 생애 집계)를 구하는데, 따로 돌려서 2GB 를 두 번 읽고 있었다.
+    #   (fver, maxpct) 단위로 한 번만 집계해 두고, 파이썬에서 두 모양으로 접는다.
+    vrows = q(f"""
       WITH u AS (
         SELECT user_pseudo_id,
           ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp)[SAFE_OFFSET(0)] AS fver,
+          MAX(IF(event_name='progress_pct',
+                 (SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct'), 0)) AS maxpct,
           {flag_sql}
         FROM {TABLE}
         WHERE _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''
         GROUP BY user_pseudo_id
       )
-      SELECT fver AS version, COUNT(*) AS users, {sum_sql}
+      SELECT fver AS version, IFNULL(maxpct, 0) AS maxpct, COUNT(*) AS users, {sum_sql}
       FROM u WHERE fver IS NOT NULL
-      GROUP BY version HAVING COUNT(*) >= 30
-      ORDER BY version DESC
-    """)
+      GROUP BY version, maxpct
+    """, tag="버전별 온보딩+도달(합본)")
+
+    # (version, maxpct) → version 으로 접어 온보딩 퍼널을 만든다.
+    from collections import defaultdict as _dd
+    _agg: dict = {}
+    for x in vrows:
+        a = _agg.setdefault(x["version"], {"users": 0})
+        a["users"] += int(x["users"])
+        for k, v in x.items():
+            if k.startswith("s_"):
+                a[k] = a.get(k, 0) + int(v or 0)
+    ver_onb = [{"version": v, "users": a["users"], **{k: a[k] for k in a if k.startswith("s_")}}
+               for v, a in _agg.items() if a["users"] >= 30]
+    ver_onb.sort(key=lambda x: x["version"], reverse=True)
     out["onb_versions"] = []
     for x in ver_onb:
         ng = int(x["s_new_game"] or 0) or 1
@@ -379,20 +396,7 @@ def main() -> None:
     # ── (전체기간) 버전별 '최대 추월%' 도달 분포 ──────────────────────────
     # progress_pct(pct=정수 추월%)의 유저별 최대값 분포. 미도달(1% 미만)=0 버킷.
     # 버킷 0~100 개별(추월% 전 구간) + 100+ 묶음(엔딩 초과분·이론상 없음). 첫 등장 버전 코호트.
-    reach = q(f"""
-      WITH u AS (
-        SELECT user_pseudo_id,
-          ARRAY_AGG(app_info.version IGNORE NULLS ORDER BY event_timestamp)[SAFE_OFFSET(0)] AS fver,
-          MAX(IF(event_name='progress_pct',
-                 (SELECT value.int_value FROM UNNEST(event_params) WHERE key='pct'), 0)) AS maxpct
-        FROM {TABLE}
-        WHERE _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''
-        GROUP BY user_pseudo_id
-      )
-      SELECT fver AS version, IFNULL(maxpct, 0) AS maxpct, COUNT(*) AS users
-      FROM u WHERE fver IS NOT NULL
-      GROUP BY version, maxpct
-    """)
+    reach = vrows   # 위 합본 쿼리가 (version, maxpct, users) 를 이미 들고 있다 — 다시 안 읽는다
     from collections import defaultdict
     CAP = 100  # 0~100 개별(추월% 전 구간 표시), 그 이상은 CAP+1(=101, 이론상 없음)
     vtot: dict = defaultdict(int)
