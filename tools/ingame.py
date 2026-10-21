@@ -40,13 +40,20 @@ client = bigquery.Client(project=PROJECT, location=LOCATION)
 _billed = 0
 
 
-def q(sql: str) -> list[dict]:
+def q(sql: str, tag: str = "") -> list[dict]:
     """쿼리 + 과금 바이트 누적. realtime.py 는 이미 재고 있었는데 여기만 안 쟀다 —
-    BigQuery 무료 구간(월 1TB)을 어디서 쓰는지 한쪽만 보면 알 수가 없다."""
+    BigQuery 무료 구간(월 1TB)을 어디서 쓰는지 한쪽만 보면 알 수가 없다.
+
+    쿼리마다 찍는 건 '합계 18.7GB'만으로는 어디를 고쳐야 할지 모르기 때문이다.
+    SQL 첫 줄을 꼬리표로 써서 로그에서 바로 범인이 보이게 한다."""
     global _billed
     job = client.query(sql)
     rows = [dict(r) for r in job.result()]
-    _billed += job.total_bytes_billed or 0
+    b = job.total_bytes_billed or 0
+    _billed += b
+    if b > 200 * 1024 * 1024:      # 200MB 넘는 것만 — 작은 건 적어 봐야 묻힌다
+        head = tag or next((ln.strip() for ln in sql.splitlines() if ln.strip()), "")[:60]
+        print(f"  [스캔] {b/1024/1024:8.0f}MB  {head}")
     return rows
 
 
@@ -67,6 +74,22 @@ def main() -> None:
     # (기존 '신규/활성 45일'은 게임 나이와 겹쳐 신규≈활성≈전체로 오해 유발 → 실질 지표로 교체)
     last_t = q(f"SELECT MAX(_TABLE_SUFFIX) AS t FROM {TABLE} WHERE _TABLE_SUFFIX NOT LIKE 'intraday%' AND IFNULL(geo.country,'') != ''")[0]["t"]
     out["last_table"] = last_t
+
+    # ⚠ 이 수집기는 **확정본만** 본다. 확정본은 하루에 한 번 늘어나므로, 같은 last_table
+    # 로 다시 돌리면 결과가 글자 하나까지 같다. 그런데 한 번에 18.7GB 를 스캔한다 —
+    # "업데이트" 를 하루에 다섯 번 누르면 94GB 가 아무 변화 없이 나간다(2026-10 실측:
+    # 91회 실행 × 18.7GB ≈ 1.7TB 로 무료 구간 1TB 를 넘겼다).
+    # 그래서 이미 처리한 날이면 여기서 끝낸다. 강제로 다시 받으려면 FORCE=1.
+    if not os.environ.get("FORCE") and os.path.exists(OUT):
+        try:
+            with open(OUT, encoding="utf-8") as f:
+                prev = json.load(f)
+        except Exception:
+            prev = {}
+        if prev.get("last_table") == last_t and prev.get("retention_cohort"):
+            print(f"확정본이 그대로입니다({last_t}) — 수집을 건너뜁니다. "
+                  f"다시 받으려면 FORCE=1. (이번에 아낀 스캔 ≈ 18GB)")
+            return
 
     _last = datetime.strptime(last_t, "%Y%m%d").date()
     d7 = (_last - timedelta(days=6)).strftime("%Y%m%d")     # 최근 7일(마지막일 포함)
