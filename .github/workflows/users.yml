@@ -7,11 +7,9 @@
 # 커밋하게 돼서 리포가 연 수백 MB씩 불어나는데, 쪼개 두면 히스토리가 쌓이지 않는다.
 name: users
 
-# ⚠ 자동 실행(schedule)을 전부 뗐다(형 지시 2026-10-22). 이 보드는 형이 볼 때만
-# 최신이면 되는데, 예약 실행이 BigQuery 를 계속 긁어 10월에 무료 구간 1TB 를 넘겼다
-# (실측 2.16TiB). 이제 **요청할 때만** 돈다 — Actions 탭에서 "Run workflow" 또는
-# Claude 에게 "업데이트".
 on:
+  schedule:
+    - cron: '30 13 * * *'         # 22:30 KST — ingame 보강 돌고 난 뒤
   workflow_dispatch:
 
 permissions:
