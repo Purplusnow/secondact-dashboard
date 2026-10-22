@@ -174,8 +174,14 @@ async function load() {
   try { state.applyFee = localStorage.getItem('applyFee') !== '0'; } catch {}
   const box = document.getElementById('fee-toggle');
   box.checked = state.applyFee;
-  document.getElementById('fee-label').textContent =
-    `인앱 수수료 ${pct(state.cfg.store_fee)} 반영`;
+  // ⚠ 이 토글은 수수료만이 아니라 **부가세까지** 켜고 끈다(derive() 의 taxed 참고).
+  //   "수수료 15% 반영"이라고만 적어 두면, 끈 숫자를 '유저가 낸 돈'으로 읽게 된다.
+  //   실제로 끈 값은 'GA4 정가 × 환율'이라 나라마다 세포함/세별도가 섞인 중간값이다.
+  const lab = document.getElementById('fee-label');
+  lab.textContent = `실수령 기준 (부가세·수수료 ${pct(state.cfg.store_fee)} 뺌)`;
+  lab.title = '켜면 구글이 떼는 부가세와 스토어 수수료를 뺀 **실제 입금액**입니다.\n'
+    + '끄면 GA4 가 기록한 정가 합계입니다 — 나라마다 부가세 포함/미포함이 달라서\n'
+    + '"유저가 낸 돈"과도 "우리가 받는 돈"과도 다른 중간값이니 비교용으로만 보세요.';
 
   recompute();
 }
