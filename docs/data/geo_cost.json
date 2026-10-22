@@ -635,7 +635,7 @@
     "clicks": 92,
     "conv": 7.0,
     "cost": 1118,
-    "impr": 1573
+    "impr": 1571
    },
    "BE": {
     "clicks": 0,
@@ -651,9 +651,9 @@
    },
    "BR": {
     "clicks": 444,
-    "conv": 60.0,
+    "conv": 63.0,
     "cost": 6385,
-    "impr": 6790
+    "impr": 6788
    },
    "BW": {
     "clicks": 1,
@@ -683,7 +683,7 @@
     "clicks": 105,
     "conv": 8.0,
     "cost": 1198,
-    "impr": 1270
+    "impr": 1268
    },
    "DE": {
     "clicks": 26,
@@ -695,17 +695,17 @@
     "clicks": 72,
     "conv": 15.0,
     "cost": 2219,
-    "impr": 847
+    "impr": 838
    },
    "FR": {
     "clicks": 55,
     "conv": 7.0,
     "cost": 1449,
-    "impr": 514
+    "impr": 513
    },
    "GB": {
     "clicks": 13,
-    "conv": 2.0,
+    "conv": 3.0,
     "cost": 454,
     "impr": 143
    },
@@ -735,27 +735,27 @@
    },
    "ID": {
     "clicks": 727,
-    "conv": 57.0,
+    "conv": 58.0,
     "cost": 5160,
-    "impr": 8201
+    "impr": 8184
    },
    "IN": {
     "clicks": 498,
-    "conv": 41.0,
+    "conv": 43.0,
     "cost": 1746,
-    "impr": 5029
+    "impr": 5028
    },
    "IT": {
     "clicks": 76,
     "conv": 8.0,
     "cost": 1598,
-    "impr": 730
+    "impr": 720
    },
    "JP": {
-    "clicks": 167,
+    "clicks": 168,
     "conv": 9.0,
-    "cost": 7565,
-    "impr": 2178
+    "cost": 7635,
+    "impr": 2183
    },
    "KE": {
     "clicks": 2,
@@ -767,7 +767,7 @@
     "clicks": 62,
     "conv": 7.0,
     "cost": 2671,
-    "impr": 682
+    "impr": 683
    },
    "LS": {
     "clicks": 1,
@@ -783,7 +783,7 @@
    },
    "MX": {
     "clicks": 97,
-    "conv": 9.0,
+    "conv": 10.0,
     "cost": 1130,
     "impr": 1030
    },
@@ -827,13 +827,13 @@
     "clicks": 38,
     "conv": 2.0,
     "cost": 619,
-    "impr": 548
+    "impr": 556
    },
    "PH": {
-    "clicks": 205,
+    "clicks": 206,
     "conv": 10.0,
-    "cost": 2570,
-    "impr": 3489
+    "cost": 2611,
+    "impr": 3502
    },
    "PK": {
     "clicks": 5,
@@ -857,13 +857,13 @@
     "clicks": 157,
     "conv": 15.0,
     "cost": 2675,
-    "impr": 2451
+    "impr": 2458
    },
    "TR": {
     "clicks": 99,
     "conv": 10.0,
     "cost": 1082,
-    "impr": 1390
+    "impr": 1388
    },
    "TW": {
     "clicks": 98,
@@ -875,7 +875,7 @@
     "clicks": 82,
     "conv": 8.0,
     "cost": 5265,
-    "impr": 757
+    "impr": 756
    },
    "VN": {
     "clicks": 250,
@@ -892,10 +892,10 @@
   },
   "2026-10-23": {
    "AR": {
-    "clicks": 34,
+    "clicks": 45,
     "conv": 0.0,
-    "cost": 341,
-    "impr": 775
+    "cost": 481,
+    "impr": 956
    },
    "BD": {
     "clicks": 4,
@@ -906,68 +906,68 @@
    "BE": {
     "clicks": 0,
     "conv": 0.0,
-    "cost": 45,
-    "impr": 19
+    "cost": 48,
+    "impr": 22
    },
    "BO": {
     "clicks": 1,
     "conv": 0.0,
     "cost": 0,
-    "impr": 3
+    "impr": 1
    },
    "BR": {
-    "clicks": 111,
-    "conv": 6.0,
-    "cost": 1500,
-    "impr": 2192
+    "clicks": 142,
+    "conv": 10.0,
+    "cost": 1953,
+    "impr": 2873
    },
    "CA": {
-    "clicks": 4,
+    "clicks": 5,
     "conv": 1.0,
-    "cost": 78,
-    "impr": 63
+    "cost": 80,
+    "impr": 91
    },
    "CH": {
-    "clicks": 5,
+    "clicks": 6,
     "conv": 0.0,
-    "cost": 235,
-    "impr": 89
+    "cost": 266,
+    "impr": 106
    },
    "CL": {
-    "clicks": 10,
+    "clicks": 15,
     "conv": 1.0,
-    "cost": 113,
-    "impr": 195
+    "cost": 153,
+    "impr": 246
    },
    "CO": {
     "clicks": 21,
     "conv": 0.0,
-    "cost": 171,
-    "impr": 322
+    "cost": 173,
+    "impr": 406
    },
    "DE": {
-    "clicks": 25,
+    "clicks": 27,
     "conv": 3.0,
-    "cost": 575,
-    "impr": 225
+    "cost": 619,
+    "impr": 239
    },
    "ES": {
-    "clicks": 76,
-    "conv": 4.0,
-    "cost": 2210,
-    "impr": 1493
+    "clicks": 92,
+    "conv": 7.0,
+    "cost": 2576,
+    "impr": 1698
    },
    "FR": {
-    "clicks": 45,
-    "conv": 5.0,
-    "cost": 878,
-    "impr": 510
+    "clicks": 51,
+    "conv": 7.0,
+    "cost": 1075,
+    "impr": 617
    },
    "GB": {
-    "clicks": 10,
+    "clicks": 13,
     "conv": 2.0,
-    "cost": 480,
-    "impr": 134
+    "cost": 644,
+    "impr": 173
    },
    "GH": {
     "clicks": 1,
@@ -978,50 +978,50 @@
    "HK": {
     "clicks": 2,
     "conv": 0.0,
-    "cost": 117,
-    "impr": 45
+    "cost": 121,
+    "impr": 46
    },
    "ID": {
-    "clicks": 283,
-    "conv": 18.0,
-    "cost": 2091,
-    "impr": 3494
+    "clicks": 306,
+    "conv": 19.0,
+    "cost": 2270,
+    "impr": 3792
    },
    "IN": {
-    "clicks": 366,
-    "conv": 31.0,
-    "cost": 1309,
-    "impr": 3517
+    "clicks": 380,
+    "conv": 40.0,
+    "cost": 1373,
+    "impr": 3573
    },
    "IT": {
-    "clicks": 78,
-    "conv": 7.0,
-    "cost": 2187,
-    "impr": 1138
+    "clicks": 96,
+    "conv": 8.0,
+    "cost": 2562,
+    "impr": 1356
    },
    "JO": {
     "clicks": 1,
     "conv": 0.0,
     "cost": 2,
-    "impr": 5
+    "impr": 2
    },
    "JP": {
-    "clicks": 25,
+    "clicks": 33,
     "conv": 0.0,
-    "cost": 978,
-    "impr": 395
+    "cost": 1409,
+    "impr": 515
    },
    "KE": {
     "clicks": 1,
     "conv": 0.0,
     "cost": 1,
-    "impr": 5
+    "impr": 7
    },
    "KR": {
     "clicks": 10,
     "conv": 2.0,
-    "cost": 455,
-    "impr": 106
+    "cost": 458,
+    "impr": 116
    },
    "MA": {
     "clicks": 1,
@@ -1030,16 +1030,16 @@
     "impr": 2
    },
    "MX": {
-    "clicks": 23,
+    "clicks": 31,
     "conv": 1.0,
-    "cost": 325,
-    "impr": 287
+    "cost": 423,
+    "impr": 368
    },
    "MY": {
-    "clicks": 32,
+    "clicks": 34,
     "conv": 1.0,
-    "cost": 391,
-    "impr": 262
+    "cost": 432,
+    "impr": 278
    },
    "NA": {
     "clicks": 1,
@@ -1054,16 +1054,16 @@
     "impr": 1
    },
    "PE": {
-    "clicks": 4,
+    "clicks": 8,
     "conv": 0.0,
-    "cost": 25,
-    "impr": 158
+    "cost": 56,
+    "impr": 199
    },
    "PH": {
-    "clicks": 42,
+    "clicks": 45,
     "conv": 3.0,
-    "cost": 385,
-    "impr": 729
+    "cost": 416,
+    "impr": 859
    },
    "PK": {
     "clicks": 6,
@@ -1075,7 +1075,7 @@
     "clicks": 2,
     "conv": 0.0,
     "cost": 71,
-    "impr": 23
+    "impr": 22
    },
    "SO": {
     "clicks": 1,
@@ -1084,34 +1084,34 @@
     "impr": 1
    },
    "TH": {
-    "clicks": 57,
-    "conv": 3.0,
-    "cost": 1069,
-    "impr": 821
+    "clicks": 58,
+    "conv": 4.0,
+    "cost": 1092,
+    "impr": 846
    },
    "TR": {
-    "clicks": 114,
-    "conv": 6.0,
-    "cost": 1133,
-    "impr": 1849
+    "clicks": 123,
+    "conv": 10.0,
+    "cost": 1260,
+    "impr": 1875
    },
    "TW": {
-    "clicks": 33,
-    "conv": 3.0,
-    "cost": 2686,
-    "impr": 1262
+    "clicks": 41,
+    "conv": 4.0,
+    "cost": 2990,
+    "impr": 1522
    },
    "US": {
-    "clicks": 34,
-    "conv": 4.0,
-    "cost": 2304,
-    "impr": 266
+    "clicks": 47,
+    "conv": 5.0,
+    "cost": 2934,
+    "impr": 403
    },
    "VN": {
-    "clicks": 117,
-    "conv": 14.0,
-    "cost": 1534,
-    "impr": 1293
+    "clicks": 118,
+    "conv": 16.0,
+    "cost": 1542,
+    "impr": 1322
    },
    "ZM": {
     "clicks": 1,
@@ -1121,5 +1121,5 @@
    }
   }
  },
- "updated": "2026-10-23T06:32:47+09:00"
+ "updated": "2026-10-23T07:32:46+09:00"
 }
