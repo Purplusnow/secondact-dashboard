@@ -276,7 +276,8 @@ def pay(day: str | None, country: str, cur: str) -> int:
         if not rows:
             print("  한 건도 없습니다.")
         for x in rows:
-            print(f"  {x['at_kst']}  {x['tag']}  {x['pid']}  {cur} {x['val']:,.0f}  {x['country']}  {x['ver']}")
+            # ⚠ 소수를 버리면 안 된다 — USD 0.84 가 1 로, 합계가 몇 달러씩 어긋난다.
+            print(f"  {x['at_kst']}  {x['tag']}  {str(x['pid']):<18}{cur} {x['val']:>10,.2f}  {x['country']}  {x['ver']}")
 
     if not day:
         return 0
