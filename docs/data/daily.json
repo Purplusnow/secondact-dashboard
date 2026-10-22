@@ -994,7 +994,7 @@
     },
     {
       "date": "2026-10-22",
-      "ads": 61015,
+      "ads": 61104,
       "admob": {
         "USD": 10.94
       },
@@ -1012,18 +1012,20 @@
     },
     {
       "date": "2026-10-23",
-      "ads": 9325,
+      "ads": 13113,
       "admob": {
-        "USD": 0.91
+        "USD": 1.69
       },
       "admob_apps": {
-        "Second Act: Property Tycoon": 0.91
+        "Second Act: Property Tycoon": 1.67,
+        "Crown & Coin: Idle Estate": 0.01,
+        "Plop Cat: Slide & Jigsaw": 0.01
       }
     }
   ],
   "synced": {
     "iap": "2026-10-22T14:07:01+09:00",
-    "ads": "2026-10-23T02:32:49+09:00",
-    "admob": "2026-10-23T02:32:49+09:00"
+    "ads": "2026-10-23T03:32:48+09:00",
+    "admob": "2026-10-23T03:32:49+09:00"
   }
 }
