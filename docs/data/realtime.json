@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-23 21:12 KST",
+ "updated": "2026-10-23 21:13 KST",
  "stage_labels": [
   {
    "key": "new_game",
@@ -136,7 +136,7 @@
   {
    "d": "20261023",
    "users": 1500,
-   "events": 117377
+   "events": 117427
   }
  ],
  "day": "20261023",
@@ -7765,14 +7765,14 @@
   {
    "tag": "0e8471",
    "joined": "13:49",
-   "last_seen": "19:47",
-   "mins": 68.7,
-   "span": 357,
-   "sessions": 2,
-   "off": 2,
+   "last_seen": "20:55",
+   "mins": 82.8,
+   "span": 426,
+   "sessions": 3,
+   "off": 4,
    "off_boost": 0,
    "prog": 0.0,
-   "events": 155,
+   "events": 183,
    "ver": "1.0 (v977)",
    "country": "Vietnam",
    "reached": [
@@ -25942,11 +25942,11 @@
   ]
  },
  "ads": {
-  "total": 1778,
+  "total": 1779,
   "by_result": [
    {
     "result": "earned",
-    "n": 1419
+    "n": 1420
    },
    {
     "result": "dismissed",
@@ -25961,18 +25961,18 @@
     "n": 0
    }
   ],
-  "finish_pct": 94.3,
+  "finish_pct": 94.4,
   "supply_pct": 15.4,
   "by_country": [
    {
     "country": "India",
-    "total": 361,
-    "earned": 279,
+    "total": 362,
+    "earned": 280,
     "dismissed": 13,
     "no_ad": 69,
     "failed": 0,
     "users": 94,
-    "finish_pct": 95.5,
+    "finish_pct": 95.6,
     "supply_pct": 19.1
    },
    {
@@ -26190,11 +26190,11 @@
   "by_placement": [
    {
     "placement": "offline",
-    "earned": 713,
+    "earned": 714,
     "dismissed": 24,
     "no_ad": 105,
     "failed": 0,
-    "total": 842
+    "total": 843
    },
    {
     "placement": "boost",
