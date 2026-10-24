@@ -15,9 +15,9 @@ on:
   workflow_dispatch:
     inputs:
       days:
-        description: 'AdMob 조회 일수 (기본 3 · 과거 메울 땐 60 같은 큰 값)'
+        description: 'AdMob 조회 일수 (기본 7 · 과거 메울 땐 60 같은 큰 값)'
         required: false
-        default: '3'
+        default: '7'
   repository_dispatch:
     types: [ads-cost]
 
@@ -66,16 +66,20 @@ jobs:
             python3 tools/sync.py --geo-json "$GEO_ROWS"
           fi
 
+      # 마케팅비 푸시(repository_dispatch)로 들어온 회차에는 AdMob 을 부르지 않는다.
+      # 그 경로는 구글 애즈 스크립트가 시간마다 밀어 주는 거라 끌 수가 없는데,
+      # 여기서 AdMob 까지 부르면 '자동 수집'이 그대로 살아 있는 셈이 된다.
+      # 광고매출은 사후 보정되는 값이라 수동 실행 때 한 번에 받아도 된다.
       - name: 광고매출 수집
-        if: env.ADMOB_REFRESH_TOKEN != ''
-        run: python3 tools/sync.py --admob --days "${{ inputs.days || 3 }}"
+        if: env.ADMOB_REFRESH_TOKEN != '' && github.event_name != 'repository_dispatch'
+        run: python3 tools/sync.py --admob --days "${{ inputs.days || 7 }}"
 
       - name: 커밋
         env:
           ADS_ROWS: ${{ toJSON(github.event.client_payload.rows) }}
           GEO_ROWS: ${{ toJSON(github.event.client_payload.geo) }}
           EV: ${{ github.event_name }}
-          DAYS: ${{ inputs.days || 3 }}
+          DAYS: ${{ inputs.days || 7 }}
         run: |
           git config user.name  "secondact-bot"
           git config user.email "34591718+Purplusnow@users.noreply.github.com"
