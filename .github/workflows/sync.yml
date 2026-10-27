@@ -33,7 +33,7 @@ permissions:
 # "업데이트"로 넷을 한꺼번에 던졌더니 realtime 이 그렇게 실패했다).
 # 그룹 이름은 '무엇을 쓰는가'로 짓는다 — 워크플로 이름으로 지으면 또 갈라진다.
 concurrency:
-  group: write-daily-json
+  group: push-docs-data
   cancel-in-progress: false
 
 jobs:

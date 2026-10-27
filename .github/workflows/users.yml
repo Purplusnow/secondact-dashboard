@@ -18,7 +18,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: users
+  group: push-docs-data
   cancel-in-progress: false
 
 jobs:
