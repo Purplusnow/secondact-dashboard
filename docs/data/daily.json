@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-30",
+  "updated": "2026-10-31",
   "note": "하루 한 줄. 숫자면 원화, {\"USD\": 8.97}이면 그날 환율로 환산. 날짜는 모두 KST 기준.",
   "daily": [
     {
@@ -1117,18 +1117,22 @@
       "date": "2026-10-30",
       "ads": 0,
       "admob": {
-        "USD": 14.55
+        "USD": 14.9
       },
       "admob_apps": {
-        "Second Act: Property Tycoon": 8.01,
-        "Crown & Coin: Idle Estate": 6.47,
+        "Second Act: Property Tycoon": 8.17,
+        "Crown & Coin: Idle Estate": 6.66,
         "Plop Cat: Slide & Jigsaw": 0.07
       }
+    },
+    {
+      "date": "2026-10-31",
+      "ads": 0
     }
   ],
   "synced": {
     "iap": "2026-10-27T09:11:24+09:00",
-    "ads": "2026-10-30T23:32:52+09:00",
-    "admob": "2026-10-30T23:32:53+09:00"
+    "ads": "2026-10-31T00:32:49+09:00",
+    "admob": "2026-10-31T00:32:50+09:00"
   }
 }
