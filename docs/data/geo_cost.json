@@ -2655,45 +2655,63 @@
     "clicks": 1,
     "conv": 1.0,
     "cost": 19,
-    "impr": 4
+    "impr": 3
+   },
+   "FR": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 9,
+    "impr": 5
    },
    "ID": {
     "clicks": 3,
     "conv": 0.0,
     "cost": 7,
-    "impr": 17
+    "impr": 9
    },
    "IN": {
-    "clicks": 3,
+    "clicks": 4,
     "conv": 0.0,
-    "cost": 10,
-    "impr": 24
+    "cost": 16,
+    "impr": 22
+   },
+   "JP": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 1,
+    "impr": 8
+   },
+   "KR": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 4,
+    "impr": 3
    },
    "MX": {
     "clicks": 1,
     "conv": 0.0,
     "cost": 7,
-    "impr": 4
+    "impr": 12
    },
    "PE": {
     "clicks": 1,
     "conv": 0.0,
     "cost": 12,
-    "impr": 7
+    "impr": 5
    },
    "TR": {
     "clicks": 2,
     "conv": 0.0,
     "cost": 20,
-    "impr": 10
+    "impr": 12
    },
    "TW": {
     "clicks": 0,
     "conv": 0.0,
     "cost": 3,
-    "impr": 1
+    "impr": 2
    }
   }
  },
- "updated": "2026-11-02T03:32:47+09:00"
+ "updated": "2026-11-02T04:32:49+09:00"
 }
