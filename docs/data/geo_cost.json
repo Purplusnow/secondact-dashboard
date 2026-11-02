@@ -2643,7 +2643,7 @@
     "clicks": 3,
     "conv": 0.0,
     "cost": 6,
-    "impr": 20
+    "impr": 19
    },
    "BR": {
     "clicks": 4,
@@ -2732,24 +2732,42 @@
   },
   "2026-11-03": {
    "BR": {
-    "clicks": 1,
+    "clicks": 4,
     "conv": 0.0,
-    "cost": 2,
-    "impr": 6
+    "cost": 17,
+    "impr": 39
    },
    "HK": {
-    "clicks": 0,
+    "clicks": 1,
     "conv": 0.0,
     "cost": 1,
     "impr": 1
+   },
+   "ID": {
+    "clicks": 3,
+    "conv": 0.0,
+    "cost": 4,
+    "impr": 19
+   },
+   "IN": {
+    "clicks": 4,
+    "conv": 0.0,
+    "cost": 8,
+    "impr": 46
+   },
+   "TH": {
+    "clicks": 0,
+    "conv": 0.0,
+    "cost": 1,
+    "impr": 6
    },
    "VN": {
     "clicks": 1,
     "conv": 0.0,
     "cost": 3,
-    "impr": 6
+    "impr": 22
    }
   }
  },
- "updated": "2026-11-03T01:32:51+09:00"
+ "updated": "2026-11-03T02:32:50+09:00"
 }
