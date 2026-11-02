@@ -2731,11 +2731,17 @@
    }
   },
   "2026-11-03": {
-   "BR": {
-    "clicks": 4,
+   "BD": {
+    "clicks": 2,
     "conv": 0.0,
-    "cost": 17,
-    "impr": 39
+    "cost": 1,
+    "impr": 8
+   },
+   "BR": {
+    "clicks": 3,
+    "conv": 0.0,
+    "cost": 7,
+    "impr": 30
    },
    "HK": {
     "clicks": 1,
@@ -2747,27 +2753,33 @@
     "clicks": 3,
     "conv": 0.0,
     "cost": 4,
-    "impr": 19
+    "impr": 21
    },
    "IN": {
-    "clicks": 4,
+    "clicks": 6,
     "conv": 0.0,
-    "cost": 8,
-    "impr": 46
+    "cost": 16,
+    "impr": 63
    },
    "TH": {
     "clicks": 0,
     "conv": 0.0,
     "cost": 1,
-    "impr": 6
+    "impr": 9
+   },
+   "TR": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 1,
+    "impr": 19
    },
    "VN": {
     "clicks": 1,
     "conv": 0.0,
     "cost": 3,
-    "impr": 22
+    "impr": 23
    }
   }
  },
- "updated": "2026-11-03T02:32:50+09:00"
+ "updated": "2026-11-03T03:32:50+09:00"
 }
