@@ -2759,13 +2759,13 @@
     "clicks": 5,
     "conv": 1.0,
     "cost": 23,
-    "impr": 23
+    "impr": 27
    },
    "IN": {
     "clicks": 9,
     "conv": 0.0,
     "cost": 18,
-    "impr": 57
+    "impr": 58
    },
    "KE": {
     "clicks": 1,
@@ -2776,8 +2776,14 @@
    "KR": {
     "clicks": 0,
     "conv": 0.0,
-    "cost": 29,
-    "impr": 14
+    "cost": 140,
+    "impr": 42
+   },
+   "PE": {
+    "clicks": 2,
+    "conv": 0.0,
+    "cost": 3,
+    "impr": 7
    },
    "PK": {
     "clicks": 1,
@@ -2795,15 +2801,21 @@
     "clicks": 1,
     "conv": 0.0,
     "cost": 1,
-    "impr": 17
+    "impr": 19
    },
-   "VN": {
+   "TW": {
     "clicks": 1,
     "conv": 0.0,
-    "cost": 3,
-    "impr": 23
+    "cost": 7,
+    "impr": 10
+   },
+   "VN": {
+    "clicks": 2,
+    "conv": 0.0,
+    "cost": 7,
+    "impr": 28
    }
   }
  },
- "updated": "2026-11-03T14:32:49+09:00"
+ "updated": "2026-11-03T15:32:50+09:00"
 }
