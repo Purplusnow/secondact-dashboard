@@ -2735,7 +2735,7 @@
     "clicks": 2,
     "conv": 0.0,
     "cost": 5,
-    "impr": 14
+    "impr": 12
    },
    "BD": {
     "clicks": 2,
@@ -2744,10 +2744,10 @@
     "impr": 2
    },
    "BR": {
-    "clicks": 4,
+    "clicks": 5,
     "conv": 1.0,
-    "cost": 8,
-    "impr": 32
+    "cost": 10,
+    "impr": 30
    },
    "HK": {
     "clicks": 1,
@@ -2789,7 +2789,7 @@
     "clicks": 1,
     "conv": 0.0,
     "cost": 3,
-    "impr": 9
+    "impr": 8
    },
    "TR": {
     "clicks": 1,
@@ -2805,5 +2805,5 @@
    }
   }
  },
- "updated": "2026-11-03T08:32:49+09:00"
+ "updated": "2026-11-03T09:32:59+09:00"
 }
