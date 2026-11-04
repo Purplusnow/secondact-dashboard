@@ -2833,13 +2833,13 @@
     "clicks": 8,
     "conv": 1.0,
     "cost": 85,
-    "impr": 113
+    "impr": 112
    },
    "BR": {
     "clicks": 15,
     "conv": 1.0,
     "cost": 120,
-    "impr": 118
+    "impr": 117
    },
    "CA": {
     "clicks": 1,
@@ -2885,9 +2885,9 @@
    },
    "FR": {
     "clicks": 5,
-    "conv": 0.0,
+    "conv": 1.0,
     "cost": 153,
-    "impr": 80
+    "impr": 81
    },
    "GB": {
     "clicks": 2,
@@ -2928,14 +2928,14 @@
    "KR": {
     "clicks": 6,
     "conv": 2.0,
-    "cost": 3173,
-    "impr": 293
+    "cost": 3180,
+    "impr": 294
    },
    "MX": {
     "clicks": 8,
     "conv": 1.0,
     "cost": 39,
-    "impr": 53
+    "impr": 51
    },
    "MY": {
     "clicks": 1,
@@ -2977,7 +2977,7 @@
     "clicks": 19,
     "conv": 0.0,
     "cost": 153,
-    "impr": 182
+    "impr": 184
    },
    "TW": {
     "clicks": 4,
@@ -2999,5 +2999,5 @@
    }
   }
  },
- "updated": "2026-11-04T09:32:48+09:00"
+ "updated": "2026-11-04T10:32:48+09:00"
 }
