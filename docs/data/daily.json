@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-08",
+  "updated": "2026-11-08T21:44:48+09:00",
   "note": "하루 한 줄. 숫자면 원화, {\"USD\": 8.97}이면 그날 환율로 환산. 날짜는 모두 KST 기준.",
   "daily": [
     {
@@ -1085,6 +1085,7 @@
       },
       "iap": {
         "SGD": 0.99,
+        "KRW": 3600,
         "VND": 21000
       },
       "iap_src": "ga4"
@@ -1123,7 +1124,11 @@
         "Second Act: Property Tycoon": 8.2,
         "Crown & Coin: Idle Estate": 6.67,
         "Plop Cat: Slide & Jigsaw": 0.08
-      }
+      },
+      "iap": {
+        "RON": 21.99
+      },
+      "iap_src": "ga4"
     },
     {
       "date": "2026-10-31",
@@ -1148,7 +1153,11 @@
         "Crown & Coin: Idle Estate": 4.05,
         "Plop Cat: Slide & Jigsaw": 0.27,
         "GYROGRID: Spin Block Puzzle": 0.01
-      }
+      },
+      "iap": {
+        "USD": 2.89
+      },
+      "iap_src": "ga4"
     },
     {
       "date": "2026-11-02",
@@ -1250,8 +1259,9 @@
     }
   ],
   "synced": {
-    "iap": "2026-11-08T21:39:33+09:00",
+    "iap": "2026-11-08T21:44:48+09:00",
     "ads": "2026-11-08T21:32:46+09:00",
-    "admob": "2026-11-08T21:39:49+09:00"
+    "admob": "2026-11-08T21:39:49+09:00",
+    "iap_scanned": "2026-11-08"
   }
 }
