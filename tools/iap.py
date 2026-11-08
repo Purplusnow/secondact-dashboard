@@ -8,7 +8,7 @@
 Play 포인트로 깎거나 전액 결제하면 그만큼(심지어 0 원으로) 적게 보인다. 할인은 구글이
 부담하고 **개발자 정산은 정가 기준**이므로, 우리가 받는 돈은 GA4 가 싣는 ProductDetails
 정가 쪽이다(2026-10-22 형 확인). 실측된 모양:
-  · 2026-10-20  Play \$0.00 ×4  ↔  GA4 \$8.81   — 포인트 전액결제. GA4 가 맞다.
+  · 2026-10-20  Play $0.00 ×4  ↔  GA4 $8.81   — 포인트 전액결제. GA4 가 맞다.
   · 2026-10-06  Play VND 12,833 ↔  GA4 21,000  — 포인트 일부결제. GA4 가 맞다.
   · 2026-10-19  Play VND 23,333 ↔  GA4 21,000  — 이건 반대 방향(부가세 포함/제외 차이).
 **스크린샷은 금액 정정용이 아니라 '빠진 건이 있나' 확인용으로 쓴다.**
@@ -38,7 +38,8 @@ DATASET = os.environ.get("BQ_DATASET", "analytics_544010325")
 LOCATION = os.environ.get("BQ_LOCATION", "asia-northeast3")
 TABLE = f"`{PROJECT}.{DATASET}.events_*`"
 OUT = os.path.join(os.path.dirname(__file__), "..", "docs", "data", "daily.json")
-DAYS = int(os.environ.get("IAP_DAYS", "3"))   # 늦게 확정되는 날을 다시 훑는 창
+MIN_DAYS = 3    # 늦게 확정되는 날을 다시 훑는 최소 창
+MAX_DAYS = 60   # 자동 창의 상한 — 이보다 길게 비었으면 IAP_DAYS 로 직접 지정한다
 
 client = bigquery.Client(project=PROJECT, location=LOCATION)
 
@@ -97,15 +98,38 @@ def fetch(suffixes: list[str]) -> dict[str, dict[str, float]]:
     return out
 
 
+def scan_days(doc: dict) -> int:
+    """이번에 훑을 일수.
+
+    ⚠ 예전엔 고정 3일이었다. realtime 이 매시간 돌 땐 그걸로 충분했지만, 수동 전용이 된
+    뒤(2026-10-27)로는 실행 간격이 3일을 넘으면 그 사이 매출이 **조용히 영구 누락**됐다
+    (10/28~11/04 가 통째로 빠진 걸 11/08 에 발견). 그래서 **마지막으로 훑은 날 이후 전부**를
+    본다. IAP_DAYS 를 주면 그 값이 이긴다(백필용).
+    """
+    env = os.environ.get("IAP_DAYS", "").strip()
+    if env:
+        return int(env)
+    synced = doc.get("synced", {})
+    last = synced.get("iap_scanned") or (synced.get("iap") or "")[:10]
+    try:
+        gap = (datetime.now(KST).date() - datetime.fromisoformat(last).date()).days
+    except ValueError:
+        print("::warning::마지막 수집일을 못 읽었습니다 — 상한까지 훑습니다")
+        return MAX_DAYS
+    if gap + 1 > MAX_DAYS:
+        print(f"::warning::{gap}일 비었습니다 — {MAX_DAYS}일까지만 훑습니다. 나머지는 IAP_DAYS 로 백필하세요")
+    return min(max(gap + 1, MIN_DAYS), MAX_DAYS)
+
+
 def main() -> None:
     with open(OUT, encoding="utf-8") as f:
         doc = json.load(f)
     by_date = {row["date"]: row for row in doc["daily"]}
 
-    got = fetch(pick_suffixes(DAYS))
-    if not got:
-        print("수집된 결제가 없습니다 — 파일을 건드리지 않습니다.")
-        return
+    days = scan_days(doc)
+    print(f"수집 창: 최근 {days}일")
+    got = fetch(pick_suffixes(days))
+    today = datetime.now(KST).date().isoformat()
 
     changed = []
     for date, iap in sorted(got.items()):
@@ -123,13 +147,17 @@ def main() -> None:
         row["iap_src"] = "ga4"
         changed.append(f"{date} {iap}")
 
-    if not changed:
+    synced = doc.setdefault("synced", {})
+    if not changed and synced.get("iap_scanned") == today:
         print("바뀐 날이 없습니다.")
         return
 
-    doc["daily"].sort(key=lambda r: r["date"])
-    doc["updated"] = datetime.now(KST).isoformat(timespec="seconds")
-    doc.setdefault("synced", {})["iap"] = doc["updated"]
+    # 결제가 없어 바뀐 게 없어도 '어디까지 훑었나'는 남긴다 — 다음 실행의 창이 여기서 시작한다.
+    synced["iap_scanned"] = today
+    if changed:
+        doc["daily"].sort(key=lambda r: r["date"])
+        doc["updated"] = datetime.now(KST).isoformat(timespec="seconds")
+        synced["iap"] = doc["updated"]
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)
         f.write("\n")

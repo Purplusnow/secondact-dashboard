@@ -14,6 +14,11 @@ name: realtime
 # Claude 에게 "업데이트".
 on:
   workflow_dispatch:
+    inputs:
+      iap_days:
+        description: '인앱매출을 며칠치 다시 훑을지(백필용). 비우면 마지막 수집일 이후 전부'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -88,6 +93,8 @@ jobs:
       - name: 인앱매출 수집
         if: env.GCP_SA_KEY != '' && steps.guard.outputs.skip != 'true'
         run: python3 tools/iap.py
+        env:
+          IAP_DAYS: ${{ inputs.iap_days }}
 
       - name: 커밋
         if: env.GCP_SA_KEY != '' && steps.guard.outputs.skip != 'true'
@@ -115,6 +122,7 @@ jobs:
             echo "::error::세 번 다시 수집해도 푸시가 안 됩니다"
             return 1
           }
+          export IAP_DAYS="${{ inputs.iap_days }}"
           recollect() {
             python3 tools/realtime.py && python3 tools/iap.py
           }
