@@ -1239,13 +1239,13 @@
     },
     {
       "date": "2026-11-08",
-      "ads": 481973,
+      "ads": 492878,
       "admob": {
-        "USD": 30.15
+        "USD": 30.57
       },
       "admob_apps": {
-        "Crown & Coin: Idle Estate": 19.23,
-        "Second Act: Property Tycoon": 10.42,
+        "Crown & Coin: Idle Estate": 19.3,
+        "Second Act: Property Tycoon": 10.77,
         "Hexa Sort: Bee Architect": 0.39,
         "World Restaurant Tour": 0.07,
         "Plop Cat: Slide & Jigsaw": 0.02,
@@ -1256,12 +1256,23 @@
         "EUR": 1.89
       },
       "iap_src": "ga4"
+    },
+    {
+      "date": "2026-11-09",
+      "ads": 437,
+      "admob": {
+        "USD": 0.06
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.04,
+        "Crown & Coin: Idle Estate": 0.02
+      }
     }
   ],
   "synced": {
     "iap": "2026-11-08T21:44:48+09:00",
-    "ads": "2026-11-08T23:32:49+09:00",
-    "admob": "2026-11-09T00:04:13+09:00",
+    "ads": "2026-11-09T00:32:47+09:00",
+    "admob": "2026-11-09T00:32:48+09:00",
     "iap_scanned": "2026-11-08"
   }
 }
