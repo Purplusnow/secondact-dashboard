@@ -10,6 +10,8 @@
             — 레벨별 시작 유저·클리어 유저·실패 횟수·시도/인, 그리고 '최고 도달 레벨' 분포(도달률 곡선)
   breakdown event, param, (num:true 면 값을 숫자로) — 값별 횟수·유저 상위 N
   maxval    event, param — 유저별 최댓값 분포(등급·환생 횟수 같은 '어디까지 갔나')
+  crosstab  event, param?, split?, dim: install_source|cert — 값 × 설치 출처/서명 인증서(위변조 판별)
+            cert 는 user_properties.apk_cert(앞 16자). split=':' 이면 'no_details:gold_pack' → 'no_details'.
 
 ★ 비용: event_params 를 읽어야 해서 공통지표(컬럼 6개)보다 무겁다. 그래서
   · 스펙에 나온 이벤트만 거른다(WHERE event_name IN …) — 다만 BigQuery 는 컬럼 단위 과금이라
@@ -76,7 +78,7 @@ def cond(step: dict) -> str:
 def build(spec: dict) -> tuple[str, list[str]]:
     """스펙 → (SELECT … UNION ALL …, 필요한 이벤트 목록). 결과 모양은 위젯 공통:
        (w 위젯ID, k 문자열키, l 정수키, n1, n2, n3)"""
-    events, params, nums = set(), set(), set()
+    events, params, nums, dims = set(), set(), set(), set()
     for w in spec["widgets"]:
         t = w["type"]
         if t == "funnel":
@@ -95,8 +97,18 @@ def build(spec: dict) -> tuple[str, list[str]]:
         elif t == "maxval":
             events.add(w["event"])
             nums.add(w["param"])
+        elif t == "crosstab":
+            events.add(w["event"])
+            if w.get("param"):
+                params.add(w["param"])
+            dims.add(w["dim"])
 
     cols = [f"{pval(p)} AS p_{p}" for p in sorted(params)] + [f"{pval(p, True)} AS n_{p}" for p in sorted(nums)]
+    # 위변조 판별용 차원 — 쓰는 스펙에서만 읽는다(user_properties 는 그만큼 스캔이 는다)
+    if "install_source" in dims:
+        cols.append("IFNULL(app_info.install_source, '(없음)') AS d_install_source")
+    if "cert" in dims:
+        cols.append("IFNULL((SELECT value.string_value FROM UNNEST(user_properties) WHERE key='apk_cert'), '(미기록)') AS d_cert")
     # 첫 줄이 열 이름·타입을 정한다 — 위젯 순서와 상관없이 같은 모양이 나오게 빈 머리줄을 둔다
     parts = ["SELECT '-1' AS w, CAST(NULL AS STRING) AS k, CAST(NULL AS INT64) AS l, CAST(NULL AS INT64) AS n1, "
              "CAST(NULL AS INT64) AS n2, CAST(NULL AS INT64) AS n3 FROM (SELECT 1) WHERE FALSE"]
@@ -128,6 +140,12 @@ def build(spec: dict) -> tuple[str, list[str]]:
             parts.append(f"""SELECT {wid}, NULL, top, COUNT(*), NULL, NULL FROM (
                 SELECT u, MAX(n_{w['param']}) AS top FROM ev WHERE e = {q(w['event'])} GROUP BY u)
               WHERE top IS NOT NULL GROUP BY top""")
+        elif t == "crosstab":
+            v = f"p_{w['param']}" if w.get("param") else "''"
+            if w.get("split"):
+                v = f"SPLIT(IFNULL({v}, ''), {q(w['split'])})[SAFE_OFFSET(0)]"
+            parts.append(f"""SELECT {wid}, CONCAT(IFNULL({v}, '(없음)'), '|', d_{w['dim']}), NULL, COUNT(*), COUNT(DISTINCT u), NULL
+              FROM ev WHERE e = {q(w['event'])} GROUP BY 2""")
     sel = "\nUNION ALL\n".join(parts)
     head = f"""
 WITH ev AS (
@@ -169,6 +187,9 @@ def shape(spec: dict, rows: list) -> list[dict]:
                                key=lambda x: -x["n"])[:w.get("top", TOP)]
         elif w["type"] == "maxval":
             o["rows"] = [{"value": r["l"], "users": r["n1"]} for r in sorted(rs, key=lambda r: r["l"])]
+        elif w["type"] == "crosstab":
+            o["rows"] = sorted(({"value": r["k"].split("|", 1)[0], "dim": r["k"].split("|", 1)[1],
+                                 "n": r["n1"], "users": r["n2"]} for r in rs), key=lambda x: -x["n"])[:60]
         out.append(o)
     return out
 

@@ -606,6 +606,36 @@
      "event": "purchase_fail",
      "param": "reason",
      "param_label": "사유"
+    },
+    {
+     "type": "crosstab",
+     "title": "결제 실패 × 설치 출처",
+     "sub": "com.android.vending = Play 스토어 설치. 그 밖은 사이드로드·다른 스토어(위변조 가능성).",
+     "event": "purchase_fail",
+     "param": "reason",
+     "split": ":",
+     "dim": "install_source",
+     "param_label": "사유",
+     "dim_label": "설치 출처"
+    },
+    {
+     "type": "crosstab",
+     "title": "결제 실패 × 서명 인증서",
+     "sub": "584546d7cd280bbb = Play 앱 서명(정품). 다른 값은 재서명된 설치본.",
+     "event": "purchase_fail",
+     "param": "reason",
+     "split": ":",
+     "dim": "cert",
+     "param_label": "사유",
+     "dim_label": "인증서"
+    },
+    {
+     "type": "crosstab",
+     "title": "결제 시도 × 설치 출처",
+     "event": "purchase_start",
+     "dim": "install_source",
+     "param_label": "",
+     "dim_label": "설치 출처"
     }
    ]
   },

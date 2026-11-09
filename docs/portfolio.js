@@ -597,6 +597,13 @@
         rows.map(r => `<tr><td class="date">${esc(label(r.value))}</td><td>${nf(r.n)}</td><td>${nf(r.users)}</td><td>${pctf(r.n, t)}</td>
           <td style="width:30%"><div class="pf-fbar-track pf-mini"><div class="pf-fbar-fill" style="width:${(100 * r.n / rows[0].n).toFixed(1)}%"></div></div></td></tr>`).join('') + '</tbody></table></div>';
     },
+    crosstab(el, w) {
+      const rows = w.rows || [], t = sum(rows.map(r => r.n));
+      if (!rows.length) { el.innerHTML = '<p class="card-sub">기록이 없습니다.</p>'; return; }
+      const head = w.param_label ? `<th class="date">${esc(w.param_label)}</th>` : '';
+      el.innerHTML = `<div class="table-scroll"><table class="ledger"><thead><tr>${head}<th class="date">${esc(w.dim_label || w.dim)}</th><th>횟수</th><th>유저</th><th>비중</th></tr></thead><tbody>` +
+        rows.map(r => `<tr>${w.param_label ? `<td class="date">${esc(r.value)}</td>` : ''}<td class="date"><code>${esc(r.dim)}</code></td><td>${nf(r.n)}</td><td>${nf(r.users)}</td><td>${pctf(r.n, t)}</td></tr>`).join('') + '</tbody></table></div>';
+    },
     maxval(el, w) {
       const rows = w.rows || [];
       if (!rows.length) { el.innerHTML = '<p class="card-sub">기록이 없습니다.</p>'; return; }
