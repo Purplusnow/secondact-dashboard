@@ -15,7 +15,7 @@
   · 스펙에 나온 이벤트만 거른다(WHERE event_name IN …) — 다만 BigQuery 는 컬럼 단위 과금이라
     거르기 전 event_params 컬럼 전체가 스캔된다. 줄이는 건 **기간(DAYS)** 뿐이다.
   · 드라이런으로 먼저 재고 MAX_GB 를 넘으면 그 게임은 건너뛴다.
-  · 인생 2막은 이미 전용 인게임 수집(ingame.py)이 있어 여기서 다루지 않는다.
+  · 스펙에 days 를 주면 그 게임만 창을 줄인다(인생 2막 = 14일).
 수동 실행만(common 워크플로 안에서 같이 돈다).
 """
 import json
@@ -181,13 +181,15 @@ def collect(app: dict, spec: dict) -> dict:
     if not ds:
         return {"status": "no_dataset"}
     today = datetime.now(KST).date()
-    start = today - timedelta(days=DAYS)
+    days = int(spec.get("days") or DAYS)          # 큰 게임(인생 2막)은 스펙에서 창을 줄인다
+    start = today - timedelta(days=days)
     suffixes, _, _ = pick_suffixes(c, app["project"], ds, start, today)
     if not suffixes:
         return {"status": "no_data"}
     body, events = build(spec)
     sql = body.format(p=app["project"], ds=ds, suffixes=", ".join(q(s) for s in suffixes))
-    params = [bigquery.ScalarQueryParameter("cstart", "DATE", today - timedelta(days=COHORT_DAYS))]
+    cdays = min(COHORT_DAYS, days)
+    params = [bigquery.ScalarQueryParameter("cstart", "DATE", today - timedelta(days=cdays))]
     dry = c.query(sql, location=loc, job_config=bigquery.QueryJobConfig(query_parameters=params, dry_run=True))
     gb = dry.total_bytes_processed / 1e9
     print(f"  {app['key']}: 테이블 {len(suffixes)}장 · 이벤트 {len(events)}종 · 예상 {gb * 1000:.0f} MB")
@@ -197,7 +199,7 @@ def collect(app: dict, spec: dict) -> dict:
         query_parameters=params, maximum_bytes_billed=int(MAX_GB * 1e9)))
     rows = list(job.result())
     return {"status": "ok", "title": spec.get("title", ""), "note": spec.get("note", ""),
-            "window": [start.isoformat(), today.isoformat()], "cohort_days": COHORT_DAYS,
+            "window": [start.isoformat(), today.isoformat()], "cohort_days": cdays,
             "scan_mb": round((job.total_bytes_billed or 0) / 1e6, 1),
             "collected": datetime.now(KST).isoformat(timespec="minutes"),
             "widgets": shape(spec, rows)}

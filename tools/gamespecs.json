@@ -1,6 +1,227 @@
 {
  "_note": "게임별 인게임 화면 정의(tools/gamestats.py 가 읽는다). 위젯: funnel / levels / breakdown / maxval — 형식은 gamestats.py 머리말. 이벤트·파라미터 이름은 각 게임 레포의 analytics 코드에서 확인한 값이다(2026-11-09). 게임이 이벤트를 바꾸면 여기도 바꿔야 화면이 조용히 0 이 되지 않는다.",
  "games": {
+  "secondact": {
+   "title": "인생 2막 — 인게임",
+   "note": "왕관과 금화와 같은 계열(이벤트 이름·파라미터 공통). 데이터가 가장 커서 최근 14일만 읽는다. 상세 분석(이상징후·국가 ROI·실시간)은 '인생 2막 상세' 탭.",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "sub": "최근 신규 유저가 각 단계에 도달한 비율(onb_step.step).",
+     "steps": [
+      {
+       "label": "새 게임",
+       "event": "onb_step",
+       "param": "step",
+       "value": "new_game"
+      },
+      {
+       "label": "인트로 완료",
+       "event": "onb_step",
+       "param": "step",
+       "value": "intro_done"
+      },
+      {
+       "label": "기획",
+       "event": "onb_step",
+       "param": "step",
+       "value": "dev_concept"
+      },
+      {
+       "label": "디자인",
+       "event": "onb_step",
+       "param": "step",
+       "value": "dev_design"
+      },
+      {
+       "label": "프로토타입",
+       "event": "onb_step",
+       "param": "step",
+       "value": "dev_prototype"
+      },
+      {
+       "label": "알파",
+       "event": "onb_step",
+       "param": "step",
+       "value": "dev_alpha"
+      },
+      {
+       "label": "베타",
+       "event": "onb_step",
+       "param": "step",
+       "value": "dev_beta"
+      },
+      {
+       "label": "출시",
+       "event": "onb_step",
+       "param": "step",
+       "value": "dev_launch"
+      },
+      {
+       "label": "첫 운영",
+       "event": "onb_step",
+       "param": "step",
+       "value": "first_ops"
+      },
+      {
+       "label": "부동산 1",
+       "event": "onb_step",
+       "param": "step",
+       "value": "property_1"
+      },
+      {
+       "label": "부동산 3",
+       "event": "onb_step",
+       "param": "step",
+       "value": "property_3"
+      },
+      {
+       "label": "부동산 5",
+       "event": "onb_step",
+       "param": "step",
+       "value": "property_5"
+      },
+      {
+       "label": "은퇴(게임 매각)",
+       "event": "onb_step",
+       "param": "step",
+       "value": "game_sale"
+      },
+      {
+       "label": "첫 후원",
+       "event": "onb_step",
+       "param": "step",
+       "value": "first_donate"
+      },
+      {
+       "label": "신분 2",
+       "event": "class_up",
+       "param": "level",
+       "value": "2"
+      },
+      {
+       "label": "신분 4",
+       "event": "class_up",
+       "param": "level",
+       "value": "4"
+      },
+      {
+       "label": "신분 7",
+       "event": "class_up",
+       "param": "level",
+       "value": "7"
+      },
+      {
+       "label": "첫 환생",
+       "event": "onb_step",
+       "param": "step",
+       "value": "first_rebirth"
+      },
+      {
+       "label": "도시 입장(2부)",
+       "event": "city_enter"
+      },
+      {
+       "label": "도시 완성",
+       "event": "city_complete"
+      }
+     ]
+    },
+    {
+     "type": "maxval",
+     "title": "어디까지 갔나 — 최고 추월%",
+     "sub": "기간 중 progress_pct 를 남긴 유저의 최고 추월%(0~100). 100 = 게임 완료.",
+     "event": "progress_pct",
+     "param": "pct",
+     "param_label": "추월%",
+     "prefix": ""
+    },
+    {
+     "type": "maxval",
+     "title": "최고 신분",
+     "sub": "class_up.level 최댓값.",
+     "event": "class_up",
+     "param": "level",
+     "param_label": "신분",
+     "prefix": "신분 "
+    },
+    {
+     "type": "breakdown",
+     "title": "보상형 광고 — 지점별",
+     "sub": "ad_impression.placement. 결과(시청 완료·닫음·실패·광고 없음)는 아래.",
+     "event": "ad_impression",
+     "param": "placement",
+     "param_label": "지점",
+     "labels": {
+      "repair": "수리",
+      "offline": "오프라인 보상",
+      "boost": "부스트",
+      "gem_ad": "보석 광고",
+      "city_speedup": "도시 가속",
+      "city_supply": "도시 보급"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "보상형 광고 — 결과",
+     "event": "ad_impression",
+     "param": "result",
+     "param_label": "결과",
+     "labels": {
+      "earned": "시청 완료",
+      "dismissed": "중간에 닫음",
+      "failed": "실패",
+      "no_ad": "광고 없음(공급)"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "오프라인 보상 수령 방식",
+     "event": "mon_offline_claim",
+     "param": "method",
+     "param_label": "방식",
+     "labels": {
+      "base": "기본",
+      "ad": "광고 2배",
+      "gem": "보석"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "보석 사용처",
+     "event": "spend_virtual_currency",
+     "param": "reason",
+     "param_label": "사용처",
+     "labels": {
+      "offline": "오프라인 보상",
+      "manager": "매니저",
+      "city_build": "도시 건설",
+      "city_cash": "도시 자금",
+      "boost": "부스트",
+      "": "(미기록)"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "결제 실패 사유",
+     "sub": "no_details = 상품 정보를 못 받아 결제창이 안 뜬 것(게임 쪽 수정 대상).",
+     "event": "purchase_failed",
+     "param": "reason",
+     "param_label": "사유",
+     "top": 15
+    },
+    {
+     "type": "breakdown",
+     "title": "보석 부족",
+     "sub": "보석이 모자라 못 쓴 지점 — 상점 유도 기회.",
+     "event": "gem_insufficient",
+     "param": "reason",
+     "param_label": "지점"
+    }
+   ],
+   "days": 14
+  },
   "crowncoin": {
    "title": "왕관과 금화 — 인게임",
    "note": "온보딩 순서는 게임의 ONB_STEPS(analytics.gd). first_settle(60초 타이머)·first_manager·first_finance(곁가지)는 crowncoin-dashboard 처럼 퍼널에서 뺐다.",

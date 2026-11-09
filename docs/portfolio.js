@@ -521,11 +521,6 @@
   /* ── 게임별 맞춤 지표(gamestats.json — 스펙은 tools/gamespecs.json) ── */
   function renderGame(k) {
     const host = $('#pf-game'), g = S.gs && S.gs.games && S.gs.games[k];
-    if (k === 'secondact') {
-      host.innerHTML = `<section class="card"><div class="card-head"><h2>인게임 지표</h2>
-        <p class="card-sub">인생 2막은 전용 인게임 보드가 있습니다 — 상단 '인생 2막 상세' › 인게임.</p></div></section>`;
-      return;
-    }
     if (!g || g.status !== 'ok' || !g.widgets) {
       host.innerHTML = g && g.msg ? `<section class="card"><p class="card-sub">맞춤 지표 수집 실패: ${esc(g.msg)}</p></section>` : '';
       return;
