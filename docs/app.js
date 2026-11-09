@@ -141,9 +141,7 @@ async function load() {
 
   state.cfg = { store_fee: 0.15, fee_applies_to: ['iap'], series: [], fx_fallback: {}, ...cfg };
 
-  document.getElementById('brand-sub').textContent =
-    (state.cfg.app_name ? state.cfg.app_name + ' · ' : '') + '마케팅비 × 매출';
-  document.getElementById('updated').textContent = data.updated ? '갱신 ' + data.updated : '';
+  /* 상단 제목·갱신 시각은 통합 보드(portfolio.js)가 쓴다 — 이 보드는 '인생 2막 상세' 탭 안에 산다 */
   document.getElementById('demo-banner').hidden = !demo;
   renderSyncLine(data.synced);
   document.getElementById('foot-fee').textContent = pct(state.cfg.store_fee);
@@ -152,7 +150,8 @@ async function load() {
 
   buildSegs();
 
-  const daily = (data.daily || []).slice().sort((a, b) => (a.date < b.date ? -1 : 1));
+  const daily = demo ? (data.daily || []).slice() : await ownAppOnly(data.daily || []);
+  daily.sort((a, b) => (a.date < b.date ? -1 : 1));
   const has = daily.length > 0;
   document.getElementById('empty').hidden = has;
   document.getElementById('content').hidden = !has;
@@ -187,6 +186,28 @@ async function load() {
 }
 
 const labelOf = k => (state.cfg.series.find(s => s.key === k) || {}).label || k;
+
+/* ★통합 대시보드 전환(2026-11-09) 뒤로 daily.json 의 admob 은 **AdMob 계정 전체 합계**다
+   (Crown & Coin 등이 섞여 이 앱 손익이 두 배쯤 좋아 보였다). 이 보드는 인생 2막만 보므로
+   admob_apps 에서 이 앱 몫만 남긴다. 마케팅비도 앱별 내역(ads_apps.json)이 있는 날은 이 앱 몫만.
+   앱별 내역이 없는 날은 그대로(그때까지 캠페인은 사실상 인생 2막뿐이었다). */
+async function ownAppOnly(daily) {
+  const get = u => fetch(u, { cache: 'no-store' }).then(r => (r.ok ? r.json() : null)).catch(() => null);
+  const [apps, adsApps] = await Promise.all([get('data/apps.json'), get('data/ads_apps.json')]);
+  const me = apps && apps.apps.find(a => a.key === 'secondact');
+  if (!me) return daily.slice();
+  const names = new Set(me.admob);
+  const byApp = (adsApps && adsApps.by_date) || {};
+  return daily.map(r => {
+    const o = { ...r };
+    if (r.admob_apps) {
+      const usd = Object.entries(r.admob_apps).reduce((t, [k, v]) => t + (names.has(k) ? v : 0), 0);
+      o.admob = { USD: Math.round(usd * 100) / 100 };
+    }
+    if (byApp[r.date]) o.ads = (byApp[r.date][me.package] || {}).cost || 0;
+    return o;
+  });
+}
 
 /* 세금·수수료가 붙는 계열에는 그 사실을 붙여 쓴다 — 표시된 숫자가 표시가가 아니라
    실수령액이라는 걸 화면에서 바로 알 수 있어야 한다. 체크를 풀면 문구도 따라 바뀐다. */

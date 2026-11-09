@@ -1,6 +1,6 @@
 # 핸드오프 — SECONDACT BOARD
 
-최종 업데이트: 2026-11-03
+최종 업데이트: 2026-11-09
 
 터미널에서 이 리포 작업을 이어받는 사람을 위한 문서. 구조·계산규칙은 `README.md` 에 있고
 여기엔 **README 에 없거나 README 가 틀린 것, 그리고 이미 결론이 난 것**만 적는다.
@@ -20,6 +20,7 @@
 | `realtime` | **수동만** | `tools/realtime.py` + `tools/iap.py` — intraday 기준 당일 유저·D1·미확정 보정 | 0.35GB |
 | `users` | **수동만** | `tools/users.py`, `tools/geo_roi.py --days 60 --write` | 작음 |
 | `sync` | 매시간(`7 * * * *`) + `repository_dispatch` + 수동 | `tools/sync.py` — AdMob 매출(`--days 7`) + Google Ads 마케팅비 | **0 (BigQuery 안 씀)** |
+| `common` | **수동만** | `tools/common.py` — **전체 앱** DAU·신규·코호트 리텐션·이벤트·버전 (+ `FEEDBACK_ON=1` 이면 `tools/feedback.py` 유저 의견) | 앱당 수백 MB (인생 2막 45일 = 385MB) |
 | `probe` | 수동만 | `tools/probe.py` — 진단용. 평시엔 안 돌린다 | 모드마다 다름 |
 
 **원칙: BigQuery 를 쓰는 워크플로는 자동 실행하지 않는다.** 2026-10-27 형 지시.
@@ -37,15 +38,15 @@
 ### 단축 명령 (형이 쓰는 말)
 - **"실시간"** → `realtime` 실행
 - **"지표업데이트"** → `ingame` 실행
-- **"업데이트" / "대시보드 업데이트"** → 네 개 전부(리텐션 포함) 실행
+- **"업데이트" / "대시보드 업데이트"** → 다섯 개 전부(`common` 포함) 실행.
+  ⚠ **한꺼번에 던지지 말고 하나씩 끝난 뒤 다음**을 돌린다. 같은 concurrency 그룹이라
+  대기열에 하나만 남고 나머지는 **취소된다**(2026-11-08 실측: 4개를 연달아 던졌더니 2개 취소).
 되묻지 말고 돌리고, **해석해서 보고까지** 한다.
 
 ```sh
-gh workflow run realtime.yml
-gh workflow run ingame.yml
-gh workflow run users.yml
-gh workflow run sync.yml -f days=7
-# 끝난 뒤
+# 하나씩 — 앞의 것이 끝난 뒤 다음
+run(){ gh workflow run "$@" >/dev/null && sleep 8 && id=$(gh run list -w "$1" -L1 --json databaseId -q '.[0].databaseId') && gh run watch $id --exit-status >/dev/null; echo "$1 rc=$?"; }
+run realtime.yml; run sync.yml -f days=7; run ingame.yml; run users.yml; run common.yml
 git pull --rebase
 ```
 
@@ -136,3 +137,48 @@ git pull --rebase
   ```
 - `docs/data/users/` 는 날짜별 스냅샷이 쌓이는 디렉터리다(파일이 많다). `anomaly.json`,
   `geo_cost.json`, `geo_roi.json` 도 생성물이니 손으로 고치지 않는다.
+
+
+---
+
+## 6. 통합 대시보드 (2026-11-09 전환)
+
+인생 2막 전용 보드를 **전체 앱 보드**로 바꿨다. 레포·URL 은 그대로다. 기존 6개 탭은 **'인생 2막 상세'** 안으로 옮겼다.
+상단 탭: **전체 / 월별 / 앱별 / 유저 의견 / 인생 2막 상세**. 코드는 `docs/portfolio.js` 한 파일이고, 기존 스크립트와 전역 이름이 겹치지 않게 IIFE 로 감쌌다.
+
+| 데이터 | 파일 | 수집 | 비고 |
+|---|---|---|---|
+| 앱 목록 | `docs/data/apps.json` | 손으로 | 순서 = 색 순서. 7번째 이후 앱은 차트에서 '기타'로 접힌다 |
+| 광고매출 | `daily.json` `admob_apps` | `sync` 매시간 | AdMob 이름 → 앱은 apps.json 의 `admob` |
+| 인앱매출 | `iap_sales.json` | `sync`(버킷 설정 시) 또는 `playsales.py --zip` | **Play 판매 리포트가 기준.** 세전가 × 0.85, KST 날짜 |
+| 마케팅비(앱별) | `ads_apps.json` | Ads 스크립트 → `sync` | 스크립트를 다시 붙여넣기 전까지 비어 있다 → '미배정' |
+| DAU·리텐션·이벤트 | `common.json` | `common` 수동 | 키 없는 앱은 '지표 미연결' |
+| 유저 의견 | `feedback.json` | `common` 안, `FEEDBACK_ON=1` 일 때만 | 이메일·전화 가림, uid·기기 안 받음 |
+
+- **인생 2막 상세의 광고매출은 이제 인생 2막 몫만** 쓴다(`app.js` `ownAppOnly`). 전에는 AdMob 계정 전체 합계라 Crown & Coin 이 섞여 있었다.
+- 11/1 이후 마케팅비는 **구글 프로모션 크레딧**이다(형 확인). `config.json` `promo_credit` 에 기간이 있고, 월별 표에 '크레딧' 표시가 붙는다. 크레딧이 끝나면 `to` 에 마지막 날짜를 넣는다.
+- 인앱: 판매 리포트가 덮는 기간(그 달 ∩ 마지막 주문 시각까지)은 리포트 값, 그 밖의 기간은 인생 2막 GA4/수동 값만 쓴다. 리포트가 없는 달의 다른 앱 인앱은 0 이 아니라 **'모름'**이다.
+
+### 형이 해야 남은 것 (이게 끝나야 다 찬다)
+1. **게임별 BigQuery 키를 시크릿으로 등록** — 터미널에서 직접:
+   ```sh
+   gh secret set GCP_SA_CROWNCOIN    < ~/dev/keystore/crowncoin-bq.json
+   gh secret set GCP_SA_PLOPCAT      < ~/dev/keystore/plopcat-bq.json
+   gh secret set GCP_SA_BEEARCHITECT < ~/dev/keystore/beearchitect-88dbb-bq.json
+   gh secret set GCP_SA_GYROGRID     < ~/dev/keystore/gyrogrid-bq.json
+   gh secret set GCP_SA_WORLDREST    < ~/dev/keystore/worldrestaurant-530d2-bq.json
+   gh secret set GCP_SA_ONELINEPATH  < ~/dev/keystore/hanbutgil-bq.json
+   gh workflow run common.yml -f days=120     # 처음 한 번 백필
+   ```
+   Pocket Arcade · FaceLapse · Private Camera 는 키가 없다(매출만 보인다).
+2. **판매 리포트 자동화** — Play Console › 사용자 및 권한 에 서비스계정(`GCP_SA_KEY` 의 client_email)을 초대하고
+   '재무 데이터 보기'를 준다(반영까지 최대 24시간). 그다음 `gh variable set PLAY_BUCKET -b pubsite_prod_rev_…`
+   (Play Console › 다운로드 보고서 › 재무 › 'Cloud Storage URI 복사'). 그 전까진 월말에 zip 을 받아 `playsales.py --zip`.
+3. **Google Ads 스크립트 다시 붙여넣기** — `tools/google-ads-script.js` 에 캠페인→앱 패키지별 비용(`appRows`)을 추가했다.
+4. **유저 의견** — 각 프로젝트의 서비스계정에 'Cloud Datastore 뷰어' 권한을 주고, **공개 게시를 확인한 뒤**
+   `gh variable set FEEDBACK_ON -b 1`. 이 레포와 Pages 는 **공개**라 의견 내용이 인터넷과 git 기록에 남는다.
+
+### 다음 단계 (미착수)
+- **게임별 맞춤 인게임 화면.** 지금 앱별 페이지의 '인게임 이벤트'는 이벤트 이름별 횟수뿐인 범용 뷰다.
+  게임마다 이벤트 설계(각 게임 레포의 analytics 코드)를 읽고 퍼널·진행도 뷰를 짜야 한다.
+  이벤트 파라미터를 읽으면 스캔이 커지니, 게임마다 필요한 이벤트만 골라 읽을 것.

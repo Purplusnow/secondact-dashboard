@@ -3,23 +3,150 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SECONDACT BOARD — 마케팅비 · 매출</title>
-<meta name="description" content="일별 광고매출·인앱매출·마케팅비를 누적으로 추적하는 대시보드.">
+<title>PURPLUSNOW BOARD</title>
+<meta name="description" content="전체 앱의 광고매출·인앱매출·DAU·리텐션·유저 의견을 한 화면에서 보는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=0148085d">
+<link rel="stylesheet" href="style.css?v=d3051b9b">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
 
 <header class="topbar">
   <div class="brand">
-    <span class="brand-name">SECONDACT BOARD</span>
-    <span class="brand-sub" id="brand-sub">마케팅비 × 매출</span>
+    <span class="brand-name">PURPLUSNOW BOARD</span>
+    <span class="brand-sub" id="brand-sub">전체 앱 · 매출 × 지표</span>
   </div>
   <span class="updated" id="updated"></span>
 </header>
 
+<nav class="topnav">
+  <button class="ttab is-on" data-top="all" type="button">전체</button>
+  <button class="ttab" data-top="month" type="button">월별</button>
+  <button class="ttab" data-top="app" type="button">앱별</button>
+  <button class="ttab" data-top="voice" type="button">유저 의견</button>
+  <button class="ttab" data-top="secondact" type="button">인생 2막 상세</button>
+</nav>
+
+<section class="empty wrap" id="pf-error" hidden><h2>데이터를 못 읽었습니다</h2><pre></pre></section>
+
+<!-- ── 전체 ── -->
+<div id="top-all">
+<main class="wrap">
+  <section class="tiles" id="pf-tiles"></section>
+
+  <section class="card">
+    <div class="card-head"><h2>앱별 현황</h2>
+      <p class="card-sub">30일 매출 순. 매출은 실수령 기준(인앱은 세금·수수료 15% 뺌, 광고는 AdMob 추정 수익). D1·D7 은 최근 코호트 가중 평균. 줄을 누르면 그 앱 페이지로 갑니다.</p></div>
+    <div class="table-scroll"><table class="ledger pf-table" id="pf-apps"></table></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head pf-head-row"><div><h2>앱별 일매출</h2><p class="card-sub">광고매출 + 인앱매출(실수령). 오늘은 진행 중.</p></div>
+      <div class="tabs" id="pf-range"><button class="tab is-on" data-days="30" type="button">30일</button><button class="tab" data-days="90" type="button">90일</button></div></div>
+    <div class="chart" id="pf-rev"></div>
+    <div class="legend" id="pf-rev-legend"></div>
+  </section>
+
+  <section class="card" id="pf-dau-card">
+    <div class="card-head"><h2>앱별 DAU</h2><p class="card-sub">봇(국가 없음) 제외. 옅은 막대는 아직 확정 테이블이 오지 않은 날(intraday 값).</p></div>
+    <div class="chart" id="pf-dau"></div>
+    <div class="legend" id="pf-dau-legend"></div>
+  </section>
+  <section class="card" id="pf-dau-empty" hidden><p class="card-sub">DAU 는 <code>common</code> 워크플로가 앱별 BigQuery 를 읽은 뒤 나옵니다.</p></section>
+
+  <section class="card" id="pf-voice-card" hidden>
+    <div class="card-head pf-head-row"><div><h2>최근 유저 의견</h2><p class="card-sub">전체 앱, 최신 5건.</p></div>
+      <button class="tab" id="pf-voice-all" type="button">전체 보기</button></div>
+    <ul class="pf-voices" id="pf-voice-latest"></ul>
+  </section>
+
+  <p class="pf-cover" id="pf-cover"></p>
+</main>
+</div>
+
+<!-- ── 월별 ── -->
+<div id="top-month" hidden>
+<main class="wrap">
+  <section class="card">
+    <div class="card-head"><h2>월별 집계</h2><p class="card-sub">전체 앱 합계. 마케팅비는 Google Ads 계정 전체.</p></div>
+    <div class="table-scroll"><table class="ledger" id="pf-month"></table></div>
+  </section>
+  <section class="card">
+    <div class="card-head"><h2>앱별 월매출</h2></div>
+    <div class="chart" id="pf-month-chart"></div>
+    <div class="legend" id="pf-month-legend"></div>
+    <div class="table-scroll" style="margin-top:16px"><table class="ledger" id="pf-month-apps"></table></div>
+    <p class="card-sub" id="pf-month-note"></p>
+  </section>
+</main>
+</div>
+
+<!-- ── 앱별 ── -->
+<div id="top-app" hidden>
+<main class="wrap">
+  <div class="pf-chips" id="pf-chips"></div>
+  <div class="pf-app-head"><div><h1 id="pf-app-title"></h1><p class="pf-muted" id="pf-app-meta"></p></div>
+    <button class="tab" id="pf-detail-link" type="button" hidden>인생 2막 상세 보드 →</button></div>
+  <section class="tiles" id="pf-app-tiles"></section>
+
+  <section class="card">
+    <div class="card-head"><h2>일매출</h2><p class="card-sub">최근 60일 · 실수령 기준.</p></div>
+    <div class="chart" id="pf-app-rev"></div>
+    <div class="legend" id="pf-app-rev-legend"></div>
+  </section>
+
+  <section class="empty" id="pf-app-nodata" hidden></section>
+  <div id="pf-app-metrics">
+    <section class="card">
+      <div class="card-head"><h2>DAU</h2><p class="card-sub">최근 60일 · 기존 + 신규 = DAU. 옅은 막대는 확정 전.</p></div>
+      <div class="chart" id="pf-app-dau"></div>
+      <div class="legend" id="pf-app-dau-legend"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>리텐션</h2><p class="card-sub">위: 각 Dn 이 익은 최근 4주 코호트의 가중 평균. 아래: 가입일별(최근 21일) — 점(·)은 아직 그날이 안 온 칸.</p></div>
+      <div class="pf-rets" id="pf-ret-tiles"></div>
+      <div class="table-scroll"><table class="ledger pf-cohort" id="pf-cohorts"></table></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>일별 건강 지표</h2><p class="card-sub">최근 14일. 결제 이벤트는 GA4 purchase 수(매출 기준 아님), 삭제는 app_remove, 예외는 app_exception.</p></div>
+      <div class="table-scroll"><table class="ledger" id="pf-health"></table></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head pf-head-row"><div><h2>인게임 이벤트</h2><p class="card-sub" id="pf-ev-sub"></p></div>
+        <label class="pf-check"><input type="checkbox" id="pf-ev-auto"> 자동 이벤트 포함</label></div>
+      <div class="table-scroll"><table class="ledger" id="pf-events"></table></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>버전별 유저</h2></div>
+      <div class="table-scroll"><table class="ledger" id="pf-versions"></table></div>
+    </section>
+  </div>
+</main>
+</div>
+
+<!-- ── 유저 의견 ── -->
+<div id="top-voice" hidden>
+<main class="wrap">
+  <section class="card" id="pf-voice-body">
+    <div class="card-head"><h2>유저 의견</h2><p class="card-sub" id="pf-voice-meta"></p></div>
+    <div class="pf-chips" id="pf-voice-chips"></div>
+    <ul class="pf-voices" id="pf-voice-list"></ul>
+    <button type="button" class="tab rt-more" id="pf-voice-more">더 보기</button>
+  </section>
+  <section class="empty" id="pf-voice-empty" hidden>
+    <h2>아직 수집된 의견이 없습니다</h2>
+    <p>게임 인앱 '의견 보내기'로 Firestore <code>feedback</code> 컬렉션에 쌓인 글을 <code>common</code> 워크플로가 모아 옵니다(리포 변수 <code>FEEDBACK_ON=1</code> 일 때).</p>
+  </section>
+</main>
+</div>
+
+<!-- ── 인생 2막 상세(기존 보드) ── -->
+<div id="top-secondact" hidden>
 <nav class="viewnav">
   <button class="vtab is-on" data-view="revenue" type="button">매출</button>
   <button class="vtab" data-view="ingame" type="button">인게임</button>
@@ -453,15 +580,18 @@
     <p><code>tools/users.py</code> 가 <code>docs/data/users/</code> 를 채우면 보입니다.</p>
   </section>
 </main>
+</div>
+
 
 <script src="refresh.js?v=4816d6ee"></script>
-<script src="app.js?v=a233ab83"></script>
+<script src="app.js?v=7ecde464"></script>
 <script src="ingame.js?v=0f9b60c7"></script>
 <script src="anomaly.js?v=451736e7"></script>
 <script src="userrow.js?v=c3aab60d"></script>
 <script src="realtime.js?v=0427caf8"></script>
 <script src="ads.js?v=4b8256d1"></script>
 <script src="users.js?v=4ffd5a32"></script>
+<script src="portfolio.js?v=468382c9"></script>
 <script src="geo.js?v=5e746b90"></script>
 </body>
 </html>

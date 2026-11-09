@@ -580,3 +580,55 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .geo-bar > b { position: relative; font-weight: 600; }
 /* 표본이 얇아 순위 계산에서 뺀 행 — 숫자는 보여주되 믿지 말라는 표시 */
 .geo-weak { opacity: .45; }
+
+/* ── 통합 보드(portfolio.js) ───────────────────────── */
+.topnav { display: flex; gap: 6px; padding: 12px 16px 0; max-width: 1120px; width: 100%; margin: 0 auto;
+          overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.ttab {
+  font-family: inherit; font-size: 14px; font-weight: 600; color: var(--ink-2); white-space: nowrap;
+  background: transparent; border: 1px solid var(--hair); border-radius: 999px;
+  padding: 7px 16px; cursor: pointer; transition: background .12s, color .12s;
+}
+.ttab:hover { background: var(--wash); color: var(--ink); }
+.ttab.is-on { background: var(--ink); border-color: var(--ink); color: #fff; }
+/* 인생 2막 상세 안의 기존 탭은 한 단계 아래 — 작게 */
+#top-secondact .viewnav { padding-top: 10px; }
+#top-secondact .vtab { font-size: 13px; padding: 5px 14px; }
+
+.pf-muted { color: var(--ink-3); font-size: 12px; font-weight: 400; }
+.pf-chip { display: inline-block; font-size: 11px; color: var(--ink-2); background: var(--wash);
+           border: 1px solid var(--hair); border-radius: 999px; padding: 1px 7px; margin-left: 4px; vertical-align: 1px; }
+.pf-table td.date { white-space: nowrap; }
+.pf-row { cursor: pointer; }
+.pf-spark { display: block; margin-left: auto; }
+.pf-head-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.pf-cover { font-size: 12px; color: var(--ink-3); line-height: 1.7; margin: 4px 2px 0; }
+.pf-cover span { display: block; }
+
+.pf-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.pf-appchip { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 13px; color: var(--ink-2);
+              background: var(--surface); border: 1px solid var(--hair); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.pf-appchip:hover { background: var(--wash); color: var(--ink); }
+.pf-appchip.is-on { border-color: var(--ink); color: var(--ink); font-weight: 600; box-shadow: inset 0 0 0 1px var(--ink); }
+.pf-app-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.pf-app-head h1 { margin: 0; font-size: 20px; font-weight: 650; letter-spacing: -.01em; }
+.pf-app-head p { margin: 4px 0 0; }
+
+.pf-rets { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 14px; }
+.pf-ret { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border: 1px solid var(--hair); border-radius: 8px; }
+.pf-ret b { font-size: 18px; font-weight: 620; }
+.pf-cohort td.pf-heat { font-variant-numeric: tabular-nums; border-bottom: 2px solid var(--surface); }
+.pf-check { font-size: 12.5px; color: var(--ink-2); display: inline-flex; gap: 6px; align-items: center; white-space: nowrap; }
+.ledger code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--ink); }
+
+.pf-voices { list-style: none; margin: 0; padding: 0; }
+.pf-voice { padding: 12px 2px; border-bottom: 1px solid var(--wash); }
+.pf-voice:last-child { border-bottom: 0; }
+.pf-voice-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; }
+.pf-voice p { margin: 6px 0 0; font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink); }
+
+@media (max-width: 640px) {
+  .pf-rets { grid-template-columns: repeat(3, 1fr); }
+  .pf-head-row, .pf-app-head { flex-direction: column; }
+}
+.ledger .dot, .pf-voice-head .dot { display: inline-block; vertical-align: 0; }

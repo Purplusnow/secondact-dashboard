@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """전체 앱 공통지표 — 앱마다 BigQuery 를 **가볍게** 한 번씩 → docs/data/common.json
 
-받는 것: 일별 DAU·신규·세션·예외·광고노출·결제 이벤트 수, 가입일 코호트 D1/D3/D7/D14/D30,
+받는 것: 일별 DAU·신규·세션·예외·광고노출·결제·삭제(app_remove) 이벤트 수, 가입일 코호트 D1/D3/D7/D14/D30,
 최근 14일 이벤트별 횟수(게임별 '인게임' 화면의 재료), 최근 7일 버전별 유저.
 
 ★ 가벼운 이유: 읽는 컬럼이 user_pseudo_id · event_timestamp · user_first_touch_timestamp ·
@@ -93,20 +93,21 @@ act AS (SELECT DISTINCT u, d, d0 FROM ev WHERE d BETWEEN @start AND @end)
 SELECT 'day' AS kind, d, CAST(NULL AS INT64) AS k, CAST(NULL AS STRING) AS e, CAST(NULL AS STRING) AS v,
        COUNT(DISTINCT u) AS n, COUNT(DISTINCT IF(d0 = d, u, NULL)) AS n2,
        COUNTIF(e = 'session_start') AS c1, COUNTIF(e = 'app_exception') AS c2,
-       COUNTIF(e = 'ad_impression') AS c3, COUNTIF(e = 'purchase') AS c4
+       COUNTIF(e = 'ad_impression') AS c3, COUNTIF(e = 'purchase') AS c4,
+       COUNTIF(e = 'app_remove') AS c5
 FROM ev WHERE d BETWEEN @start AND @end GROUP BY d
 UNION ALL
-SELECT 'base', d0, NULL, NULL, NULL, COUNT(DISTINCT u), NULL, NULL, NULL, NULL, NULL
+SELECT 'base', d0, NULL, NULL, NULL, COUNT(DISTINCT u), NULL, NULL, NULL, NULL, NULL, NULL
 FROM act WHERE d0 BETWEEN @start AND @end GROUP BY d0
 UNION ALL
-SELECT 'ret', d0, DATE_DIFF(d, d0, DAY), NULL, NULL, COUNT(DISTINCT u), NULL, NULL, NULL, NULL, NULL
+SELECT 'ret', d0, DATE_DIFF(d, d0, DAY), NULL, NULL, COUNT(DISTINCT u), NULL, NULL, NULL, NULL, NULL, NULL
 FROM act WHERE d0 BETWEEN @start AND @end AND DATE_DIFF(d, d0, DAY) IN ({ret})
 GROUP BY d0, DATE_DIFF(d, d0, DAY)
 UNION ALL
-SELECT 'evt', d, NULL, e, NULL, COUNT(*), COUNT(DISTINCT u), NULL, NULL, NULL, NULL
+SELECT 'evt', d, NULL, e, NULL, COUNT(*), COUNT(DISTINCT u), NULL, NULL, NULL, NULL, NULL
 FROM ev WHERE d BETWEEN @evstart AND @end GROUP BY d, e
 UNION ALL
-SELECT 'ver', CAST(NULL AS DATE), NULL, NULL, v, COUNT(DISTINCT u), NULL, NULL, NULL, NULL, NULL
+SELECT 'ver', CAST(NULL AS DATE), NULL, NULL, v, COUNT(DISTINCT u), NULL, NULL, NULL, NULL, NULL, NULL
 FROM ev WHERE d BETWEEN @verstart AND @end GROUP BY v
 """
 
@@ -156,7 +157,8 @@ def collect(app: dict, prev: dict) -> dict:
         if k == "day":
             day[r["d"].isoformat()] = {"date": r["d"].isoformat(), "dau": r["n"], "new": r["n2"],
                                        "sessions": r["c1"], "exceptions": r["c2"],
-                                       "ad_impressions": r["c3"], "purchases": r["c4"]}
+                                       "ad_impressions": r["c3"], "purchases": r["c4"],
+                                       "uninstalls": r["c5"]}
         elif k == "base":
             base[r["d"].isoformat()] = r["n"]
         elif k == "ret":

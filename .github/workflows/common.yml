@@ -48,19 +48,25 @@ jobs:
       - run: pip install --quiet google-cloud-bigquery
       - name: 공통지표 수집
         run: python3 tools/common.py
+      # 유저 의견(Firestore) — 이 레포·Pages 가 공개라 리포 변수 FEEDBACK_ON=1 로 켰을 때만 돈다.
+      - name: 유저 의견 수집
+        if: vars.FEEDBACK_ON == '1'
+        run: python3 tools/feedback.py
       - name: 커밋
         run: |
           git config user.name  "secondact-bot"
           git config user.email "34591718+Purplusnow@users.noreply.github.com"
-          # common.json 은 이 잡만 쓴다 — 밀리면 최신 위에 내 파일만 얹어 다시 민다.
-          cp docs/data/common.json "$RUNNER_TEMP/common.json"
+          # common.json·feedback.json 은 이 잡만 쓴다 — 밀리면 최신 위에 내 파일만 얹어 다시 민다.
+          FILES="docs/data/common.json"
+          [ -f docs/data/feedback.json ] && FILES="$FILES docs/data/feedback.json"
+          mkdir -p "$RUNNER_TEMP/keep" && cp $FILES "$RUNNER_TEMP/keep/"
           for i in 1 2 3; do
-            git add docs/data/common.json
+            git add $FILES
             git diff --cached --quiet && { echo "변경 없음"; exit 0; }
             git commit -q -m "공통지표 수집: $(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') KST"
             git push -q && exit 0
             git fetch -q origin main && git reset -q --hard origin/main
-            cp "$RUNNER_TEMP/common.json" docs/data/common.json
+            cp "$RUNNER_TEMP"/keep/* docs/data/
             sleep $((i * 3))
           done
           exit 1
