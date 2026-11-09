@@ -62,6 +62,7 @@
     S.daily = (daily.daily || []).slice().sort((a, b) => (a.date < b.date ? -1 : 1));
     S.sales = sales; S.adsApps = adsApps; S.common = common;
     $('#updated').textContent = daily.updated ? '갱신 ' + daily.updated : '';
+    S.dailySynced = daily.synced || {};
     await loadFx();
     S.M = model();
     route();
@@ -332,10 +333,12 @@
 
     $('#pf-tiles').innerHTML = [
       tile('이번 달 매출', krw(monRev), `광고 ${krw(monAd)} · 인앱 ${krw(monIap)}${proj ? ` · 예상 ${krw(proj)}` : ''}`),
-      tile('어제 매출', krw(ydRev), `최근 7일 평균 ${krw(wkAvg)}`),
+      tile('어제 매출', krw(ydRev), `광고 ${krw(tot(ad, [yday]))} · 인앱 ${krw(tot(iap, [yday]))} · 7일 평균 ${krw(wkAvg)}`),
       tile('어제 DAU', dauKs.length ? nf(ydDau) + '명' : '—', dauKs.length ? `신규 ${nf(ydNew)}명 · 지표 연결 ${dauKs.length}개 앱` : '공통지표 수집 전'),
       tile('이번 달 마케팅비', krw(monSpend), credit ? `프로모션 크레딧 — 현금 아님 · 손익 ${krw(monRev - monSpend)}` : `손익 ${krw(monRev - monSpend)}`),
     ].join('');
+
+    renderDay(today, yday);
 
     // 앱별 현황 표
     const d30 = span(addDays(yday, -29), yday), d7 = span(addDays(yday, -6), yday);
@@ -419,6 +422,28 @@
       `</tbody><tfoot><tr><td class="date">합계</td>${ks.map(k => `<td class="sum">${sum(rows.map(d => fbCount(d, k)))}</td>`).join('')}<td class="sum">${sum(rows.map(d => sum(ks.map(k => fbCount(d, k)))))}</td></tr></tfoot>`;
     $('#pf-voice-last').innerHTML = ks.map(k => { const v = fb.apps[k] || {};
       return `<span class="pf-vs"><span class="dot" style="background:${colorOf(k)}"></span>${esc(nameOf(k))} <span class="pf-muted">마지막 ${v.last_at ? esc(v.last_at.replace('T', ' ').slice(0, 16)) : '—'}</span></span>`; }).join('');
+  }
+
+  /* 오늘·어제 — 앱별 광고/인앱. 오늘은 진행 중이고 두 출처의 반영 시각이 달라 그걸 같이 적는다. */
+  function renderDay(today, yday) {
+    const M = S.M, ks = keys();
+    const ad = (k, d) => M.apps[k].ad[d] || 0, iap = (k, d) => M.apps[k].iap[d] || 0;
+    const live = ks.filter(k => [today, yday].some(d => ad(k, d) || iap(k, d)));
+    const cell = v => (v ? won(v) : '<span class="pf-muted">—</span>');
+    const prov = (k, d) => (M.apps[k].iapProv[d] ? ' <span class="pf-muted" title="판매 리포트 반영 전 — GA4 기록">GA4</span>' : '');
+    const tot = (fn, d) => sum(ks.map(k => fn(k, d)));
+    $('#pf-day').innerHTML = `<thead><tr><th class="date">앱</th><th>광고<span class="th-note">오늘</span></th><th>인앱<span class="th-note">오늘</span></th><th>합계<span class="th-note">오늘</span></th>
+      <th>광고<span class="th-note">어제</span></th><th>인앱<span class="th-note">어제</span></th><th>합계<span class="th-note">어제</span></th></tr></thead><tbody>` +
+      live.map(k => `<tr><td class="date"><span class="dot" style="background:${colorOf(k)}"></span> ${esc(nameOf(k))}</td>
+        <td>${cell(ad(k, today))}</td><td>${cell(iap(k, today))}${prov(k, today)}</td><td class="sum">${cell(rev(k, today))}</td>
+        <td>${cell(ad(k, yday))}</td><td>${cell(iap(k, yday))}${prov(k, yday)}</td><td class="sum">${cell(rev(k, yday))}</td></tr>`).join('') +
+      `</tbody><tfoot><tr><td class="date">합계</td><td>${won(tot(ad, today))}</td><td>${won(tot(iap, today))}</td><td class="sum">${won(tot(rev, today))}</td>
+        <td>${won(tot(ad, yday))}</td><td>${won(tot(iap, yday))}</td><td class="sum">${won(tot(rev, yday))}</td></tr></tfoot>`;
+    const synced = (S.dailySynced && S.dailySynced.admob) || '';
+    const last = S.M.salesCover.last;
+    const iapNote = last && last.slice(0, 10) >= today ? `판매 리포트 ${last.slice(11, 16)}까지`
+      : `판매 리포트는 ${last ? last.replace('T', ' ').slice(5, 16) : '—'}까지라 그 뒤 인앱은 인생 2막 GA4 기록만(다른 앱은 리포트가 들어오면 채워짐)`;
+    $('#pf-day-sub').textContent = `실수령 기준. 광고 = AdMob 추정(매시간, 마지막 ${synced ? synced.slice(11, 16) : '—'}). 인앱 = ${iapNote}.`;
   }
 
   function coverNote() {
