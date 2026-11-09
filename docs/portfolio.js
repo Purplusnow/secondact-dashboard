@@ -374,7 +374,7 @@
     const ds = fold(dk, k => d => M.apps[k].dau[d] || 0);
     stacked($('#pf-dau'), days, ds,
       (v, ax) => (ax ? (v >= 1000 ? (v / 1000).toFixed(v >= 1e4 ? 0 : 1) + '천' : nf(v)) : nf(v) + '명'),
-      { dim: d => dk.some(k => M.apps[k].prov[d]), note: d => (dk.some(k => M.apps[k].prov[d]) ? ' · 확정 전(intraday)' : '') });
+      {});
     legend($('#pf-dau-legend'), legendOf(ds));
     $('#pf-dau-card').hidden = !dk.length;
     $('#pf-dau-empty').hidden = !!dk.length;
@@ -508,7 +508,7 @@
       { key: 'ret', label: '기존 유저', color: '#86b6ef', val: d => Math.max(0, (A.dau[d] || 0) - (A.new[d] || 0)) },
       { key: 'new', label: '신규 유저', color: '#1c5cab', val: d => A.new[d] || 0 }],
       (v, ax) => (ax ? nf(v) : nf(v) + '명'),
-      { dim: d => A.prov[d], note: d => (A.prov[d] ? ' · 확정 전(intraday)' : '') });
+      {});
     legend($('#pf-app-dau-legend'), [{ label: '기존 유저', color: '#86b6ef' }, { label: '신규 유저', color: '#1c5cab' }]);
 
     renderGame(k);
