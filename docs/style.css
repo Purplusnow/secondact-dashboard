@@ -632,3 +632,20 @@ a { color: #2a78d6; text-underline-offset: 2px; }
   .pf-head-row, .pf-app-head { flex-direction: column; }
 }
 .ledger .dot, .pf-voice-head .dot { display: inline-block; vertical-align: 0; }
+
+/* 게임별 맞춤 지표 */
+.pf-game-head { margin: 22px 2px 10px; }
+.pf-game-head h2 { margin: 0; font-size: 16px; font-weight: 650; }
+.pf-fbar { margin: 10px 0; }
+.pf-fbar-head { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--ink-2); margin-bottom: 5px; }
+.pf-fbar-head b { color: var(--ink); font-weight: 620; }
+.pf-fbar-track { height: 18px; background: var(--wash); border-radius: 4px; overflow: hidden; }
+.pf-fbar-track.pf-mini { height: 8px; }
+.pf-fbar-fill { height: 100%; background: #2a78d6; border-radius: 4px; }
+.pf-drop { color: var(--bad); font-weight: 620; }
+.ledger tr.pf-wall td { background: rgba(208, 59, 59, .06); }
+.pf-voice-sum { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-bottom: 12px; }
+.pf-vs { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-2); }
+.pf-vs b { color: var(--ink); font-weight: 650; }
+.pf-new { font-size: 11px; font-weight: 600; color: #fff; background: var(--bad); border-radius: 999px; padding: 1px 7px; }
+.ledger tr.pf-fresh td { background: rgba(42, 120, 214, .05); }

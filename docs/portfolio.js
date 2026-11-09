@@ -26,7 +26,7 @@
     'notification_receive', 'notification_open', 'notification_dismiss', 'notification_foreground',
     'first_visit', 'page_view', 'dynamic_link_first_open', 'dynamic_link_app_open', 'app_exception']);
 
-  const S = { apps: [], byKey: {}, cfg: {}, daily: [], sales: null, adsApps: null, common: null, fb: null, fbApp: '', fbN: 50,
+  const S = { apps: [], byKey: {}, cfg: {}, daily: [], sales: null, adsApps: null, common: null, fb: null, gs: null, fbApp: '', fbN: 50,
               fx: { byDate: {}, dates: [] }, M: null, top: 'all', app: null, range: 30, evAuto: false };
 
   /* ── 형식 ───────────────────────────────────────── */
@@ -54,6 +54,7 @@
       get('data/apps.json'), get('data/config.json'), get('data/daily.json'),
       get('data/iap_sales.json'), get('data/ads_apps.json'), get('data/common.json'), get('data/feedback.json')]);
     S.fb = fb;
+    S.gs = await get('data/gamestats.json');
     if (!apps || !daily) { $('#pf-error').hidden = false; return; }
     S.apps = apps.apps;
     S.apps.forEach((a, i) => { a.color = i < PALETTE.length ? PALETTE[i] : OTHER; S.byKey[a.key] = a; });
@@ -378,36 +379,43 @@
     $('#pf-dau-card').hidden = !dk.length;
     $('#pf-dau-empty').hidden = !!dk.length;
     $('#pf-cover').innerHTML = coverNote();
-    const latest = ((S.fb && S.fb.items) || []).slice(0, 5);
-    $('#pf-voice-card').hidden = !latest.length;
-    $('#pf-voice-latest').innerHTML = latest.map(voiceItem).join('');
+    renderVoiceSummary();
   }
 
-  /* ── 유저 의견 ───────────────────────────────────── */
-  const voiceItem = i => {
-    const a = S.byKey[i.app];
-    return `<li class="pf-voice"><div class="pf-voice-head"><span class="dot" style="background:${a ? a.color : OTHER}"></span>
-      <b>${esc(a ? a.name : i.app)}</b><span class="pf-muted num">${esc(i.at.replace('T', ' '))}</span>
-      ${i.version ? `<span class="pf-muted">${esc(i.version)}</span>` : ''}${i.locale ? `<span class="pf-muted">${esc(i.locale)}</span>` : ''}</div>
-      <p>${esc(i.text)}</p></li>`;
-  };
+  /* ── 유저 의견: 앱 × 날짜 '건수'만(내용은 Firebase 콘솔에서) ── */
+  const fbCount = (d, k) => ((S.fb && S.fb.counts && S.fb.counts[d]) || {})[k] || 0;
+
+  function renderVoiceSummary() {
+    const fb = S.fb, today = kstDate(0);
+    const d7 = span(addDays(today, -6), today);
+    const per = S.apps.map(a => ({ a, n7: sum(d7.map(d => fbCount(d, a.key))), today: fbCount(today, a.key),
+                                   last: fb && fb.apps && fb.apps[a.key] && fb.apps[a.key].last_at })).filter(x => x.n7);
+    $('#pf-voice-card').hidden = !fb;
+    if (!fb) return;
+    $('#pf-voice-latest').innerHTML = per.length
+      ? `<div class="pf-voice-sum">${per.map(x => `<span class="pf-vs"><span class="dot" style="background:${x.a.color}"></span>${esc(x.a.name)} <b class="num">${x.n7}</b>${x.today ? ` <span class="pf-new">오늘 +${x.today}</span>` : ''}</span>`).join('')}</div>`
+      : '<p class="card-sub">최근 7일 새 의견이 없습니다.</p>';
+  }
 
   function renderVoice() {
-    const fb = S.fb, items = (fb && fb.items) || [];
-    $('#pf-voice-empty').hidden = !!items.length;
-    $('#pf-voice-body').hidden = !items.length;
-    if (!items.length) return;
-    const count = {};
-    items.forEach(i => (count[i.app] = (count[i.app] || 0) + 1));
-    $('#pf-voice-chips').innerHTML = [`<button type="button" class="pf-appchip${S.fbApp ? '' : ' is-on'}" data-app="">전체 ${items.length}</button>`]
-      .concat(S.apps.filter(a => count[a.key]).map(a => `<button type="button" class="pf-appchip${S.fbApp === a.key ? ' is-on' : ''}" data-app="${a.key}"><span class="dot" style="background:${a.color}"></span>${esc(a.name)} ${count[a.key]}</button>`)).join('');
-    document.querySelectorAll('#pf-voice-chips .pf-appchip').forEach(b => b.addEventListener('click', () => { S.fbApp = b.dataset.app; S.fbN = 50; renderVoice(); }));
-    const shown = items.filter(i => !S.fbApp || i.app === S.fbApp);
-    $('#pf-voice-list').innerHTML = shown.slice(0, S.fbN).map(voiceItem).join('');
-    $('#pf-voice-more').hidden = shown.length <= S.fbN;
+    const fb = S.fb;
+    const dates = Object.keys((fb && fb.counts) || {}).sort().reverse();
+    $('#pf-voice-empty').hidden = !!dates.length;
+    $('#pf-voice-body').hidden = !dates.length;
+    if (!fb) return;
     const st = Object.entries(fb.apps || {}).filter(([, v]) => v.status && v.status !== 'ok' && v.status !== 'no_secret');
-    $('#pf-voice-meta').textContent = `최신순 · 갱신 ${fb.updated}` + (st.length ? ` · 못 읽은 앱: ${st.map(([k, v]) => (S.byKey[k] ? S.byKey[k].name : k) + '(' + (v.msg || v.status) + ')').join(', ')}` : '') +
-      ' · 이메일·전화번호는 가려서 저장합니다.';
+    $('#pf-voice-meta').textContent = `갱신 ${fb.updated} · 건수만 보여 줍니다(내용은 Firebase 콘솔 › Firestore › feedback).` +
+      (st.length ? ` 못 읽은 앱: ${st.map(([k, v]) => (S.byKey[k] ? S.byKey[k].name : k) + '(' + (v.msg || v.status) + ')').join(', ')}` : '');
+    if (!dates.length) return;
+    const ks = S.apps.filter(a => dates.some(d => fbCount(d, a.key))).map(a => a.key);
+    const today = kstDate(0), yday = kstDate(1);
+    const rows = dates.slice(0, 60);
+    $('#pf-voice-table').innerHTML = `<thead><tr><th class="date">날짜</th>${ks.map(k => `<th><span class="dot" style="background:${colorOf(k)}"></span> ${esc(nameOf(k))}</th>`).join('')}<th>합계</th></tr></thead><tbody>` +
+      rows.map(d => { const t = sum(ks.map(k => fbCount(d, k)));
+        return `<tr${d >= yday ? ' class="pf-fresh"' : ''}><td class="date">${mmdd(d)}${d === today ? ' <span class="pf-new">오늘</span>' : d === yday ? ' <span class="pf-muted">어제</span>' : ''}</td>${ks.map(k => `<td>${fbCount(d, k) || '<span class="pf-muted">·</span>'}</td>`).join('')}<td class="sum">${t}</td></tr>`; }).join('') +
+      `</tbody><tfoot><tr><td class="date">합계</td>${ks.map(k => `<td class="sum">${sum(rows.map(d => fbCount(d, k)))}</td>`).join('')}<td class="sum">${sum(rows.map(d => sum(ks.map(k => fbCount(d, k)))))}</td></tr></tfoot>`;
+    $('#pf-voice-last').innerHTML = ks.map(k => { const v = fb.apps[k] || {};
+      return `<span class="pf-vs"><span class="dot" style="background:${colorOf(k)}"></span>${esc(nameOf(k))} <span class="pf-muted">마지막 ${v.last_at ? esc(v.last_at.replace('T', ' ')) : '—'}</span></span>`; }).join('');
   }
 
   function coverNote() {
@@ -503,11 +511,96 @@
       { dim: d => A.prov[d], note: d => (A.prov[d] ? ' · 확정 전(intraday)' : '') });
     legend($('#pf-app-dau-legend'), [{ label: '기존 유저', color: '#86b6ef' }, { label: '신규 유저', color: '#1c5cab' }]);
 
+    renderGame(k);
     renderCohorts(k, c);
     renderHealth(c);
     renderEvents(c);
     renderVersions(c);
   }
+
+  /* ── 게임별 맞춤 지표(gamestats.json — 스펙은 tools/gamespecs.json) ── */
+  function renderGame(k) {
+    const host = $('#pf-game'), g = S.gs && S.gs.games && S.gs.games[k];
+    if (k === 'secondact') {
+      host.innerHTML = `<section class="card"><div class="card-head"><h2>인게임 지표</h2>
+        <p class="card-sub">인생 2막은 전용 인게임 보드가 있습니다 — 상단 '인생 2막 상세' › 인게임.</p></div></section>`;
+      return;
+    }
+    if (!g || g.status !== 'ok' || !g.widgets) {
+      host.innerHTML = g && g.msg ? `<section class="card"><p class="card-sub">맞춤 지표 수집 실패: ${esc(g.msg)}</p></section>` : '';
+      return;
+    }
+    host.innerHTML = `<div class="pf-game-head"><h2>${esc(g.title || '인게임 지표')}</h2>
+      <p class="card-sub">최근 ${esc(g.window[0].slice(5).replace('-', '/'))}~${esc(g.window[1].slice(5).replace('-', '/'))} · 퍼널·도달률은 최근 ${g.cohort_days}일 신규 유저 기준 · 스캔 ${g.scan_mb}MB${g.note ? ' · ' + esc(g.note) : ''}</p></div>` +
+      g.widgets.map((w, i) => `<section class="card"><div class="card-head"><h2>${esc(w.title || '')}</h2>${w.sub ? `<p class="card-sub">${esc(w.sub)}</p>` : ''}</div><div id="pf-gw-${i}"></div></section>`).join('');
+    g.widgets.forEach((w, i) => {
+      const el = $('#pf-gw-' + i);
+      try { WIDGET[w.type] && WIDGET[w.type](el, w); } catch (e) { el.innerHTML = `<p class="card-sub">표시 오류: ${esc(e.message)}</p>`; }
+    });
+  }
+
+  const bar = (label, n, base, note = '') => {
+    const p = base ? n / base : 0;
+    return `<div class="pf-fbar"><div class="pf-fbar-head"><span>${esc(label)}</span><span class="num">${nf(n)}명 · <b>${(p * 100).toFixed(1)}%</b>${note}</span></div>
+      <div class="pf-fbar-track"><div class="pf-fbar-fill" style="width:${Math.min(100, p * 100).toFixed(1)}%"></div></div></div>`;
+  };
+
+  const WIDGET = {
+    funnel(el, w) {
+      let prev = null;
+      el.innerHTML = (w.base ? '' : '<p class="card-sub">이 기간 신규 유저가 없습니다.</p>') + w.steps.map(s => {
+        const drop = prev && prev > 0 ? 1 - s.users / prev : 0;
+        const note = prev != null && drop > 0.15 ? ` <span class="pf-drop">−${(drop * 100).toFixed(0)}%</span>` : '';
+        prev = s.users;
+        return bar(s.label, s.users, w.base, note);
+      }).join('') + `<p class="pf-muted">기준: 신규 ${nf(w.base)}명. 빨간 숫자는 앞 단계 대비 15% 넘게 빠진 곳.</p>`;
+    },
+    levels(el, w) {
+      const rows = w.rows || [];
+      if (!rows.length) { el.innerHTML = '<p class="card-sub">레벨 기록이 없습니다.</p>'; return; }
+      const maxL = Math.max(...rows.map(r => r.level), ...(w.reach || []).map(r => r.level));
+      const atLeast = {};
+      let acc = 0;
+      for (let L = maxL; L >= 1; L--) { acc += ((w.reach || []).find(r => r.level === L) || {}).users || 0; atLeast[L] = acc; }
+      const levels = []; for (let L = 1; L <= maxL; L++) levels.push(L);
+      const chart = document.createElement('div'); chart.className = 'chart';
+      el.append(chart);
+      if (w.base) {
+        stacked(chart, levels, [{ key: 'r', label: '도달률', color: '#2a78d6', val: L => (atLeast[L] || 0) / w.base * 100 }],
+          (v, ax) => (ax ? v.toFixed(0) + '%' : v.toFixed(1) + '%'), { xfmt: L => 'L' + L, h: 180 });
+      }
+      const rated = rows.filter(r => r.start >= 5).map(r => ({ ...r, rate: r.clear / r.start }));
+      const walls = new Set(rated.slice().sort((a, b) => a.rate - b.rate).slice(0, 3).map(r => r.level));
+      const t = document.createElement('div'); t.className = 'table-scroll';
+      t.innerHTML = `<table class="ledger"><thead><tr><th class="date">레벨</th><th>시작 유저</th><th>클리어 유저</th><th>클리어율</th><th>실패</th><th>시도/인</th><th>도달<span class="th-note">신규 기준</span></th></tr></thead><tbody>` +
+        rows.map(r => `<tr${walls.has(r.level) ? ' class="pf-wall"' : ''}><td class="date">L${r.level}${walls.has(r.level) ? ' <span class="pf-chip">벽</span>' : ''}</td><td>${nf(r.start)}</td><td>${nf(r.clear)}</td>
+          <td>${pctf(r.clear, r.start)}</td><td>${nf(r.fails)}</td><td>${r.start ? (r.attempts / r.start).toFixed(1) : '—'}</td><td>${w.base ? pctf(atLeast[r.level] || 0, w.base) : '—'}</td></tr>`).join('') + '</tbody></table>';
+      el.append(t);
+      const n = document.createElement('p'); n.className = 'pf-muted';
+      n.textContent = `위: 최근 신규 ${nf(w.base)}명 중 그 레벨 이상을 시작해 본 비율. 아래 표의 '벽'은 시작 유저 5명 이상인 레벨 중 클리어율이 가장 낮은 셋.`;
+      el.append(n);
+    },
+    breakdown(el, w) {
+      const rows = w.rows || [], t = sum(rows.map(r => r.n));
+      if (!rows.length) { el.innerHTML = '<p class="card-sub">기록이 없습니다.</p>'; return; }
+      const label = v => (w.labels && w.labels[v]) || v;
+      el.innerHTML = `<div class="table-scroll"><table class="ledger"><thead><tr><th class="date">${esc(w.param_label || w.param)}</th><th>횟수</th><th>유저</th><th>비중</th><th></th></tr></thead><tbody>` +
+        rows.map(r => `<tr><td class="date">${esc(label(r.value))}</td><td>${nf(r.n)}</td><td>${nf(r.users)}</td><td>${pctf(r.n, t)}</td>
+          <td style="width:30%"><div class="pf-fbar-track pf-mini"><div class="pf-fbar-fill" style="width:${(100 * r.n / rows[0].n).toFixed(1)}%"></div></div></td></tr>`).join('') + '</tbody></table></div>';
+    },
+    maxval(el, w) {
+      const rows = w.rows || [];
+      if (!rows.length) { el.innerHTML = '<p class="card-sub">기록이 없습니다.</p>'; return; }
+      const t = sum(rows.map(r => r.users));
+      const chart = document.createElement('div'); chart.className = 'chart'; el.append(chart);
+      const vals = rows.map(r => r.value), by = Object.fromEntries(rows.map(r => [r.value, r.users]));
+      stacked(chart, vals, [{ key: 'u', label: '유저', color: '#2a78d6', val: v => by[v] || 0 }],
+        (v, ax) => (ax ? nf(v) : nf(v) + '명'), { xfmt: v => (w.prefix || '') + v, h: 170 });
+      const n = document.createElement('p'); n.className = 'pf-muted';
+      n.textContent = `이 기간 이벤트를 남긴 ${nf(t)}명의 최고 ${w.param_label || w.param} 분포.`;
+      el.append(n);
+    },
+  };
 
   function statusText(c) {
     if (!c) return '공통지표가 아직 수집되지 않았습니다 — common 워크플로를 돌리세요.';
@@ -567,7 +660,6 @@
   }));
   $('#pf-ev-auto').addEventListener('change', e => { S.evAuto = e.target.checked; if (S.app) renderEvents(commonOf(S.app)); });
   $('#pf-detail-link').addEventListener('click', () => (location.hash = 'secondact'));
-  $('#pf-voice-more').addEventListener('click', () => { S.fbN += 50; renderVoice(); });
   $('#pf-voice-all').addEventListener('click', () => (location.hash = 'voice'));
   let rt;
   addEventListener('resize', () => {

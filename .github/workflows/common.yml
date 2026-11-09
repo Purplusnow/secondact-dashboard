@@ -48,17 +48,21 @@ jobs:
       - run: pip install --quiet google-cloud-bigquery
       - name: 공통지표 수집
         run: python3 tools/common.py
-      # 유저 의견(Firestore) — 이 레포·Pages 가 공개라 리포 변수 FEEDBACK_ON=1 로 켰을 때만 돈다.
-      - name: 유저 의견 수집
-        if: vars.FEEDBACK_ON == '1'
+      # 게임별 맞춤 인게임 지표(tools/gamespecs.json). event_params 를 읽어 공통지표보다 무겁다 — 드라이런 상한 적용.
+      - name: 게임별 인게임 지표
+        continue-on-error: true   # 실패해도 공통지표는 커밋한다
+        run: python3 tools/gamestats.py
+      # 유저 의견 '건수'만(Firestore). 내용은 읽지 않는다 — 공개 레포라서.
+      - name: 유저 의견 건수
+        continue-on-error: true   # 실패해도 공통지표는 커밋한다
         run: python3 tools/feedback.py
       - name: 커밋
         run: |
           git config user.name  "secondact-bot"
           git config user.email "34591718+Purplusnow@users.noreply.github.com"
-          # common.json·feedback.json 은 이 잡만 쓴다 — 밀리면 최신 위에 내 파일만 얹어 다시 민다.
+          # common·gamestats·feedback.json 은 이 잡만 쓴다 — 밀리면 최신 위에 내 파일만 얹어 다시 민다.
           FILES="docs/data/common.json"
-          [ -f docs/data/feedback.json ] && FILES="$FILES docs/data/feedback.json"
+          for f in docs/data/feedback.json docs/data/gamestats.json; do [ -f "$f" ] && FILES="$FILES $f"; done
           mkdir -p "$RUNNER_TEMP/keep" && cp $FILES "$RUNNER_TEMP/keep/"
           for i in 1 2 3; do
             git add $FILES

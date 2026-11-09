@@ -1,0 +1,1099 @@
+{
+ "_note": "게임별 인게임 화면 정의(tools/gamestats.py 가 읽는다). 위젯: funnel / levels / breakdown / maxval — 형식은 gamestats.py 머리말. 이벤트·파라미터 이름은 각 게임 레포의 analytics 코드에서 확인한 값이다(2026-11-09). 게임이 이벤트를 바꾸면 여기도 바꿔야 화면이 조용히 0 이 되지 않는다.",
+ "games": {
+  "crowncoin": {
+   "title": "왕관과 금화 — 인게임",
+   "note": "온보딩 순서는 게임의 ONB_STEPS(analytics.gd). first_settle(60초 타이머)·first_manager·first_finance(곁가지)는 crowncoin-dashboard 처럼 퍼널에서 뺐다.",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "sub": "최근 신규 유저가 각 단계에 도달한 비율(onb_step.step).",
+     "steps": [
+      {
+       "label": "새 게임",
+       "event": "onb_step",
+       "param": "step",
+       "value": "new_game"
+      },
+      {
+       "label": "인트로 완료",
+       "event": "onb_step",
+       "param": "step",
+       "value": "intro_done"
+      },
+      {
+       "label": "기획",
+       "event": "onb_step",
+       "param": "step",
+       "value": "dev_concept"
+      },
+      {
+       "label": "디자인",
+       "event": "onb_step",
+       "param": "step",
+       "value": "dev_design"
+      },
+      {
+       "label": "프로토타입",
+       "event": "onb_step",
+       "param": "step",
+       "value": "dev_prototype"
+      },
+      {
+       "label": "알파",
+       "event": "onb_step",
+       "param": "step",
+       "value": "dev_alpha"
+      },
+      {
+       "label": "베타",
+       "event": "onb_step",
+       "param": "step",
+       "value": "dev_beta"
+      },
+      {
+       "label": "출시",
+       "event": "onb_step",
+       "param": "step",
+       "value": "dev_launch"
+      },
+      {
+       "label": "첫 운영",
+       "event": "onb_step",
+       "param": "step",
+       "value": "first_ops"
+      },
+      {
+       "label": "부동산 1",
+       "event": "onb_step",
+       "param": "step",
+       "value": "property_1"
+      },
+      {
+       "label": "부동산 3",
+       "event": "onb_step",
+       "param": "step",
+       "value": "property_3"
+      },
+      {
+       "label": "부동산 5",
+       "event": "onb_step",
+       "param": "step",
+       "value": "property_5"
+      },
+      {
+       "label": "은퇴(게임 매각)",
+       "event": "onb_step",
+       "param": "step",
+       "value": "game_sale"
+      },
+      {
+       "label": "첫 후원",
+       "event": "onb_step",
+       "param": "step",
+       "value": "first_donate"
+      },
+      {
+       "label": "첫 환생",
+       "event": "onb_step",
+       "param": "step",
+       "value": "first_rebirth"
+      },
+      {
+       "label": "도시 입장(2부)",
+       "event": "city_enter"
+      },
+      {
+       "label": "도시 완성",
+       "event": "city_complete"
+      }
+     ]
+    },
+    {
+     "type": "maxval",
+     "title": "어디까지 갔나 — 최고 추월%",
+     "sub": "기간 중 progress_pct 를 남긴 유저의 최고 추월%(0~100). 100 = 게임 완료.",
+     "event": "progress_pct",
+     "param": "pct",
+     "param_label": "추월%",
+     "prefix": ""
+    },
+    {
+     "type": "maxval",
+     "title": "최고 신분",
+     "sub": "class_up.level 최댓값.",
+     "event": "class_up",
+     "param": "level",
+     "param_label": "신분",
+     "prefix": "신분 "
+    },
+    {
+     "type": "breakdown",
+     "title": "보상형 광고 — 지점별",
+     "sub": "ad_impression.placement. 결과(시청 완료·닫음·실패·광고 없음)는 아래.",
+     "event": "ad_impression",
+     "param": "placement",
+     "param_label": "지점",
+     "labels": {
+      "repair": "수리",
+      "offline": "오프라인 보상",
+      "boost": "부스트",
+      "gem_ad": "보석 광고",
+      "city_speedup": "도시 가속",
+      "city_supply": "도시 보급"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "보상형 광고 — 결과",
+     "event": "ad_impression",
+     "param": "result",
+     "param_label": "결과",
+     "labels": {
+      "earned": "시청 완료",
+      "dismissed": "중간에 닫음",
+      "failed": "실패",
+      "no_ad": "광고 없음(공급)"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "오프라인 보상 수령 방식",
+     "event": "mon_offline_claim",
+     "param": "method",
+     "param_label": "방식",
+     "labels": {
+      "base": "기본",
+      "ad": "광고 2배",
+      "gem": "보석"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "보석 사용처",
+     "event": "spend_virtual_currency",
+     "param": "reason",
+     "param_label": "사용처",
+     "labels": {
+      "offline": "오프라인 보상",
+      "manager": "매니저",
+      "city_build": "도시 건설",
+      "city_cash": "도시 자금",
+      "boost": "부스트",
+      "": "(미기록)"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "결제 실패 사유",
+     "sub": "no_details = 상품 정보를 못 받아 결제창이 안 뜬 것(게임 쪽 수정 대상).",
+     "event": "purchase_failed",
+     "param": "reason",
+     "param_label": "사유",
+     "top": 15
+    },
+    {
+     "type": "breakdown",
+     "title": "보석 부족",
+     "sub": "보석이 모자라 못 쓴 지점 — 상점 유도 기회.",
+     "event": "gem_insufficient",
+     "param": "reason",
+     "param_label": "지점"
+    }
+   ]
+  },
+  "plopcat": {
+   "title": "퐁당냥 — 인게임",
+   "note": "level_start·level_clear 는 레벨당 계정 1회(첫 시작·첫 클리어)라 클리어율 = 클리어/시작. level_fail 은 매 시도마다.",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "sub": "onboard_step(게임의 ONB_STEPS 순서).",
+     "steps": [
+      {
+       "label": "게임 열기",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "game_open"
+      },
+      {
+       "label": "첫 이동",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "first_move"
+      },
+      {
+       "label": "레벨 1 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv1_clear"
+      },
+      {
+       "label": "레벨 3 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv3_clear"
+      },
+      {
+       "label": "앨범 첫 열기",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "album_first"
+      },
+      {
+       "label": "첫 조각",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "first_piece"
+      },
+      {
+       "label": "레벨 10 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv10_clear"
+      },
+      {
+       "label": "첫 그림 완성",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "first_picture"
+      },
+      {
+       "label": "레벨 20 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv20_clear"
+      },
+      {
+       "label": "레벨 50 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv50_clear"
+      }
+     ]
+    },
+    {
+     "type": "levels",
+     "title": "레벨별 진행",
+     "start": {
+      "event": "level_start"
+     },
+     "clear": {
+      "event": "level_clear"
+     },
+     "fail": {
+      "event": "level_fail"
+     },
+     "level_param": "level",
+     "max_level": 150
+    },
+    {
+     "type": "breakdown",
+     "title": "막힌 레벨",
+     "sub": "level_stuck — 재시작 3회 이상 또는 힌트 2회 이상인 레벨(계정당 1회).",
+     "event": "level_stuck",
+     "param": "level",
+     "num": true,
+     "param_label": "레벨",
+     "top": 15
+    },
+    {
+     "type": "breakdown",
+     "title": "하트 소진 레벨",
+     "event": "out_of_hearts",
+     "param": "level",
+     "num": true,
+     "param_label": "레벨",
+     "top": 15
+    },
+    {
+     "type": "breakdown",
+     "title": "아이템 사용 — 종류",
+     "event": "booster_use",
+     "param": "kind",
+     "param_label": "아이템",
+     "labels": {
+      "hint": "힌트",
+      "undo": "되돌리기",
+      "tow": "견인",
+      "moves": "이동 추가",
+      "heart": "하트"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "아이템 사용 — 지불 수단",
+     "sub": "유료 = 발바닥(paw)·보석(gem). 광고·무료·특전은 돈이 안 나간 것.",
+     "event": "booster_use",
+     "param": "source",
+     "param_label": "수단",
+     "labels": {
+      "paw": "발바닥(유료)",
+      "gem": "보석(유료)",
+      "ad": "광고",
+      "free": "무료",
+      "perk": "특전"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "광고 — 지점",
+     "event": "ad_watch",
+     "param": "placement",
+     "param_label": "지점",
+     "labels": {
+      "hint": "힌트(보상)",
+      "moves": "이동(보상)",
+      "heart": "하트(보상)",
+      "inter": "전면"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "광고 — 결과",
+     "event": "ad_watch",
+     "param": "result",
+     "param_label": "결과",
+     "labels": {
+      "earned": "시청 완료",
+      "dismissed": "중간에 닫음",
+      "no_ad": "광고 없음(공급)",
+      "failed": "실패",
+      "house": "자체 홍보로 대체"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "결제 실패 사유",
+     "event": "purchase_fail",
+     "param": "reason",
+     "param_label": "사유"
+    }
+   ]
+  },
+  "beearchitect": {
+   "title": "Bee Architect — 인게임",
+   "note": "level_start·level_clear 는 첫 1회, level_fail 은 매번(포기 포함).",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "steps": [
+      {
+       "label": "게임 열기",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "game_open"
+      },
+      {
+       "label": "첫 배치",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "first_place"
+      },
+      {
+       "label": "첫 수확",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "first_harvest"
+      },
+      {
+       "label": "레벨 1 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv1_clear"
+      },
+      {
+       "label": "레벨 3 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv3_clear"
+      },
+      {
+       "label": "레벨 5 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv5_clear"
+      },
+      {
+       "label": "레벨 10 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv10_clear"
+      },
+      {
+       "label": "레벨 15 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv15_clear"
+      },
+      {
+       "label": "레벨 20 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv20_clear"
+      },
+      {
+       "label": "레벨 30 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv30_clear"
+      },
+      {
+       "label": "레벨 50 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv50_clear"
+      },
+      {
+       "label": "레벨 100 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv100_clear"
+      },
+      {
+       "label": "레벨 200 클리어",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "lv200_clear"
+      }
+     ]
+    },
+    {
+     "type": "levels",
+     "title": "레벨별 진행",
+     "start": {
+      "event": "level_start"
+     },
+     "clear": {
+      "event": "level_clear"
+     },
+     "fail": {
+      "event": "level_fail"
+     },
+     "level_param": "level",
+     "max_level": 250
+    },
+    {
+     "type": "breakdown",
+     "title": "실패 원인",
+     "event": "level_fail",
+     "param": "cause",
+     "param_label": "원인",
+     "labels": {
+      "stuck": "막힘",
+      "stacks": "칸 부족",
+      "quit": "포기"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "부활",
+     "event": "revive",
+     "param": "how",
+     "param_label": "방법",
+     "labels": {
+      "ad": "광고",
+      "coins": "코인"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "부스터 사용",
+     "event": "booster_use",
+     "param": "kind",
+     "param_label": "부스터",
+     "labels": {
+      "hammer": "망치",
+      "swap": "교체",
+      "shuffle": "섞기"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "보상형 광고 — 지점",
+     "event": "ad_watch",
+     "param": "placement",
+     "param_label": "지점",
+     "labels": {
+      "revive": "부활",
+      "win_x3": "승리 3배",
+      "life": "생명",
+      "shop_coins": "상점 코인",
+      "daily_x2": "일일 2배"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "보상형 광고 — 결과",
+     "event": "ad_watch",
+     "param": "result",
+     "param_label": "결과",
+     "labels": {
+      "earned": "시청 완료",
+      "dismissed": "중간에 닫음",
+      "no_ad": "광고 없음(공급)",
+      "failed": "실패",
+      "house": "자체 홍보로 대체"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "도전 모드 시작",
+     "event": "mode_start",
+     "param": "mode",
+     "param_label": "모드",
+     "labels": {
+      "daily": "일일 도전",
+      "endless": "무한"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "상점 진입 경로",
+     "event": "shop_open",
+     "param": "from",
+     "param_label": "경로"
+    }
+   ]
+  },
+  "gyrogrid": {
+   "title": "GYROGRID — 인게임",
+   "note": "모험 레벨(엘리트 제외) + 무한 점수 모드(클래식·데일리). level_start 는 시도마다 찍힌다.",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "steps": [
+      {
+       "label": "앱 열기",
+       "event": "onboarding",
+       "param": "name",
+       "value": "app_open"
+      },
+      {
+       "label": "튜토리얼 시작",
+       "event": "onboarding",
+       "param": "name",
+       "value": "tutorial_begin"
+      },
+      {
+       "label": "드래그",
+       "event": "onboarding",
+       "param": "name",
+       "value": "tut_drag"
+      },
+      {
+       "label": "회전",
+       "event": "onboarding",
+       "param": "name",
+       "value": "tut_spin"
+      },
+      {
+       "label": "튜토리얼 완료",
+       "event": "onboarding",
+       "param": "name",
+       "value": "tutorial_complete"
+      },
+      {
+       "label": "첫 판 끝",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_game_end"
+      },
+      {
+       "label": "첫 회전 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_spin_clear"
+      },
+      {
+       "label": "첫 소용돌이",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_vortex"
+      },
+      {
+       "label": "레벨 5 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv5_clear"
+      },
+      {
+       "label": "레벨 10 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv10_clear"
+      },
+      {
+       "label": "레벨 20 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv20_clear"
+      },
+      {
+       "label": "레벨 41 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv41_clear"
+      },
+      {
+       "label": "레벨 51 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv51_clear"
+      },
+      {
+       "label": "레벨 71 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv71_clear"
+      },
+      {
+       "label": "레벨 100 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv100_clear"
+      }
+     ]
+    },
+    {
+     "type": "levels",
+     "title": "모험 레벨별 진행",
+     "sub": "엘리트 레벨 제외. 클리어 = level_end.success=1.",
+     "start": {
+      "event": "level_start",
+      "where": {
+       "elite": "0"
+      }
+     },
+     "clear": {
+      "event": "level_end",
+      "where": {
+       "elite": "0",
+       "success": "1"
+      }
+     },
+     "fail": {
+      "event": "level_end",
+      "where": {
+       "elite": "0",
+       "success": "0"
+      }
+     },
+     "level_param": "level",
+     "max_level": 150
+    },
+    {
+     "type": "breakdown",
+     "title": "실패 사유",
+     "event": "level_end",
+     "param": "fail_reason",
+     "param_label": "사유",
+     "labels": {
+      "no_moves": "이동 소진",
+      "no_space": "공간 없음",
+      "bomb": "폭탄",
+      "quit": "포기",
+      "": "(성공)"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "무한 모드 시작",
+     "event": "game_start",
+     "param": "mode",
+     "param_label": "모드",
+     "labels": {
+      "classic": "클래식",
+      "daily": "데일리"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "부활",
+     "event": "revive",
+     "param": "method",
+     "param_label": "방법",
+     "labels": {
+      "ad": "광고",
+      "coins": "코인"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "보상형 광고 — 지점",
+     "event": "ad_rewarded_show",
+     "param": "placement",
+     "param_label": "지점"
+    },
+    {
+     "type": "breakdown",
+     "title": "전면 광고 — 지점",
+     "event": "ad_inter_show",
+     "param": "placement",
+     "param_label": "지점"
+    },
+    {
+     "type": "breakdown",
+     "title": "화면 진입",
+     "event": "screen_open",
+     "param": "screen",
+     "param_label": "화면"
+    },
+    {
+     "type": "breakdown",
+     "title": "결제 중단 사유",
+     "event": "iap_cancel",
+     "param": "reason",
+     "param_label": "사유"
+    }
+   ]
+  },
+  "worldrest": {
+   "title": "World Restaurant Tour — 인게임",
+   "note": "레벨이 '나라(country) × 스테이지(1~30)' 구조라 진행은 온보딩 마일스톤(누적 클리어 스테이지 수)으로 본다.",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "sub": "lvN = 누적 클리어 스테이지 N개.",
+     "steps": [
+      {
+       "label": "앱 열기",
+       "event": "onboarding",
+       "param": "name",
+       "value": "app_open"
+      },
+      {
+       "label": "인트로",
+       "event": "onboarding",
+       "param": "name",
+       "value": "intro_seen"
+      },
+      {
+       "label": "튜토리얼 시작",
+       "event": "onboarding",
+       "param": "name",
+       "value": "tutorial_begin"
+      },
+      {
+       "label": "첫 서빙",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_serve"
+      },
+      {
+       "label": "튜토리얼 완료",
+       "event": "onboarding",
+       "param": "name",
+       "value": "tutorial_complete"
+      },
+      {
+       "label": "레벨 3 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv3_clear"
+      },
+      {
+       "label": "레벨 5 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv5_clear"
+      },
+      {
+       "label": "레벨 10 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv10_clear"
+      },
+      {
+       "label": "레벨 20 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv20_clear"
+      },
+      {
+       "label": "레벨 30 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv30_clear"
+      },
+      {
+       "label": "레벨 45 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv45_clear"
+      },
+      {
+       "label": "레벨 60 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv60_clear"
+      },
+      {
+       "label": "레벨 90 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv90_clear"
+      },
+      {
+       "label": "레벨 120 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv120_clear"
+      },
+      {
+       "label": "레벨 180 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv180_clear"
+      },
+      {
+       "label": "레벨 240 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv240_clear"
+      },
+      {
+       "label": "레벨 300 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv300_clear"
+      },
+      {
+       "label": "레벨 360 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv360_clear"
+      }
+     ]
+    },
+    {
+     "type": "maxval",
+     "title": "도달한 나라",
+     "sub": "level_start.country 최댓값.",
+     "event": "level_start",
+     "param": "country",
+     "param_label": "나라",
+     "prefix": "나라 "
+    },
+    {
+     "type": "breakdown",
+     "title": "스테이지 결과",
+     "event": "level_end",
+     "param": "result",
+     "param_label": "결과",
+     "labels": {
+      "clear": "클리어",
+      "fail": "실패"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "나라별 플레이",
+     "event": "level_end",
+     "param": "country",
+     "num": true,
+     "param_label": "나라"
+    },
+    {
+     "type": "breakdown",
+     "title": "모드",
+     "event": "level_start",
+     "param": "mode",
+     "param_label": "모드",
+     "labels": {
+      "normal": "일반",
+      "rush": "러시",
+      "critic": "평론가",
+      "perfect": "퍼펙트"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "부스터",
+     "event": "booster_use",
+     "param": "booster",
+     "param_label": "부스터"
+    },
+    {
+     "type": "breakdown",
+     "title": "보상형 광고 — 지점",
+     "event": "ad_rewarded_show",
+     "param": "placement",
+     "param_label": "지점"
+    },
+    {
+     "type": "breakdown",
+     "title": "오퍼 노출",
+     "event": "offer_show",
+     "param": "offer",
+     "param_label": "오퍼"
+    }
+   ]
+  },
+  "onelinepath": {
+   "title": "OneLine Path — 인게임",
+   "note": "level_start 는 시도마다 찍힌다. 클리어 = level_end.success=1.",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "steps": [
+      {
+       "label": "앱 열기",
+       "event": "onboarding",
+       "param": "name",
+       "value": "app_open"
+      },
+      {
+       "label": "튜토리얼 시작",
+       "event": "onboarding",
+       "param": "name",
+       "value": "tutorial_begin"
+      },
+      {
+       "label": "첫 되돌리기",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_backtrack"
+      },
+      {
+       "label": "튜토리얼 완료",
+       "event": "onboarding",
+       "param": "name",
+       "value": "tutorial_complete"
+      },
+      {
+       "label": "레벨 3 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv3_clear"
+      },
+      {
+       "label": "레벨 5 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv5_clear"
+      },
+      {
+       "label": "레벨 10 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv10_clear"
+      },
+      {
+       "label": "레벨 20 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv20_clear"
+      },
+      {
+       "label": "레벨 35 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv35_clear"
+      },
+      {
+       "label": "레벨 60 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv60_clear"
+      },
+      {
+       "label": "레벨 100 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv100_clear"
+      },
+      {
+       "label": "레벨 150 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv150_clear"
+      },
+      {
+       "label": "레벨 200 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv200_clear"
+      },
+      {
+       "label": "레벨 300 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv300_clear"
+      },
+      {
+       "label": "레벨 500 클리어",
+       "event": "onboarding",
+       "param": "name",
+       "value": "lv500_clear"
+      }
+     ]
+    },
+    {
+     "type": "levels",
+     "title": "레벨별 진행",
+     "start": {
+      "event": "level_start"
+     },
+     "clear": {
+      "event": "level_end",
+      "param": "success",
+      "value": "1"
+     },
+     "fail": {
+      "event": "level_end",
+      "param": "success",
+      "value": "0"
+     },
+     "level_param": "level",
+     "max_level": 500
+    },
+    {
+     "type": "breakdown",
+     "title": "실패 사유",
+     "event": "level_end",
+     "param": "fail_reason",
+     "param_label": "사유",
+     "labels": {
+      "retry": "다시 하기",
+      "quit": "포기",
+      "": "(성공)"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "힌트를 쓴 레벨",
+     "event": "hint_used",
+     "param": "level",
+     "num": true,
+     "param_label": "레벨",
+     "top": 15
+    },
+    {
+     "type": "breakdown",
+     "title": "상점 진입 경로",
+     "event": "shop_open",
+     "param": "source",
+     "param_label": "경로",
+     "labels": {
+      "hint_button": "힌트 버튼",
+      "home": "홈"
+     }
+    },
+    {
+     "type": "breakdown",
+     "title": "전면 광고 — 지점",
+     "event": "ad_inter_show",
+     "param": "placement",
+     "param_label": "지점"
+    }
+   ]
+  }
+ }
+}

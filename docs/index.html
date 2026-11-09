@@ -7,7 +7,7 @@
 <meta name="description" content="전체 앱의 광고매출·인앱매출·DAU·리텐션·유저 의견을 한 화면에서 보는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=d3051b9b">
+<link rel="stylesheet" href="style.css?v=0170ab3c">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -56,9 +56,9 @@
   <section class="card" id="pf-dau-empty" hidden><p class="card-sub">DAU 는 <code>common</code> 워크플로가 앱별 BigQuery 를 읽은 뒤 나옵니다.</p></section>
 
   <section class="card" id="pf-voice-card" hidden>
-    <div class="card-head pf-head-row"><div><h2>최근 유저 의견</h2><p class="card-sub">전체 앱, 최신 5건.</p></div>
-      <button class="tab" id="pf-voice-all" type="button">전체 보기</button></div>
-    <ul class="pf-voices" id="pf-voice-latest"></ul>
+    <div class="card-head pf-head-row"><div><h2>유저 의견 — 최근 7일</h2><p class="card-sub">앱별 접수 건수. 내용은 Firebase 콘솔에서.</p></div>
+      <button class="tab" id="pf-voice-all" type="button">날짜별 보기</button></div>
+    <div id="pf-voice-latest"></div>
   </section>
 
   <p class="pf-cover" id="pf-cover"></p>
@@ -104,6 +104,8 @@
       <div class="legend" id="pf-app-dau-legend"></div>
     </section>
 
+    <div id="pf-game"></div>
+
     <section class="card">
       <div class="card-head"><h2>리텐션</h2><p class="card-sub">위: 각 Dn 이 익은 최근 4주 코호트의 가중 평균. 아래: 가입일별(최근 21일) — 점(·)은 아직 그날이 안 온 칸.</p></div>
       <div class="pf-rets" id="pf-ret-tiles"></div>
@@ -133,14 +135,13 @@
 <div id="top-voice" hidden>
 <main class="wrap">
   <section class="card" id="pf-voice-body">
-    <div class="card-head"><h2>유저 의견</h2><p class="card-sub" id="pf-voice-meta"></p></div>
-    <div class="pf-chips" id="pf-voice-chips"></div>
-    <ul class="pf-voices" id="pf-voice-list"></ul>
-    <button type="button" class="tab rt-more" id="pf-voice-more">더 보기</button>
+    <div class="card-head"><h2>유저 의견 — 앱별 · 날짜별 건수</h2><p class="card-sub" id="pf-voice-meta"></p></div>
+    <div class="pf-voice-sum" id="pf-voice-last"></div>
+    <div class="table-scroll"><table class="ledger" id="pf-voice-table"></table></div>
   </section>
   <section class="empty" id="pf-voice-empty" hidden>
     <h2>아직 수집된 의견이 없습니다</h2>
-    <p>게임 인앱 '의견 보내기'로 Firestore <code>feedback</code> 컬렉션에 쌓인 글을 <code>common</code> 워크플로가 모아 옵니다(리포 변수 <code>FEEDBACK_ON=1</code> 일 때).</p>
+    <p>게임 인앱 '의견 보내기'로 Firestore <code>feedback</code> 컬렉션에 쌓인 건수를 <code>common</code> 워크플로가 셉니다. 서비스계정에 'Cloud Datastore 뷰어' 권한이 있어야 합니다.</p>
   </section>
 </main>
 </div>
@@ -591,7 +592,7 @@
 <script src="realtime.js?v=0427caf8"></script>
 <script src="ads.js?v=4b8256d1"></script>
 <script src="users.js?v=4ffd5a32"></script>
-<script src="portfolio.js?v=468382c9"></script>
+<script src="portfolio.js?v=587c0b7d"></script>
 <script src="geo.js?v=5e746b90"></script>
 </body>
 </html>
