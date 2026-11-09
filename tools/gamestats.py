@@ -10,7 +10,7 @@
             — 레벨별 시작 유저·클리어 유저·실패 횟수·시도/인, 그리고 '최고 도달 레벨' 분포(도달률 곡선)
   breakdown event, param, (num:true 면 값을 숫자로) — 값별 횟수·유저 상위 N
   maxval    event, param — 유저별 최댓값 분포(등급·환생 횟수 같은 '어디까지 갔나')
-  crosstab  event, param?, split?, dim: install_source|cert — 값 × 설치 출처/서명 인증서(위변조 판별)
+  crosstab  event, param?, split?, dim: install_source|cert|country|os_version — 값 × 설치 출처/서명 인증서(위변조 판별)
             cert 는 user_properties.apk_cert(앞 16자). split=':' 이면 'no_details:gold_pack' → 'no_details'.
 
 ★ 비용: event_params 를 읽어야 해서 공통지표(컬럼 6개)보다 무겁다. 그래서
@@ -107,6 +107,10 @@ def build(spec: dict) -> tuple[str, list[str]]:
     # 위변조 판별용 차원 — 쓰는 스펙에서만 읽는다(user_properties 는 그만큼 스캔이 는다)
     if "install_source" in dims:
         cols.append("IFNULL(app_info.install_source, '(없음)') AS d_install_source")
+    if "country" in dims:
+        cols.append("IFNULL(geo.country, '(없음)') AS d_country")
+    if "os_version" in dims:
+        cols.append("IFNULL(device.operating_system_version, '(없음)') AS d_os_version")
     if "cert" in dims:
         cols.append("IFNULL((SELECT value.string_value FROM UNNEST(user_properties) WHERE key='apk_cert'), '(미기록)') AS d_cert")
     # 첫 줄이 열 이름·타입을 정한다 — 위젯 순서와 상관없이 같은 모양이 나오게 빈 머리줄을 둔다

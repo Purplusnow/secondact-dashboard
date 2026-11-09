@@ -636,6 +636,34 @@
      "dim": "install_source",
      "param_label": "",
      "dim_label": "설치 출처"
+    },
+    {
+     "type": "crosstab",
+     "title": "결제 실패 × 국가",
+     "event": "purchase_fail",
+     "param": "reason",
+     "split": ":",
+     "dim": "country",
+     "param_label": "사유",
+     "dim_label": "국가"
+    },
+    {
+     "type": "crosstab",
+     "title": "결제 실패 × Android 버전",
+     "event": "purchase_fail",
+     "param": "reason",
+     "split": ":",
+     "dim": "os_version",
+     "param_label": "사유",
+     "dim_label": "Android"
+    },
+    {
+     "type": "crosstab",
+     "title": "결제 완료 × 국가",
+     "event": "purchase",
+     "dim": "country",
+     "param_label": "",
+     "dim_label": "국가"
     }
    ]
   },
