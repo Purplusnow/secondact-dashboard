@@ -25,6 +25,7 @@ from datetime import datetime, timedelta, timezone
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DAILY = ROOT / "docs" / "data" / "daily.json"
 GEO = ROOT / "docs" / "data" / "geo_cost.json"
+ADS_APPS = ROOT / "docs" / "data" / "ads_apps.json"
 GEOMAP = ROOT / "tools" / "geo_targets_countries.json"
 KST = timezone(timedelta(hours=9))
 TOKEN_URL = "https://oauth2.googleapis.com/token"
@@ -88,6 +89,40 @@ def apply_ads(payload: str) -> None:
             row["ads"] = cost
     stamp(data, "ads")
     save(data, changed)
+
+
+def apply_apps(payload: str) -> None:
+    """앱(캠페인)별 마케팅비 → docs/data/ads_apps.json. 통합 대시보드가 게임별 손익을 낸다.
+
+    스크립트가 캠페인마다 app_campaign_setting.app_id(=패키지명)를 실어 보낸다. 앱 캠페인이
+    아니면 app 이 빈 값이라 '(앱 미지정)'으로 모은다. geo 와 같은 이유로 daily.json 과 분리.
+    합계 기준은 여전히 daily.ads 다 — 여기는 '어느 앱에 썼나'를 나누는 용도.
+    """
+    rows = json.loads(payload) if payload else []
+    if isinstance(rows, dict):
+        rows = [rows]
+    if not rows:
+        print("앱별: 받은 행 없음 — 건너뜀")
+        return
+    data = json.loads(ADS_APPS.read_text(encoding="utf-8")) if ADS_APPS.exists() else {"by_date": {}}
+    fresh: dict = {}
+    for it in rows:
+        date = it.get("date")
+        try:
+            datetime.strptime(date, "%Y-%m-%d")
+        except (TypeError, ValueError):
+            continue
+        app = (it.get("app") or "").strip() or "(앱 미지정)"
+        slot = fresh.setdefault(date, {}).setdefault(app, {"cost": 0, "conv": 0.0, "campaigns": []})
+        slot["cost"] += int(round(float(it.get("cost", 0))))
+        slot["conv"] = round(slot["conv"] + float(it.get("conv", 0)), 2)
+        if it.get("campaign") and it["campaign"] not in slot["campaigns"]:
+            slot["campaigns"].append(it["campaign"])
+    # 날짜 단위로 통째로 바꾼다 — 그날 꺼진 캠페인이 옛 값으로 남지 않게.
+    data["by_date"].update(fresh)
+    data["updated"] = datetime.now(KST).isoformat(timespec="seconds")
+    ADS_APPS.write_text(json.dumps(data, ensure_ascii=False, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+    print(f"앱별: {len(fresh)}일 · " + ", ".join(f"{d} {len(v)}개 앱" for d, v in sorted(fresh.items())))
 
 
 def apply_geo(payload: str) -> None:
@@ -210,6 +245,7 @@ def main() -> int:
     p = argparse.ArgumentParser(description="daily.json 자동 갱신")
     p.add_argument("--ads-json", help="[{date, cost}] 형태의 JSON 문자열")
     p.add_argument("--geo-json", help="[{date, geo, cost, conv, clicks, impr}] 국가별(선택)")
+    p.add_argument("--apps-json", help="[{date, app, campaign, cost, conv}] 앱(캠페인)별(선택)")
     p.add_argument("--admob", action="store_true", help="AdMob API에서 광고매출 수집")
     p.add_argument("--days", type=int, default=3,
                    help="AdMob 조회 일수 (기본 3 — 사후 상향 조정을 따라잡기 위해 여유를 둔다)")
@@ -219,9 +255,11 @@ def main() -> int:
         apply_ads(a.ads_json)
     if a.geo_json:
         apply_geo(a.geo_json)
+    if a.apps_json:
+        apply_apps(a.apps_json)
     if a.admob:
         apply_admob(a.days)
-    if not a.ads_json and not a.admob and not a.geo_json:
+    if not a.ads_json and not a.admob and not a.geo_json and not a.apps_json:
         p.error("--ads-json 또는 --admob 중 하나는 필요합니다")
     return 0
 

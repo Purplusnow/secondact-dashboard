@@ -1,0 +1,16 @@
+{
+  "_note": "통합 대시보드의 앱 목록. 손으로 고친다. order = 화면 순서 = 색 순서(색은 앱에 붙는다 — 순위가 바뀌어도 안 바뀐다). admob = AdMob displayLabel(이름이 바뀐 옛 항목도 같은 앱으로 묶는다). secret = BigQuery 키가 든 GitHub Secret 이름(없으면 DAU·리텐션 없이 매출만). 새 앱: 한 줄 추가 + 키를 시크릿으로 등록하면 다음 수집부터 붙는다.",
+  "apps": [
+    { "key": "secondact",   "name": "인생 2막",        "kind": "game", "package": "com.purplusnow.secondactlife",  "admob": ["Second Act: Property Tycoon"],                   "project": "second-act-life",      "secret": "GCP_SA_KEY",              "detail": "secondact" },
+    { "key": "crowncoin",   "name": "왕관과 금화",      "kind": "game", "package": "com.purplusnow.crowncoin",      "admob": ["Crown & Coin: Idle Estate", "Crown and Coin"],    "project": "crownandcoin",         "secret": "GCP_SA_CROWNCOIN" },
+    { "key": "plopcat",     "name": "퐁당냥",          "kind": "game", "package": "com.purplusnow.plopcat",        "admob": ["Plop Cat: Slide & Jigsaw"],                      "project": "plopcat-6d336",        "secret": "GCP_SA_PLOPCAT" },
+    { "key": "pocketarcade","name": "Pocket Arcade",   "kind": "game", "package": "com.secondact.pocketarcade",    "admob": ["Pocket Arcade: Mini Games", "Pocket Arcade - Offline Games"], "project": "pocket-arcade-eda0c", "secret": "" },
+    { "key": "beearchitect","name": "Bee Architect",   "kind": "game", "package": "com.purplusnow.beearchitect",   "admob": ["Hexa Sort: Bee Architect"],                      "project": "beearchitect-88dbb",   "secret": "GCP_SA_BEEARCHITECT" },
+    { "key": "gyrogrid",    "name": "GYROGRID",        "kind": "game", "package": "com.purplusnow.gyrogrid",       "admob": ["GYROGRID: Spin Block Puzzle"],                   "project": "gyrogrid-77d1c",       "secret": "GCP_SA_GYROGRID" },
+    { "key": "worldrest",   "name": "World Restaurant Tour", "kind": "game", "package": "com.purplusnow.worldrestaurant", "admob": ["World Restaurant Tour"],                "project": "worldrestaurant-530d2","secret": "GCP_SA_WORLDREST" },
+    { "key": "onelinepath", "name": "OneLine Path",    "kind": "game", "package": "com.purplusnow.hanbutgil",      "admob": ["OneLine Path: One Line Puzzle"],                 "project": "hanbutgil",            "secret": "GCP_SA_ONELINEPATH" },
+    { "key": "facelapse",   "name": "FaceLapse",       "kind": "app",  "package": "com.purplusnow.facelapse",      "admob": ["FaceLapse: AI Face Age"],                        "project": "face-lapse",           "secret": "" },
+    { "key": "privatecam",  "name": "Private Camera",  "kind": "app",  "package": "com.purplusnow.private_camera",  "admob": ["Private Camera - Photo Vault"],                  "project": "private-camera-1ca1a", "secret": "" },
+    { "key": "adrevenue",   "name": "Ad Revenue Dashboard", "kind": "app", "package": "com.purplusnow.adrevenuecontrol", "admob": ["Ad Revenue Dashboard"],                   "project": "",                     "secret": "" }
+  ]
+}

@@ -42,6 +42,15 @@ function main() {
     Logger.log('⚠ 국가별 수집 실패(총액은 정상 전송): ' + e);
   }
 
+  // 앱(캠페인)별 분해(2026-11-09 추가) — 통합 대시보드가 게임별 손익을 낸다. geo 와 같은 이유로 분리.
+  var apps = [];
+  try {
+    apps = appRows(tz);
+    Logger.log('앱별 ' + apps.length + '행');
+  } catch (e) {
+    Logger.log('⚠ 앱별 수집 실패(총액은 정상 전송): ' + e);
+  }
+
   Logger.log('보낼 값: ' + JSON.stringify(rows));
 
   var res = UrlFetchApp.fetch(
@@ -54,7 +63,7 @@ function main() {
         'Accept': 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28'
       },
-      payload: JSON.stringify({ event_type: 'ads-cost', client_payload: { rows: rows, geo: geo } }),
+      payload: JSON.stringify({ event_type: 'ads-cost', client_payload: { rows: rows, geo: geo, apps: apps } }),
       muteHttpExceptions: true
     });
 
@@ -152,4 +161,32 @@ function post(payload) {
     });
   var code = res.getResponseCode();
   if (code !== 204) throw new Error('GitHub 전송 실패 ' + code + ': ' + res.getContentText());
+}
+
+
+/**
+ * 캠페인별 비용 — 앱 캠페인이면 app_campaign_setting.app_id 가 패키지명(com.purplusnow.…)이다.
+ * 대시보드는 그 패키지로 앱을 찾는다(docs/data/apps.json). 앱 캠페인이 아니면 app 이 빈 값.
+ */
+function appRows(tz) {
+  var from = dayOffset(1, tz).replace(/-/g, '');
+  var to = dayOffset(0, tz).replace(/-/g, '');
+  var q =
+    'SELECT segments.date, campaign.name, campaign.app_campaign_setting.app_id, ' +
+    'metrics.cost_micros, metrics.conversions ' +
+    'FROM campaign ' +
+    'WHERE segments.date BETWEEN "' + from + '" AND "' + to + '" AND metrics.cost_micros > 0';
+  var out = [];
+  var it = AdsApp.report(q).rows();
+  while (it.hasNext()) {
+    var r = it.next();
+    out.push({
+      date: String(r['segments.date']),
+      campaign: String(r['campaign.name'] || ''),
+      app: String(r['campaign.app_campaign_setting.app_id'] || ''),
+      cost: Math.round(Number(r['metrics.cost_micros'] || 0) / 1000000),
+      conv: Number(r['metrics.conversions'] || 0)
+    });
+  }
+  return out;
 }

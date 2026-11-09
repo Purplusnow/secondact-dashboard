@@ -1,0 +1,66 @@
+# 전체 앱 공통지표 — 앱마다 BigQuery 경량 쿼리 → docs/data/common.json
+#
+# ⚠ BigQuery 를 쓰므로 **수동 실행만** 한다(HANDOFF §1 원칙). schedule 을 달지 말 것.
+# 앱당 수십~수백 MB(읽는 컬럼 6개뿐). 드라이런으로 먼저 재고 MAX_GB 를 넘으면 그 앱은 건너뛴다.
+#
+# 키: 앱마다 GitHub Secret 하나(서비스계정 JSON 원문). 이름은 docs/data/apps.json 의 secret.
+# 비어 있으면 그 앱은 status=no_secret 로 남고 화면엔 '미연결'로 뜬다 — 실패가 아니다.
+name: common
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: '다시 계산할 일수 (기본 45 · 처음 붙는 앱 백필은 120)'
+        required: false
+        default: '45'
+      only:
+        description: '이 앱만 (apps.json 의 key, 쉼표로 여러 개). 비우면 전부'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+# daily.json 은 안 쓰지만 같은 main 에 푸시하므로 같은 그룹에 둔다(HANDOFF: 그룹을 쪼개지 말 것).
+concurrency:
+  group: push-docs-data
+  cancel-in-progress: false
+
+jobs:
+  common:
+    runs-on: ubuntu-latest
+    env:
+      DAYS: ${{ inputs.days || 45 }}
+      ONLY: ${{ inputs.only }}
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      GCP_SA_CROWNCOIN: ${{ secrets.GCP_SA_CROWNCOIN }}
+      GCP_SA_PLOPCAT: ${{ secrets.GCP_SA_PLOPCAT }}
+      GCP_SA_BEEARCHITECT: ${{ secrets.GCP_SA_BEEARCHITECT }}
+      GCP_SA_GYROGRID: ${{ secrets.GCP_SA_GYROGRID }}
+      GCP_SA_WORLDREST: ${{ secrets.GCP_SA_WORLDREST }}
+      GCP_SA_ONELINEPATH: ${{ secrets.GCP_SA_ONELINEPATH }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet google-cloud-bigquery
+      - name: 공통지표 수집
+        run: python3 tools/common.py
+      - name: 커밋
+        run: |
+          git config user.name  "secondact-bot"
+          git config user.email "34591718+Purplusnow@users.noreply.github.com"
+          # common.json 은 이 잡만 쓴다 — 밀리면 최신 위에 내 파일만 얹어 다시 민다.
+          cp docs/data/common.json "$RUNNER_TEMP/common.json"
+          for i in 1 2 3; do
+            git add docs/data/common.json
+            git diff --cached --quiet && { echo "변경 없음"; exit 0; }
+            git commit -q -m "공통지표 수집: $(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') KST"
+            git push -q && exit 0
+            git fetch -q origin main && git reset -q --hard origin/main
+            cp "$RUNNER_TEMP/common.json" docs/data/common.json
+            sleep $((i * 3))
+          done
+          exit 1

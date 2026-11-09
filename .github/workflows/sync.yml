@@ -47,6 +47,9 @@ jobs:
       ADMOB_CLIENT_SECRET: ${{ secrets.ADMOB_CLIENT_SECRET }}
       ADMOB_REFRESH_TOKEN: ${{ secrets.ADMOB_REFRESH_TOKEN }}
       ADMOB_PUBLISHER_ID: ${{ secrets.ADMOB_PUBLISHER_ID }}
+      PLAY_BUCKET: ${{ vars.PLAY_BUCKET }}
+      # 판매 리포트용 키 — Play Console 에 초대한 서비스계정. 따로 안 두면 인생 2막 키를 쓴다.
+      PLAY_SA_KEY: ${{ secrets.PLAY_SA_KEY || secrets.GCP_SA_KEY }}
 
     steps:
       - uses: actions/checkout@v4
@@ -61,21 +64,36 @@ jobs:
         env:
           ADS_ROWS: ${{ toJSON(github.event.client_payload.rows) }}
           GEO_ROWS: ${{ toJSON(github.event.client_payload.geo) }}
-        # 국가별(geo)은 선택 — 스크립트 구버전이 보내지 않으면 'null' 이 와서 조용히 건너뛴다.
+          APP_ROWS: ${{ toJSON(github.event.client_payload.apps) }}
+        # 국가별(geo)·앱별(apps)은 선택 — 스크립트 구버전이 보내지 않으면 'null' 이 와서 조용히 건너뛴다.
         run: |
           python3 tools/sync.py --ads-json "$ADS_ROWS"
           if [ "$GEO_ROWS" != "null" ] && [ -n "$GEO_ROWS" ]; then
             python3 tools/sync.py --geo-json "$GEO_ROWS"
+          fi
+          if [ "$APP_ROWS" != "null" ] && [ -n "$APP_ROWS" ]; then
+            python3 tools/sync.py --apps-json "$APP_ROWS"
           fi
 
       - name: 광고매출 수집
         if: env.ADMOB_REFRESH_TOKEN != ''
         run: python3 tools/sync.py --admob --days "${{ inputs.days || 7 }}"
 
+      # 인앱매출(전체 앱) — Play 판매 리포트를 Cloud Storage 버킷에서 받는다. BigQuery 가 아니라
+      # 비용이 없어서 매시간 자동으로 둔다. 버킷 변수(vars.PLAY_BUCKET)나 키가 없으면 건너뛴다.
+      - name: 판매 리포트 수집
+        if: env.PLAY_BUCKET != '' && env.PLAY_SA_KEY != ''
+        run: |
+          pip install --quiet google-cloud-storage
+          printf '%s' "$PLAY_SA_KEY" > "$RUNNER_TEMP/play.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/play.json" >> "$GITHUB_ENV"
+          GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/play.json" python3 tools/playsales.py
+
       - name: 커밋
         env:
           ADS_ROWS: ${{ toJSON(github.event.client_payload.rows) }}
           GEO_ROWS: ${{ toJSON(github.event.client_payload.geo) }}
+          APP_ROWS: ${{ toJSON(github.event.client_payload.apps) }}
           EV: ${{ github.event_name }}
           DAYS: ${{ inputs.days || 7 }}
         run: |
@@ -109,7 +127,11 @@ jobs:
               if [ "$GEO_ROWS" != "null" ] && [ -n "$GEO_ROWS" ]; then
                 python3 tools/sync.py --geo-json "$GEO_ROWS"
               fi
+              if [ "$APP_ROWS" != "null" ] && [ -n "$APP_ROWS" ]; then
+                python3 tools/sync.py --apps-json "$APP_ROWS"
+              fi
             fi
             if [ -n "$ADMOB_REFRESH_TOKEN" ]; then python3 tools/sync.py --admob --days "$DAYS"; fi
+            if [ -n "$PLAY_BUCKET" ] && [ -n "$PLAY_SA_KEY" ]; then python3 tools/playsales.py; fi
           }
           push_or_recollect recollect
