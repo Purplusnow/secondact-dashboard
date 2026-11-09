@@ -36,17 +36,19 @@
 **그룹을 다시 쪼개지 말 것.**
 
 ### 단축 명령 (형이 쓰는 말)
-- **"실시간"** → `realtime` 실행
-- **"지표업데이트"** → `ingame` 실행
-- **"업데이트" / "대시보드 업데이트"** → 다섯 개 전부(`common` 포함) 실행.
-  ⚠ **한꺼번에 던지지 말고 하나씩 끝난 뒤 다음**을 돌린다. 같은 concurrency 그룹이라
-  대기열에 하나만 남고 나머지는 **취소된다**(2026-11-08 실측: 4개를 연달아 던졌더니 2개 취소).
+- **"업데이트" / "대시보드 업데이트"** → **`sync` → `common`** 두 개만(2026-11-09 부터). 통합 보드 전체가 이걸로 찬다.
+  BigQuery 는 `common` 하나(전체 앱 ≈ 1.4GB). 예전 4개(ingame 18.5GB 포함)를 돌리던 것보다 10배 이상 가볍다.
+- **"인생2막 상세 업데이트"** → `realtime` → `ingame` → `users` (기존 '인생 2막 상세' 탭 — 이상징후·국가 ROI·실시간 유저 목록·가입자 행).
+  이 탭들은 통합 보드에 대응물이 없어서 남겨 뒀지만, 평소엔 안 돌린다(ingame 1회 18.5GB).
+- **"실시간"** → `realtime`, **"지표업데이트"** → `ingame` (예전 그대로)
 되묻지 말고 돌리고, **해석해서 보고까지** 한다.
+⚠ **한꺼번에 던지지 말고 하나씩 끝난 뒤 다음**을 돌린다. 같은 concurrency 그룹이라
+대기열에 하나만 남고 나머지는 **취소된다**(2026-11-08 실측).
 
 ```sh
-# 하나씩 — 앞의 것이 끝난 뒤 다음
 run(){ gh workflow run "$@" >/dev/null && sleep 8 && id=$(gh run list -w "$1" -L1 --json databaseId -q '.[0].databaseId') && gh run watch $id --exit-status >/dev/null; echo "$1 rc=$?"; }
-run realtime.yml; run sync.yml -f days=7; run ingame.yml; run users.yml; run common.yml
+run sync.yml -f days=7; run common.yml                       # 업데이트
+run realtime.yml; run ingame.yml; run users.yml               # 인생2막 상세 업데이트
 git pull --rebase
 ```
 
