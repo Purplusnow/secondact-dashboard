@@ -366,6 +366,21 @@
     },
     {
      "type": "breakdown",
+     "title": "결제 시도 상품",
+     "sub": "purchase_start — 상점에서 구매 버튼을 누른 상품.",
+     "event": "purchase_start",
+     "param": "product_id",
+     "param_label": "상품"
+    },
+    {
+     "type": "breakdown",
+     "title": "결제 완료 상품",
+     "event": "purchase",
+     "param": "product_id",
+     "param_label": "상품"
+    },
+    {
+     "type": "breakdown",
      "title": "결제 실패 사유",
      "event": "purchase_fail",
      "param": "reason",
