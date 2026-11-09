@@ -20,7 +20,7 @@
 | `realtime` | **수동만** | `tools/realtime.py` + `tools/iap.py` — intraday 기준 당일 유저·D1·미확정 보정 | 0.35GB |
 | `users` | **수동만** | `tools/users.py`, `tools/geo_roi.py --days 60 --write` | 작음 |
 | `sync` | 매시간(`7 * * * *`) + `repository_dispatch` + 수동 | `tools/sync.py` — AdMob 매출(`--days 7`) + Google Ads 마케팅비 | **0 (BigQuery 안 씀)** |
-| `common` | **수동만** | `tools/common.py` — **전체 앱** DAU·신규·코호트 리텐션·이벤트·버전 (+ `FEEDBACK_ON=1` 이면 `tools/feedback.py` 유저 의견) | 앱당 수백 MB (인생 2막 45일 = 385MB) |
+| `common` | **수동만** | `tools/common.py`(전체 앱 DAU·신규·리텐션·이벤트·버전) → `tools/gamestats.py`(게임별 맞춤 인게임) → `tools/feedback.py`(유저 의견 **건수**) | 공통 ~0.7GB + 게임별 ~0.25GB |
 | `probe` | 수동만 | `tools/probe.py` — 진단용. 평시엔 안 돌린다 | 모드마다 다름 |
 
 **원칙: BigQuery 를 쓰는 워크플로는 자동 실행하지 않는다.** 2026-10-27 형 지시.
@@ -153,7 +153,8 @@ git pull --rebase
 | 인앱매출 | `iap_sales.json` | `sync`(버킷 설정 시) 또는 `playsales.py --zip` | **Play 판매 리포트가 기준.** 세전가 × 0.85, KST 날짜 |
 | 마케팅비(앱별) | `ads_apps.json` | Ads 스크립트 → `sync` | 스크립트를 다시 붙여넣기 전까지 비어 있다 → '미배정' |
 | DAU·리텐션·이벤트 | `common.json` | `common` 수동 | 키 없는 앱은 '지표 미연결' |
-| 유저 의견 | `feedback.json` | `common` 안, `FEEDBACK_ON=1` 일 때만 | 이메일·전화 가림, uid·기기 안 받음 |
+| 게임별 인게임 | `gamestats.json` | `common` 안 | 스펙 `tools/gamespecs.json`(위젯: funnel/levels/breakdown/maxval). 인생 2막은 전용 보드라 제외 |
+| 유저 의견 | `feedback.json` | `common` 안 | **앱 × 날짜 건수만**(형 지시). 내용은 Firebase 콘솔. 쿼리도 created_unix 만 받는다 |
 
 - **인생 2막 상세의 광고매출은 이제 인생 2막 몫만** 쓴다(`app.js` `ownAppOnly`). 전에는 AdMob 계정 전체 합계라 Crown & Coin 이 섞여 있었다.
 - 11/1 이후 마케팅비는 **구글 프로모션 크레딧**이다(형 확인). `config.json` `promo_credit` 에 기간이 있고, 월별 표에 '크레딧' 표시가 붙는다. 크레딧이 끝나면 `to` 에 마지막 날짜를 넣는다.
@@ -175,10 +176,13 @@ git pull --rebase
    '재무 데이터 보기'를 준다(반영까지 최대 24시간). 그다음 `gh variable set PLAY_BUCKET -b pubsite_prod_rev_…`
    (Play Console › 다운로드 보고서 › 재무 › 'Cloud Storage URI 복사'). 그 전까진 월말에 zip 을 받아 `playsales.py --zip`.
 3. **Google Ads 스크립트 다시 붙여넣기** — `tools/google-ads-script.js` 에 캠페인→앱 패키지별 비용(`appRows`)을 추가했다.
-4. **유저 의견** — 각 프로젝트의 서비스계정에 'Cloud Datastore 뷰어' 권한을 주고, **공개 게시를 확인한 뒤**
-   `gh variable set FEEDBACK_ON -b 1`. 이 레포와 Pages 는 **공개**라 의견 내용이 인터넷과 git 기록에 남는다.
+4. **유저 의견 건수 — 인생 2막·Bee Architect 만 403.** 그 두 프로젝트의 서비스계정에 'Cloud Datastore 뷰어'
+   (roles/datastore.viewer)를 주면 다음 `common` 부터 잡힌다. 나머지 게임은 이미 읽힌다(2026-11-09).
 
-### 다음 단계 (미착수)
-- **게임별 맞춤 인게임 화면.** 지금 앱별 페이지의 '인게임 이벤트'는 이벤트 이름별 횟수뿐인 범용 뷰다.
-  게임마다 이벤트 설계(각 게임 레포의 analytics 코드)를 읽고 퍼널·진행도 뷰를 짜야 한다.
-  이벤트 파라미터를 읽으면 스캔이 커지니, 게임마다 필요한 이벤트만 골라 읽을 것.
+### 게임별 인게임 화면 (2026-11-09)
+- 엔진 하나(`gamestats.py`) + 게임별 스펙(`gamespecs.json`). 스펙의 이벤트·파라미터는 각 게임 레포의
+  `scripts/**/analytics.gd`·`docs/ANALYTICS.md` 에서 확인한 값이다. **게임이 이벤트 이름을 바꾸면 화면이 조용히 0 이 된다** — 스펙도 같이 고칠 것.
+- 파라미터 타입 함정: 왕관과 금화·퐁당냥은 bool 이 문자열 "true"/"false", Bee Architect·신규 3종은 int 0/1. 엔진은 모든 값을 문자열로 비교하므로 스펙의 value 는 `"1"`·`"true"` 처럼 쓴다.
+- '레벨별 진행'의 벽 = (L1·L2 제외) 클리어율 90% 미만 하위 셋 ∪ 1인당 실패 상위 셋. 퐁당냥·Bee Architect 는 level_start/clear 가 계정당 첫 1회라 클리어율보다 실패/인이 막힘을 더 잘 드러낸다.
+- World Restaurant Tour 는 레벨이 나라×스테이지라 levels 위젯 대신 온보딩 마일스톤(누적 클리어 수)으로 본다.
+- Bee Architect·GYROGRID·World Restaurant Tour·OneLine Path 는 **스트리밍 내보내기만** 켜져 있다(확정 테이블 없음). 지표엔 지장 없고 차트가 '확정 전' 색으로 나온다.

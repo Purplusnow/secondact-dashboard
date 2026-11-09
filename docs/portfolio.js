@@ -415,7 +415,7 @@
         return `<tr${d >= yday ? ' class="pf-fresh"' : ''}><td class="date">${mmdd(d)}${d === today ? ' <span class="pf-new">오늘</span>' : d === yday ? ' <span class="pf-muted">어제</span>' : ''}</td>${ks.map(k => `<td>${fbCount(d, k) || '<span class="pf-muted">·</span>'}</td>`).join('')}<td class="sum">${t}</td></tr>`; }).join('') +
       `</tbody><tfoot><tr><td class="date">합계</td>${ks.map(k => `<td class="sum">${sum(rows.map(d => fbCount(d, k)))}</td>`).join('')}<td class="sum">${sum(rows.map(d => sum(ks.map(k => fbCount(d, k)))))}</td></tr></tfoot>`;
     $('#pf-voice-last').innerHTML = ks.map(k => { const v = fb.apps[k] || {};
-      return `<span class="pf-vs"><span class="dot" style="background:${colorOf(k)}"></span>${esc(nameOf(k))} <span class="pf-muted">마지막 ${v.last_at ? esc(v.last_at.replace('T', ' ')) : '—'}</span></span>`; }).join('');
+      return `<span class="pf-vs"><span class="dot" style="background:${colorOf(k)}"></span>${esc(nameOf(k))} <span class="pf-muted">마지막 ${v.last_at ? esc(v.last_at.replace('T', ' ').slice(0, 16)) : '—'}</span></span>`; }).join('');
   }
 
   function coverNote() {
@@ -570,14 +570,28 @@
           (v, ax) => (ax ? v.toFixed(0) + '%' : v.toFixed(1) + '%'), { xfmt: L => 'L' + L, h: 180 });
       }
       const rated = rows.filter(r => r.start >= 5).map(r => ({ ...r, rate: r.clear / r.start }));
-      const walls = new Set(rated.slice().sort((a, b) => a.rate - b.rate).slice(0, 3).map(r => r.level));
+      /* 벽 = 클리어율 낮은 셋 ∪ 실패/인 높은 셋. 첫 클리어만 찍는 게임은 결국 다 깨서 클리어율이 높게 나오고,
+         막힘은 실패 횟수로 드러난다(퐁당냥 L32: 클리어 87% 인데 실패 200회). */
+      // L1·L2 는 튜토리얼 이탈이라 벽에서 뺀다. 클리어율 벽은 90% 미만일 때만.
+      const cand = rated.filter(r => r.level > 2);
+      const walls = new Set([...cand.filter(r => r.rate < 0.9).sort((a, b) => a.rate - b.rate).slice(0, 3),
+                             ...cand.filter(r => r.fails > 0).sort((a, b) => b.fails / b.start - a.fails / a.start).slice(0, 3)].map(r => r.level));
       const t = document.createElement('div'); t.className = 'table-scroll';
-      t.innerHTML = `<table class="ledger"><thead><tr><th class="date">레벨</th><th>시작 유저</th><th>클리어 유저</th><th>클리어율</th><th>실패</th><th>시도/인</th><th>도달<span class="th-note">신규 기준</span></th></tr></thead><tbody>` +
-        rows.map(r => `<tr${walls.has(r.level) ? ' class="pf-wall"' : ''}><td class="date">L${r.level}${walls.has(r.level) ? ' <span class="pf-chip">벽</span>' : ''}</td><td>${nf(r.start)}</td><td>${nf(r.clear)}</td>
-          <td>${pctf(r.clear, r.start)}</td><td>${nf(r.fails)}</td><td>${r.start ? (r.attempts / r.start).toFixed(1) : '—'}</td><td>${w.base ? pctf(atLeast[r.level] || 0, w.base) : '—'}</td></tr>`).join('') + '</tbody></table>';
+      /* 시작 이벤트가 레벨당 1회만 찍히는 게임(퐁당냥·Bee Architect)은 시도/인이 늘 1 이라 숨긴다 */
+      const showAtt = sum(rows.map(r => r.attempts)) > sum(rows.map(r => r.start)) * 1.05;
+      t.innerHTML = `<table class="ledger"><thead><tr><th class="date">레벨</th><th>시작 유저</th><th>클리어 유저</th><th>클리어율</th><th>실패</th><th>실패/인</th>${showAtt ? '<th>시도/인</th>' : ''}<th>도달<span class="th-note">신규 기준</span></th></tr></thead><tbody>` +
+        rows.map((r, i) => `<tr class="${walls.has(r.level) ? 'pf-wall' : ''}${i >= 30 && !walls.has(r.level) ? ' pf-more-row' : ''}"><td class="date">L${r.level}${walls.has(r.level) ? ' <span class="pf-chip">벽</span>' : ''}</td><td>${nf(r.start)}</td><td>${nf(r.clear)}</td>
+          <td>${pctf(r.clear, r.start)}</td><td>${nf(r.fails)}</td><td>${r.start ? (r.fails / r.start).toFixed(2) : '—'}</td>${showAtt ? `<td>${r.start ? (r.attempts / r.start).toFixed(1) : '—'}</td>` : ''}<td>${w.base ? pctf(atLeast[r.level] || 0, w.base) : '—'}</td></tr>`).join('') + '</tbody></table>';
       el.append(t);
+      if (rows.length > 30) {
+        t.classList.add('pf-folded');
+        const more = document.createElement('button'); more.type = 'button'; more.className = 'tab rt-more';
+        more.textContent = `전체 ${rows.length}개 레벨 보기`;
+        more.addEventListener('click', () => { t.classList.remove('pf-folded'); more.remove(); });
+        el.append(more);
+      }
       const n = document.createElement('p'); n.className = 'pf-muted';
-      n.textContent = `위: 최근 신규 ${nf(w.base)}명 중 그 레벨 이상을 시작해 본 비율. 아래 표의 '벽'은 시작 유저 5명 이상인 레벨 중 클리어율이 가장 낮은 셋.`;
+      n.textContent = `위: 최근 신규 ${nf(w.base)}명 중 그 레벨 이상을 시작해 본 비율. 아래 표의 '벽'은 시작 유저 5명 이상인 레벨 중(L1·L2 튜토리얼 제외) 클리어율 90% 미만 하위 셋과 1인당 실패가 가장 많은 셋. 처음 30개 레벨과 벽만 먼저 보입니다.`;
       el.append(n);
     },
     breakdown(el, w) {

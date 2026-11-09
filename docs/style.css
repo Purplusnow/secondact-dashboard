@@ -649,3 +649,4 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .pf-vs b { color: var(--ink); font-weight: 650; }
 .pf-new { font-size: 11px; font-weight: 600; color: #fff; background: var(--bad); border-radius: 999px; padding: 1px 7px; }
 .ledger tr.pf-fresh td { background: rgba(42, 120, 214, .05); }
+.pf-folded tr.pf-more-row { display: none; }
