@@ -56,21 +56,33 @@ jobs:
       - name: 유저 의견 건수
         continue-on-error: true   # 실패해도 공통지표는 커밋한다
         run: python3 tools/feedback.py
+      # 인생 2막 인앱(GA4 purchase) — 판매 리포트가 오기 전 '오늘·어제' 인앱을 채운다.
+      # 원래 realtime 워크플로 안에 있었는데, '업데이트'가 sync+common 으로 바뀐 뒤 빠져서
+      # 오늘 인앱이 늘 0 으로 보였다(2026-11-10). 마지막으로 훑은 날 이후만 읽는다.
+      - name: 인생 2막 인앱(GA4)
+        continue-on-error: true
+        run: |
+          printf '%s' "$GCP_SA_KEY" > "$RUNNER_TEMP/sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+          GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json" python3 tools/iap.py
       - name: 커밋
         run: |
           git config user.name  "secondact-bot"
           git config user.email "34591718+Purplusnow@users.noreply.github.com"
           # common·gamestats·feedback.json 은 이 잡만 쓴다 — 밀리면 최신 위에 내 파일만 얹어 다시 민다.
+          # daily.json(iap 필드)은 sync 와 공유라 복사하지 않고 다시 수집한다.
           FILES="docs/data/common.json"
           for f in docs/data/feedback.json docs/data/gamestats.json; do [ -f "$f" ] && FILES="$FILES $f"; done
           mkdir -p "$RUNNER_TEMP/keep" && cp $FILES "$RUNNER_TEMP/keep/"
           for i in 1 2 3; do
-            git add $FILES
+            git add $FILES docs/data/daily.json
             git diff --cached --quiet && { echo "변경 없음"; exit 0; }
             git commit -q -m "공통지표 수집: $(date -u -d '+9 hours' '+%Y-%m-%d %H:%M') KST"
             git push -q && exit 0
             git fetch -q origin main && git reset -q --hard origin/main
             cp "$RUNNER_TEMP"/keep/* docs/data/
+            # daily.json 은 sync 와 같이 쓴다 — 덮어쓰지 말고 최신 위에서 iap 만 다시 받는다(sync.yml 과 같은 방식)
+            python3 tools/iap.py || true
             sleep $((i * 3))
           done
           exit 1
