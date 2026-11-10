@@ -20,7 +20,7 @@
 | `realtime` | **수동만** | `tools/realtime.py` + `tools/iap.py` — intraday 기준 당일 유저·D1·미확정 보정 | 0.35GB |
 | `users` | **수동만** | `tools/users.py`, `tools/geo_roi.py --days 60 --write` | 작음 |
 | `sync` | 매시간(`7 * * * *`) + `repository_dispatch` + 수동 | `tools/sync.py` — AdMob 매출(`--days 7`) + Google Ads 마케팅비 | **0 (BigQuery 안 씀)** |
-| `common` | **수동만** | `tools/common.py`(전체 앱 DAU·신규·리텐션·이벤트·버전) → `tools/gamestats.py`(게임별 맞춤 인게임) → `tools/feedback.py`(유저 의견 **건수**) | 공통 ~0.7GB + 게임별 ~0.25GB |
+| `common` | **수동만** | `tools/common.py`(전체 앱 DAU·신규·리텐션·이벤트·버전) → `tools/gamestats.py`(게임별 맞춤 인게임) → `tools/feedback.py`(유저 의견 **건수**) → `tools/iap.py`(인생 2막 인앱 GA4 — 판매 리포트 전 오늘·어제 인앱) | 공통 ~0.7GB + 게임별 ~0.25GB |
 | `probe` | 수동만 | `tools/probe.py` — 진단용. 평시엔 안 돌린다 | 모드마다 다름 |
 
 **원칙: BigQuery 를 쓰는 워크플로는 자동 실행하지 않는다.** 2026-10-27 형 지시.
