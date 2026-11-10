@@ -11,7 +11,7 @@
  * 여기 한 군데로 계속 커버된다. 다른 스크립트보다 먼저 실행돼야 한다.
  */
 (() => {
-  const KEY = 'bust', VIEW = 'view';
+  const KEY = 'bust';
 
   let bust = '';
   try { bust = sessionStorage.getItem(KEY) || ''; } catch { /* 프라이빗 모드 */ }
@@ -35,28 +35,13 @@
     btn.addEventListener('click', () => {
       btn.disabled = true;
       btn.textContent = '받는 중…';
-      try {
-        sessionStorage.setItem(KEY, String(Date.now()));
-        // 보던 탭으로 돌아오게 — 새로고침했더니 첫 탭이면 매번 다시 찾아 들어가야 한다
-        const on = document.querySelector('.vtab.is-on');
-        if (on) sessionStorage.setItem(VIEW, on.dataset.view);
-      } catch { /* 저장이 막혀도 새로고침 자체는 한다 */ }
+      // 보던 탭은 URL 해시(#app=… 등)에 있어서 새로고침해도 그대로다
+      try { sessionStorage.setItem(KEY, String(Date.now())); } catch { /* 저장이 막혀도 새로고침 자체는 한다 */ }
       location.reload();
     });
 
     const up = document.getElementById('updated');
     (up ? up.parentNode : document.querySelector('.topbar'))
       .insertBefore(btn, up || null);
-
-    // 새로고침 직후라면 보던 탭을 복원한다.
-    let want = '';
-    try {
-      want = sessionStorage.getItem(VIEW) || '';
-      sessionStorage.removeItem(VIEW);
-    } catch { /* 무시 */ }
-    if (want && want !== 'revenue') {
-      const tab = document.querySelector(`.vtab[data-view="${want}"]`);
-      if (tab) tab.click();
-    }
   });
 })();

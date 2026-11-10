@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""index.html 의 app.js / style.css 참조에 내용 해시를 박는다.
+"""index.html 의 js / style.css 참조에 내용 해시를 박는다.
 
 GitHub Pages는 정적 파일에 max-age=600을 걸어서, 배포 직후 10분 동안 브라우저가
 옛날 app.js를 계속 쓴다(=고친 게 반영 안 된 것처럼 보인다). 파일이 바뀌면 URL도
@@ -12,7 +12,7 @@ import sys
 
 DOCS = pathlib.Path(__file__).resolve().parent.parent / "docs"
 INDEX = DOCS / "index.html"
-ASSETS = ["refresh.js", "app.js", "style.css", "ingame.js", "realtime.js", "ads.js", "userrow.js", "users.js", "anomaly.js", "geo.js", "portfolio.js"]
+ASSETS = ["refresh.js", "style.css", "portfolio.js"]
 
 
 def main() -> int:

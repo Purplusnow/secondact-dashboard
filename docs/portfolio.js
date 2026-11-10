@@ -11,7 +11,7 @@
  * daily.json(표시가 ÷ (1+세율) × (1−수수료)). 리포트가 없는 기간의 다른 앱 인앱은 '모름'이지
  * 0 이 아니다 — 화면에 반영 기간을 항상 적는다.
  *
- * 기존 인생 2막 보드(app.js 등)와 전역 이름이 겹치지 않게 전부 이 IIFE 안에 둔다.
+ * 전역을 더럽히지 않게 전부 이 IIFE 안에 둔다.
  */
 (() => {
   const $ = s => document.querySelector(s);
@@ -200,16 +200,14 @@
   function route() {
     const h = location.hash.replace('#', '');
     const [top, arg] = h.split('=');
-    S.top = ['all', 'month', 'app', 'voice', 'secondact'].includes(top) ? top : 'all';
+    S.top = ['all', 'month', 'app', 'voice'].includes(top) ? top : 'all';
     if (S.top === 'app') S.app = S.byKey[arg] ? arg : (S.app || S.apps[0].key);
     document.querySelectorAll('.ttab').forEach(b => b.classList.toggle('is-on', b.dataset.top === S.top));
-    ['all', 'month', 'app', 'voice', 'secondact'].forEach(t => { $('#top-' + t).hidden = t !== S.top; });
-    $('#brand-sub').textContent = S.top === 'secondact' ? '인생 2막 상세' : '전체 앱 · 매출 × 지표';
+    ['all', 'month', 'app', 'voice'].forEach(t => { $('#top-' + t).hidden = t !== S.top; });
     if (S.top === 'all') renderAll();
     if (S.top === 'month') renderMonth();
     if (S.top === 'app') renderApp();
     if (S.top === 'voice') renderVoice();
-    if (S.top === 'secondact') dispatchEvent(new Event('resize'));   // 숨겨져 있던 차트를 다시 잰다
   }
   addEventListener('hashchange', () => S.M && route());
 
@@ -505,7 +503,6 @@
     document.querySelectorAll('.pf-appchip').forEach(b => b.addEventListener('click', () => (location.hash = 'app=' + b.dataset.app)));
     $('#pf-app-title').textContent = a.name;
     $('#pf-app-meta').textContent = [a.package, c && c.dataset ? `${c.dataset} · 최종 확정 ${c.last_table || '—'} · 스캔 ${c.scan_mb}MB` : null].filter(Boolean).join(' · ');
-    $('#pf-detail-link').hidden = a.detail !== 'secondact';
 
     const d30 = span(addDays(yday, -29), yday), d7 = span(addDays(yday, -6), yday);
     const r30 = sum(d30.map(d => rev(k, d))), dau30 = sum(d30.map(d => A.dau[d] || 0));
@@ -703,11 +700,10 @@
     renderAll();
   }));
   $('#pf-ev-auto').addEventListener('change', e => { S.evAuto = e.target.checked; if (S.app) renderEvents(commonOf(S.app)); });
-  $('#pf-detail-link').addEventListener('click', () => (location.hash = 'secondact'));
   $('#pf-voice-all').addEventListener('click', () => (location.hash = 'voice'));
   let rt;
   addEventListener('resize', () => {
-    if (!S.M || S.top === 'secondact') return;
+    if (!S.M) return;
     clearTimeout(rt);
     rt = setTimeout(route, 160);
   });
