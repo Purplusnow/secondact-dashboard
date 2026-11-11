@@ -156,7 +156,7 @@ git pull --rebase
 | 앱 목록 | `docs/data/apps.json` | 손으로 | 순서 = 색 순서. 7번째 이후 앱은 차트에서 '기타'로 접힌다. **표에는 값이 0 이어도 전부 나온다**(형 지시). 앱 목록의 원천 = `~/dev/privacy-policy/*.html`(출시 앱마다 정책 페이지) · AdMob 이름 = 영문 스토어 제목 |
 | 광고매출 | `daily.json` `admob_apps` | `sync` 매시간 | AdMob 이름 → 앱은 apps.json 의 `admob` |
 | 인앱매출 | `iap_sales.json` | `sync`(버킷 설정 시) 또는 `playsales.py --zip` | **Play 판매 리포트가 기준.** 세전가 × 0.85, KST 날짜 |
-| 마케팅비(앱별) | `ads_apps.json` | Ads 스크립트 → `sync` | 스크립트를 다시 붙여넣기 전까지 비어 있다 → '미배정' |
+| 마케팅비 | `daily.json` `ads` · `ads_apps.json` | `sync` | **2026-11-12 형 지시로 화면에서 뺐다**(타일·월별 마케팅비/손익 열·크레딧 표시). 수집은 계속 돈다(BigQuery 안 씀). 다시 넣으려면 `91aca414` 의 portfolio.js 참고 |
 | DAU·리텐션·이벤트 | `common.json` | `common` 수동 | 키 없는 앱은 '지표 미연결' |
 | 게임별 인게임 | `gamestats.json` | `common` 안 | 스펙 `tools/gamespecs.json`(위젯: funnel/levels/breakdown/maxval). 인생 2막은 전용 보드라 제외 |
 | 유저 의견 | `feedback.json` | `common` 안 | **앱 × 날짜 건수만**(형 지시). 내용은 Firebase 콘솔. 쿼리도 created_unix 만 받는다 |
@@ -190,7 +190,7 @@ git pull --rebase
 2. **판매 리포트 자동화** — Play Console › 사용자 및 권한 에 서비스계정(`GCP_SA_KEY` 의 client_email)을 초대하고
    '재무 데이터 보기'를 준다(반영까지 최대 24시간). 그다음 `gh variable set PLAY_BUCKET -b pubsite_prod_rev_…`
    (Play Console › 다운로드 보고서 › 재무 › 'Cloud Storage URI 복사'). 그 전까진 월말에 zip 을 받아 `playsales.py --zip`.
-3. **Google Ads 스크립트 다시 붙여넣기** — `tools/google-ads-script.js` 에 캠페인→앱 패키지별 비용(`appRows`)을 추가했다.
+3. ~~Google Ads 스크립트 다시 붙여넣기~~ (마케팅비를 화면에서 빼서 보류) — `tools/google-ads-script.js` 에 캠페인→앱 패키지별 비용(`appRows`)을 추가했다.
 4. **유저 의견 건수 — 인생 2막·Bee Architect 만 403.** 그 두 프로젝트의 서비스계정에 'Cloud Datastore 뷰어'
    (roles/datastore.viewer)를 주면 다음 `common` 부터 잡힌다. 나머지 게임은 이미 읽힌다(2026-11-09).
 

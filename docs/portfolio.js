@@ -2,9 +2,10 @@
  *
  * 데이터(전부 정적 JSON):
  *   apps.json       앱 목록(손으로 고친다). 순서 = 색 순서. 색은 앱에 붙는다(순위 아님).
- *   daily.json      admob_apps(앱별 AdMob USD) · ads(계정 전체 마케팅비) · iap(인생 2막 GA4/수동)
+ *   daily.json      admob_apps(앱별 AdMob USD) · iap(인생 2막 GA4/수동)
  *   iap_sales.json  Play 판매 리포트 → 앱(패키지)별·KST 날짜별 인앱 세전가
- *   ads_apps.json   캠페인→앱 패키지별 마케팅비(Ads 스크립트 갱신 이후부터)
+ *
+ * 마케팅비(daily.json ads · ads_apps.json)는 수집은 계속되지만 화면엔 안 쓴다 — 2026-11-12 형 지시.
  *   common.json     앱별 BigQuery 경량 수집(DAU·신규·코호트·이벤트·버전)
  *
  * 인앱 기준: 판매 리포트가 덮는 기간은 리포트(세전가 × (1−수수료)), 그 밖은 인생 2막만
@@ -26,7 +27,7 @@
     'notification_receive', 'notification_open', 'notification_dismiss', 'notification_foreground',
     'first_visit', 'page_view', 'dynamic_link_first_open', 'dynamic_link_app_open', 'app_exception']);
 
-  const S = { apps: [], byKey: {}, cfg: {}, daily: [], sales: null, adsApps: null, common: null, fb: null, gs: null, fbApp: '', fbN: 50,
+  const S = { apps: [], byKey: {}, cfg: {}, daily: [], sales: null, common: null, fb: null, gs: null, fbApp: '', fbN: 50,
               fx: { byDate: {}, dates: [] }, M: null, top: 'all', app: null, range: 30, evAuto: false };
 
   /* ── 형식 ───────────────────────────────────────── */
@@ -50,9 +51,9 @@
   const get = u => fetch(u, { cache: 'no-store' }).then(r => (r.ok ? r.json() : null)).catch(() => null);
 
   async function load() {
-    const [apps, cfg, daily, sales, adsApps, common, fb] = await Promise.all([
+    const [apps, cfg, daily, sales, common, fb] = await Promise.all([
       get('data/apps.json'), get('data/config.json'), get('data/daily.json'),
-      get('data/iap_sales.json'), get('data/ads_apps.json'), get('data/common.json'), get('data/feedback.json')]);
+      get('data/iap_sales.json'), get('data/common.json'), get('data/feedback.json')]);
     S.fb = fb;
     S.gs = await get('data/gamestats.json');
     if (!apps || !daily) { $('#pf-error').hidden = false; return; }
@@ -60,7 +61,7 @@
     S.apps.forEach((a, i) => { a.color = i < PALETTE.length ? PALETTE[i] : OTHER; S.byKey[a.key] = a; });
     S.cfg = { store_fee: 0.15, fx_fallback: {}, tax_rates: {}, ...(cfg || {}) };
     S.daily = (daily.daily || []).slice().sort((a, b) => (a.date < b.date ? -1 : 1));
-    S.sales = sales; S.adsApps = adsApps; S.common = common;
+    S.sales = sales; S.common = common;
     $('#updated').textContent = daily.updated ? '갱신 ' + daily.updated : '';
     S.dailySynced = daily.synced || {};
     await loadFx();
@@ -107,9 +108,9 @@
   /* ── 모델: 앱 × 날짜 ─────────────────────────────── */
   function model() {
     const fee = S.cfg.store_fee;
-    const M = { apps: {}, spendTotal: {}, spendUnassigned: {}, first: null, last: kstDate(0) };
-    S.apps.forEach(a => (M.apps[a.key] = { ad: {}, iap: {}, iapProv: {}, spend: {}, dau: {}, new: {}, prov: {} }));
-    M.apps._other = { ad: {}, iap: {}, iapProv: {}, spend: {}, dau: {}, new: {}, prov: {} };
+    const M = { apps: {}, first: null, last: kstDate(0) };
+    S.apps.forEach(a => (M.apps[a.key] = { ad: {}, iap: {}, iapProv: {}, dau: {}, new: {}, prov: {} }));
+    M.apps._other = { ad: {}, iap: {}, iapProv: {}, dau: {}, new: {}, prov: {} };
     const byAdmob = {}, byPkg = {};
     S.apps.forEach(a => { a.admob.forEach(n => (byAdmob[n] = a.key)); if (a.package) byPkg[a.package] = a.key; });
 
@@ -126,7 +127,6 @@
         const k = typeof r.admob === 'number' ? r.admob : usd * rate('USD', d);
         M.apps.secondact.ad[d] = (M.apps.secondact.ad[d] || 0) + k;
       }
-      if (r.ads) M.spendTotal[d] = r.ads;
     }
 
     // 인앱: 판매 리포트가 덮는 기간 = 리포트 달 ∩ 마지막 주문 시각까지
@@ -150,19 +150,6 @@
       if (r.iap_src === 'ga4') M.apps.secondact.iapProv[r.date] = true;
     }
 
-    // 마케팅비: 앱별 내역이 있는 날은 앱으로, 없는 날은 '미배정'
-    const split = (S.adsApps && S.adsApps.by_date) || {};
-    for (const [d, total] of Object.entries(M.spendTotal)) {
-      if (split[d]) {
-        let assigned = 0;
-        for (const [p, v] of Object.entries(split[d])) {
-          const k = byPkg[p];
-          if (k) { M.apps[k].spend[d] = v.cost; assigned += v.cost; }
-        }
-        if (total - assigned > 0) M.spendUnassigned[d] = total - assigned;
-      } else M.spendUnassigned[d] = total;
-    }
-
     // 공통지표
     for (const a of S.apps) {
       const c = S.common && S.common.apps && S.common.apps[a.key];
@@ -183,7 +170,6 @@
   const nameOf = k => (k === '_other' ? '기타(목록 밖)' : S.byKey[k].name);
   const colorOf = k => (k === '_other' ? OTHER : S.byKey[k].color);
   const commonOf = k => (S.common && S.common.apps && S.common.apps[k]) || null;
-  const spendCredit = d => { const p = S.cfg.promo_credit; return p && d >= p.from && (!p.to || d <= p.to); };
 
   function retention(k, day, from, to) {
     const c = commonOf(k);
@@ -326,14 +312,11 @@
     const wk = span(addDays(yday, -6), yday), wkAvg = tot(rev, wk) / 7;
     const dauKs = S.apps.filter(a => M.apps[a.key].dau[yday] != null);
     const ydDau = sum(dauKs.map(a => M.apps[a.key].dau[yday])), ydNew = sum(dauKs.map(a => M.apps[a.key].new[yday]));
-    const monSpend = sum(mDays.map(d => M.spendTotal[d] || 0));
-    const credit = mDays.some(spendCredit);
 
     $('#pf-tiles').innerHTML = [
       tile('이번 달 매출', krw(monRev), `광고 ${krw(monAd)} · 인앱 ${krw(monIap)}${proj ? ` · 예상 ${krw(proj)}` : ''}`),
       tile('어제 매출', krw(ydRev), `광고 ${krw(tot(ad, [yday]))} · 인앱 ${krw(tot(iap, [yday]))} · 7일 평균 ${krw(wkAvg)}`),
       tile('어제 DAU', dauKs.length ? nf(ydDau) + '명' : '—', dauKs.length ? `신규 ${nf(ydNew)}명 · 지표 연결 ${dauKs.length}개 앱` : '공통지표 수집 전'),
-      tile('이번 달 마케팅비', krw(monSpend), credit ? `프로모션 크레딧 — 현금 아님 · 손익 ${krw(monRev - monSpend)}` : `손익 ${krw(monRev - monSpend)}`),
     ].join('');
 
     renderDay(today, yday);
@@ -450,7 +433,7 @@
     const ok = cm ? Object.values(cm.apps || {}).filter(x => x.status === 'ok').length : 0;
     return [
       `인앱: Play 판매 리포트 ${c.months.length ? c.months.map(m => m.slice(0, 4) + '.' + m.slice(4)).join(', ') + ` (마지막 주문 ${c.last ? c.last.replace('T', ' ').slice(0, 16) : '—'})` : '없음'} · 그 밖의 기간은 인생 2막 GA4/수동 기록만.`,
-      `광고매출: AdMob 앱별. 마케팅비: ${S.adsApps ? '캠페인→앱 내역이 있는 날은 앱별, 없는 날은 미배정' : '앱별 내역 없음(Ads 스크립트 갱신 전) — 합계만'}.`,
+      `광고매출: AdMob 앱별.`,
       `DAU·리텐션: ${cm ? `BigQuery 경량 수집 ${cm.updated} · ${ok}/${S.apps.length}개 앱 연결` : '아직 수집 전'}.`,
     ].map(x => `<span>${esc(x)}</span>`).join('');
   }
@@ -468,17 +451,14 @@
       const ds = inM(m);
       const ad = sum(ds.map(d => sum(ks.map(k => M.apps[k].ad[d] || 0))));
       const iap = sum(ds.map(d => sum(ks.map(k => M.apps[k].iap[d] || 0))));
-      const spend = sum(ds.map(d => M.spendTotal[d] || 0));
       const dauDays = ds.filter(d => S.apps.some(a => M.apps[a.key].dau[d] != null));
       const avgDau = dauDays.length ? sum(dauDays.map(d => sum(S.apps.map(a => M.apps[a.key].dau[d] || 0)))) / dauDays.length : null;
       const nw = dauDays.length ? sum(dauDays.map(d => sum(S.apps.map(a => M.apps[a.key].new[d] || 0)))) : null;
-      return { m, ad, iap, rev: ad + iap, spend, profit: ad + iap - spend, avgDau, nw, credit: ds.some(spendCredit),
+      return { m, ad, iap, rev: ad + iap, avgDau, nw,
                partial: m === today.slice(0, 7), dauPartial: dauDays.length < ds.length };
     });
-    const cls = v => (v < 0 ? 'neg' : 'pos');
-    $('#pf-month').innerHTML = `<thead><tr><th class="date">월</th><th>광고매출</th><th>인앱매출</th><th>총매출</th><th>마케팅비</th><th>손익</th><th>평균 DAU<span class="th-note">전체 앱 합</span></th><th>신규</th></tr></thead><tbody>` +
+    $('#pf-month').innerHTML = `<thead><tr><th class="date">월</th><th>광고매출</th><th>인앱매출</th><th>총매출</th><th>평균 DAU<span class="th-note">전체 앱 합</span></th><th>신규</th></tr></thead><tbody>` +
       rows.map(r => `<tr><td class="date">${r.m.replace('-', '.')}${r.partial ? ' <span class="pf-muted">진행 중</span>' : ''}</td><td>${won(r.ad)}</td><td>${won(r.iap)}</td><td class="sum">${won(r.rev)}</td>
-        <td>${won(r.spend)}${r.credit ? ' <span class="pf-chip" title="11/1 이후 마케팅비는 구글 프로모션 크레딧 — 현금 지출 아님">크레딧</span>' : ''}</td><td class="${cls(r.profit)}">${won(r.profit)}</td>
         <td>${r.avgDau != null ? nf(r.avgDau) + (r.dauPartial ? '*' : '') : '—'}</td><td>${r.nw != null ? nf(r.nw) + (r.dauPartial ? '*' : '') : '—'}</td></tr>`).join('') + '</tbody>';
 
     // 앱 × 월 매출
@@ -509,12 +489,11 @@
     const d30 = span(addDays(yday, -29), yday), d7 = span(addDays(yday, -6), yday);
     const r30 = sum(d30.map(d => rev(k, d))), dau30 = sum(d30.map(d => A.dau[d] || 0));
     const d1 = retention(k, 1, addDays(today, -15), addDays(today, -2)), d7r = retention(k, 7, addDays(today, -37), addDays(today, -8));
-    const sp30 = sum(d30.map(d => A.spend[d] || 0));
     $('#pf-app-tiles').innerHTML = [
       tile('어제 DAU', A.dau[yday] != null ? nf(A.dau[yday]) + '명' : '—', c && c.daily ? `신규 7일 ${nf(sum(d7.map(d => A.new[d])))}명` : statusText(c)),
       tile('D1 · D7', `${d1 ? (d1.pct * 100).toFixed(1) + '%' : '—'} · ${d7r ? (d7r.pct * 100).toFixed(1) + '%' : '—'}`, d1 ? `최근 2주 코호트 ${nf(d1.base)}명 기준` : '코호트 없음'),
       tile('매출 30일', krw(r30), `광고 ${krw(sum(d30.map(d => A.ad[d] || 0)))} · 인앱 ${krw(sum(d30.map(d => A.iap[d] || 0)))}`),
-      tile('ARPDAU 30일', dau30 ? won(r30 / dau30) : '—', sp30 ? `마케팅비 30일 ${krw(sp30)}` : '앱별 마케팅비 내역 없음'),
+      tile('ARPDAU 30일', dau30 ? won(r30 / dau30) : '—', dau30 ? `30일 누적 DAU ${nf(dau30)}` : '지표 없음'),
     ].join('');
 
     const days = span(addDays(today, -59), today);
