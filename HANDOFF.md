@@ -68,6 +68,7 @@ git pull --rebase
   - 실수령 공식: `GA4 ÷ (1+세율) × 0.85`. 수수료 15% 는 earnings CSV 에서 확인됨.
   - 미국은 표시가에 세금이 **빠져** 있어 결제 때 더 붙는다(GA4 = 정산 기준). 유럽·일본은 포함.
 - **`geo.country` 가 빈 줄은 Play 사전출시 봇이다.** 모든 쿼리에 `IFNULL(geo.country,'') != ''`.
+  - ⚠ **통합 보드(`common.py`·`gamestats.py`)는 2026-11-12 형 지시로 봇을 *포함*해서 센다**(Firebase 콘솔과 맞추려고). 필터는 옛 인생 2막 수집 스크립트에만 남아 있다.
 - **버전 코호트 비교는 나이와 관측창을 둘 다 맞춰야 한다.** 안 맞추면 어린 코호트가 회귀로 보인다
   (v965 "회귀"는 이 착시였고 반증됨).
   - ⚠ **`by_version.cohort_age_days` 에 알려진 편향이 있다**: 나이는 `CURRENT_TIMESTAMP` 기준
@@ -182,6 +183,7 @@ git pull --rebase
    gh secret set GCP_SA_DRAKEWING     < ~/dev/keystore/drakewing-85f43-bq.json
    gh secret set GCP_SA_HAEDAMHOUSE   < ~/dev/keystore/haedamhouse-bq.json
    gh workflow run common.yml -f days=120 -f only=rainloopsushi,baduk,abysslantern,drakewing,haedamhouse
+   → **2026-11-12 등록·백필 완료.**
    ```
    머지 레일웨이 · 해무사진관 · Lumen Legion 은 BigQuery 키가 없다(Lumen Legion 의 Firebase 는 아직 placeholder).
 2. **판매 리포트 자동화** — Play Console › 사용자 및 권한 에 서비스계정(`GCP_SA_KEY` 의 client_email)을 초대하고
