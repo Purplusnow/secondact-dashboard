@@ -4374,58 +4374,64 @@
   },
   "2026-11-11": {
    "AR": {
-    "clicks": 121,
+    "clicks": 139,
     "conv": 7.0,
-    "cost": 1606,
-    "impr": 2435
+    "cost": 1769,
+    "impr": 3039
    },
    "AT": {
     "clicks": 4,
     "conv": 0.0,
     "cost": 127,
-    "impr": 22
+    "impr": 24
    },
    "AU": {
-    "clicks": 1,
+    "clicks": 2,
     "conv": 0.0,
-    "cost": 46,
-    "impr": 14
+    "cost": 48,
+    "impr": 17
+   },
+   "BD": {
+    "clicks": 3,
+    "conv": 0.0,
+    "cost": 3,
+    "impr": 18
    },
    "BR": {
-    "clicks": 217,
+    "clicks": 240,
     "conv": 23.0,
-    "cost": 2623,
-    "impr": 2781
+    "cost": 2938,
+    "impr": 3460
    },
    "CA": {
     "clicks": 14,
     "conv": 2.0,
     "cost": 533,
-    "impr": 75
+    "impr": 82
    },
    "CH": {
     "clicks": 4,
     "conv": 1.0,
-    "cost": 256,
-    "impr": 53
+    "cost": 257,
+    "impr": 59
    },
    "CL": {
-    "clicks": 9,
+    "clicks": 10,
     "conv": 0.0,
-    "cost": 115,
-    "impr": 168
+    "cost": 125,
+    "impr": 221
    },
    "CO": {
-    "clicks": 83,
+    "clicks": 88,
     "conv": 10.0,
-    "cost": 1372,
-    "impr": 1581
+    "cost": 1497,
+    "impr": 1863
    },
    "DE": {
-    "clicks": 65,
+    "clicks": 70,
     "conv": 7.0,
-    "cost": 2400,
-    "impr": 705
+    "cost": 2554,
+    "impr": 840
    },
    "EG": {
     "clicks": 2,
@@ -4434,22 +4440,22 @@
     "impr": 4
    },
    "ES": {
-    "clicks": 54,
+    "clicks": 64,
     "conv": 7.0,
-    "cost": 1871,
-    "impr": 747
+    "cost": 2121,
+    "impr": 979
    },
    "FR": {
-    "clicks": 73,
+    "clicks": 84,
     "conv": 8.0,
-    "cost": 2380,
-    "impr": 956
+    "cost": 2681,
+    "impr": 1260
    },
    "GB": {
-    "clicks": 12,
+    "clicks": 15,
     "conv": 2.0,
-    "cost": 612,
-    "impr": 168
+    "cost": 771,
+    "impr": 209
    },
    "GH": {
     "clicks": 1,
@@ -4460,104 +4466,110 @@
    "HK": {
     "clicks": 0,
     "conv": 0.0,
-    "cost": 5,
-    "impr": 6
+    "cost": 32,
+    "impr": 17
    },
    "ID": {
-    "clicks": 38,
+    "clicks": 62,
     "conv": 2.0,
-    "cost": 255,
-    "impr": 450
+    "cost": 417,
+    "impr": 1013
    },
    "IE": {
     "clicks": 1,
     "conv": 0.0,
     "cost": 57,
-    "impr": 26
+    "impr": 27
    },
    "IN": {
-    "clicks": 187,
-    "conv": 23.0,
-    "cost": 818,
-    "impr": 1970
+    "clicks": 239,
+    "conv": 24.0,
+    "cost": 1083,
+    "impr": 3638
    },
    "IT": {
-    "clicks": 30,
+    "clicks": 35,
     "conv": 4.0,
-    "cost": 731,
-    "impr": 331
+    "cost": 864,
+    "impr": 404
    },
    "JP": {
-    "clicks": 66,
-    "conv": 3.0,
-    "cost": 1624,
-    "impr": 342
+    "clicks": 119,
+    "conv": 4.0,
+    "cost": 3075,
+    "impr": 1410
+   },
+   "KH": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 2,
+    "impr": 3
    },
    "KR": {
-    "clicks": 315,
+    "clicks": 344,
     "conv": 15.0,
-    "cost": 75194,
-    "impr": 11580
+    "cost": 76564,
+    "impr": 12204
    },
    "MX": {
-    "clicks": 86,
+    "clicks": 91,
     "conv": 8.0,
-    "cost": 1046,
-    "impr": 1177
+    "cost": 1115,
+    "impr": 1339
    },
    "MY": {
-    "clicks": 22,
+    "clicks": 36,
     "conv": 1.0,
-    "cost": 329,
-    "impr": 179
+    "cost": 600,
+    "impr": 493
    },
    "NZ": {
     "clicks": 1,
     "conv": 0.0,
     "cost": 56,
-    "impr": 14
+    "impr": 21
    },
    "PE": {
-    "clicks": 32,
+    "clicks": 39,
     "conv": 2.0,
-    "cost": 471,
-    "impr": 755
+    "cost": 522,
+    "impr": 946
    },
    "PH": {
-    "clicks": 33,
+    "clicks": 62,
     "conv": 2.0,
-    "cost": 379,
-    "impr": 611
+    "cost": 782,
+    "impr": 1782
    },
    "PK": {
-    "clicks": 2,
+    "clicks": 3,
     "conv": 0.0,
-    "cost": 2,
-    "impr": 9
+    "cost": 3,
+    "impr": 21
    },
    "SG": {
     "clicks": 4,
     "conv": 0.0,
-    "cost": 76,
-    "impr": 18
+    "cost": 77,
+    "impr": 45
    },
    "TH": {
-    "clicks": 49,
-    "conv": 3.0,
-    "cost": 794,
-    "impr": 590
+    "clicks": 99,
+    "conv": 4.0,
+    "cost": 1567,
+    "impr": 1613
    },
    "TR": {
-    "clicks": 117,
-    "conv": 11.0,
-    "cost": 1067,
-    "impr": 2039
+    "clicks": 131,
+    "conv": 12.0,
+    "cost": 1250,
+    "impr": 2536
    },
    "TW": {
-    "clicks": 21,
+    "clicks": 34,
     "conv": 1.0,
-    "cost": 1037,
-    "impr": 302
+    "cost": 1828,
+    "impr": 794
    },
    "UG": {
     "clicks": 1,
@@ -4566,18 +4578,104 @@
     "impr": 2
    },
    "US": {
-    "clicks": 35,
+    "clicks": 40,
     "conv": 4.0,
-    "cost": 1999,
-    "impr": 321
+    "cost": 2155,
+    "impr": 435
    },
    "VN": {
-    "clicks": 39,
+    "clicks": 94,
     "conv": 2.0,
-    "cost": 431,
-    "impr": 501
+    "cost": 1073,
+    "impr": 2094
+   }
+  },
+  "2026-11-12": {
+   "AR": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 3,
+    "impr": 30
+   },
+   "BR": {
+    "clicks": 3,
+    "conv": 0.0,
+    "cost": 80,
+    "impr": 34
+   },
+   "CO": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 38,
+    "impr": 19
+   },
+   "FR": {
+    "clicks": 0,
+    "conv": 0.0,
+    "cost": 2,
+    "impr": 5
+   },
+   "ID": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 5,
+    "impr": 7
+   },
+   "IN": {
+    "clicks": 5,
+    "conv": 0.0,
+    "cost": 13,
+    "impr": 43
+   },
+   "JP": {
+    "clicks": 0,
+    "conv": 0.0,
+    "cost": 3,
+    "impr": 5
+   },
+   "KR": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 44,
+    "impr": 11
+   },
+   "MX": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 44,
+    "impr": 11
+   },
+   "PE": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 7,
+    "impr": 4
+   },
+   "PH": {
+    "clicks": 4,
+    "conv": 0.0,
+    "cost": 68,
+    "impr": 41
+   },
+   "TH": {
+    "clicks": 4,
+    "conv": 0.0,
+    "cost": 68,
+    "impr": 36
+   },
+   "TR": {
+    "clicks": 3,
+    "conv": 0.0,
+    "cost": 33,
+    "impr": 17
+   },
+   "VN": {
+    "clicks": 5,
+    "conv": 0.0,
+    "cost": 70,
+    "impr": 69
    }
   }
  },
- "updated": "2026-11-11T23:32:52+09:00"
+ "updated": "2026-11-12T00:32:50+09:00"
 }
