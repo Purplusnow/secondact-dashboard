@@ -151,7 +151,7 @@ git pull --rebase
 
 | 데이터 | 파일 | 수집 | 비고 |
 |---|---|---|---|
-| 앱 목록 | `docs/data/apps.json` | 손으로 | 순서 = 색 순서. 7번째 이후 앱은 차트에서 '기타'로 접힌다 |
+| 앱 목록 | `docs/data/apps.json` | 손으로 | 순서 = 색 순서. 7번째 이후 앱은 차트에서 '기타'로 접힌다. **표에는 값이 0 이어도 전부 나온다**(형 지시). 앱 목록의 원천 = `~/dev/privacy-policy/*.html`(출시 앱마다 정책 페이지) · AdMob 이름 = 영문 스토어 제목 |
 | 광고매출 | `daily.json` `admob_apps` | `sync` 매시간 | AdMob 이름 → 앱은 apps.json 의 `admob` |
 | 인앱매출 | `iap_sales.json` | `sync`(버킷 설정 시) 또는 `playsales.py --zip` | **Play 판매 리포트가 기준.** 세전가 × 0.85, KST 날짜 |
 | 마케팅비(앱별) | `ads_apps.json` | Ads 스크립트 → `sync` | 스크립트를 다시 붙여넣기 전까지 비어 있다 → '미배정' |
@@ -174,6 +174,16 @@ git pull --rebase
    gh workflow run common.yml -f days=120     # 처음 한 번 백필
    ```
    Pocket Arcade · FaceLapse · Private Camera 는 키가 없다(매출만 보인다).
+   **2026-11-12 추가 5종**(키는 `~/dev/keystore` 에 있다 — 시크릿만 등록하면 된다):
+   ```sh
+   gh secret set GCP_SA_RAINLOOPSUSHI < ~/dev/keystore/rainloopsushi-bq.json
+   gh secret set GCP_SA_BADUK         < ~/dev/keystore/baduk-bq.json
+   gh secret set GCP_SA_ABYSSLANTERN  < ~/dev/keystore/abyss-lantern-5c4d7-bq.json
+   gh secret set GCP_SA_DRAKEWING     < ~/dev/keystore/drakewing-85f43-bq.json
+   gh secret set GCP_SA_HAEDAMHOUSE   < ~/dev/keystore/haedamhouse-bq.json
+   gh workflow run common.yml -f days=120 -f only=rainloopsushi,baduk,abysslantern,drakewing,haedamhouse
+   ```
+   머지 레일웨이 · 해무사진관 · Lumen Legion 은 BigQuery 키가 없다(Lumen Legion 의 Firebase 는 아직 placeholder).
 2. **판매 리포트 자동화** — Play Console › 사용자 및 권한 에 서비스계정(`GCP_SA_KEY` 의 client_email)을 초대하고
    '재무 데이터 보기'를 준다(반영까지 최대 24시간). 그다음 `gh variable set PLAY_BUCKET -b pubsite_prod_rev_…`
    (Play Console › 다운로드 보고서 › 재무 › 'Cloud Storage URI 복사'). 그 전까진 월말에 zip 을 받아 `playsales.py --zip`.

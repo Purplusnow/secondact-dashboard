@@ -11,6 +11,14 @@
     { "key": "onelinepath", "name": "OneLine Path",    "kind": "game", "package": "com.purplusnow.hanbutgil",      "admob": ["OneLine Path: One Line Puzzle"],                 "project": "hanbutgil",            "secret": "GCP_SA_ONELINEPATH" },
     { "key": "facelapse",   "name": "FaceLapse",       "kind": "app",  "package": "com.purplusnow.facelapse",      "admob": ["FaceLapse: AI Face Age"],                        "project": "face-lapse",           "secret": "" },
     { "key": "privatecam",  "name": "Private Camera",  "kind": "app",  "package": "com.purplusnow.private_camera",  "admob": ["Private Camera - Photo Vault"],                  "project": "private-camera-1ca1a", "secret": "" },
-    { "key": "adrevenue",   "name": "Ad Revenue Dashboard", "kind": "app", "package": "com.purplusnow.adrevenuecontrol", "admob": ["Ad Revenue Dashboard"],                   "project": "",                     "secret": "" }
+    { "key": "adrevenue",   "name": "Ad Revenue Dashboard", "kind": "app", "package": "com.purplusnow.adrevenuecontrol", "admob": ["Ad Revenue Dashboard"],                   "project": "",                     "secret": "" },
+    { "key": "rainloopsushi","name": "빗물초밥",        "kind": "game", "package": "com.purplusnow.rainloopsushi",  "admob": ["Rainloop Sushi: Cozy Idle Shop"],                "project": "rainloopsushi",        "secret": "GCP_SA_RAINLOOPSUSHI" },
+    { "key": "baduk",       "name": "바둑 (Go Blossom)", "kind": "game", "package": "com.purplusnow.badukblossom",   "admob": ["Go Blossom: Baduk & Weiqi"],                     "project": "go-blossom",           "secret": "GCP_SA_BADUK" },
+    { "key": "mergerailway","name": "머지 레일웨이",     "kind": "game", "package": "com.purplusnow.mergerailway",   "admob": ["Merge Railway: Train Makeover"],                 "project": "merge-railway",        "secret": "" },
+    { "key": "haemu",       "name": "해무사진관",        "kind": "game", "package": "com.purplusnow.haemuphotostudio", "admob": ["Haemu Photo Studio: Romance"],                 "project": "",                     "secret": "" },
+    { "key": "abysslantern","name": "심연의 등불",       "kind": "game", "package": "com.purplusnow.abysslantern",   "admob": ["Abyss Lantern"],                                 "project": "abyss-lantern-5c4d7",  "secret": "GCP_SA_ABYSSLANTERN" },
+    { "key": "drakewing",   "name": "Drakewing",       "kind": "game", "package": "com.purplusnow.drakewing",      "admob": [],                                                "project": "drakewing-85f43",      "secret": "GCP_SA_DRAKEWING" },
+    { "key": "haedamhouse", "name": "해담하우스",        "kind": "game", "package": "com.purplusnow.haedamhouse",    "admob": [],                                                "project": "haedamhouse",          "secret": "GCP_SA_HAEDAMHOUSE" },
+    { "key": "lumenlegion", "name": "Lumen Legion",    "kind": "game", "package": "com.purplusnow.lumenlegion",    "admob": [],                                                "project": "",                     "secret": "" }
   ]
 }

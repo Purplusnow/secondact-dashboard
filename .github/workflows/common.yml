@@ -40,6 +40,11 @@ jobs:
       GCP_SA_GYROGRID: ${{ secrets.GCP_SA_GYROGRID }}
       GCP_SA_WORLDREST: ${{ secrets.GCP_SA_WORLDREST }}
       GCP_SA_ONELINEPATH: ${{ secrets.GCP_SA_ONELINEPATH }}
+      GCP_SA_RAINLOOPSUSHI: ${{ secrets.GCP_SA_RAINLOOPSUSHI }}
+      GCP_SA_BADUK: ${{ secrets.GCP_SA_BADUK }}
+      GCP_SA_ABYSSLANTERN: ${{ secrets.GCP_SA_ABYSSLANTERN }}
+      GCP_SA_DRAKEWING: ${{ secrets.GCP_SA_DRAKEWING }}
+      GCP_SA_HAEDAMHOUSE: ${{ secrets.GCP_SA_HAEDAMHOUSE }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

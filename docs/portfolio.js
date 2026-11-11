@@ -426,7 +426,8 @@
   function renderDay(today, yday) {
     const M = S.M, ks = keys();
     const ad = (k, d) => M.apps[k].ad[d] || 0, iap = (k, d) => M.apps[k].iap[d] || 0;
-    const live = ks.filter(k => [today, yday].some(d => ad(k, d) || iap(k, d)));
+    // 값이 0 이어도 목록의 앱은 전부 보인다(형 지시 2026-11-12). '기타'만 값이 있을 때 붙인다.
+    const live = ks.filter(k => k !== '_other' || [today, yday].some(d => ad(k, d) || iap(k, d)));
     const cell = v => (v ? won(v) : '<span class="pf-muted">—</span>');
     const prov = (k, d) => (M.apps[k].iapProv[d] ? ' <span class="pf-muted" title="판매 리포트 반영 전 — GA4 기록">GA4</span>' : '');
     const tot = (fn, d) => sum(ks.map(k => fn(k, d)));
@@ -483,9 +484,10 @@
     // 앱 × 월 매출
     const show = months.slice(0, 6);
     const live = ks.filter(k => days.some(d => rev(k, d) > 0));
+    const listed = ks.filter(k => k !== '_other' || live.includes(k));   // 표는 0 인 앱도 전부
     const cell = (k, m) => sum(inM(m).map(d => rev(k, d)));
     $('#pf-month-apps').innerHTML = `<thead><tr><th class="date">앱</th>${show.map(m => `<th>${m.replace('-', '.')}</th>`).join('')}</tr></thead><tbody>` +
-      live.map(k => `<tr><td class="date"><span class="dot" style="background:${colorOf(k)}"></span> ${esc(nameOf(k))}</td>${show.map(m => `<td>${cell(k, m) ? won(cell(k, m)) : '—'}</td>`).join('')}</tr>`).join('') +
+      listed.map(k => `<tr><td class="date"><span class="dot" style="background:${colorOf(k)}"></span> ${esc(nameOf(k))}</td>${show.map(m => `<td>${cell(k, m) ? won(cell(k, m)) : '—'}</td>`).join('')}</tr>`).join('') +
       `</tbody><tfoot><tr><td class="date">합계</td>${show.map(m => `<td class="sum">${won(sum(live.map(k => cell(k, m))))}</td>`).join('')}</tr></tfoot>`;
 
     const asc = months.slice(0, 12).reverse();
