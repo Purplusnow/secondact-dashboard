@@ -134,6 +134,7 @@ git pull --rebase
   안 하면 배포 후 10분간 브라우저가 옛 파일을 쓴다(README 에도 있다).
 - **`git add -A` 금지** — 병렬 작업 중이면 남의 파일을 삼킨다. 파일을 지정하고 커밋 후 `--stat` 대조.
 - **커밋 신원은 전역 설정을 쓴다.** `-c user.email` 로 우회하지 말 것(pre-commit 훅이 막는다).
+- **수집 스크립트를 고쳐 푸시한 직후에 `gh workflow run` 하면 옛 커밋으로 돈다**(2026-11-12 실측 — 푸시 직후 디스패치가 한 단계 전 sha 를 잡았다). 몇 초 두고 돌리고, `gh run view <id> --json headSha` 로 확인.
 - 로컬에서 볼 때: `cd docs && python3 -m http.server 8731`
 - 데이터 상태 확인:
   ```sh
