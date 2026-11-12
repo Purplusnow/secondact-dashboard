@@ -458,13 +458,14 @@
   function renderDauGrid(days) {
     const M = S.M, yday = kstDate(1);
     const has = k => days.some(d => M.apps[k].dau[d]);
+    // 순서·제목 숫자 = 어제 DAU
     const order = S.apps.map(a => a.key)
       .sort((x, y) => (has(y) - has(x)) || ((M.apps[y].dau[yday] || 0) - (M.apps[x].dau[yday] || 0)));
     const host = $('#pf-dau-grid');
     host.innerHTML = order.map(k => {
       const c = commonOf(k), v = M.apps[k].dau[yday];
       return `<div class="pf-mini" data-app="${k}"><div class="pf-mini-head"><span class="pf-mini-name">${esc(nameOf(k))}</span>` +
-        `<span class="pf-mini-val">${v != null ? nf(v) + '명' : '—'}</span></div>` +
+        `<span class="pf-mini-val"><span class="pf-muted">어제</span> ${v != null ? nf(v) + '명' : '—'}</span></div>` +
         (has(k) ? `<div class="chart" id="pf-gw-${k}"></div>` : `<p class="pf-mini-empty">${esc(statusText(c))}</p>`) + '</div>';
     }).join('');
     order.filter(has).forEach(k => stacked($('#pf-gw-' + k), days,
