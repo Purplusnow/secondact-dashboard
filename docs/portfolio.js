@@ -443,30 +443,30 @@
 
   function renderVoice() {
     const fb = S.fb;
-    /* 의견이 없는 날도 행을 둔다 — 빠진 날이 '0건'인지 '안 셌다'인지 헷갈리지 않게. 오늘부터 첫 의견일까지 연속. */
     const has = Object.keys((fb && fb.counts) || {}).sort();
     const dates = has.length ? span(has[0], kstDate(0)).reverse() : [];
     $('#pf-voice-empty').hidden = !!dates.length;
     $('#pf-voice-body').hidden = !dates.length;
     if (!fb) return;
-    const st = Object.entries(fb.apps || {}).filter(([, v]) => v.status && v.status !== 'ok' && v.status !== 'no_secret');
-    $('#pf-voice-meta').textContent = `갱신 ${fb.updated} · 건수만 보여 줍니다(내용은 Firebase 콘솔 › Firestore › feedback).` +
-      (st.length ? ` 못 읽은 앱: ${st.map(([k, v]) => (S.byKey[k] ? S.byKey[k].name : k) + '(' + (v.msg || v.status) + ')').join(', ')}` : '');
+    $('#pf-voice-meta').textContent = `건수만 · 내용은 Firebase 콘솔 › Firestore › feedback · 갱신 ${String(fb.updated || '').replace(' KST', '')}`;
     if (!dates.length) return;
-    // 열 = 목록의 앱 전부(형 지시 2026-11-12). 못 읽는 앱은 0 이 아니라 '—' 와 이유(머리글 아래 작게).
+    // 행 = 목록의 앱 전부. 못 읽는 앱은 0 이 아니라 '—' 와 이유.
     const ks = S.apps.map(a => a.key);
     const stOf = k => (fb.apps[k] || {}).status;
     const readable = k => stOf(k) === 'ok' || dates.some(d => fbCount(d, k));
     const why = k => ({ no_access: '권한 필요', no_secret: '미연결', error: /404/.test((fb.apps[k] || {}).msg || '') ? '기능 없음' : '오류' }[stOf(k)] || '—');
-    const cellOf = (d, k) => (readable(k) ? (fbCount(d, k) || '<span class="pf-muted">0</span>') : '<span class="pf-muted">—</span>');
+    // 행 = 앱, 열 = 날짜(왼쪽 오래된 → 오른쪽 최근 30일), 형 지시 2026-11-12. 표는 오른쪽 끝(오늘)으로 스크롤해 둔다.
     const today = kstDate(0), yday = kstDate(1);
-    const rows = dates.slice(0, 60);
-    $('#pf-voice-table').innerHTML = `<thead><tr><th class="date">날짜</th>${ks.map(k => `<th><span class="dot" style="background:${colorOf(k)}"></span> ${esc(nameOf(k))}${readable(k) ? '' : `<span class="th-note" title="${esc((fb.apps[k] || {}).msg || '')}">${why(k)}</span>`}</th>`).join('')}<th>합계</th></tr></thead><tbody>` +
-      rows.map(d => { const t = sum(ks.map(k => fbCount(d, k)));
-        return `<tr${d >= yday ? ' class="pf-fresh"' : ''}><td class="date">${mmdd(d)}${d === today ? ' <span class="pf-new">오늘</span>' : d === yday ? ' <span class="pf-muted">어제</span>' : ''}</td>${ks.map(k => `<td>${cellOf(d, k)}</td>`).join('')}<td class="sum">${t}</td></tr>`; }).join('') +
-      `</tbody><tfoot><tr><td class="date">합계</td>${ks.map(k => `<td class="sum">${readable(k) ? sum(rows.map(d => fbCount(d, k))) : '—'}</td>`).join('')}<td class="sum">${sum(rows.map(d => sum(ks.map(k => fbCount(d, k)))))}</td></tr></tfoot>`;
-    $('#pf-voice-last').innerHTML = ks.filter(readable).map(k => { const v = fb.apps[k] || {};
-      return `<span class="pf-vs"><span class="dot" style="background:${colorOf(k)}"></span>${esc(nameOf(k))} <span class="pf-muted">마지막 ${v.last_at ? esc(v.last_at.replace('T', ' ').slice(0, 16)) : '—'}</span></span>`; }).join('');
+    const cols = span(addDays(today, -29), today);
+    const head = cols.map(d => `<th class="pf-vd${d === today ? ' pf-vd-today' : ''}">${d === today ? '오늘' : mmdd(d)}</th>`).join('');
+    $('#pf-voice-table').innerHTML = `<thead><tr><th class="date">앱</th>${head}<th>30일</th><th>마지막 접수</th></tr></thead><tbody>` +
+      ks.map(k => { const v = fb.apps[k] || {}, ok = readable(k);
+        return `<tr><td class="date"><span class="dot" style="background:${colorOf(k)}"></span> ${esc(nameOf(k))}${ok ? '' : ` <span class="pf-muted" title="${esc(v.msg || '')}">${why(k)}</span>`}</td>` +
+          cols.map(d => `<td class="pf-vd${d === today ? ' pf-vd-today' : ''}">${ok ? (fbCount(d, k) || '<span class="pf-muted">·</span>') : '<span class="pf-muted">—</span>'}</td>`).join('') +
+          `<td class="sum">${ok ? sum(cols.map(d => fbCount(d, k))) : '—'}</td><td class="pf-muted">${v.last_at ? esc(v.last_at.replace('T', ' ').slice(2, 16)) : '—'}</td></tr>`; }).join('') +
+      `</tbody><tfoot><tr><td class="date">합계</td>${cols.map(d => `<td class="sum pf-vd${d === today ? ' pf-vd-today' : ''}">${sum(ks.map(k => fbCount(d, k))) || ''}</td>`).join('')}<td class="sum">${sum(cols.map(d => sum(ks.map(k => fbCount(d, k)))))}</td><td></td></tr></tfoot>`;
+    $('#pf-voice-last').innerHTML = '';
+    const sc = $('#pf-voice-table').parentElement; requestAnimationFrame(() => (sc.scrollLeft = sc.scrollWidth));
   }
 
   /* 오늘·어제 — 앱별 광고/인앱. 오늘은 진행 중이고 두 출처의 반영 시각이 달라 그걸 같이 적는다. */

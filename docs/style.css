@@ -631,6 +631,11 @@ h1 .pf-biz { font-size: 12px; vertical-align: 3px; }
 .pf-revsum b { font-size: 20px; font-weight: 650; margin: 0 2px 0 4px; }
 .pf-tabgroup { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 
+/* 유저 의견 표 — 날짜 열은 좁게 */
+#pf-voice-table th.pf-vd, #pf-voice-table td.pf-vd { min-width: 34px; padding-left: 4px; padding-right: 4px; text-align: center; }
+#pf-voice-table .pf-vd-today { background: var(--wash); font-weight: 600; }
+#pf-voice-table td.date, #pf-voice-table th.date { white-space: nowrap; position: sticky; left: 0; background: var(--surface); z-index: 1; }
+
 /* 앱별 DAU 바둑판 */
 .pf-minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
 .pf-mini { border: 1px solid var(--hair); border-radius: 8px; padding: 10px 10px 4px; cursor: pointer; min-width: 0; }
