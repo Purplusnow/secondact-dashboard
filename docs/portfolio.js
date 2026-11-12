@@ -97,7 +97,10 @@
     S.daily = (daily.daily || []).slice().sort((a, b) => (a.date < b.date ? -1 : 1));
     S.sales = sales; S.common = common;
     assignColors();
-    $('#updated').textContent = daily.updated ? '갱신 ' + daily.updated : '';
+    // 갱신 = 수집 시각들(AdMob·광고비·인앱·공통지표) 중 가장 늦은 것, 날짜+시각(KST)
+    const stamps = [...Object.entries(daily.synced || {}).filter(([k]) => k !== 'iap_scanned').map(([, v]) => v), common && common.updated]
+      .filter(Boolean).map(v => String(v).replace('T', ' ').slice(0, 16)).filter(v => /^\d{4}-\d\d-\d\d \d\d:\d\d$/.test(v)).sort();
+    $('#updated').textContent = stamps.length ? '갱신 ' + stamps[stamps.length - 1] : (daily.updated ? '갱신 ' + daily.updated : '');
     S.dailySynced = daily.synced || {};
     await loadFx();
     S.M = model();
