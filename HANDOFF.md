@@ -188,8 +188,8 @@ git pull --rebase
    ```
    **2026-11-12:** 머지 레일웨이 키 등록·연결 완료(스트리밍). 포켓 아케이드·얼굴 나이 변화 기록·프라이빗 카메라는
    무료 요금제(샌드박스)라 **'매일' 내보내기로 BigQuery 연결**(서울)했다 — 스트리밍 없음, BQ 테이블 60일 뒤 만료(보드 파일엔 남는다),
-   연결일(11/12) 이후 데이터만. 서비스계정 `<프로젝트>-bq` 키는 형이 만들어야 한다 → `GCP_SA_POCKETARCADE`·`GCP_SA_FACELAPSE`·`GCP_SA_PRIVATECAM`
-   (apps.json·common.yml 은 미리 연결해 둠). 해무사진관·광고 수익 대시보드는 Firebase 프로젝트가 없다. 빛의 군단 Firebase 는 아직 placeholder.
+   연결일(11/12) 이후 데이터만. 키 3개도 같은 날 받아 시크릿 등록 완료(`GCP_SA_POCKETARCADE`·`GCP_SA_FACELAPSE`·`GCP_SA_PRIVATECAM`).
+   첫 매일 내보내기 전이라 그날은 `no_dataset` — 다음 날부터 `common` 이 잡는다. 해무사진관·광고 수익 대시보드는 Firebase 프로젝트가 없다. 빛의 군단 Firebase 는 아직 placeholder.
    **해무사진관(2026-11-12 Firebase 신설, v1.1.0부터 계측)**: `apps.json`·워크플로·`gamespecs.json`(haemu) 등록함. 키가 생기면
    `gh secret set GCP_SA_HAEMU < ~/dev/keystore/haemu-photo-studio-bq.json` → `gh workflow run common.yml -f days=30 -f only=haemu`.
 2. **판매 리포트 자동화** — Play Console › 사용자 및 권한 에 서비스계정(`GCP_SA_KEY` 의 client_email)을 초대하고
