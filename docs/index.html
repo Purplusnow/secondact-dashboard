@@ -7,7 +7,7 @@
 <meta name="description" content="전체 앱의 광고매출·인앱매출·DAU·리텐션·유저 의견을 한 화면에서 보는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=62b4ef3b">
+<link rel="stylesheet" href="style.css?v=6bba3629">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -17,7 +17,6 @@
     <span class="brand-name">PURPLUSNOW BOARD</span>
     <span class="brand-sub" id="brand-sub">전체 앱 · 매출 × 지표</span>
   </div>
-  <button class="reload pf-mask" id="pf-mask" type="button" aria-pressed="false" title="캡처·공유용 — 게임 이름을 프로젝트 1, 2 … 로 바꿉니다">게임명 가리기</button>
   <span class="updated" id="updated"></span>
 </header>
 
@@ -56,7 +55,8 @@
   </section>
 
   <section class="card" id="pf-dau-card">
-    <div class="card-head"><h2>앱별 DAU</h2><p class="card-sub">어제 DAU 순 · 칸마다 세로축 따로 · 봇 포함</p></div>
+    <div class="card-head pf-head-row"><div><h2>앱별 DAU</h2><p class="card-sub">어제 DAU 순 · 칸마다 세로축 따로 · 봇 포함</p></div>
+      <button class="tab pf-mask" id="pf-mask" type="button" aria-pressed="false" title="캡처·공유용 — 이 카드의 게임 이름을 프로젝트 1, 2 … 로 바꿉니다">게임명 가리기</button></div>
     <div class="pf-minis" id="pf-dau-grid"></div>
   </section>
 
@@ -152,6 +152,6 @@
 
 
 <script src="refresh.js?v=a91cb06a"></script>
-<script src="portfolio.js?v=0ac39458"></script>
+<script src="portfolio.js?v=818b7fe1"></script>
 </body>
 </html>

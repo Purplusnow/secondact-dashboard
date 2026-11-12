@@ -556,8 +556,6 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .reload:hover:not(:disabled) { background: var(--wash); color: var(--ink); }
 .reload:disabled { opacity: .55; cursor: default; }
 .reload + .updated { margin-left: 0; }
-.pf-mask { margin-right: 8px; }
-.pf-mask + .reload { margin-left: 0; }
 .pf-mask.is-on { background: var(--ink); color: var(--surface); border-color: var(--ink); }
 
 /* 낙폭이 '설계대로'인 칸 표시 — 줄 안에 꼬리표를 넣으면 그 줄만 막대가 짧아져 축이 깨진다.

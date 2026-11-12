@@ -54,12 +54,11 @@
    * 색 자체는 앱마다 고정(apps.json color → COLORS) — 다른 앱이 들고 나도 안 바뀐다. DAU 지표가 없는 앱은 늘 회색. */
   const COLOR_MIN_DAU = 10;
 
-  /* 게임명 가리기(캡처·외부 공유용, 형 지시 2026-11-12) — 켜면 앱 이름을 '프로젝트 N'(목록 순서)으로 바꾸고
-   * 패키지명·데이터셋·인게임 섹션 제목/메모처럼 게임을 드러내는 글도 숨긴다. 보는 사람 브라우저에만 기억한다. */
+  /* 게임명 가리기(캡처·외부 공유용, 형 지시 2026-11-12) — **앱별 DAU 카드에만** 적용. 켜면 그 카드의 앱 이름을
+   * '프로젝트 N'(목록 순서)으로 바꾼다. 다른 화면은 그대로. 보는 사람 브라우저에만 기억한다. */
   const MASK_KEY = 'pf-mask';
   S.mask = (() => { try { return localStorage.getItem(MASK_KEY) === '1'; } catch { return false; } })();
   function applyMask() {
-    S.apps.forEach(a => (a.name = S.mask ? a.alias : a.realName));
     const b = $('#pf-mask');
     if (b) { b.classList.toggle('is-on', S.mask); b.textContent = S.mask ? '게임명 보이기' : '게임명 가리기'; b.setAttribute('aria-pressed', S.mask); }
   }
@@ -85,7 +84,7 @@
     if (!apps || !daily) { $('#pf-error').hidden = false; return; }
     // review: true = Play 심사 중(스토어 미공개) — 화면에서 뺀다(형 지시 2026-11-12). 매출이 잡히면 '기타(목록 밖)'로 간다.
     S.apps = apps.apps.filter(a => !a.review);
-    S.apps.forEach((a, i) => { a.realName = a.name; a.alias = `프로젝트 ${i + 1}`; });
+    S.apps.forEach((a, i) => (a.alias = `프로젝트 ${i + 1}`));
     applyMask();
     S.apps.forEach(a => (S.byKey[a.key] = a));
     S.cfg = { store_fee: 0.15, fx_fallback: {}, tax_rates: {}, ...(cfg || {}) };
@@ -512,7 +511,7 @@
     const host = $('#pf-dau-grid');
     host.innerHTML = order.map(k => {
       const c = commonOf(k), v = M.apps[k].dau[yday];
-      return `<div class="pf-mini" data-app="${k}"><div class="pf-mini-head"><span class="pf-mini-name">${esc(nameOf(k))}${bizTag(S.byKey[k])}</span>` +
+      return `<div class="pf-mini" data-app="${k}"><div class="pf-mini-head"><span class="pf-mini-name">${esc(S.mask ? S.byKey[k].alias : nameOf(k))}${bizTag(S.byKey[k])}</span>` +
         `<span class="pf-mini-val"><span class="pf-muted">어제</span> ${v != null ? nf(v) + '명' : '—'}</span></div>` +
         (has(k) ? `<div class="chart" id="pf-gw-${k}"></div>` + retLine(k) : `<p class="pf-mini-empty">${esc(statusText(c))}</p>`) + '</div>';
     }).join('');
@@ -566,7 +565,7 @@
     $('#pf-chips').innerHTML = S.apps.map(x => `<button type="button" class="pf-appchip${x.key === k ? ' is-on' : ''}" data-app="${x.key}"><span class="dot" style="background:${x.color}"></span>${esc(x.name)}</button>`).join('');
     document.querySelectorAll('.pf-appchip').forEach(b => b.addEventListener('click', () => (location.hash = 'app=' + b.dataset.app)));
     $('#pf-app-title').innerHTML = esc(a.name) + bizTag(a);
-    $('#pf-app-meta').textContent = S.mask ? '' : [a.package, c && c.dataset ? `${c.dataset} · 최종 확정 ${c.last_table || '—'} · 스캔 ${c.scan_mb}MB` : null].filter(Boolean).join(' · ');
+    $('#pf-app-meta').textContent = [a.package, c && c.dataset ? `${c.dataset} · 최종 확정 ${c.last_table || '—'} · 스캔 ${c.scan_mb}MB` : null].filter(Boolean).join(' · ');
 
     const d30 = span(addDays(yday, -29), yday), d7 = span(addDays(yday, -6), yday);
     const r30 = sum(d30.map(d => rev(k, d))), dau30 = sum(d30.map(d => A.dau[d] || 0));
@@ -613,8 +612,8 @@
       host.innerHTML = g && g.msg ? `<section class="card"><p class="card-sub">맞춤 지표 수집 실패: ${esc(g.msg)}</p></section>` : '';
       return;
     }
-    host.innerHTML = `<div class="pf-game-head"><h2>${esc(S.mask ? `${S.byKey[k].name} — 인게임` : (g.title || '인게임 지표'))}</h2>
-      <p class="card-sub">최근 ${esc(g.window[0].slice(5).replace('-', '/'))}~${esc(g.window[1].slice(5).replace('-', '/'))} · 퍼널·도달률은 최근 ${g.cohort_days}일 신규 유저 기준 · 스캔 ${g.scan_mb}MB${g.note && !S.mask ? ' · ' + esc(g.note) : ''}</p></div>` +
+    host.innerHTML = `<div class="pf-game-head"><h2>${esc(g.title || '인게임 지표')}</h2>
+      <p class="card-sub">최근 ${esc(g.window[0].slice(5).replace('-', '/'))}~${esc(g.window[1].slice(5).replace('-', '/'))} · 퍼널·도달률은 최근 ${g.cohort_days}일 신규 유저 기준 · 스캔 ${g.scan_mb}MB${g.note ? ' · ' + esc(g.note) : ''}</p></div>` +
       g.widgets.map((w, i) => `<section class="card"><div class="card-head"><h2>${esc(w.title || '')}</h2>${w.sub ? `<p class="card-sub">${esc(w.sub)}</p>` : ''}</div><div id="pf-gw-${i}"></div></section>`).join('');
     g.widgets.forEach((w, i) => {
       const el = $('#pf-gw-' + i);
@@ -771,7 +770,7 @@
     S.mask = !S.mask;
     try { localStorage.setItem(MASK_KEY, S.mask ? '1' : '0'); } catch { /* 저장 막혀도 이번 화면엔 적용 */ }
     applyMask();
-    if (S.M) route();
+    if (S.M && S.top === 'all') renderDauGrid(span(addDays(kstDate(0), -(S.range - 1)), kstDate(0)));
   });
   $('#pf-ev-auto').addEventListener('change', e => { S.evAuto = e.target.checked; if (S.app) renderEvents(commonOf(S.app)); });
   $('#pf-voice-all').addEventListener('click', () => (location.hash = 'voice'));
