@@ -46,6 +46,9 @@ jobs:
       GCP_SA_DRAKEWING: ${{ secrets.GCP_SA_DRAKEWING }}
       GCP_SA_HAEDAMHOUSE: ${{ secrets.GCP_SA_HAEDAMHOUSE }}
       GCP_SA_MERGERAILWAY: ${{ secrets.GCP_SA_MERGERAILWAY }}
+      GCP_SA_POCKETARCADE: ${{ secrets.GCP_SA_POCKETARCADE }}
+      GCP_SA_FACELAPSE: ${{ secrets.GCP_SA_FACELAPSE }}
+      GCP_SA_PRIVATECAM: ${{ secrets.GCP_SA_PRIVATECAM }}
       GCP_SA_HAEMU: ${{ secrets.GCP_SA_HAEMU }}
     steps:
       - uses: actions/checkout@v4
