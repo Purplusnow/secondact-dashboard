@@ -157,7 +157,7 @@ WITH ev AS (
          DATE(TIMESTAMP_MICROS(user_first_touch_timestamp), 'Asia/Seoul') >= @cstart AS coh
          {''.join(', ' + c for c in cols)}
   FROM `{{p}}.{{ds}}.events_*`
-  WHERE _TABLE_SUFFIX IN ({{suffixes}})   -- 봇(국가 없음)도 포함(2026-11-12 형 지시)
+  WHERE _TABLE_SUFFIX IN ({{suffixes}}) AND IFNULL(geo.country, '') != ''   -- 봇(국가 없음) 제외
     AND event_name IN ({', '.join(q(e) for e in sorted(events | {'first_open'}))})
 ),
 base AS (SELECT DISTINCT u FROM ev WHERE coh)

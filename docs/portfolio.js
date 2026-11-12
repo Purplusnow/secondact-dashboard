@@ -398,7 +398,7 @@
     $('#pf-apps').innerHTML = `<thead><tr><th class="date">앱</th><th>DAU<span class="th-note">어제</span></th><th>신규<span class="th-note">7일</span></th><th>누적 가입자</th>
       <th>D1</th><th>D7</th><th>광고<span class="th-note">30일</span></th><th>인앱<span class="th-note">30일</span></th><th>매출<span class="th-note">30일</span></th><th>30일 추이</th></tr></thead><tbody>` +
       rows.map(x => `<tr class="pf-row" data-app="${x.a.key}"><td class="date"><span class="dot" style="background:${x.a.color}"></span> ${esc(x.a.name)}${bizTag(x.a)}${x.a.kind === 'app' ? ' <span class="pf-muted">앱</span>' : ''} ${status(x.c)}</td>
-        <td>${x.dau != null ? nf(x.dau) : '—'}</td><td>${x.new7 != null ? nf(x.new7) : '—'}</td><td title="${x.c && x.c.total_since ? esc(x.c.total_since) + ' 부터(BigQuery 내보내기 시작) · 봇 포함' : ''}">${x.c && x.c.total_users != null ? nf(x.c.total_users) : '—'}</td>
+        <td>${x.dau != null ? nf(x.dau) : '—'}</td><td>${x.new7 != null ? nf(x.new7) : '—'}</td><td title="${x.c && x.c.total_since ? esc(x.c.total_since) + ' 부터(BigQuery 내보내기 시작) · 봇 제외' : ''}">${x.c && x.c.total_users != null ? nf(x.c.total_users) : '—'}</td>
         <td title="${x.d1 ? '코호트 ' + nf(x.d1.base) + '명' : ''}">${r(x.d1)}</td><td title="${x.d7r ? '코호트 ' + nf(x.d7r.base) + '명' : ''}">${r(x.d7r)}</td>
         <td>${krw(x.ad30)}</td><td>${krw(x.iap30)}</td><td class="sum">${krw(x.r30)}</td><td>${spark(x.trend, x.a.color)}</td></tr>`).join('') +
       (oth ? `<tr><td class="date"><span class="dot" style="background:${OTHER}"></span> 기타(심사 중·목록 밖 AdMob 앱)</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td colspan="2"></td><td class="sum">${krw(oth)}</td><td></td></tr>` : '') +

@@ -17,8 +17,9 @@ MAX_GB 를 넘는 앱은 건너뛴다.
 코호트가 '익은 값'으로 굳는다. 더 옛날 날짜는 파일에 남은 값을 그대로 둔다(누적).
 처음 붙는 앱은 DAYS=120 같은 값으로 한 번 백필한다.
 
-봇: geo.country 가 빈 줄(Play 사전출시 봇)도 **세어 넣는다** — 2026-11-12 형 지시(Firebase 콘솔과 맞추려고).
-     전에는 IFNULL(geo.country,'') != '' 로 뺐다.
+봇: geo.country 가 빈 줄은 Play 사전출시 봇이다 — 모든 앱에서 뺀다(IFNULL(geo.country,'') != '').
+     2026-11-12 잠깐 포함했다가 되돌림: 국가 없는 유저는 전부 한 기종(OnePlus IN2025)·1일·이벤트 3~4개·광고/결제 0 이었다.
+     새 게임은 왜곡이 커서(월드 레스토랑 투어 누적 59명 중 46명) 형이 다시 빼기로 함.
 날짜는 전부 KST(이벤트 타임스탬프 기준). 확정 테이블이 없는 날은 intraday 로 채우고
 provisional=true 를 단다(확정본은 26~34시간 늦게 온다).
 """
@@ -88,6 +89,7 @@ WITH ev AS (
          app_info.version AS v
   FROM `{p}.{ds}.events_*`
   WHERE _TABLE_SUFFIX IN ({suffixes})
+    AND IFNULL(geo.country, '') != ''
 ),
 act AS (SELECT DISTINCT u, d, d0 FROM ev WHERE d BETWEEN @start AND @end)
 SELECT 'day' AS kind, d, CAST(NULL AS INT64) AS k, CAST(NULL AS STRING) AS e, CAST(NULL AS STRING) AS v,
@@ -114,9 +116,9 @@ FROM ev WHERE d BETWEEN @verstart AND @end GROUP BY v
 
 def total_users(c, app: dict, ds: str, loc: str):
     """누적 가입자(형 지시 2026-11-12) — 내보내기 전 기간 고유 유저 수(user_pseudo_id) + 첫 데이터 날짜.
-    봇 포함(보드 기준과 같음). 내보내기를 켜기 전 가입자는 BigQuery 에 없어 못 센다. 인생 2막 ~240MB."""
+    봇(국가 없음) 제외 — 보드 기준과 같음. 내보내기를 켜기 전 가입자는 BigQuery 에 없어 못 센다."""
     sql = f"""SELECT COUNT(DISTINCT user_pseudo_id) AS n, MIN(event_date) AS d0
-              FROM `{app['project']}.{ds}.events_*`"""
+              FROM `{app['project']}.{ds}.events_*` WHERE IFNULL(geo.country, '') != ''"""
     try:
         job = c.query(sql, location=loc, job_config=bigquery.QueryJobConfig(maximum_bytes_billed=int(MAX_GB * 1e9)))
         r = list(job.result())[0]
