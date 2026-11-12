@@ -1388,6 +1388,183 @@
      "param_label": "지점"
     }
    ]
+  },
+  "haemu": {
+   "title": "해무사진관 — 인게임",
+   "note": "유료 미연시(v1.1.0부터 계측). 이벤트 사전: ~/dev/girl-game/docs/ANALYTICS.md. 핵심은 어디서 멈추나(day_start), 2회차 전환(second_run), 루트·엔딩 분포.",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "sub": "onboarding.name — 설치당 1회. 2회차 시작이 재미의 핵심 지표.",
+     "steps": [
+      {
+       "label": "앱 열기",
+       "event": "onboarding",
+       "param": "name",
+       "value": "app_open"
+      },
+      {
+       "label": "시작 화면",
+       "event": "onboarding",
+       "param": "name",
+       "value": "splash_tap"
+      },
+      {
+       "label": "새 게임",
+       "event": "onboarding",
+       "param": "name",
+       "value": "new_game"
+      },
+      {
+       "label": "2일차",
+       "event": "onboarding",
+       "param": "name",
+       "value": "day2"
+      },
+      {
+       "label": "자유행동(4일차)",
+       "event": "onboarding",
+       "param": "name",
+       "value": "free_day"
+      },
+      {
+       "label": "첫 히로인 이벤트",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_event"
+      },
+      {
+       "label": "첫 사진",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_photo"
+      },
+      {
+       "label": "첫 메신저",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_chat"
+      },
+      {
+       "label": "8일차",
+       "event": "onboarding",
+       "param": "name",
+       "value": "day8"
+      },
+      {
+       "label": "축제(12일차)",
+       "event": "onboarding",
+       "param": "name",
+       "value": "festival"
+      },
+      {
+       "label": "첫 엔딩",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_ending"
+      },
+      {
+       "label": "첫 굿엔딩",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_good"
+      },
+      {
+       "label": "2회차 시작",
+       "event": "onboarding",
+       "param": "name",
+       "value": "second_run"
+      },
+      {
+       "label": "진엔딩 해금",
+       "event": "onboarding",
+       "param": "name",
+       "value": "true_unlocked"
+      },
+      {
+       "label": "진엔딩",
+       "event": "onboarding",
+       "param": "name",
+       "value": "true_ending"
+      },
+      {
+       "label": "엔딩 전부",
+       "event": "onboarding",
+       "param": "name",
+       "value": "all_endings"
+      }
+     ]
+    },
+    {
+     "type": "maxval",
+     "title": "어디까지 갔나 — 최고 일차",
+     "sub": "유저별 day_start.day 최댓값(1~12, 12 = 축제).",
+     "event": "day_start",
+     "param": "day",
+     "param_label": "일차",
+     "prefix": "Day "
+    },
+    {
+     "type": "maxval",
+     "title": "본 엔딩 수",
+     "sub": "유저별 ending.endings 최댓값(전체 18).",
+     "event": "ending",
+     "param": "endings",
+     "param_label": "엔딩",
+     "prefix": ""
+    },
+    {
+     "type": "breakdown",
+     "title": "엔딩 분포",
+     "sub": "ending.id",
+     "event": "ending",
+     "param": "id",
+     "param_label": "엔딩"
+    },
+    {
+     "type": "breakdown",
+     "title": "엔딩 종류",
+     "sub": "ending.kind(good/normal/bad/true/solo)",
+     "event": "ending",
+     "param": "kind",
+     "param_label": "종류"
+    },
+    {
+     "type": "breakdown",
+     "title": "축제 초대 상대(루트)",
+     "sub": "invite.pick",
+     "event": "invite",
+     "param": "pick",
+     "param_label": "히로인"
+    },
+    {
+     "type": "breakdown",
+     "title": "1회차 플레이 시간(분)",
+     "sub": "ending.play_min — 목표 120~180분.",
+     "event": "ending",
+     "param": "play_min",
+     "param_label": "분",
+     "num": true
+    },
+    {
+     "type": "breakdown",
+     "title": "이벤트 방문 히로인",
+     "sub": "spot_pick.hero(한가한 방문 포함)",
+     "event": "spot_pick",
+     "param": "hero",
+     "param_label": "히로인"
+    },
+    {
+     "type": "breakdown",
+     "title": "되감기한 일차",
+     "sub": "rewind.day — 후회한 선택이 많은 날",
+     "event": "rewind",
+     "param": "day",
+     "param_label": "일차",
+     "num": true
+    }
+   ]
   }
  }
 }

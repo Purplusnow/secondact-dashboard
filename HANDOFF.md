@@ -186,7 +186,9 @@ git pull --rebase
    gh workflow run common.yml -f days=120 -f only=rainloopsushi,baduk,abysslantern,drakewing,haedamhouse
    → **2026-11-12 등록·백필 완료.**
    ```
-   머지 레일웨이 · 해무사진관 · Lumen Legion 은 BigQuery 키가 없다(Lumen Legion 의 Firebase 는 아직 placeholder).
+   머지 레일웨이 · Lumen Legion 은 BigQuery 키가 없다(Lumen Legion 의 Firebase 는 아직 placeholder).
+   **해무사진관(2026-11-12 Firebase 신설, v1.1.0부터 계측)**: `apps.json`·워크플로·`gamespecs.json`(haemu) 등록함. 키가 생기면
+   `gh secret set GCP_SA_HAEMU < ~/dev/keystore/haemu-photo-studio-bq.json` → `gh workflow run common.yml -f days=30 -f only=haemu`.
 2. **판매 리포트 자동화** — Play Console › 사용자 및 권한 에 서비스계정(`GCP_SA_KEY` 의 client_email)을 초대하고
    '재무 데이터 보기'를 준다(반영까지 최대 24시간). 그다음 `gh variable set PLAY_BUCKET -b pubsite_prod_rev_…`
    (Play Console › 다운로드 보고서 › 재무 › 'Cloud Storage URI 복사'). 그 전까진 월말에 zip 을 받아 `playsales.py --zip`.

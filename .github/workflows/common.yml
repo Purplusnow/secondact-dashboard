@@ -45,6 +45,7 @@ jobs:
       GCP_SA_ABYSSLANTERN: ${{ secrets.GCP_SA_ABYSSLANTERN }}
       GCP_SA_DRAKEWING: ${{ secrets.GCP_SA_DRAKEWING }}
       GCP_SA_HAEDAMHOUSE: ${{ secrets.GCP_SA_HAEDAMHOUSE }}
+      GCP_SA_HAEMU: ${{ secrets.GCP_SA_HAEMU }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
