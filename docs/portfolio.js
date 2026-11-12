@@ -53,6 +53,16 @@
   /* 색 기준(형 지시 2026-11-12): 최근 7일(어제까지) 평균 DAU 가 COLOR_MIN_DAU 이상인 앱만 색, 나머지는 회색.
    * 색 자체는 앱마다 고정(apps.json color → COLORS) — 다른 앱이 들고 나도 안 바뀐다. DAU 지표가 없는 앱은 늘 회색. */
   const COLOR_MIN_DAU = 10;
+
+  /* 게임명 가리기(캡처·외부 공유용, 형 지시 2026-11-12) — 켜면 앱 이름을 '프로젝트 N'(목록 순서)으로 바꾸고
+   * 패키지명·데이터셋·인게임 섹션 제목/메모처럼 게임을 드러내는 글도 숨긴다. 보는 사람 브라우저에만 기억한다. */
+  const MASK_KEY = 'pf-mask';
+  S.mask = (() => { try { return localStorage.getItem(MASK_KEY) === '1'; } catch { return false; } })();
+  function applyMask() {
+    S.apps.forEach(a => (a.name = S.mask ? a.alias : a.realName));
+    const b = $('#pf-mask');
+    if (b) { b.classList.toggle('is-on', S.mask); b.textContent = S.mask ? '게임명 보이기' : '게임명 가리기'; b.setAttribute('aria-pressed', S.mask); }
+  }
   function assignColors() {
     const ds = span(kstDate(7), kstDate(1));
     S.apps.forEach(a => {
@@ -75,6 +85,8 @@
     if (!apps || !daily) { $('#pf-error').hidden = false; return; }
     // review: true = Play 심사 중(스토어 미공개) — 화면에서 뺀다(형 지시 2026-11-12). 매출이 잡히면 '기타(목록 밖)'로 간다.
     S.apps = apps.apps.filter(a => !a.review);
+    S.apps.forEach((a, i) => { a.realName = a.name; a.alias = `프로젝트 ${i + 1}`; });
+    applyMask();
     S.apps.forEach(a => (S.byKey[a.key] = a));
     S.cfg = { store_fee: 0.15, fx_fallback: {}, tax_rates: {}, ...(cfg || {}) };
     S.daily = (daily.daily || []).slice().sort((a, b) => (a.date < b.date ? -1 : 1));
@@ -185,6 +197,7 @@
 
   const rev = (k, d) => (S.M.apps[k].ad[d] || 0) + (S.M.apps[k].iap[d] || 0);
   const keys = () => [...S.apps.map(a => a.key), '_other'];
+  const bizTag = a => (a && a.biz ? ` <span class="pf-biz pf-biz-${{ 무료: 'free', 유료: 'paid', 구독: 'sub' }[a.biz] || 'free'}">${esc(a.biz)}</span>` : '');
   const nameOf = k => (k === '_other' ? '기타(심사 중·목록 밖)' : S.byKey[k].name);
   const colorOf = k => (k === '_other' ? OTHER : S.byKey[k].color);
   const commonOf = k => (S.common && S.common.apps && S.common.apps[k]) || null;
@@ -356,7 +369,7 @@
     const r = x => (x ? `${(x.pct * 100).toFixed(1)}%` : '—');
     $('#pf-apps').innerHTML = `<thead><tr><th class="date">앱</th><th>DAU<span class="th-note">어제</span></th><th>신규<span class="th-note">7일</span></th>
       <th>D1</th><th>D7</th><th>광고<span class="th-note">30일</span></th><th>인앱<span class="th-note">30일</span></th><th>매출<span class="th-note">30일</span></th><th>30일 추이</th></tr></thead><tbody>` +
-      rows.map(x => `<tr class="pf-row" data-app="${x.a.key}"><td class="date"><span class="dot" style="background:${x.a.color}"></span> ${esc(x.a.name)}${x.a.kind === 'app' ? ' <span class="pf-muted">앱</span>' : ''} ${status(x.c)}</td>
+      rows.map(x => `<tr class="pf-row" data-app="${x.a.key}"><td class="date"><span class="dot" style="background:${x.a.color}"></span> ${esc(x.a.name)}${bizTag(x.a)}${x.a.kind === 'app' ? ' <span class="pf-muted">앱</span>' : ''} ${status(x.c)}</td>
         <td>${x.dau != null ? nf(x.dau) : '—'}</td><td>${x.new7 != null ? nf(x.new7) : '—'}</td>
         <td title="${x.d1 ? '코호트 ' + nf(x.d1.base) + '명' : ''}">${r(x.d1)}</td><td title="${x.d7r ? '코호트 ' + nf(x.d7r.base) + '명' : ''}">${r(x.d7r)}</td>
         <td>${krw(x.ad30)}</td><td>${krw(x.iap30)}</td><td class="sum">${krw(x.r30)}</td><td>${spark(x.trend, x.a.color)}</td></tr>`).join('') +
@@ -435,7 +448,7 @@
     const synced = (S.dailySynced && S.dailySynced.admob) || '';
     const last = S.M.salesCover.last;
     const iapNote = last && last.slice(0, 10) >= today ? `판매 리포트 ${last.slice(11, 16)}까지`
-      : `판매 리포트는 ${last ? last.replace('T', ' ').slice(5, 16) : '—'}까지라 그 뒤 인앱은 인생 2막 GA4 기록만(다른 앱은 리포트가 들어오면 채워짐)`;
+      : `판매 리포트는 ${last ? last.replace('T', ' ').slice(5, 16) : '—'}까지라 그 뒤 인앱은 ${nameOf('secondact')} GA4 기록만(다른 앱은 리포트가 들어오면 채워짐)`;
     $('#pf-day-sub').textContent = `실수령 기준. 광고 = AdMob 추정(매시간, 마지막 ${synced ? synced.slice(11, 16) : '—'}). 인앱 = ${iapNote}.`;
   }
 
@@ -443,7 +456,7 @@
     const c = S.M.salesCover, cm = S.common;
     const ok = cm ? Object.values(cm.apps || {}).filter(x => x.status === 'ok').length : 0;
     return [
-      `인앱: Play 판매 리포트 ${c.months.length ? c.months.map(m => m.slice(0, 4) + '.' + m.slice(4)).join(', ') + ` (마지막 주문 ${c.last ? c.last.replace('T', ' ').slice(0, 16) : '—'})` : '없음'} · 그 밖의 기간은 인생 2막 GA4/수동 기록만.`,
+      `인앱: Play 판매 리포트 ${c.months.length ? c.months.map(m => m.slice(0, 4) + '.' + m.slice(4)).join(', ') + ` (마지막 주문 ${c.last ? c.last.replace('T', ' ').slice(0, 16) : '—'})` : '없음'} · 그 밖의 기간은 ${nameOf('secondact')} GA4/수동 기록만.`,
       `광고매출: AdMob 앱별.`,
       `DAU·리텐션: ${cm ? `BigQuery 경량 수집 ${cm.updated} · ${ok}/${S.apps.length}개 앱 연결` : '아직 수집 전'}.`,
     ].map(x => `<span>${esc(x)}</span>`).join('');
@@ -471,7 +484,7 @@
     const host = $('#pf-dau-grid');
     host.innerHTML = order.map(k => {
       const c = commonOf(k), v = M.apps[k].dau[yday];
-      return `<div class="pf-mini" data-app="${k}"><div class="pf-mini-head"><span class="pf-mini-name">${esc(nameOf(k))}</span>` +
+      return `<div class="pf-mini" data-app="${k}"><div class="pf-mini-head"><span class="pf-mini-name">${esc(nameOf(k))}${bizTag(S.byKey[k])}</span>` +
         `<span class="pf-mini-val"><span class="pf-muted">어제</span> ${v != null ? nf(v) + '명' : '—'}</span></div>` +
         (has(k) ? `<div class="chart" id="pf-gw-${k}"></div>` + retLine(k) : `<p class="pf-mini-empty">${esc(statusText(c))}</p>`) + '</div>';
     }).join('');
@@ -515,7 +528,7 @@
     const ms = fold(live, k => m => cell(k, m));
     stacked($('#pf-month-chart'), asc, ms, (v, ax) => (ax ? krw(v).replace('₩', '') : won(v)), { xfmt: m => m.replace('-', '.'), h: 240 });
     legend($('#pf-month-legend'), legendOf(ms));
-    $('#pf-month-note').textContent = `* 표시는 그달 일부 날짜만 DAU 가 수집된 값(공통지표는 ${S.common ? '최근 수집 창부터' : '아직 수집 전'}). 인앱은 판매 리포트가 있는 달만 전체 앱 기준이고, 없는 달은 인생 2막 기록만 들어 있습니다.`;
+    $('#pf-month-note').textContent = `* 표시는 그달 일부 날짜만 DAU 가 수집된 값(공통지표는 ${S.common ? '최근 수집 창부터' : '아직 수집 전'}). 인앱은 판매 리포트가 있는 달만 전체 앱 기준이고, 없는 달은 ${nameOf('secondact')} 기록만 들어 있습니다.`;
   }
 
   /* ── 앱별 ───────────────────────────────────────── */
@@ -524,8 +537,8 @@
     const today = kstDate(0), yday = kstDate(1);
     $('#pf-chips').innerHTML = S.apps.map(x => `<button type="button" class="pf-appchip${x.key === k ? ' is-on' : ''}" data-app="${x.key}"><span class="dot" style="background:${x.color}"></span>${esc(x.name)}</button>`).join('');
     document.querySelectorAll('.pf-appchip').forEach(b => b.addEventListener('click', () => (location.hash = 'app=' + b.dataset.app)));
-    $('#pf-app-title').textContent = a.name;
-    $('#pf-app-meta').textContent = [a.package, c && c.dataset ? `${c.dataset} · 최종 확정 ${c.last_table || '—'} · 스캔 ${c.scan_mb}MB` : null].filter(Boolean).join(' · ');
+    $('#pf-app-title').innerHTML = esc(a.name) + bizTag(a);
+    $('#pf-app-meta').textContent = S.mask ? '' : [a.package, c && c.dataset ? `${c.dataset} · 최종 확정 ${c.last_table || '—'} · 스캔 ${c.scan_mb}MB` : null].filter(Boolean).join(' · ');
 
     const d30 = span(addDays(yday, -29), yday), d7 = span(addDays(yday, -6), yday);
     const r30 = sum(d30.map(d => rev(k, d))), dau30 = sum(d30.map(d => A.dau[d] || 0));
@@ -572,8 +585,8 @@
       host.innerHTML = g && g.msg ? `<section class="card"><p class="card-sub">맞춤 지표 수집 실패: ${esc(g.msg)}</p></section>` : '';
       return;
     }
-    host.innerHTML = `<div class="pf-game-head"><h2>${esc(g.title || '인게임 지표')}</h2>
-      <p class="card-sub">최근 ${esc(g.window[0].slice(5).replace('-', '/'))}~${esc(g.window[1].slice(5).replace('-', '/'))} · 퍼널·도달률은 최근 ${g.cohort_days}일 신규 유저 기준 · 스캔 ${g.scan_mb}MB${g.note ? ' · ' + esc(g.note) : ''}</p></div>` +
+    host.innerHTML = `<div class="pf-game-head"><h2>${esc(S.mask ? `${S.byKey[k].name} — 인게임` : (g.title || '인게임 지표'))}</h2>
+      <p class="card-sub">최근 ${esc(g.window[0].slice(5).replace('-', '/'))}~${esc(g.window[1].slice(5).replace('-', '/'))} · 퍼널·도달률은 최근 ${g.cohort_days}일 신규 유저 기준 · 스캔 ${g.scan_mb}MB${g.note && !S.mask ? ' · ' + esc(g.note) : ''}</p></div>` +
       g.widgets.map((w, i) => `<section class="card"><div class="card-head"><h2>${esc(w.title || '')}</h2>${w.sub ? `<p class="card-sub">${esc(w.sub)}</p>` : ''}</div><div id="pf-gw-${i}"></div></section>`).join('');
     g.widgets.forEach((w, i) => {
       const el = $('#pf-gw-' + i);
@@ -721,6 +734,12 @@
     document.querySelectorAll('#pf-range .tab').forEach(x => x.classList.toggle('is-on', x === b));
     renderAll();
   }));
+  $('#pf-mask').addEventListener('click', () => {
+    S.mask = !S.mask;
+    try { localStorage.setItem(MASK_KEY, S.mask ? '1' : '0'); } catch { /* 저장 막혀도 이번 화면엔 적용 */ }
+    applyMask();
+    if (S.M) route();
+  });
   $('#pf-ev-auto').addEventListener('change', e => { S.evAuto = e.target.checked; if (S.app) renderEvents(commonOf(S.app)); });
   $('#pf-voice-all').addEventListener('click', () => (location.hash = 'voice'));
   let rt;

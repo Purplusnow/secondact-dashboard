@@ -556,6 +556,9 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .reload:hover:not(:disabled) { background: var(--wash); color: var(--ink); }
 .reload:disabled { opacity: .55; cursor: default; }
 .reload + .updated { margin-left: 0; }
+.pf-mask { margin-right: 8px; }
+.pf-mask + .reload { margin-left: 0; }
+.pf-mask.is-on { background: var(--ink); color: var(--surface); border-color: var(--ink); }
 
 /* 낙폭이 '설계대로'인 칸 표시 — 줄 안에 꼬리표를 넣으면 그 줄만 막대가 짧아져 축이 깨진다.
    라벨에 점선만 긋고(설명은 title), 본문은 차트 아래 각주로 뺀다. 레이아웃에 영향 0. */
@@ -613,6 +616,12 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .pf-app-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .pf-app-head h1 { margin: 0; font-size: 20px; font-weight: 650; letter-spacing: -.01em; }
 .pf-app-head p { margin: 4px 0 0; }
+
+/* 유형 태그(무료/유료/구독) — 상태색이 아니라 중립 잉크, 테두리 굵기만 다르게 */
+.pf-biz { display: inline-block; font-size: 11px; font-weight: 500; line-height: 1; padding: 2px 5px; margin-left: 6px;
+          border-radius: 4px; border: 1px solid var(--hair); color: var(--ink-3); vertical-align: 2px; white-space: nowrap; }
+.pf-biz-paid, .pf-biz-sub { color: var(--ink); border-color: var(--ink-3); font-weight: 600; }
+h1 .pf-biz { font-size: 12px; vertical-align: 3px; }
 
 /* 앱별 DAU 바둑판 */
 .pf-minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
