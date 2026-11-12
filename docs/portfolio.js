@@ -60,7 +60,13 @@
   S.mask = (() => { try { return localStorage.getItem(MASK_KEY) === '1'; } catch { return false; } })();
   function applyMask() {
     const b = $('#pf-mask');
-    if (b) { b.classList.toggle('is-on', S.mask); b.textContent = S.mask ? '게임명 보이기' : '게임명 가리기'; b.setAttribute('aria-pressed', S.mask); }
+    if (!b) return;
+    // 글자 대신 눈 아이콘 — 보이는 중이면 눈, 가린 중이면 빗금 친 눈. 설명은 title·aria-label 로.
+    const eye = '<path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8s-2.5 4.5-6.5 4.5S1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/>';
+    b.innerHTML = `<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">${eye}${S.mask ? '<path d="M2.5 2.5l11 11"/>' : ''}</svg>`;
+    const label = S.mask ? '게임명 보이기' : '게임명 가리기(캡처용)';
+    b.title = label; b.setAttribute('aria-label', label);
+    b.classList.toggle('is-on', S.mask); b.setAttribute('aria-pressed', S.mask);
   }
   function assignColors() {
     const ds = span(kstDate(7), kstDate(1));
