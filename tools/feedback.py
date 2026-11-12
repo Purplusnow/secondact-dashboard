@@ -68,8 +68,13 @@ def main() -> int:
         try:
             got = fetch(app, int(st.get("last_unix", 0)))
         except urllib.error.HTTPError as e:
-            st.update(status="no_access" if e.code in (401, 403) else "error",
-                      msg=f"HTTP {e.code}" + (" — 서비스계정에 Cloud Datastore 뷰어 권한 필요" if e.code == 403 else ""))
+            body = e.read().decode(errors="replace") if hasattr(e, "read") else ""
+            # Firestore 를 안 쓰는 프로젝트(API 미사용 403 / DB 없음 404) = 의견 보내기 기능이 없는 앱 — 권한 문제와 가른다(2026-11-12)
+            if e.code == 404 or (e.code == 403 and ("has not been used" in body or "SERVICE_DISABLED" in body)):
+                st.update(status="no_feature", msg=f"HTTP {e.code} — Firestore 미사용(의견 기능 없음)")
+            else:
+                st.update(status="no_access" if e.code in (401, 403) else "error",
+                          msg=f"HTTP {e.code}" + (" — 서비스계정에 Cloud Datastore 뷰어 권한 필요" if e.code == 403 else ""))
             print(f"  {app['key']}: {st['msg']}")
             continue
         except Exception as e:

@@ -454,7 +454,7 @@
     const ks = S.apps.map(a => a.key);
     const stOf = k => (fb.apps[k] || {}).status;
     const readable = k => stOf(k) === 'ok' || dates.some(d => fbCount(d, k));
-    const why = k => ({ no_access: '권한 필요', no_secret: '미연결', error: /404/.test((fb.apps[k] || {}).msg || '') ? '기능 없음' : '오류' }[stOf(k)] || '—');
+    const why = k => ({ no_access: '권한 필요', no_secret: '미연결', no_feature: '기능 없음', error: /404/.test((fb.apps[k] || {}).msg || '') ? '기능 없음' : '오류' }[stOf(k)] || '—');
     // 행 = 앱, 열 = 날짜(왼쪽 오래된 → 오른쪽 최근 30일), 형 지시 2026-11-12. 표는 오른쪽 끝(오늘)으로 스크롤해 둔다.
     const today = kstDate(0), yday = kstDate(1);
     const cols = span(addDays(today, -29), today);
