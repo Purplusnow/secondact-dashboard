@@ -153,7 +153,7 @@ git pull --rebase
 
 | 데이터 | 파일 | 수집 | 비고 |
 |---|---|---|---|
-| 앱 목록 | `docs/data/apps.json` | 손으로 | 순서 = 색 순서. 7번째 이후 앱은 차트에서 '기타'로 접힌다. **표에는 값이 0 이어도 전부 나온다**(형 지시). 앱 목록의 원천 = `~/dev/privacy-policy/*.html`(출시 앱마다 정책 페이지) · AdMob 이름 = 영문 스토어 제목 |
+| 앱 목록 | `docs/data/apps.json` | 손으로 | **색 = 최근 7일 평균 DAU 10 이상인 앱만**(형 지시 2026-11-12, `portfolio.js` `COLOR_MIN_DAU`), 그 앱들끼리 목록 순서대로 팔레트를 채운다. 나머지는 회색이고 쌓는 차트에서 '기타'로 접힌다. 기준을 넘나들면 색이 생기거나 없어진다. **표에는 값이 0 이어도 전부 나온다**(형 지시). 앱 목록의 원천 = `~/dev/privacy-policy/*.html`(출시 앱마다 정책 페이지) · AdMob 이름 = 영문 스토어 제목 |
 | 광고매출 | `daily.json` `admob_apps` | `sync` 매시간 | AdMob 이름 → 앱은 apps.json 의 `admob` |
 | 인앱매출 | `iap_sales.json` | `sync`(버킷 설정 시) 또는 `playsales.py --zip` | **Play 판매 리포트가 기준.** 세전가 × 0.85, KST 날짜 |
 | 마케팅비 | `daily.json` `ads` · `ads_apps.json` | `sync` | **2026-11-12 형 지시로 화면에서 뺐다**(타일·월별 마케팅비/손익 열·크레딧 표시). 수집은 계속 돈다(BigQuery 안 씀). 다시 넣으려면 `91aca414` 의 portfolio.js 참고 |

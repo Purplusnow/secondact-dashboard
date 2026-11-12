@@ -18,7 +18,7 @@
   const $ = s => document.querySelector(s);
   const FX_API = 'https://api.frankfurter.dev/v1';
   const ECB = new Set('USD JPY BGN CZK DKK GBP HUF PLN RON SEK CHF ISK NOK TRY AUD BRL CAD CNY HKD IDR ILS INR KRW MXN MYR NZD PHP SGD THB ZAR EUR'.split(' '));
-  /* 검증된 범주 팔레트 8색 중 앞 7색 — 8번째 이후 앱은 '기타'(중립 회색)로 접는다 */
+  /* 검증된 범주 팔레트 8색 중 앞 7색 — 색 기준(assignColors) 밖의 앱은 중립 회색 */
   const PALETTE = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#6250d6'];
   const OTHER = '#a3a29c';
   const SEQ = ['#cde2fb', '#b7d3f6', '#86b6ef', '#6da7ec', '#3987e5', '#2a78d6', '#1c5cab', '#184f95'];
@@ -48,6 +48,21 @@
   const sum = xs => xs.reduce((t, x) => t + (x || 0), 0);
 
   /* ── 로드 ───────────────────────────────────────── */
+  /* 색 기준(형 지시 2026-11-12): 최근 7일(어제까지) 평균 DAU 가 COLOR_MIN_DAU 이상인 앱만 색, 나머지는 회색.
+   * 색을 받는 앱끼리는 apps.json 순서대로 팔레트를 채운다 — 위쪽 앱은 아래 앱이 들고 나도 색이 안 바뀐다.
+   * DAU 지표가 없는 앱(키 없음)은 늘 회색. 팔레트 7색을 넘게 기준을 넘으면 8번째부터 회색. */
+  const COLOR_MIN_DAU = 10;
+  function assignColors() {
+    const ds = span(kstDate(7), kstDate(1));
+    let i = 0;
+    S.apps.forEach(a => {
+      const daily = ((S.common && S.common.apps && S.common.apps[a.key]) || {}).daily || [];
+      const by = Object.fromEntries(daily.map(r => [r.date, r.dau || 0]));
+      a.dau7 = sum(ds.map(d => by[d] || 0)) / ds.length;
+      a.color = a.dau7 >= COLOR_MIN_DAU && i < PALETTE.length ? PALETTE[i++] : OTHER;
+    });
+  }
+
   const get = u => fetch(u, { cache: 'no-store' }).then(r => (r.ok ? r.json() : null)).catch(() => null);
 
   async function load() {
@@ -58,10 +73,11 @@
     S.gs = await get('data/gamestats.json');
     if (!apps || !daily) { $('#pf-error').hidden = false; return; }
     S.apps = apps.apps;
-    S.apps.forEach((a, i) => { a.color = i < PALETTE.length ? PALETTE[i] : OTHER; S.byKey[a.key] = a; });
+    S.apps.forEach(a => (S.byKey[a.key] = a));
     S.cfg = { store_fee: 0.15, fx_fallback: {}, tax_rates: {}, ...(cfg || {}) };
     S.daily = (daily.daily || []).slice().sort((a, b) => (a.date < b.date ? -1 : 1));
     S.sales = sales; S.common = common;
+    assignColors();
     $('#updated').textContent = daily.updated ? '갱신 ' + daily.updated : '';
     S.dailySynced = daily.synced || {};
     await loadFx();
@@ -283,7 +299,7 @@
 
   /* 레전드가 2개 이상일 때만 — 앱 순서 고정, 값이 있는 앱만 */
   const revSeries = ks => fold(ks, k => d => rev(k, d));
-  /* 팔레트 7색 밖의 앱(회색)은 한 계열 '기타'로 접는다 — 같은 회색 계열이 여러 개면 구별이 안 된다 */
+  /* 회색 앱(7일 평균 DAU 10 미만 등)은 한 계열 '기타'로 접는다 — 같은 회색 계열이 여러 개면 구별이 안 된다 */
   function fold(ks, valOf) {
     const main = ks.filter(k => colorOf(k) !== OTHER), rest = ks.filter(k => colorOf(k) === OTHER);
     const out = main.map(k => ({ key: k, label: nameOf(k), color: colorOf(k), val: valOf(k) }));

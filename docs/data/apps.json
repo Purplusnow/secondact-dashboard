@@ -1,5 +1,5 @@
 {
-  "_note": "통합 대시보드의 앱 목록. 손으로 고친다. order = 화면 순서 = 색 순서(색은 앱에 붙는다 — 순위가 바뀌어도 안 바뀐다). admob = AdMob displayLabel(이름이 바뀐 옛 항목도 같은 앱으로 묶는다). secret = BigQuery 키가 든 GitHub Secret 이름(없으면 DAU·리텐션 없이 매출만). 새 앱: 한 줄 추가 + 키를 시크릿으로 등록하면 다음 수집부터 붙는다.",
+  "_note": "통합 대시보드의 앱 목록. 손으로 고친다. order = 화면 순서. 색은 최근 7일 평균 DAU 10 이상인 앱에만, 그 앱들끼리 이 순서대로 붙는다(portfolio.js COLOR_MIN_DAU). admob = AdMob displayLabel(이름이 바뀐 옛 항목도 같은 앱으로 묶는다). secret = BigQuery 키가 든 GitHub Secret 이름(없으면 DAU·리텐션 없이 매출만). 새 앱: 한 줄 추가 + 키를 시크릿으로 등록하면 다음 수집부터 붙는다.",
   "apps": [
     { "key": "secondact",   "name": "인생 2막",        "kind": "game", "package": "com.purplusnow.secondactlife",  "admob": ["Second Act: Property Tycoon"],                   "project": "second-act-life",      "secret": "GCP_SA_KEY",              "detail": "secondact" },
     { "key": "crowncoin",   "name": "왕관과 금화",      "kind": "game", "package": "com.purplusnow.crowncoin",      "admob": ["Crown & Coin: Idle Estate", "Crown and Coin"],    "project": "crownandcoin",         "secret": "GCP_SA_CROWNCOIN" },
