@@ -628,6 +628,8 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 h1 .pf-biz-n { font-size: 13px; }
 h1 .pf-biz { font-size: 12px; vertical-align: 3px; }
 
+.pf-tabgroup { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
 /* 앱별 DAU 바둑판 */
 .pf-minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
 .pf-mini { border: 1px solid var(--hair); border-radius: 8px; padding: 10px 10px 4px; cursor: pointer; min-width: 0; }

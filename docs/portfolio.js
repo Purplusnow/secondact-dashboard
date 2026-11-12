@@ -30,7 +30,7 @@
     'first_visit', 'page_view', 'dynamic_link_first_open', 'dynamic_link_app_open', 'app_exception']);
 
   const S = { apps: [], byKey: {}, cfg: {}, daily: [], sales: null, common: null, fb: null, gs: null, fbApp: '', fbN: 50,
-              fx: { byDate: {}, dates: [] }, M: null, top: 'all', app: null, range: 30, evAuto: false };
+              fx: { byDate: {}, dates: [] }, M: null, revBy: 'app', top: 'all', app: null, range: 30, evAuto: false };
 
   /* ── 형식 ───────────────────────────────────────── */
   const nf = n => Math.round(n).toLocaleString('ko-KR');
@@ -399,8 +399,12 @@
 
     // 일매출 · DAU 누적 막대
     const days = span(addDays(today, -(S.range - 1)), today);
-    const live = ks.filter(k => days.some(d => rev(k, d) > 0));
-    const rs = revSeries(live);
+    // 보기 전환(형 지시 2026-11-12): 앱별 누적 ↔ 광고·인앱 누적(전체 앱 합). 앱 페이지 일매출과 같은 두 색.
+    const allSum = fn => d => sum(ks.map(k => fn(k, d)));
+    const rs = S.revBy === 'src'
+      ? [{ key: 'ad', label: '광고매출', color: '#2a78d6', val: allSum((k, d) => M.apps[k].ad[d] || 0) },
+         { key: 'iap', label: '인앱매출', color: '#1baf7a', val: allSum((k, d) => M.apps[k].iap[d] || 0) }]
+      : revSeries(ks.filter(k => days.some(d => rev(k, d) > 0)));
     stacked($('#pf-rev'), days, rs, (v, ax) => (ax ? krw(v).replace('₩', '') : won(v)),
       { note: d => (d === today ? ' · 오늘(진행 중)' : '') });
     legend($('#pf-rev-legend'), legendOf(rs));
@@ -747,6 +751,11 @@
   /* ── 배선 ───────────────────────────────────────── */
   document.querySelectorAll('.ttab').forEach(b => b.addEventListener('click', () => {
     location.hash = b.dataset.top === 'app' ? 'app=' + (S.app || S.apps[0].key) : b.dataset.top;
+  }));
+  document.querySelectorAll('#pf-revby .tab').forEach(b => b.addEventListener('click', () => {
+    S.revBy = b.dataset.by;
+    document.querySelectorAll('#pf-revby .tab').forEach(x => x.classList.toggle('is-on', x === b));
+    renderAll();
   }));
   document.querySelectorAll('#pf-range .tab').forEach(b => b.addEventListener('click', () => {
     S.range = +b.dataset.days;

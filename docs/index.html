@@ -7,7 +7,7 @@
 <meta name="description" content="전체 앱의 광고매출·인앱매출·DAU·리텐션·유저 의견을 한 화면에서 보는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=7386986c">
+<link rel="stylesheet" href="style.css?v=9f61fe62">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -47,8 +47,9 @@
   </section>
 
   <section class="card">
-    <div class="card-head pf-head-row"><div><h2>앱별 일매출</h2><p class="card-sub">광고매출 + 인앱매출(실수령). 오늘은 진행 중.</p></div>
-      <div class="tabs" id="pf-range"><button class="tab is-on" data-days="30" type="button">30일</button><button class="tab" data-days="90" type="button">90일</button></div></div>
+    <div class="card-head pf-head-row"><div><h2>일매출</h2><p class="card-sub">실수령 기준. 오늘은 진행 중.</p></div>
+      <div class="pf-tabgroup"><div class="tabs" id="pf-revby"><button class="tab is-on" data-by="app" type="button">앱별</button><button class="tab" data-by="src" type="button">광고·인앱</button></div>
+      <div class="tabs" id="pf-range"><button class="tab is-on" data-days="30" type="button">30일</button><button class="tab" data-days="90" type="button">90일</button></div></div></div>
     <div class="chart" id="pf-rev"></div>
     <div class="legend" id="pf-rev-legend"></div>
   </section>
@@ -150,6 +151,6 @@
 
 
 <script src="refresh.js?v=a91cb06a"></script>
-<script src="portfolio.js?v=c31c6a51"></script>
+<script src="portfolio.js?v=2697e6c9"></script>
 </body>
 </html>
