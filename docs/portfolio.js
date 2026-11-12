@@ -453,15 +453,19 @@
     $('#pf-voice-meta').textContent = `갱신 ${fb.updated} · 건수만 보여 줍니다(내용은 Firebase 콘솔 › Firestore › feedback).` +
       (st.length ? ` 못 읽은 앱: ${st.map(([k, v]) => (S.byKey[k] ? S.byKey[k].name : k) + '(' + (v.msg || v.status) + ')').join(', ')}` : '');
     if (!dates.length) return;
-    // 열 = 의견을 셀 수 있는 앱 전부(0건이어도). 권한 없는 앱은 위 안내 문구로.
-    const ks = S.apps.filter(a => dates.some(d => fbCount(d, a.key)) || (fb.apps[a.key] || {}).status === 'ok').map(a => a.key);
+    // 열 = 목록의 앱 전부(형 지시 2026-11-12). 못 읽는 앱은 0 이 아니라 '—' 와 이유(머리글 아래 작게).
+    const ks = S.apps.map(a => a.key);
+    const stOf = k => (fb.apps[k] || {}).status;
+    const readable = k => stOf(k) === 'ok' || dates.some(d => fbCount(d, k));
+    const why = k => ({ no_access: '권한 필요', no_secret: '미연결', error: /404/.test((fb.apps[k] || {}).msg || '') ? '기능 없음' : '오류' }[stOf(k)] || '—');
+    const cellOf = (d, k) => (readable(k) ? (fbCount(d, k) || '<span class="pf-muted">0</span>') : '<span class="pf-muted">—</span>');
     const today = kstDate(0), yday = kstDate(1);
     const rows = dates.slice(0, 60);
-    $('#pf-voice-table').innerHTML = `<thead><tr><th class="date">날짜</th>${ks.map(k => `<th><span class="dot" style="background:${colorOf(k)}"></span> ${esc(nameOf(k))}</th>`).join('')}<th>합계</th></tr></thead><tbody>` +
+    $('#pf-voice-table').innerHTML = `<thead><tr><th class="date">날짜</th>${ks.map(k => `<th><span class="dot" style="background:${colorOf(k)}"></span> ${esc(nameOf(k))}${readable(k) ? '' : `<span class="th-note" title="${esc((fb.apps[k] || {}).msg || '')}">${why(k)}</span>`}</th>`).join('')}<th>합계</th></tr></thead><tbody>` +
       rows.map(d => { const t = sum(ks.map(k => fbCount(d, k)));
-        return `<tr${d >= yday ? ' class="pf-fresh"' : ''}><td class="date">${mmdd(d)}${d === today ? ' <span class="pf-new">오늘</span>' : d === yday ? ' <span class="pf-muted">어제</span>' : ''}</td>${ks.map(k => `<td>${fbCount(d, k) || '<span class="pf-muted">0</span>'}</td>`).join('')}<td class="sum">${t}</td></tr>`; }).join('') +
-      `</tbody><tfoot><tr><td class="date">합계</td>${ks.map(k => `<td class="sum">${sum(rows.map(d => fbCount(d, k)))}</td>`).join('')}<td class="sum">${sum(rows.map(d => sum(ks.map(k => fbCount(d, k)))))}</td></tr></tfoot>`;
-    $('#pf-voice-last').innerHTML = ks.map(k => { const v = fb.apps[k] || {};
+        return `<tr${d >= yday ? ' class="pf-fresh"' : ''}><td class="date">${mmdd(d)}${d === today ? ' <span class="pf-new">오늘</span>' : d === yday ? ' <span class="pf-muted">어제</span>' : ''}</td>${ks.map(k => `<td>${cellOf(d, k)}</td>`).join('')}<td class="sum">${t}</td></tr>`; }).join('') +
+      `</tbody><tfoot><tr><td class="date">합계</td>${ks.map(k => `<td class="sum">${readable(k) ? sum(rows.map(d => fbCount(d, k))) : '—'}</td>`).join('')}<td class="sum">${sum(rows.map(d => sum(ks.map(k => fbCount(d, k)))))}</td></tr></tfoot>`;
+    $('#pf-voice-last').innerHTML = ks.filter(readable).map(k => { const v = fb.apps[k] || {};
       return `<span class="pf-vs"><span class="dot" style="background:${colorOf(k)}"></span>${esc(nameOf(k))} <span class="pf-muted">마지막 ${v.last_at ? esc(v.last_at.replace('T', ' ').slice(0, 16)) : '—'}</span></span>`; }).join('');
   }
 
