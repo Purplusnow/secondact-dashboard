@@ -778,6 +778,32 @@
     applyMask();
     if (S.M && S.top === 'all') renderDauGrid(span(addDays(kstDate(0), -(S.range - 1)), kstDate(0)));
   });
+  /* 앱별 DAU 카드만 PNG 로 저장(형 지시 2026-11-12) — 누를 때만 html2canvas 를 불러온다. 버튼은 이미지에서 뺀다.
+   * 가리기가 켜져 있으면 가린 이름 그대로 찍힌다(캡처용). */
+  let h2c = null;
+  const loadH2C = () => h2c || (h2c = new Promise((ok, bad) => {
+    const sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    sc.onload = () => ok(window.html2canvas); sc.onerror = () => { h2c = null; bad(new Error('이미지 라이브러리를 못 불러왔습니다')); };
+    document.head.append(sc);
+  }));
+  $('#pf-dau-png').addEventListener('click', async e => {
+    const btn = e.currentTarget, card = $('#pf-dau-card');
+    btn.disabled = true;
+    try {
+      const html2canvas = await loadH2C();
+      const bg = getComputedStyle(document.body).backgroundColor;
+      const canvas = await html2canvas(card, { scale: 2, backgroundColor: bg, logging: false,
+        ignoreElements: el => el.id === 'pf-mask' || el.id === 'pf-dau-png' });
+      const a = document.createElement('a');
+      a.download = `dau-${kstDate(0)}${S.mask ? '-masked' : ''}.png`;
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    } catch (err) {
+      console.error('[pf] DAU 이미지 저장 실패', err);
+      btn.title = '저장 실패 — 다시 눌러 보세요';
+    } finally { btn.disabled = false; }
+  });
   $('#pf-ev-auto').addEventListener('change', e => { S.evAuto = e.target.checked; if (S.app) renderEvents(commonOf(S.app)); });
   $('#pf-voice-all').addEventListener('click', () => (location.hash = 'voice'));
   let rt;
