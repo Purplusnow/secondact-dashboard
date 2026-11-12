@@ -373,6 +373,7 @@
 
     $('#pf-tiles').innerHTML = [
       tile('이번 달 매출', krw(monRev), `광고 ${krw(monAd)} · 인앱 ${krw(monIap)}${proj ? ` · 예상 ${krw(proj)}` : ''}`),
+      tile('오늘 매출', krw(tot(rev, [today])), `광고 ${krw(tot(ad, [today]))} · 인앱 ${krw(tot(iap, [today]))} · 진행 중${S.dailySynced && S.dailySynced.admob ? ' (' + S.dailySynced.admob.slice(11, 16) + ' 기준)' : ''}`),
       tile('어제 매출', krw(ydRev), `광고 ${krw(tot(ad, [yday]))} · 인앱 ${krw(tot(iap, [yday]))} · 7일 평균 ${krw(wkAvg)}`),
       tile('어제 DAU', dauKs.length ? nf(ydDau) + '명' : '—', dauKs.length ? `신규 ${nf(ydNew)}명 · 지표 연결 ${dauKs.length}개 앱` : '공통지표 수집 전'),
     ].join('');
