@@ -354,14 +354,7 @@
     stacked($('#pf-rev'), days, rs, (v, ax) => (ax ? krw(v).replace('₩', '') : won(v)),
       { note: d => (d === today ? ' · 오늘(진행 중)' : '') });
     legend($('#pf-rev-legend'), legendOf(rs));
-    const dk = S.apps.filter(a => days.some(d => M.apps[a.key].dau[d])).map(a => a.key);
-    const ds = fold(dk, k => d => M.apps[k].dau[d] || 0);
-    stacked($('#pf-dau'), days, ds,
-      (v, ax) => (ax ? (v >= 1000 ? (v / 1000).toFixed(v >= 1e4 ? 0 : 1) + '천' : nf(v)) : nf(v) + '명'),
-      {});
-    legend($('#pf-dau-legend'), legendOf(ds));
-    $('#pf-dau-card').hidden = !dk.length;
-    $('#pf-dau-empty').hidden = !!dk.length;
+    renderDauGrid(days);
     $('#pf-cover').innerHTML = coverNote();
     renderVoiceSummary();
   }
@@ -440,6 +433,28 @@
 
   const tile = (label, value, sub) =>
     `<div class="tile"><div class="tile-label">${esc(label)}</div><div class="tile-value num">${value}</div><div class="tile-sub">${esc(sub)}</div></div>`;
+
+  /* 앱별 DAU — 앱 하나에 작은 차트 하나(바둑판). '기타'로 접지 않고 목록의 앱을 전부 보인다(형 지시 2026-11-12).
+   * 앱마다 축이 따로라 작은 앱도 모양이 보인다 — 크기 비교는 칸 제목의 숫자로 한다.
+   * 한 계열뿐이라 범주색이 필요 없어서 전부 같은 색. 확정 전(intraday) 날은 옅게. */
+  function renderDauGrid(days) {
+    const M = S.M, yday = kstDate(1);
+    const has = k => days.some(d => M.apps[k].dau[d]);
+    const order = S.apps.map(a => a.key)
+      .sort((x, y) => (has(y) - has(x)) || ((M.apps[y].dau[yday] || 0) - (M.apps[x].dau[yday] || 0)));
+    const host = $('#pf-dau-grid');
+    host.innerHTML = order.map(k => {
+      const c = commonOf(k), v = M.apps[k].dau[yday];
+      return `<div class="pf-mini" data-app="${k}"><div class="pf-mini-head"><span class="pf-mini-name">${esc(nameOf(k))}</span>` +
+        `<span class="pf-mini-val">${v != null ? nf(v) + '명' : '—'}</span></div>` +
+        (has(k) ? `<div class="chart" id="pf-gw-${k}"></div>` : `<p class="pf-mini-empty">${esc(statusText(c))}</p>`) + '</div>';
+    }).join('');
+    order.filter(has).forEach(k => stacked($('#pf-gw-' + k), days,
+      [{ key: k, label: 'DAU', color: PALETTE[0], val: d => M.apps[k].dau[d] || 0 }],
+      (v, ax) => (ax ? (v >= 1000 ? (v / 1000).toFixed(v >= 1e4 ? 0 : 1) + '천' : nf(v)) : nf(v) + '명'),
+      { h: 120, dim: d => !!M.apps[k].prov[d] }));
+    host.querySelectorAll('.pf-mini').forEach(el => el.addEventListener('click', () => (location.hash = 'app=' + el.dataset.app)));
+  }
 
   /* ── 월별 ───────────────────────────────────────── */
   function renderMonth() {

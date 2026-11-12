@@ -614,6 +614,15 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .pf-app-head h1 { margin: 0; font-size: 20px; font-weight: 650; letter-spacing: -.01em; }
 .pf-app-head p { margin: 4px 0 0; }
 
+/* 앱별 DAU 바둑판 */
+.pf-minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.pf-mini { border: 1px solid var(--hair); border-radius: 8px; padding: 10px 10px 4px; cursor: pointer; min-width: 0; }
+.pf-mini:hover { background: var(--wash); }
+.pf-mini-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.pf-mini-name { font-size: 13px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-mini-val { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pf-mini-empty { font-size: 12.5px; color: var(--ink-3); margin: 18px 0 22px; text-align: center; }
+
 .pf-rets { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 14px; }
 .pf-ret { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border: 1px solid var(--hair); border-radius: 8px; }
 .pf-ret b { font-size: 18px; font-weight: 620; }
