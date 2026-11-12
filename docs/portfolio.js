@@ -18,8 +18,10 @@
   const $ = s => document.querySelector(s);
   const FX_API = 'https://api.frankfurter.dev/v1';
   const ECB = new Set('USD JPY BGN CZK DKK GBP HUF PLN RON SEK CHF ISK NOK TRY AUD BRL CAD CNY HKD IDR ILS INR KRW MXN MYR NZD PHP SGD THB ZAR EUR'.split(' '));
-  /* 검증된 범주 팔레트 8색 중 앞 7색 — 색 기준(assignColors) 밖의 앱은 중립 회색 */
-  const PALETTE = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#6250d6'];
+  /* 앱 고정색 48개(apps.json 의 color = 인덱스). 앞 7개 = 검증된 범주 팔레트, 나머지는 OKLCH 16색조×밝기 3단 격자에서
+   * 이미 고른 색과 가장 먼 것부터 뽑았다 — 앞 번호일수록 서로 잘 갈린다(8번 ΔE≥16.7, 16번 ≥10). 순서를 바꾸지 말 것. */
+  const COLORS = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#6250d6', '#9b4153', '#50b3e8', '#9a8700', '#007872', '#746300', '#b066b4', '#b695e6', '#9ab45a', '#009ab7', '#cb5e73', '#71509b', '#24bfb8', '#006c9d', '#964d09', '#e98a77', '#777ad8', '#c56c21', '#2f7434', '#479c4d', '#78931e', '#d19d47', '#976fcb', '#cc624d', '#c15f96', '#009f99', '#4c86d9', '#0091ce', '#4cc098', '#934370', '#ce8dd1', '#b47900', '#5759a6', '#b9a947', '#28bbd4', '#77a9f2', '#e1925a', '#576d05', '#9c4534', '#854888', '#999ff2', '#75bc78'];
+  const PALETTE = COLORS.slice(0, 7);
   const OTHER = '#a3a29c';
   const SEQ = ['#cde2fb', '#b7d3f6', '#86b6ef', '#6da7ec', '#3987e5', '#2a78d6', '#1c5cab', '#184f95'];
   const AUTO_EVENTS = new Set(['screen_view', 'user_engagement', 'session_start', 'first_open', 'app_remove',
@@ -49,17 +51,16 @@
 
   /* ── 로드 ───────────────────────────────────────── */
   /* 색 기준(형 지시 2026-11-12): 최근 7일(어제까지) 평균 DAU 가 COLOR_MIN_DAU 이상인 앱만 색, 나머지는 회색.
-   * 색을 받는 앱끼리는 apps.json 순서대로 팔레트를 채운다 — 위쪽 앱은 아래 앱이 들고 나도 색이 안 바뀐다.
-   * DAU 지표가 없는 앱(키 없음)은 늘 회색. 팔레트 7색을 넘게 기준을 넘으면 8번째부터 회색. */
+   * 색 자체는 앱마다 고정(apps.json color → COLORS) — 다른 앱이 들고 나도 안 바뀐다. DAU 지표가 없는 앱은 늘 회색. */
   const COLOR_MIN_DAU = 10;
   function assignColors() {
     const ds = span(kstDate(7), kstDate(1));
-    let i = 0;
     S.apps.forEach(a => {
+      if (a.color_idx == null) a.color_idx = typeof a.color === 'number' ? a.color : -1;
       const daily = ((S.common && S.common.apps && S.common.apps[a.key]) || {}).daily || [];
       const by = Object.fromEntries(daily.map(r => [r.date, r.dau || 0]));
       a.dau7 = sum(ds.map(d => by[d] || 0)) / ds.length;
-      a.color = a.dau7 >= COLOR_MIN_DAU && i < PALETTE.length ? PALETTE[i++] : OTHER;
+      a.color = a.dau7 >= COLOR_MIN_DAU && COLORS[a.color_idx] ? COLORS[a.color_idx] : OTHER;
     });
   }
 
