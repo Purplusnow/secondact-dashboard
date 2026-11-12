@@ -112,6 +112,22 @@ FROM ev WHERE d BETWEEN @verstart AND @end GROUP BY v
 """
 
 
+def total_users(c, app: dict, ds: str, loc: str):
+    """누적 가입자(형 지시 2026-11-12) — 내보내기 전 기간 고유 유저 수(user_pseudo_id) + 첫 데이터 날짜.
+    봇 포함(보드 기준과 같음). 내보내기를 켜기 전 가입자는 BigQuery 에 없어 못 센다. 인생 2막 ~240MB."""
+    sql = f"""SELECT COUNT(DISTINCT user_pseudo_id) AS n, MIN(event_date) AS d0
+              FROM `{app['project']}.{ds}.events_*`"""
+    try:
+        job = c.query(sql, location=loc, job_config=bigquery.QueryJobConfig(maximum_bytes_billed=int(MAX_GB * 1e9)))
+        r = list(job.result())[0]
+        d0 = f"{r['d0'][:4]}-{r['d0'][4:6]}-{r['d0'][6:]}" if r["d0"] else None
+        print(f"    누적 가입자 {r['n']}명(since {d0}) · 스캔 {(job.total_bytes_billed or 0) / 1e6:.1f} MB")
+        return int(r["n"]), d0
+    except Exception as e:
+        print(f"    누적 가입자 집계 실패: {e}"[:300])
+        return None
+
+
 def subs_active(c, app: dict, ds: str, loc: str, today) -> int | None:
     """구독 앱의 활성 구독자 추정(형 지시 2026-11-12) — apps.json 의 subs 설정이 있을 때만.
     구독 결제 완료 이벤트(plan 파라미터)를 플랜별 기간(월 31일·연 366일) 안에 남긴 유저 수.
@@ -226,9 +242,11 @@ def collect(app: dict, prev: dict) -> dict:
                      for e, m in evt.items()), key=lambda x: -x["n"])
 
     subs = subs_active(c, app, ds, loc, today)
+    total = total_users(c, app, ds, loc)
 
     return {
         **({"subs_active": subs} if subs is not None else {}),
+        **({"total_users": total[0], "total_since": total[1]} if total else {}),
         "status": "ok", "dataset": ds, "location": loc, "last_table": last,
         "window": [start.isoformat(), today.isoformat()], "scan_mb": scan_mb,
         "collected": datetime.now(KST).isoformat(timespec="seconds"),
