@@ -197,7 +197,26 @@
 
   const rev = (k, d) => (S.M.apps[k].ad[d] || 0) + (S.M.apps[k].iap[d] || 0);
   const keys = () => [...S.apps.map(a => a.key), '_other'];
-  const bizTag = a => (a && a.biz ? ` <span class="pf-biz pf-biz-${{ 무료: 'free', 유료: 'paid', 구독: 'sub' }[a.biz] || 'free'}">${esc(a.biz)}</span>` : '');
+  /* 유형 태그 + 구독 앱은 활성 구독자(추정, common.json subs_active), 유료 앱은 유료 구매자(Play 판매 리포트 주문 − 환불) */
+  function paidBuyers(a) {
+    let n = 0;
+    for (const m of Object.values((S.sales && S.sales.months) || {}))
+      for (const day of Object.values(m.by_date || {})) { const x = day[a.package]; if (x) n += (x.n || 0) - (x.refunds || 0); }
+    return n;
+  }
+  const bizTag = a => {
+    if (!a || !a.biz) return '';
+    const cls = { 무료: 'free', 유료: 'paid', 구독: 'sub' }[a.biz] || 'free';
+    let extra = '';
+    if (a.biz === '구독') {
+      const c = commonOf(a.key);
+      if (c && c.subs_active != null) extra = ` <span class="pf-biz-n" title="구독 결제 완료 이벤트 기준 추정(월 31일·연 366일 안) — 갱신·해지는 못 봄">(활성구독자: ${nf(c.subs_active)}명)</span>`;
+    } else if (a.biz === '유료') {
+      const last = S.sales && S.sales.last_order;
+      extra = ` <span class="pf-biz-n" title="Play 판매 리포트 주문 − 환불${last ? ' · 리포트 ' + esc(last.replace('T', ' ').slice(0, 16)) + '까지' : ' · 리포트 없음'}">(유료구매자: ${nf(paidBuyers(a))}명)</span>`;
+    }
+    return ` <span class="pf-biz pf-biz-${cls}">${esc(a.biz)}</span>${extra}`;
+  };
   const nameOf = k => (k === '_other' ? '기타(심사 중·목록 밖)' : S.byKey[k].name);
   const colorOf = k => (k === '_other' ? OTHER : S.byKey[k].color);
   const commonOf = k => (S.common && S.common.apps && S.common.apps[k]) || null;

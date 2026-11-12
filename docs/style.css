@@ -624,6 +624,8 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .pf-biz-free { background: #e4f3ea; color: #17643a; }
 .pf-biz-paid { background: #e6ecfb; color: #2445a3; }
 .pf-biz-sub  { background: #fcefd9; color: #7d4b00; }
+.pf-biz-n { font-size: 12px; font-weight: 500; color: var(--ink-2); margin-left: 4px; white-space: nowrap; }
+h1 .pf-biz-n { font-size: 13px; }
 h1 .pf-biz { font-size: 12px; vertical-align: 3px; }
 
 /* 앱별 DAU 바둑판 */

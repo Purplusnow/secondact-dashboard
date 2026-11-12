@@ -112,6 +112,38 @@ FROM ev WHERE d BETWEEN @verstart AND @end GROUP BY v
 """
 
 
+def subs_active(c, app: dict, ds: str, loc: str, today) -> int | None:
+    """구독 앱의 활성 구독자 추정(형 지시 2026-11-12) — apps.json 의 subs 설정이 있을 때만.
+    구독 결제 완료 이벤트(plan 파라미터)를 플랜별 기간(월 31일·연 366일) 안에 남긴 유저 수.
+    안드로이드는 갱신이 클라이언트 이벤트로 안 남아서 '최초 결제 후 기간 안'만 센다 — 갱신·해지는 못 본다(추정)."""
+    cfg = app.get("subs")
+    if not cfg:
+        return None
+    longest = max(cfg["days"].values())
+    cases = " ".join(f"WHEN '{plan}' THEN {int(d)}" for plan, d in cfg["days"].items())
+    sql = f"""
+    SELECT COUNT(DISTINCT user_pseudo_id) AS n FROM (
+      SELECT user_pseudo_id,
+             DATE(TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') AS d,
+             (SELECT value.string_value FROM UNNEST(event_params) WHERE key = @param) AS plan
+      FROM `{app['project']}.{ds}.events_*`
+      WHERE _TABLE_SUFFIX >= FORMAT_DATE('%Y%m%d', DATE_SUB(@today, INTERVAL {longest + 1} DAY))
+        AND event_name = @event)
+    WHERE DATE_DIFF(@today, d, DAY) < CASE plan {cases} ELSE 0 END"""
+    params = [bigquery.ScalarQueryParameter("param", "STRING", cfg.get("param", "plan")),
+              bigquery.ScalarQueryParameter("event", "STRING", cfg["event"]),
+              bigquery.ScalarQueryParameter("today", "DATE", today)]
+    try:
+        job = c.query(sql, location=loc, job_config=bigquery.QueryJobConfig(
+            query_parameters=params, maximum_bytes_billed=int(MAX_GB * 1e9)))
+        n = list(job.result())[0]["n"]
+        print(f"    활성 구독자(추정) {n}명 · 스캔 {(job.total_bytes_billed or 0) / 1e6:.1f} MB")
+        return int(n)
+    except Exception as e:
+        print(f"    활성 구독자 집계 실패: {e}"[:300])
+        return None
+
+
 def collect(app: dict, prev: dict) -> dict:
     if not app.get("secret") or not app.get("project"):
         return {**prev, "status": "no_secret"}
@@ -193,7 +225,10 @@ def collect(app: dict, prev: dict) -> dict:
                       "users": max((v[1] for v in m.values()), default=0)}
                      for e, m in evt.items()), key=lambda x: -x["n"])
 
+    subs = subs_active(c, app, ds, loc, today)
+
     return {
+        **({"subs_active": subs} if subs is not None else {}),
         "status": "ok", "dataset": ds, "location": loc, "last_table": last,
         "window": [start.isoformat(), today.isoformat()], "scan_mb": scan_mb,
         "collected": datetime.now(KST).isoformat(timespec="seconds"),
