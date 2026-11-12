@@ -454,7 +454,7 @@
 
   /* 앱별 DAU — 앱 하나에 작은 차트 하나(바둑판). '기타'로 접지 않고 목록의 앱을 전부 보인다(형 지시 2026-11-12).
    * 앱마다 축이 따로라 작은 앱도 모양이 보인다 — 크기 비교는 칸 제목의 숫자로 한다.
-   * 한 계열뿐이라 범주색이 필요 없어서 전부 같은 색. 확정 전(intraday) 날은 옅게. */
+   * 한 계열뿐이라 범주색이 필요 없어서 전부 같은 색. 확정 전(intraday) 날도 구분 없이 같은 진하기(형 지시 2026-11-12). */
   function renderDauGrid(days) {
     const M = S.M, yday = kstDate(1);
     const has = k => days.some(d => M.apps[k].dau[d]);
@@ -478,7 +478,7 @@
     order.filter(has).forEach(k => stacked($('#pf-gw-' + k), days,
       [{ key: k, label: 'DAU', color: PALETTE[0], val: d => M.apps[k].dau[d] || 0 }],
       (v, ax) => (ax ? (v >= 1000 ? (v / 1000).toFixed(v >= 1e4 ? 0 : 1) + '천' : nf(v)) : nf(v) + '명'),
-      { h: 120, dim: d => !!M.apps[k].prov[d] }));
+      { h: 120 }));
     host.querySelectorAll('.pf-mini').forEach(el => el.addEventListener('click', () => (location.hash = 'app=' + el.dataset.app)));
   }
 
