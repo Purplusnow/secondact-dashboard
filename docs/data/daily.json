@@ -1316,11 +1316,11 @@
       "date": "2026-11-12",
       "ads": 2642,
       "admob": {
-        "USD": 17.36
+        "USD": 17.4
       },
       "admob_apps": {
-        "Second Act: Property Tycoon": 9.31,
-        "Crown & Coin: Idle Estate": 7.9,
+        "Second Act: Property Tycoon": 9.3,
+        "Crown & Coin: Idle Estate": 7.95,
         "Hexa Sort: Bee Architect": 0.09,
         "Plop Cat: Slide & Jigsaw": 0.05,
         "Merge Railway: Train Makeover": 0.01
@@ -1334,13 +1334,20 @@
     },
     {
       "date": "2026-11-13",
-      "ads": 0
+      "ads": 0,
+      "admob": {
+        "USD": 1.03
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.92,
+        "Crown & Coin: Idle Estate": 0.11
+      }
     }
   ],
   "synced": {
     "iap": "2026-11-12T18:50:35+09:00",
-    "ads": "2026-11-13T00:32:50+09:00",
-    "admob": "2026-11-13T00:32:50+09:00",
+    "ads": "2026-11-13T01:32:50+09:00",
+    "admob": "2026-11-13T01:32:51+09:00",
     "iap_scanned": "2026-11-12"
   }
 }
