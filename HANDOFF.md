@@ -153,7 +153,7 @@ git pull --rebase
 
 | 데이터 | 파일 | 수집 | 비고 |
 |---|---|---|---|
-| 앱 목록 | `docs/data/apps.json` | 손으로 | **목록 순서 = Play 최초 출시일 순**(`released`, 스토어 페이지의 출시일 — 형 지시 2026-11-12. 새 앱은 출시일 자리에 끼워 넣는다). **프로덕션 출시된 앱만 화면에**(형 지시 2026-11-12). 심사 중은 `"review": true` 로 숨기고 수집은 계속 — Play 공개 페이지(`play.google.com/store/apps/details?id=<패키지>`)가 200 이 되면 표시를 지운다. 업데이트 때마다 확인할 것.  **색 = 앱마다 고정 번호**(`apps.json` `color` → `portfolio.js` `COLORS` 48색, 한번 정하면 안 바꾼다. 새 앱은 안 쓴 다음 번호). **최근 7일 평균 DAU 10 이상일 때만 그 색이 보이고** 아래면 회색(`COLOR_MIN_DAU`) — 형 지시 2026-11-12. 회색 앱은 쌓는 차트에서 '기타'로 접힌다. **표에는 값이 0 이어도 전부 나온다**(형 지시). 앱 목록의 원천 = `~/dev/privacy-policy/*.html`(출시 앱마다 정책 페이지) · AdMob 이름 = 영문 스토어 제목 |
+| 앱 목록 | `docs/data/apps.json` | 손으로 | **목록 순서 = Play 최초 출시일 순**(`released`, 스토어 페이지의 출시일 — 형 지시 2026-11-12. 새 앱은 출시일 자리에 끼워 넣는다). **프로덕션 출시된 앱만 화면에**(형 지시 2026-11-12). 미출시(심사 중 4종 + 출시 준비 전인 빛의 군단 — Firebase·Play 콘솔 작업 전, 2026-11-12 확인)는 `"review": true` 로 숨기고 수집은 계속 — Play 공개 페이지(`play.google.com/store/apps/details?id=<패키지>`)가 200 이 되면 표시를 지운다. 업데이트 때마다 확인할 것.  **색 = 앱마다 고정 번호**(`apps.json` `color` → `portfolio.js` `COLORS` 48색, 한번 정하면 안 바꾼다. 새 앱은 안 쓴 다음 번호). **최근 7일 평균 DAU 10 이상일 때만 그 색이 보이고** 아래면 회색(`COLOR_MIN_DAU`) — 형 지시 2026-11-12. 회색 앱은 쌓는 차트에서 '기타'로 접힌다. **표에는 값이 0 이어도 전부 나온다**(형 지시). 앱 목록의 원천 = `~/dev/privacy-policy/*.html`(출시 앱마다 정책 페이지) · AdMob 이름 = 영문 스토어 제목 |
 | 광고매출 | `daily.json` `admob_apps` | `sync` 매시간 | AdMob 이름 → 앱은 apps.json 의 `admob` |
 | 인앱매출 | `iap_sales.json` | `sync`(버킷 설정 시) 또는 `playsales.py --zip` | **Play 판매 리포트가 기준.** 세전가 × 0.85, KST 날짜 |
 | 마케팅비 | `daily.json` `ads` · `ads_apps.json` | `sync` | **2026-11-12 형 지시로 화면에서 뺐다**(타일·월별 마케팅비/손익 열·크레딧 표시). 수집은 계속 돈다(BigQuery 안 씀). 다시 넣으려면 `91aca414` 의 portfolio.js 참고 |
