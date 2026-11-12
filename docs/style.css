@@ -617,10 +617,13 @@ a { color: #2a78d6; text-underline-offset: 2px; }
 .pf-app-head h1 { margin: 0; font-size: 20px; font-weight: 650; letter-spacing: -.01em; }
 .pf-app-head p { margin: 4px 0 0; }
 
-/* 유형 태그(무료/유료/구독) — 상태색이 아니라 중립 잉크, 테두리 굵기만 다르게 */
-.pf-biz { display: inline-block; font-size: 11px; font-weight: 500; line-height: 1; padding: 2px 5px; margin-left: 6px;
-          border-radius: 4px; border: 1px solid var(--hair); color: var(--ink-3); vertical-align: 2px; white-space: nowrap; }
-.pf-biz-paid, .pf-biz-sub { color: var(--ink); border-color: var(--ink-3); font-weight: 600; }
+/* 유형 태그(무료/유료/구독) */
+.pf-biz { display: inline-block; font-size: 11px; font-weight: 600; line-height: 1; padding: 3px 6px; margin-left: 6px;
+          border-radius: 4px; vertical-align: 2px; white-space: nowrap; }
+/* 유형별 색 — 옅은 바탕 + 진한 같은 계열 글자(대비 4.5:1 이상) */
+.pf-biz-free { background: #e4f3ea; color: #17643a; }
+.pf-biz-paid { background: #e6ecfb; color: #2445a3; }
+.pf-biz-sub  { background: #fcefd9; color: #7d4b00; }
 h1 .pf-biz { font-size: 12px; vertical-align: 3px; }
 
 /* 앱별 DAU 바둑판 */
