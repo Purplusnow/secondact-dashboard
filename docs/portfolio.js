@@ -73,7 +73,8 @@
     S.fb = fb;
     S.gs = await get('data/gamestats.json');
     if (!apps || !daily) { $('#pf-error').hidden = false; return; }
-    S.apps = apps.apps;
+    // review: true = Play 심사 중(스토어 미공개) — 화면에서 뺀다(형 지시 2026-11-12). 매출이 잡히면 '기타(목록 밖)'로 간다.
+    S.apps = apps.apps.filter(a => !a.review);
     S.apps.forEach(a => (S.byKey[a.key] = a));
     S.cfg = { store_fee: 0.15, fx_fallback: {}, tax_rates: {}, ...(cfg || {}) };
     S.daily = (daily.daily || []).slice().sort((a, b) => (a.date < b.date ? -1 : 1));
@@ -184,7 +185,7 @@
 
   const rev = (k, d) => (S.M.apps[k].ad[d] || 0) + (S.M.apps[k].iap[d] || 0);
   const keys = () => [...S.apps.map(a => a.key), '_other'];
-  const nameOf = k => (k === '_other' ? '기타(목록 밖)' : S.byKey[k].name);
+  const nameOf = k => (k === '_other' ? '기타(심사 중·목록 밖)' : S.byKey[k].name);
   const colorOf = k => (k === '_other' ? OTHER : S.byKey[k].color);
   const commonOf = k => (S.common && S.common.apps && S.common.apps[k]) || null;
 
@@ -359,7 +360,7 @@
         <td>${x.dau != null ? nf(x.dau) : '—'}</td><td>${x.new7 != null ? nf(x.new7) : '—'}</td>
         <td title="${x.d1 ? '코호트 ' + nf(x.d1.base) + '명' : ''}">${r(x.d1)}</td><td title="${x.d7r ? '코호트 ' + nf(x.d7r.base) + '명' : ''}">${r(x.d7r)}</td>
         <td>${krw(x.ad30)}</td><td>${krw(x.iap30)}</td><td class="sum">${krw(x.r30)}</td><td>${spark(x.trend, x.a.color)}</td></tr>`).join('') +
-      (oth ? `<tr><td class="date"><span class="dot" style="background:${OTHER}"></span> 기타(목록 밖 AdMob 앱)</td><td>—</td><td>—</td><td>—</td><td>—</td><td colspan="2"></td><td class="sum">${krw(oth)}</td><td></td></tr>` : '') +
+      (oth ? `<tr><td class="date"><span class="dot" style="background:${OTHER}"></span> 기타(심사 중·목록 밖 AdMob 앱)</td><td>—</td><td>—</td><td>—</td><td>—</td><td colspan="2"></td><td class="sum">${krw(oth)}</td><td></td></tr>` : '') +
       `</tbody><tfoot><tr><td class="date">합계</td><td>${dauKs.length ? nf(ydDau) : '—'}</td><td></td><td></td><td></td>
         <td>${krw(sum(rows.map(x => x.ad30)))}</td><td>${krw(sum(rows.map(x => x.iap30)))}</td><td class="sum">${krw(sum(rows.map(x => x.r30)) + oth)}</td><td></td></tr></tfoot>`;
     document.querySelectorAll('#pf-apps .pf-row').forEach(tr => tr.addEventListener('click', () => (location.hash = 'app=' + tr.dataset.app)));
