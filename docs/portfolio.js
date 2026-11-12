@@ -405,6 +405,11 @@
       ? [{ key: 'ad', label: '광고매출', color: '#2a78d6', val: allSum((k, d) => M.apps[k].ad[d] || 0) },
          { key: 'iap', label: '인앱매출', color: '#1baf7a', val: allSum((k, d) => M.apps[k].iap[d] || 0) }]
       : revSeries(ks.filter(k => days.some(d => rev(k, d) > 0)));
+    // 기간 누적(형 지시 2026-11-12) — 막대 위 숫자 하나. 누적선을 겹치면 축이 둘이 돼서 숫자로 둔다.
+    const cum = sum(days.map(d => sum(ks.map(k => rev(k, d)))));
+    const cumAd = sum(days.map(d => sum(ks.map(k => M.apps[k].ad[d] || 0))));
+    $('#pf-revsum').innerHTML = `<span class="pf-muted">최근 ${S.range}일 누적</span> <b>${won(cum)}</b>` +
+      `<span class="pf-muted"> · 광고 ${krw(cumAd)} · 인앱 ${krw(cum - cumAd)}</span>`;
     stacked($('#pf-rev'), days, rs, (v, ax) => (ax ? krw(v).replace('₩', '') : won(v)),
       { note: d => (d === today ? ' · 오늘(진행 중)' : '') });
     legend($('#pf-rev-legend'), legendOf(rs));
