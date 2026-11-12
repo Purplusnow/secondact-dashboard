@@ -632,6 +632,9 @@ h1 .pf-biz { font-size: 12px; vertical-align: 3px; }
 .pf-tabgroup { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 
 /* 유저 의견 표 — 날짜 열은 좁게 */
+.pf-newtbl th.pf-vd, .pf-newtbl td.pf-vd { text-align: right; }
+.pf-newtbl .pf-vd-today { background: var(--wash); }
+.pf-newtbl td.date { white-space: nowrap; }
 #pf-voice-table th.pf-vd, #pf-voice-table td.pf-vd { min-width: 34px; padding-left: 4px; padding-right: 4px; text-align: center; }
 #pf-voice-table .pf-vd-today { background: var(--wash); font-weight: 600; }
 #pf-voice-table td.date, #pf-voice-table th.date { white-space: nowrap; position: sticky; left: 0; background: var(--surface); z-index: 1; }
