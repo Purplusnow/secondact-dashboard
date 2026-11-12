@@ -639,6 +639,11 @@ h1 .pf-biz { font-size: 12px; vertical-align: 3px; }
 #pf-voice-table .pf-vd-today { background: var(--wash); font-weight: 600; }
 #pf-voice-table td.date, #pf-voice-table th.date { white-space: nowrap; position: sticky; left: 0; background: var(--surface); z-index: 1; }
 
+.pf-roi-from { font-size: 14px; color: var(--ink-2); margin: 0 0 14px; padding: 10px 14px; border: 1px solid var(--hair); border-radius: 8px; background: var(--surface); }
+.pf-roi-from b { color: var(--ink); }
+#roi-tiles .neg { color: var(--bad); }
+#roi-tiles .pos { color: var(--good); }
+
 /* 앱별 DAU 바둑판 */
 .pf-minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
 .pf-mini { border: 1px solid var(--hair); border-radius: 8px; padding: 10px 10px 4px; cursor: pointer; min-width: 0; }

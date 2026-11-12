@@ -87,6 +87,7 @@
       get('data/iap_sales.json'), get('data/common.json'), get('data/feedback.json')]);
     S.fb = fb;
     S.gs = await get('data/gamestats.json');
+    S.adsApps = await get('data/ads_apps.json');   // 광고 손익 탭용(앱별 광고비 — Ads 스크립트 갱신 전엔 없음)
     if (!apps || !daily) { $('#pf-error').hidden = false; return; }
     // review: true = Play 심사 중(스토어 미공개) — 화면에서 뺀다(형 지시 2026-11-12). 매출이 잡히면 '기타(목록 밖)'로 간다.
     S.apps = apps.apps.filter(a => !a.review);
@@ -244,14 +245,15 @@
   function route() {
     const h = location.hash.replace('#', '');
     const [top, arg] = h.split('=');
-    S.top = ['all', 'month', 'app', 'voice'].includes(top) ? top : 'all';
+    S.top = ['all', 'month', 'app', 'voice', 'roi'].includes(top) ? top : 'all';
     if (S.top === 'app') S.app = S.byKey[arg] ? arg : (S.app || S.apps[0].key);
     document.querySelectorAll('.ttab').forEach(b => b.classList.toggle('is-on', b.dataset.top === S.top));
-    ['all', 'month', 'app', 'voice'].forEach(t => { $('#top-' + t).hidden = t !== S.top; });
+    ['all', 'month', 'app', 'voice', 'roi'].forEach(t => { $('#top-' + t).hidden = t !== S.top; });
     if (S.top === 'all') renderAll();
     if (S.top === 'month') renderMonth();
     if (S.top === 'app') renderApp();
     if (S.top === 'voice') renderVoice();
+    if (S.top === 'roi') renderRoi();
   }
   addEventListener('hashchange', () => S.M && route());
 
@@ -551,6 +553,61 @@
       { h: 120 }));
     host.querySelectorAll('.pf-mini').forEach(el => el.addEventListener('click', () => (location.hash = 'app=' + el.dataset.app)));
   }
+
+  /* ══ 광고 손익 탭(형 지시 2026-11-13) ══════════════════════════════════════════
+   * 기점(ROI_FROM)부터 광고비 누적 지출을 0 으로 두고, 앱별 누적 광고비 vs 누적 매출(광고+인앱 실수령)을 본다.
+   * 광고비: 계정 합계 = daily.json ads, 앱별 = ads_apps.json(캠페인 app_id=패키지). 앱별 내역이 없는 날은 '앱 미배정'.
+   * 지울 때: 이 블록 + index.html 의 '광고 손익' 버튼·#top-roi + route() 의 'roi' 두 곳 + S.adsApps 로드 한 줄. */
+  const ROI_FROM = '2026-11-13';
+  function renderRoi() {
+    const M = S.M, today = kstDate(0), days = span(ROI_FROM, today);
+    const byPkg = Object.fromEntries(S.apps.filter(a => a.package).map(a => [a.package, a.key]));
+    const total = {}, perApp = {}, unassigned = {};
+    const split = (S.adsApps && S.adsApps.by_date) || {};
+    for (const r of S.daily) {
+      if (r.date < ROI_FROM || !r.ads) continue;
+      total[r.date] = r.ads;
+      let got = 0;
+      for (const [pkg, v] of Object.entries(split[r.date] || {})) {
+        const k = byPkg[pkg]; if (!k) continue;
+        perApp[k] = (perApp[k] || 0) + v.cost; got += v.cost;
+      }
+      if (r.ads - got > 0) unassigned[r.date] = r.ads - got;
+    }
+    const spend = sum(Object.values(total)), unas = sum(Object.values(unassigned));
+    const revOf = k => sum(days.map(d => rev(k, d)));
+    const adOf = k => sum(days.map(d => M.apps[k].ad[d] || 0)), iapOf = k => sum(days.map(d => M.apps[k].iap[d] || 0));
+    const ks = keys(), revAll = sum(ks.map(revOf));
+    const p = S.cfg.promo_credit, credit = p && today >= p.from && (!p.to || ROI_FROM <= p.to);
+    $('#roi-from').innerHTML = `<b>기점 ${ROI_FROM.replace(/-/g, '.')}</b> — 이날부터 광고비 누적 지출을 0원으로 두고 다시 셉니다. 그 전 지출·매출은 이 탭에 넣지 않습니다.` +
+      (credit ? ` <span class="pf-chip" title="config.json promo_credit">구글 프로모션 크레딧 기간</span>` : '');
+    const cls = v => (v < 0 ? 'neg' : 'pos');
+    const roas = (r, sp) => (sp > 0 ? (100 * r / sp).toFixed(0) + '%' : '—');
+    $('#roi-tiles').innerHTML = [
+      tile('누적 광고비', won(spend), `${days.length}일 · 오늘 ${won(total[today] || 0)}`),
+      tile('누적 매출', won(revAll), `광고 ${krw(sum(ks.map(adOf)))} · 인앱 ${krw(sum(ks.map(iapOf)))}`),
+      tile('손익', `<span class="${cls(revAll - spend)}">${won(revAll - spend)}</span>`, `ROAS ${roas(revAll, spend)} (매출 ÷ 광고비)`),
+    ].join('');
+    $('#roi-sub').textContent = S.adsApps ? '앱별 광고비 = Google Ads 앱 캠페인(패키지) 기준. 앱에 안 묶인 비용은 \'앱 미배정\'.'
+      : '⚠ 앱별 광고비가 아직 안 들어온다 — Google Ads 스크립트를 새 버전(tools/google-ads-script.js)으로 바꿔 붙여야 나뉜다. 그 전엔 전부 \'앱 미배정\'.';
+    const rows = S.apps.map(a => ({ k: a.key, name: a.name, color: a.color, sp: perApp[a.key] || 0, ad: adOf(a.key), iap: iapOf(a.key), r: revOf(a.key) }))
+      .sort((x, y) => (y.sp - x.sp) || (y.r - x.r));
+    const oth = revOf('_other');
+    const line = (name, color, sp, ad, iap, r, title = '') => `<tr${title ? ` title="${esc(title)}"` : ''}><td class="date"><span class="dot" style="background:${color}"></span> ${name}</td>` +
+      `<td>${sp ? won(sp) : '<span class="pf-muted">—</span>'}</td><td>${won(ad)}</td><td>${won(iap)}</td><td class="sum">${won(r)}</td>` +
+      `<td class="${cls(r - sp)}">${won(r - sp)}</td><td>${roas(r, sp)}</td></tr>`;
+    $('#roi-apps').innerHTML = `<thead><tr><th class="date">앱</th><th>광고비<span class="th-note">누적</span></th><th>광고매출</th><th>인앱매출</th><th>매출<span class="th-note">누적</span></th><th>손익</th><th>ROAS</th></tr></thead><tbody>` +
+      rows.map(x => line(esc(x.name), x.color, x.sp, x.ad, x.iap, x.r)).join('') +
+      (unas ? line('앱 미배정', OTHER, unas, 0, 0, 0, '앱 캠페인에 묶이지 않았거나 앱별 내역이 없는 날의 광고비') : '') +
+      (oth ? line('기타(심사 중·목록 밖)', OTHER, 0, oth, 0, oth) : '') +
+      `</tbody><tfoot><tr><td class="date">합계</td><td>${won(spend)}</td><td>${won(sum(ks.map(adOf)))}</td><td>${won(sum(ks.map(iapOf)))}</td><td class="sum">${won(revAll)}</td><td class="${cls(revAll - spend)}">${won(revAll - spend)}</td><td>${roas(revAll, spend)}</td></tr></tfoot>`;
+    let cs = 0, cr = 0;
+    const drows = days.map(d => { const s0 = total[d] || 0, r0 = sum(ks.map(k => rev(k, d))); cs += s0; cr += r0;
+      return { d, s0, r0, cs, cr }; }).reverse();
+    $('#roi-days').innerHTML = `<thead><tr><th class="date">날짜</th><th>광고비</th><th>매출</th><th>누적 광고비</th><th>누적 매출</th><th>누적 손익</th></tr></thead><tbody>` +
+      drows.map(x => `<tr><td class="date">${mmdd(x.d)}${x.d === today ? ' <span class="pf-new">오늘</span>' : ''}</td><td>${won(x.s0)}</td><td>${won(x.r0)}</td><td>${won(x.cs)}</td><td>${won(x.cr)}</td><td class="${cls(x.cr - x.cs)}">${won(x.cr - x.cs)}</td></tr>`).join('') + '</tbody>';
+  }
+  /* ══ 광고 손익 탭 끝 ══ */
 
   /* ── 월별 ───────────────────────────────────────── */
   function renderMonth() {

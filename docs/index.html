@@ -7,7 +7,7 @@
 <meta name="description" content="전체 앱의 광고매출·인앱매출·DAU·리텐션·유저 의견을 한 화면에서 보는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=15a773cc">
+<link rel="stylesheet" href="style.css?v=cfe1934f">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -25,6 +25,7 @@
   <button class="ttab" data-top="month" type="button">월별</button>
   <button class="ttab" data-top="app" type="button">앱별</button>
   <button class="ttab" data-top="voice" type="button">유저 의견</button>
+  <button class="ttab" data-top="roi" type="button">광고 손익</button>  <!-- 광고 손익 탭(2026-11-13~). 지울 때: 이 버튼 + #top-roi 블록 + portfolio.js 의 '광고 손익 탭' 블록 -->
 </nav>
 
 <section class="empty wrap" id="pf-error" hidden><h2>데이터를 못 읽었습니다</h2><pre></pre></section>
@@ -140,6 +141,22 @@
 </main>
 </div>
 
+<!-- ── 광고 손익(2026-11-13 기점) — 지울 때 이 블록째 삭제 ── -->
+<div id="top-roi" hidden>
+<main class="wrap">
+  <p class="pf-roi-from" id="roi-from"></p>
+  <section class="tiles" id="roi-tiles"></section>
+  <section class="card">
+    <div class="card-head"><h2>앱별 누적 광고비 vs 누적 매출</h2><p class="card-sub" id="roi-sub"></p></div>
+    <div class="table-scroll"><table class="ledger" id="roi-apps"></table></div>
+  </section>
+  <section class="card">
+    <div class="card-head"><h2>일별 추이</h2><p class="card-sub">전체 앱 합계 · 오늘은 진행 중</p></div>
+    <div class="table-scroll"><table class="ledger" id="roi-days"></table></div>
+  </section>
+</main>
+</div>
+
 <!-- ── 유저 의견 ── -->
 <div id="top-voice" hidden>
 <main class="wrap">
@@ -157,6 +174,6 @@
 
 
 <script src="refresh.js?v=a91cb06a"></script>
-<script src="portfolio.js?v=3555dc0e"></script>
+<script src="portfolio.js?v=a07ee95d"></script>
 </body>
 </html>
