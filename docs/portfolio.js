@@ -461,12 +461,19 @@
     // 순서·제목 숫자 = 어제 DAU
     const order = S.apps.map(a => a.key)
       .sort((x, y) => (has(y) - has(x)) || ((M.apps[y].dau[yday] || 0) - (M.apps[x].dau[yday] || 0)));
+    const today = kstDate(0);
+    // 리텐션 — 앱별 현황 표와 같은 창(D1: 최근 2주 코호트, D7: 익은 최근 4주 코호트, 가중 평균)
+    const retLine = k => {
+      const r1 = retention(k, 1, addDays(today, -15), addDays(today, -2)), r7 = retention(k, 7, addDays(today, -37), addDays(today, -8));
+      const f = (n, r) => `<span title="${r ? '코호트 ' + nf(r.base) + '명' : '코호트 없음'}">D${n} <b>${r ? (r.pct * 100).toFixed(1) + '%' : '—'}</b></span>`;
+      return `<div class="pf-mini-ret">${f(1, r1)}${f(7, r7)}</div>`;
+    };
     const host = $('#pf-dau-grid');
     host.innerHTML = order.map(k => {
       const c = commonOf(k), v = M.apps[k].dau[yday];
       return `<div class="pf-mini" data-app="${k}"><div class="pf-mini-head"><span class="pf-mini-name">${esc(nameOf(k))}</span>` +
         `<span class="pf-mini-val"><span class="pf-muted">어제</span> ${v != null ? nf(v) + '명' : '—'}</span></div>` +
-        (has(k) ? `<div class="chart" id="pf-gw-${k}"></div>` : `<p class="pf-mini-empty">${esc(statusText(c))}</p>`) + '</div>';
+        (has(k) ? `<div class="chart" id="pf-gw-${k}"></div>` + retLine(k) : `<p class="pf-mini-empty">${esc(statusText(c))}</p>`) + '</div>';
     }).join('');
     order.filter(has).forEach(k => stacked($('#pf-gw-' + k), days,
       [{ key: k, label: 'DAU', color: PALETTE[0], val: d => M.apps[k].dau[d] || 0 }],
