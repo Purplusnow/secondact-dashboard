@@ -74,10 +74,13 @@
    "com.purplusnow.mergerailway": {
     "campaigns": [
      "MergeRailway_CL_AOS_Live",
-     "MergeRailway_TW_AOS_Live"
+     "MergeRailway_HK_ZHT_AOS_Live",
+     "MergeRailway_KR_AOS_Live",
+     "MergeRailway_TW_AOS_Live",
+     "MergeRailway_JP_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 10
+    "cost": 85
    },
    "com.purplusnow.rainloopsushi": {
     "campaigns": [
@@ -86,7 +89,7 @@
      "RainloopSushi_TH_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 1077
+    "cost": 1379
    },
    "com.purplusnow.worldrestaurant": {
     "campaigns": [
@@ -96,9 +99,9 @@
      "WorldRestaurant_KR_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 52
+    "cost": 94
    }
   }
  },
- "updated": "2026-11-13T21:32:49+09:00"
+ "updated": "2026-11-13T22:33:02+09:00"
 }
