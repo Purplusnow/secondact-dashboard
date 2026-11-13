@@ -1568,7 +1568,7 @@
   },
   "baduk": {
    "title": "바둑 — 인게임",
-   "note": "초기 퍼널만(2026-11-13). 이벤트: pick_opponent·pick_level·game_start·game_end(result)·trial_start.",
+   "note": "초기 퍼널만(2026-11-13). 이벤트: pick_opponent·pick_level·game_start·game_end(result)·trial_start. 무료 체험 시작(trial_start)은 결제창을 본 사람만 거쳐 온보딩 이탈이 아니라 뺐다.",
    "widgets": [
     {
      "type": "funnel",
@@ -1600,10 +1600,6 @@
          "resign_win"
         ]
        }
-      },
-      {
-       "label": "무료 체험 시작",
-       "event": "trial_start"
       }
      ]
     }
@@ -1660,7 +1656,7 @@
   },
   "rainloopsushi": {
    "title": "빗물초밥 — 인게임",
-   "note": "초기 퍼널만(2026-11-13). onboarding.name 순서는 scripts/state.gd ONBOARDING.",
+   "note": "초기 퍼널만(2026-11-13). 코드(state.gd)는 tutorial_done 이 2번째지만 실제로는 첫 서빙·매장 확장 뒤에 찍혀서(11·8·6명) 실제 흐름 순서로 둠.",
    "widgets": [
     {
      "type": "funnel",
@@ -1674,12 +1670,6 @@
        "value": "first_open"
       },
       {
-       "label": "튜토리얼 완료",
-       "event": "onboarding",
-       "param": "name",
-       "value": "tutorial_done"
-      },
-      {
        "label": "첫 직접 서빙",
        "event": "onboarding",
        "param": "name",
@@ -1690,6 +1680,12 @@
        "event": "onboarding",
        "param": "name",
        "value": "first_expand"
+      },
+      {
+       "label": "튜토리얼 완료",
+       "event": "onboarding",
+       "param": "name",
+       "value": "tutorial_done"
       },
       {
        "label": "첫 방치 정산",
