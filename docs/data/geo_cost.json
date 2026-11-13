@@ -4759,37 +4759,55 @@
     "clicks": 1,
     "conv": 0.0,
     "cost": 1,
-    "impr": 3
+    "impr": 7
    },
    "CL": {
     "clicks": 1,
     "conv": 0.0,
     "cost": 6,
-    "impr": 14
+    "impr": 15
+   },
+   "ES": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 6,
+    "impr": 5
    },
    "HK": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 122,
+    "impr": 16
+   },
+   "ID": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 5,
+    "impr": 13
+   },
+   "IT": {
     "clicks": 0,
     "conv": 0.0,
-    "cost": 46,
+    "cost": 27,
     "impr": 4
    },
    "JP": {
-    "clicks": 6,
+    "clicks": 10,
     "conv": 0.0,
-    "cost": 317,
-    "impr": 66
+    "cost": 438,
+    "impr": 145
    },
    "KR": {
     "clicks": 2,
     "conv": 0.0,
-    "cost": 8,
-    "impr": 6
+    "cost": 12,
+    "impr": 5
    },
    "MY": {
-    "clicks": 3,
+    "clicks": 6,
     "conv": 0.0,
-    "cost": 43,
-    "impr": 15
+    "cost": 283,
+    "impr": 34
    },
    "PH": {
     "clicks": 22,
@@ -4798,24 +4816,30 @@
     "impr": 914
    },
    "TH": {
+    "clicks": 3,
+    "conv": 0.0,
+    "cost": 58,
+    "impr": 64
+   },
+   "TR": {
     "clicks": 2,
     "conv": 0.0,
-    "cost": 44,
-    "impr": 48
+    "cost": 8,
+    "impr": 4
    },
    "TW": {
-    "clicks": 2,
+    "clicks": 3,
     "conv": 0.0,
-    "cost": 17,
-    "impr": 14
+    "cost": 55,
+    "impr": 24
    },
    "VN": {
     "clicks": 3,
     "conv": 0.0,
-    "cost": 47,
-    "impr": 42
+    "cost": 48,
+    "impr": 58
    }
   }
  },
- "updated": "2026-11-13T22:33:02+09:00"
+ "updated": "2026-11-13T23:32:48+09:00"
 }
