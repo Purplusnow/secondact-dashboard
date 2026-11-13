@@ -4761,25 +4761,43 @@
     "cost": 6,
     "impr": 13
    },
-   "PH": {
-    "clicks": 7,
-    "conv": 0.0,
-    "cost": 654,
-    "impr": 391
-   },
-   "TH": {
+   "JP": {
     "clicks": 1,
     "conv": 0.0,
     "cost": 4,
-    "impr": 4
+    "impr": 15
+   },
+   "KR": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 3,
+    "impr": 7
+   },
+   "PH": {
+    "clicks": 19,
+    "conv": 0.0,
+    "cost": 930,
+    "impr": 799
+   },
+   "TH": {
+    "clicks": 2,
+    "conv": 0.0,
+    "cost": 8,
+    "impr": 12
+   },
+   "TW": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 4,
+    "impr": 7
    },
    "VN": {
     "clicks": 1,
     "conv": 0.0,
-    "cost": 9,
-    "impr": 9
+    "cost": 31,
+    "impr": 22
    }
   }
  },
- "updated": "2026-11-13T19:32:48+09:00"
+ "updated": "2026-11-13T20:32:50+09:00"
 }

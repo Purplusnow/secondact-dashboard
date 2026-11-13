@@ -73,27 +73,30 @@
   "2026-11-13": {
    "com.purplusnow.mergerailway": {
     "campaigns": [
-     "MergeRailway_CL_AOS_Live"
+     "MergeRailway_CL_AOS_Live",
+     "MergeRailway_TW_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 6
+    "cost": 10
    },
    "com.purplusnow.rainloopsushi": {
     "campaigns": [
+     "RainloopSushi_JP_AOS_Live",
      "RainloopSushi_PH_AOS_Live",
      "RainloopSushi_TH_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 658
+    "cost": 942
    },
    "com.purplusnow.worldrestaurant": {
     "campaigns": [
-     "WorldRestaurant_VN_AOS_Live"
+     "WorldRestaurant_VN_AOS_Live",
+     "WorldRestaurant_KR_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 9
+    "cost": 34
    }
   }
  },
- "updated": "2026-11-13T19:32:49+09:00"
+ "updated": "2026-11-13T20:32:50+09:00"
 }
