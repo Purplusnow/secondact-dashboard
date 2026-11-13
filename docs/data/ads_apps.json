@@ -76,7 +76,14 @@
      "MergeRailway_CL_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 0
+    "cost": 6
+   },
+   "com.purplusnow.rainloopsushi": {
+    "campaigns": [
+     "RainloopSushi_PH_AOS_Live"
+    ],
+    "conv": 0.0,
+    "cost": 1
    },
    "com.purplusnow.worldrestaurant": {
     "campaigns": [
@@ -87,5 +94,5 @@
    }
   }
  },
- "updated": "2026-11-13T16:32:50+09:00"
+ "updated": "2026-11-13T17:32:53+09:00"
 }
