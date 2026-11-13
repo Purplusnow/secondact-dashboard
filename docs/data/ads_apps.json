@@ -80,23 +80,27 @@
    },
    "com.purplusnow.gyrogrid": {
     "campaigns": [
-     "Gyrogrid_JP_AOS_Live"
+     "Gyrogrid_JP_AOS_Live",
+     "Gyrogrid_TH_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 25
+    "cost": 27
    },
    "com.purplusnow.haedamhouse": {
     "campaigns": [
+     "HaedamHouse_KR_AOS_Live",
      "HaedamHouse_TW_AOS_Live",
+     "HaedamHouse_PH_AOS_Live",
      "HaedamHouse_IT_AOS_Live",
      "HaedamHouse_HK_ZHT_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 35
+    "cost": 61
    },
    "com.purplusnow.mergerailway": {
     "campaigns": [
      "MergeRailway_ES_AOS_Live",
+     "MergeRailway_FR_AOS_Live",
      "MergeRailway_CL_AOS_Live",
      "MergeRailway_HK_ZHT_AOS_Live",
      "MergeRailway_KR_AOS_Live",
@@ -104,7 +108,7 @@
      "MergeRailway_JP_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 142
+    "cost": 561
    },
    "com.purplusnow.rainloopsushi": {
     "campaigns": [
@@ -112,16 +116,22 @@
      "RainloopSushi_JP_AOS_Live",
      "RainloopSushi_ID_AOS_Live",
      "RainloopSushi_TR_AOS_Live",
+     "RainloopSushi_PE_AOS_Live",
+     "RainloopSushi_KR_AOS_Live",
      "RainloopSushi_PH_AOS_Live",
      "RainloopSushi_TH_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 1509
+    "cost": 1928
    },
    "com.purplusnow.worldrestaurant": {
     "campaigns": [
+     "WorldRestaurant_JP_AOS_Live",
      "WorldRestaurant_HK_ZHT_AOS_Live",
+     "WorldRestaurant_PH_AOS_Live",
+     "WorldRestaurant_SG_EN_AOS_Live",
      "WorldRestaurant_MY_EN_AOS_Live",
+     "WorldRestaurant_FR_AOS_Live",
      "WorldRestaurant_ES_AOS_Live",
      "WorldRestaurant_BR_AOS_Live",
      "WorldRestaurant_TH_AOS_Live",
@@ -129,9 +139,27 @@
      "WorldRestaurant_KR_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 356
+    "cost": 575
+   }
+  },
+  "2026-11-14": {
+   "com.purplusnow.rainloopsushi": {
+    "campaigns": [
+     "RainloopSushi_ID_AOS_Live",
+     "RainloopSushi_TR_AOS_Live"
+    ],
+    "conv": 0.0,
+    "cost": 6
+   },
+   "com.purplusnow.worldrestaurant": {
+    "campaigns": [
+     "WorldRestaurant_HK_ZHT_AOS_Live",
+     "WorldRestaurant_MY_EN_AOS_Live"
+    ],
+    "conv": 0.0,
+    "cost": 8
    }
   }
  },
- "updated": "2026-11-13T23:32:48+09:00"
+ "updated": "2026-11-14T00:33:04+09:00"
 }

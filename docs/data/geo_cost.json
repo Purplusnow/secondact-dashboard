@@ -4759,87 +4759,131 @@
     "clicks": 1,
     "conv": 0.0,
     "cost": 1,
-    "impr": 7
+    "impr": 14
    },
    "CL": {
     "clicks": 1,
     "conv": 0.0,
     "cost": 6,
-    "impr": 15
+    "impr": 17
    },
    "ES": {
+    "clicks": 2,
+    "conv": 0.0,
+    "cost": 67,
+    "impr": 24
+   },
+   "FR": {
     "clicks": 1,
     "conv": 0.0,
-    "cost": 6,
-    "impr": 5
+    "cost": 42,
+    "impr": 15
    },
    "HK": {
     "clicks": 1,
     "conv": 0.0,
-    "cost": 122,
-    "impr": 16
+    "cost": 337,
+    "impr": 36
    },
    "ID": {
     "clicks": 1,
     "conv": 0.0,
-    "cost": 5,
-    "impr": 13
+    "cost": 21,
+    "impr": 37
    },
    "IT": {
     "clicks": 0,
     "conv": 0.0,
-    "cost": 27,
-    "impr": 4
+    "cost": 32,
+    "impr": 18
    },
    "JP": {
-    "clicks": 10,
+    "clicks": 20,
     "conv": 0.0,
-    "cost": 438,
-    "impr": 145
+    "cost": 831,
+    "impr": 223
    },
    "KR": {
-    "clicks": 2,
+    "clicks": 3,
     "conv": 0.0,
-    "cost": 12,
-    "impr": 5
+    "cost": 37,
+    "impr": 11
    },
    "MY": {
     "clicks": 6,
     "conv": 0.0,
-    "cost": 283,
-    "impr": 34
+    "cost": 189,
+    "impr": 58
+   },
+   "PE": {
+    "clicks": 2,
+    "conv": 0.0,
+    "cost": 34,
+    "impr": 32
    },
    "PH": {
-    "clicks": 22,
+    "clicks": 23,
     "conv": 0.0,
-    "cost": 1003,
-    "impr": 914
+    "cost": 1008,
+    "impr": 919
+   },
+   "SG": {
+    "clicks": 0,
+    "conv": 0.0,
+    "cost": 3,
+    "impr": 3
    },
    "TH": {
-    "clicks": 3,
+    "clicks": 9,
     "conv": 0.0,
-    "cost": 58,
-    "impr": 64
+    "cost": 95,
+    "impr": 88
    },
    "TR": {
     "clicks": 2,
     "conv": 0.0,
-    "cost": 8,
-    "impr": 4
+    "cost": 39,
+    "impr": 36
    },
    "TW": {
-    "clicks": 3,
+    "clicks": 7,
     "conv": 0.0,
-    "cost": 55,
-    "impr": 24
+    "cost": 355,
+    "impr": 62
    },
    "VN": {
     "clicks": 3,
     "conv": 0.0,
-    "cost": 48,
-    "impr": 58
+    "cost": 57,
+    "impr": 72
+   }
+  },
+  "2026-11-14": {
+   "HK": {
+    "clicks": 0,
+    "conv": 0.0,
+    "cost": 7,
+    "impr": 1
+   },
+   "ID": {
+    "clicks": 0,
+    "conv": 0.0,
+    "cost": 1,
+    "impr": 0
+   },
+   "MY": {
+    "clicks": 0,
+    "conv": 0.0,
+    "cost": 1,
+    "impr": 0
+   },
+   "TR": {
+    "clicks": 0,
+    "conv": 0.0,
+    "cost": 5,
+    "impr": 0
    }
   }
  },
- "updated": "2026-11-13T23:32:48+09:00"
+ "updated": "2026-11-14T00:33:04+09:00"
 }
