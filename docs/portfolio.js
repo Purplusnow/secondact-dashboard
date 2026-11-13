@@ -646,92 +646,52 @@
   }
 
   /* ── 앱별 ───────────────────────────────────────── */
-  /* ══ 이상 신호(형 지시 2026-11-13) ═══════════════════════════════════════════
-   * 이미 받은 데이터(common.json·daily.json·feedback.json)만으로 브라우저에서 계산 — BigQuery 추가 비용 없음.
-   * 기준: '어제'(하루가 끝난 날)를 그 전 7일 평균과 비교. 표본이 작으면(DAU 몇 명) 흔들림이라 판정하지 않는다.
-   * level: 'bad'(문제) · 'warn'(주의). 규칙을 늘릴 땐 detect() 에 한 덩어리씩 추가. */
-  function detect(k) {
-    const out = [], A = S.M.apps[k], c = commonOf(k), today = kstDate(0), y = kstDate(1);
-    const base = span(addDays(y, -7), addDays(y, -1));
-    const avg = f => { const v = base.map(f).filter(x => x != null); return v.length ? sum(v) / v.length : null; };
-    const pct = (a, b) => `${a >= b ? '+' : '−'}${Math.abs(Math.round(100 * (a - b) / b))}%`;
-    const add = (level, title, detail) => out.push({ level, title, detail });
-    if (!c || c.status !== 'ok' || !c.daily) return out;
-    const by = Object.fromEntries(c.daily.map(r => [r.date, r]));
-    const lastDay = c.daily.length ? c.daily[c.daily.length - 1].date : null;
-    // 1) 데이터 끊김 — 최근 사흘 동안 행이 없다(매일 내보내기는 하루 늦게 와서 사흘로 본다)
-    const hadUsers = avg(d => (by[d] || {}).dau) || 0;
-    if (lastDay && lastDay < addDays(today, -2) && hadUsers >= 5)
-      add('bad', '데이터 끊김', `마지막 데이터 ${mmdd(lastDay)} — 그 뒤로 이벤트가 안 들어온다(앱 SDK·BigQuery 내보내기 확인)`);
-    const Y = by[y];
-    if (!Y) return out;
-    // 2) DAU 급변
-    const dauB = avg(d => (by[d] || {}).dau);
-    if (dauB >= 30 && Y.dau < dauB * 0.6) add(Y.dau < dauB * 0.5 ? 'bad' : 'warn', 'DAU 급감', `어제 ${nf(Y.dau)}명 · 7일 평균 ${nf(dauB)}명 대비 ${pct(Y.dau, dauB)}`);
-    // 3) 신규 급변(광고 집행 변화로도 생긴다)
-    const newB = avg(d => (by[d] || {}).new);
-    if (newB >= 20 && Y.new < newB * 0.5) add('warn', '신규 급감', `어제 ${nf(Y.new)}명 · 7일 평균 ${nf(newB)}명 대비 ${pct(Y.new, newB)} — 광고 중단·스토어 노출 변화 확인`);
-    if (newB >= 10 && Y.new > newB * 2.5) add('warn', '신규 급증', `어제 ${nf(Y.new)}명 · 7일 평균 ${nf(newB)}명 대비 ${pct(Y.new, newB)}`);
-    // 4) 앱 오류(app_exception)
-    const exB = avg(d => (by[d] || {}).exceptions) || 0;
-    if (Y.exceptions >= 5 && Y.exceptions > Math.max(3 * exB, exB + 5)) add('bad', '앱 오류 급증', `어제 app_exception ${nf(Y.exceptions)}건 · 7일 평균 ${exB.toFixed(1)}건`);
-    // 5) 광고 노출 급감(광고 SDK·광고 단위 문제 의심) — DAU 1인당 노출로 본다
-    const impB = avg(d => { const r = by[d]; return r && r.dau ? r.ad_impressions / r.dau : null; });
-    const impBN = avg(d => (by[d] || {}).ad_impressions) || 0;
-    if (impBN >= 50 && Y.dau && impB && Y.ad_impressions / Y.dau < impB * 0.5)
-      add('bad', '광고 노출 급감', `어제 1인당 ${(Y.ad_impressions / Y.dau).toFixed(2)}회 · 7일 평균 ${impB.toFixed(2)}회 — 광고 SDK·단위·동의(UMP) 확인`);
-    // 6) AdMob 매출 0 — 평소 매출이 있던 앱
-    const adB = avg(d => A.ad[d] || 0) || 0;
-    if (adB >= 500 && !(A.ad[y] > 0)) add('bad', '광고매출 0', `어제 AdMob 매출이 없다 · 7일 평균 ${won(adB)}`);
-    // 7) 삭제 급증 — DAU 대비 삭제 비율
-    const unB = avg(d => { const r = by[d]; return r && r.dau ? r.uninstalls / r.dau : null; });
-    if (Y.uninstalls >= 10 && Y.dau && unB && Y.uninstalls / Y.dau > unB * 1.5)
-      add('warn', '삭제 급증', `어제 삭제 ${nf(Y.uninstalls)}건(DAU의 ${(100 * Y.uninstalls / Y.dau).toFixed(0)}%) · 평소 ${(100 * unB).toFixed(0)}%`);
-    // 8) 결제 끊김 — 평소 하루 2건 이상이던 앱이 어제 0
-    const buyB = avg(d => (by[d] || {}).purchases) || 0;
-    if (buyB >= 2 && !Y.purchases) add('warn', '결제 0건', `어제 결제 이벤트 0 · 7일 평균 ${buyB.toFixed(1)}건 — 결제창·상품 조회 확인`);
-    // 9) D1 하락 — 어제 익은 코호트(그저께 가입) vs 그 전 7개 코호트 가중 평균
-    const coh = Object.fromEntries((c.cohorts || []).map(r => [r.date, r]));
-    const cd = addDays(y, -1), C = coh[cd];
-    if (C && C.base >= 30 && C.d1 != null) {
-      let n = 0, b = 0;
-      for (let i = 2; i <= 8; i++) { const r = coh[addDays(y, -i)]; if (r && r.d1 != null) { n += r.d1; b += r.base; } }
-      if (b >= 100) { const now = C.d1 / C.base, was = n / b, gap = 100 * (was - now);
-        if (gap >= 8) add(gap >= 15 ? 'bad' : 'warn', 'D1 리텐션 하락', `${mmdd(cd)} 가입자 D1 ${(100 * now).toFixed(1)}% · 직전 7일 ${(100 * was).toFixed(1)}% (−${gap.toFixed(1)}%p)`); }
-    }
-    // 10) 이벤트 끊김 — 평소 하루 20회 이상 오던 '게임 이벤트'가 어제 0(이벤트 이름 변경·버그).
-    //     자동 이벤트(app_update 등은 배포 직후에만 몰린다)는 빼고, DAU 20명 미만 앱은 판정 안 함(0 이 자연스럽다).
-    const ev = c.events || {}, iy = (ev.days || []).indexOf(y);
-    if (iy >= 1 && dauB >= 20) {
-      const lost = (ev.rows || []).filter(r => !AUTO_EVENTS.has(r.e)).filter(r => {
-        const prev = r.by_day.slice(Math.max(0, iy - 7), iy); const m = prev.length ? sum(prev) / prev.length : 0;
-        return m >= 20 && !r.by_day[iy];
-      }).map(r => r.e);
-      if (lost.length) add('bad', '이벤트 끊김', `평소 오던 이벤트가 어제 0회: ${lost.slice(0, 5).join(', ')}${lost.length > 5 ? ` 외 ${lost.length - 5}개` : ''} — 이름 변경·계측 버그 확인`);
-    }
-    // 11) 유저 의견 몰림
-    const fbY = fbCount(y, k);
-    if (fbY >= 3) add('warn', '유저 의견 몰림', `어제 의견 ${fbY}건 — Firebase 콘솔에서 내용 확인`);
-    return out.sort((a, b) => (a.level === b.level ? 0 : a.level === 'bad' ? -1 : 1));
+  /* ══ 초기 퍼널 점검(형 지시 2026-11-13) ═══════════════════════════════════════
+   * gamestats.json 의 첫 '퍼널' 위젯(최근 N일 신규 코호트, 스펙은 tools/gamespecs.json)에서 앞 6단계를 본다.
+   * 단계 전환율 = 이 단계 도달 ÷ 직전 단계 도달(첫 단계는 ÷ 코호트 신규). 단계 순서가 엄격하지 않은 스펙도 있어 1 을 넘으면 1 로 본다.
+   *   문제   : 한 단계에서 40% 넘게 빠짐(전환 < 60%) 또는 직전 단계 10명 이상인데 0명 — 버그 의심
+   *   양호   : 가장 약한 단계 60~85% 또는 6단계까지 남는 비율 < 60%
+   *   좋음   : 전 단계 85% 이상이고 6단계 누적 60% 이상
+   *   판단 보류: 코호트 신규 30명 미만
+   * 30일 코호트 합계라 '최근 며칠 새 깨진 것'은 묽어질 수 있다(필요하면 최근 7일 코호트 비교를 gamestats 에 추가). */
+  const FUNNEL_STEPS = 6;
+  function funnelCheck(k) {
+    const g = S.gs && S.gs.games && S.gs.games[k];
+    const w = g && g.status === 'ok' && (g.widgets || []).find(x => x.type === 'funnel');
+    if (!w) return { level: 'none', title: '퍼널 없음', detail: '이 게임은 퍼널 스펙(gamespecs.json)이 없다' };
+    const steps = (w.steps || []).slice(0, FUNNEL_STEPS);
+    const base = w.base || 0;
+    const rows = steps.map((st, i) => { const prev = i ? steps[i - 1].users : base;
+      return { label: st.label, users: st.users, prev, conv: prev > 0 ? Math.min(1, st.users / prev) : null }; });
+    const cum = base > 0 && steps.length ? Math.min(1, steps[steps.length - 1].users / base) : null;
+    const days = g.cohort_days || 30;
+    if (base < 30) return { level: 'hold', title: '판단 보류', detail: `최근 ${days}일 신규 ${nf(base)}명 — 표본이 30명 미만`, rows, base, cum, days };
+    const worst = rows.filter(r => r.conv != null).reduce((a, b) => (b.conv < a.conv ? b : a), { conv: 2 });
+    const broken = rows.find(r => r.prev >= 10 && r.users === 0);
+    let level = 'good';
+    if (broken || worst.conv < 0.6) level = 'bad';
+    else if (worst.conv < 0.85 || (cum != null && cum < 0.6)) level = 'ok';
+    const title = { good: '좋음', ok: '양호', bad: '문제' }[level];
+    const detail = broken ? `'${broken.label}' 도달 0명(직전 단계 ${nf(broken.prev)}명) — 이벤트·화면 버그 의심`
+      : `가장 많이 빠지는 단계 '${worst.label}' ${(100 * worst.conv).toFixed(0)}% · ${rows.length}단계까지 ${(100 * cum).toFixed(0)}% 남음`;
+    return { level, title, detail, rows, base, cum, days, worst };
   }
 
-  function renderAlerts(k) {
-    const host = $('#pf-alerts'), c = commonOf(k), y = kstDate(1);
-    const list = detect(k);
-    const head = `<div class="card-head"><h2>이상 신호</h2><p class="card-sub">어제(${mmdd(y)})를 직전 7일 평균과 비교 · 표본이 작은 지표는 판정 안 함</p></div>`;
-    if (!c || c.status !== 'ok') { host.innerHTML = head + `<p class="pf-al-none">지표가 연결되지 않아 감지할 수 없습니다.</p>`; return; }
-    host.innerHTML = head + (list.length
-      ? `<ul class="pf-al-list">${list.map(x => `<li class="pf-al pf-al-${x.level}"><span class="pf-al-tag">${x.level === 'bad' ? '문제' : '주의'}</span><b>${esc(x.title)}</b><span class="pf-al-detail">${esc(x.detail)}</span></li>`).join('')}</ul>`
-      : `<p class="pf-al-none"><span class="pf-al-ok">✓</span> 이상 없음</p>`);
+  function renderFunnelCheck(k) {
+    const f = funnelCheck(k), host = $('#pf-alerts');
+    const head = `<div class="card-head pf-head-row"><div><h2>초기 퍼널 점검</h2><p class="card-sub">최근 ${f.days || 30}일 신규 ${f.base != null ? nf(f.base) + '명' : ''} 기준 · 앞 ${FUNNEL_STEPS}단계 단계별 전환율</p></div>` +
+      `<span class="pf-fc pf-fc-${f.level}">${f.title}</span></div>`;
+    const steps = f.rows ? `<ol class="pf-fc-steps">${f.rows.map(r => `<li class="${f.worst && r === f.worst && f.level !== 'good' ? 'is-worst' : ''}${r.prev >= 10 && r.users === 0 ? ' is-broken' : ''}">` +
+      `<span class="pf-fc-name">${esc(r.label)}</span><span class="pf-fc-n">${nf(r.users)}명</span><span class="pf-fc-c">${r.conv != null ? (100 * r.conv).toFixed(0) + '%' : '—'}</span></li>`).join('')}</ol>` : '';
+    host.innerHTML = head + `<p class="pf-fc-detail">${esc(f.detail)}</p>` + steps;
   }
-  /* ══ 이상 신호 끝 ══ */
 
   function renderApp() {
     const k = S.app, a = S.byKey[k], A = S.M.apps[k], c = commonOf(k);
     const today = kstDate(0), yday = kstDate(1);
-    $('#pf-chips').innerHTML = S.apps.map(x => { const al = detect(x.key), lv = al.some(z => z.level === 'bad') ? 'bad' : al.length ? 'warn' : '';
-      return `<button type="button" class="pf-appchip${x.key === k ? ' is-on' : ''}" data-app="${x.key}"><span class="dot" style="background:${x.color}"></span>${esc(x.name)}${lv ? `<span class="pf-chip-al pf-al-${lv}" title="이상 신호 ${al.length}건">${al.length}</span>` : ''}</button>`; }).join('');
-    renderAlerts(k);
+    $('#pf-chips').innerHTML = S.apps.map(x => { const f = funnelCheck(x.key);
+      return `<button type="button" class="pf-appchip${x.key === k ? ' is-on' : ''}" data-app="${x.key}"><span class="dot" style="background:${x.color}"></span>${esc(x.name)}${f.level === 'bad' ? `<span class="pf-chip-al pf-fc-bad" title="초기 퍼널 문제">!</span>` : ''}</button>`; }).join('');
+    renderFunnelCheck(k);
     document.querySelectorAll('.pf-appchip').forEach(b => b.addEventListener('click', () => (location.hash = 'app=' + b.dataset.app)));
     $('#pf-app-title').innerHTML = esc(a.name) + bizTag(a);
     $('#pf-app-meta').textContent = [a.package, c && c.dataset ? `${c.dataset} · 최종 확정 ${c.last_table || '—'} · 스캔 ${c.scan_mb}MB` : null].filter(Boolean).join(' · ');

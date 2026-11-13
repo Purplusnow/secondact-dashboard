@@ -644,18 +644,22 @@ h1 .pf-biz { font-size: 12px; vertical-align: 3px; }
 #roi-tiles .neg { color: var(--bad); }
 #roi-tiles .pos { color: var(--good); }
 
-/* 이상 신호(앱별 탭) — 문제=빨강·주의=주황, 색 + 글자 라벨 */
-.pf-alerts { padding-bottom: 12px; }
-.pf-al-list { list-style: none; margin: 0; padding: 0; }
-.pf-al { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; padding: 9px 0; border-top: 1px solid var(--wash); font-size: 13.5px; }
-.pf-al:first-child { border-top: 0; }
-.pf-al b { font-weight: 650; color: var(--ink); }
-.pf-al-detail { color: var(--ink-2); }
-.pf-al-tag { font-size: 11px; font-weight: 700; padding: 3px 7px; border-radius: 4px; line-height: 1; }
-.pf-al-bad .pf-al-tag, .pf-chip-al.pf-al-bad { background: #fde8e8; color: #a82727; }
-.pf-al-warn .pf-al-tag, .pf-chip-al.pf-al-warn { background: #fdf0d9; color: #7d4b00; }
-.pf-al-none { margin: 4px 0; font-size: 13.5px; color: var(--ink-2); }
-.pf-al-ok { color: var(--good); font-weight: 700; margin-right: 4px; }
+/* 초기 퍼널 점검(앱별 탭) — 판정 = 색 + 글자 */
+.pf-alerts { padding-bottom: 14px; }
+.pf-fc { font-size: 13px; font-weight: 700; padding: 5px 12px; border-radius: 6px; white-space: nowrap; align-self: center; }
+.pf-fc-good { background: #e4f3ea; color: #17643a; }
+.pf-fc-ok   { background: #fdf0d9; color: #7d4b00; }
+.pf-fc-bad, .pf-chip-al.pf-fc-bad { background: #fde8e8; color: #a82727; }
+.pf-fc-hold, .pf-fc-none { background: var(--wash); color: var(--ink-3); }
+.pf-fc-detail { margin: 2px 0 10px; font-size: 13.5px; color: var(--ink-2); }
+.pf-fc-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; counter-reset: st; }
+.pf-fc-steps li { counter-increment: st; border: 1px solid var(--hair); border-radius: 8px; padding: 8px 10px; display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; font-size: 12.5px; }
+.pf-fc-name { grid-column: 1 / -1; color: var(--ink); font-weight: 600; }
+.pf-fc-name::before { content: counter(st) '. '; color: var(--ink-3); font-weight: 500; }
+.pf-fc-n { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.pf-fc-c { font-weight: 650; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.pf-fc-steps li.is-worst { border-color: #e2b65b; background: #fffaf0; }
+.pf-fc-steps li.is-broken { border-color: #e08b8b; background: #fff5f5; }
 .pf-chip-al { display: inline-block; min-width: 16px; text-align: center; font-size: 11px; font-weight: 700; padding: 1px 5px; border-radius: 8px; margin-left: 6px; line-height: 1.4; }
 
 /* 앱별 DAU 바둑판 */
