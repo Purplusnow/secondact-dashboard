@@ -4759,21 +4759,27 @@
     "clicks": 1,
     "conv": 0.0,
     "cost": 6,
-    "impr": 15
+    "impr": 13
    },
    "PH": {
-    "clicks": 0,
+    "clicks": 2,
+    "conv": 0.0,
+    "cost": 58,
+    "impr": 21
+   },
+   "TH": {
+    "clicks": 1,
     "conv": 0.0,
     "cost": 1,
-    "impr": 7
+    "impr": 3
    },
    "VN": {
     "clicks": 1,
     "conv": 0.0,
-    "cost": 4,
-    "impr": 5
+    "cost": 9,
+    "impr": 9
    }
   }
  },
- "updated": "2026-11-13T17:32:53+09:00"
+ "updated": "2026-11-13T18:32:49+09:00"
 }
