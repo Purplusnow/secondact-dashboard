@@ -246,7 +246,7 @@
     const h = location.hash.replace('#', '');
     const [top, arg] = h.split('=');
     S.top = ['all', 'month', 'app', 'voice', 'roi'].includes(top) ? top : 'all';
-    if (S.top === 'app') S.app = S.byKey[arg] ? arg : (S.app || S.apps[0].key);
+    if (S.top === 'app') S.app = S.byKey[arg] || arg === '_sum' ? arg : (S.app || '_sum');
     document.querySelectorAll('.ttab').forEach(b => b.classList.toggle('is-on', b.dataset.top === S.top));
     ['all', 'month', 'app', 'voice', 'roi'].forEach(t => { $('#top-' + t).hidden = t !== S.top; });
     if (S.top === 'all') renderAll();
@@ -686,13 +686,33 @@
     host.innerHTML = head + `<p class="pf-fc-detail">${esc(f.detail)}</p>` + steps;
   }
 
+  /* 앱별 탭 '종합'(형 지시 2026-11-13) — 전 앱의 초기 퍼널 판정 + 핵심 지표를 한 표로. 문제 → 양호 → 좋음 → 보류 → 없음 순. */
+  function renderAppSummary() {
+    const M = S.M, today = kstDate(0), yday = kstDate(1), d7 = span(addDays(yday, -6), yday);
+    const order = { bad: 0, ok: 1, good: 2, hold: 3, none: 4 };
+    const rows = S.apps.map(a => { const f = funnelCheck(a.key), A = M.apps[a.key], c = commonOf(a.key);
+      return { a, f, dau: A.dau[yday], new7: c && c.daily ? sum(d7.map(d => A.new[d] || 0)) : null,
+               d1: retention(a.key, 1, addDays(today, -15), addDays(today, -2)) }; })
+      .sort((x, y) => (order[x.f.level] - order[y.f.level]) || ((y.dau || 0) - (x.dau || 0)));
+    const cnt = lv => rows.filter(r => r.f.level === lv).length;
+    $('#pf-sum-sub').textContent = `문제 ${cnt('bad')} · 양호 ${cnt('ok')} · 좋음 ${cnt('good')} · 판단 보류 ${cnt('hold')} · 퍼널 없음 ${cnt('none')} — 줄을 누르면 그 앱 페이지`;
+    $('#pf-sum-table').innerHTML = `<thead><tr><th class="date">앱</th><th>초기 퍼널</th><th class="date">요약</th><th>DAU<span class="th-note">어제</span></th><th>신규<span class="th-note">7일</span></th><th>D1</th></tr></thead><tbody>` +
+      rows.map(r => `<tr class="pf-row" data-app="${r.a.key}"><td class="date"><span class="dot" style="background:${r.a.color}"></span> ${esc(r.a.name)}${bizTag(r.a)}</td>` +
+        `<td><span class="pf-fc pf-fc-${r.f.level}">${r.f.title}</span></td><td class="date pf-sum-detail">${esc(r.f.detail)}</td>` +
+        `<td>${r.dau != null ? nf(r.dau) : '—'}</td><td>${r.new7 != null ? nf(r.new7) : '—'}</td><td>${r.d1 ? (100 * r.d1.pct).toFixed(1) + '%' : '—'}</td></tr>`).join('') + '</tbody>';
+    document.querySelectorAll('#pf-sum-table .pf-row').forEach(tr => tr.addEventListener('click', () => (location.hash = 'app=' + tr.dataset.app)));
+  }
+
   function renderApp() {
-    const k = S.app, a = S.byKey[k], A = S.M.apps[k], c = commonOf(k);
+    const k = S.app, a = S.byKey[k] || {}, A = S.M.apps[k] || {}, c = commonOf(k);
     const today = kstDate(0), yday = kstDate(1);
-    $('#pf-chips').innerHTML = S.apps.map(x => { const f = funnelCheck(x.key);
+    $('#pf-chips').innerHTML = `<button type="button" class="pf-appchip pf-chip-sum${k === '_sum' ? ' is-on' : ''}" data-app="_sum">종합</button>` + S.apps.map(x => { const f = funnelCheck(x.key);
       return `<button type="button" class="pf-appchip${x.key === k ? ' is-on' : ''}" data-app="${x.key}"><span class="dot" style="background:${x.color}"></span>${esc(x.name)}${f.level === 'bad' ? `<span class="pf-chip-al pf-fc-bad" title="초기 퍼널 문제">!</span>` : ''}</button>`; }).join('');
-    renderFunnelCheck(k);
     document.querySelectorAll('.pf-appchip').forEach(b => b.addEventListener('click', () => (location.hash = 'app=' + b.dataset.app)));
+    $('#pf-app-summary').hidden = k !== '_sum';
+    $('#pf-app-one').hidden = k === '_sum';
+    if (k === '_sum') { renderAppSummary(); return; }
+    renderFunnelCheck(k);
     $('#pf-app-title').innerHTML = esc(a.name) + bizTag(a);
     $('#pf-app-meta').textContent = [a.package, c && c.dataset ? `${c.dataset} · 최종 확정 ${c.last_table || '—'} · 스캔 ${c.scan_mb}MB` : null].filter(Boolean).join(' · ');
 
@@ -883,7 +903,7 @@
 
   /* ── 배선 ───────────────────────────────────────── */
   document.querySelectorAll('.ttab').forEach(b => b.addEventListener('click', () => {
-    location.hash = b.dataset.top === 'app' ? 'app=' + (S.app || S.apps[0].key) : b.dataset.top;
+    location.hash = b.dataset.top === 'app' ? 'app=' + (S.app || '_sum') : b.dataset.top;
   }));
   document.querySelectorAll('#pf-revby .tab').forEach(b => b.addEventListener('click', () => {
     S.revBy = b.dataset.by;

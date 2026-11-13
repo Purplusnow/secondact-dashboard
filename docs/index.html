@@ -7,7 +7,7 @@
 <meta name="description" content="전체 앱의 광고매출·인앱매출·DAU·리텐션·유저 의견을 한 화면에서 보는 대시보드.">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="style.css?v=80804867">
+<link rel="stylesheet" href="style.css?v=c8bc3145">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 </head>
 <body>
@@ -97,6 +97,14 @@
 <div id="top-app" hidden>
 <main class="wrap">
   <div class="pf-chips" id="pf-chips"></div>
+  <!-- 종합(앱별 탭 첫 서브탭) — 앱을 하나씩 안 열어도 보이게 -->
+  <div id="pf-app-summary" hidden>
+    <section class="card">
+      <div class="card-head"><h2>종합 — 초기 퍼널 · 핵심 지표</h2><p class="card-sub" id="pf-sum-sub"></p></div>
+      <div class="table-scroll"><table class="ledger" id="pf-sum-table"></table></div>
+    </section>
+  </div>
+  <div id="pf-app-one">
   <div class="pf-app-head"><div><h1 id="pf-app-title"></h1><p class="pf-muted" id="pf-app-meta"></p></div></div>
   <section class="card pf-alerts" id="pf-alerts"></section>
   <section class="tiles" id="pf-app-tiles"></section>
@@ -139,6 +147,7 @@
       <div class="table-scroll"><table class="ledger" id="pf-versions"></table></div>
     </section>
   </div>
+  </div><!-- /pf-app-one -->
 </main>
 </div>
 
@@ -175,6 +184,6 @@
 
 
 <script src="refresh.js?v=a91cb06a"></script>
-<script src="portfolio.js?v=253ccc58"></script>
+<script src="portfolio.js?v=19547b30"></script>
 </body>
 </html>
