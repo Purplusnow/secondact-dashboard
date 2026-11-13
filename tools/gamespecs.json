@@ -1565,6 +1565,246 @@
      "num": true
     }
    ]
+  },
+  "baduk": {
+   "title": "바둑 — 인게임",
+   "note": "초기 퍼널만(2026-11-13). 이벤트: pick_opponent·pick_level·game_start·game_end(result)·trial_start.",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "sub": "최근 신규 유저가 첫 대국까지 가는 흐름.",
+     "steps": [
+      {
+       "label": "상대 선택",
+       "event": "pick_opponent"
+      },
+      {
+       "label": "급수 선택",
+       "event": "pick_level"
+      },
+      {
+       "label": "대국 시작",
+       "event": "game_start"
+      },
+      {
+       "label": "대국 종료",
+       "event": "game_end"
+      },
+      {
+       "label": "첫 승리",
+       "event": "game_end",
+       "where": {
+        "result": [
+         "win",
+         "resign_win"
+        ]
+       }
+      },
+      {
+       "label": "무료 체험 시작",
+       "event": "trial_start"
+      }
+     ]
+    }
+   ]
+  },
+  "mergerailway": {
+   "title": "머지 레일웨이 — 인게임",
+   "note": "초기 퍼널만(2026-11-13). onboard_step.step 순서(step_idx 1~6).",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "sub": "onboard_step.step — 튜토리얼 단계.",
+     "steps": [
+      {
+       "label": "게임 열기",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "game_open"
+      },
+      {
+       "label": "탭 튜토리얼",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "tut_tap"
+      },
+      {
+       "label": "합치기",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "tut_merge"
+      },
+      {
+       "label": "주문",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "tut_order"
+      },
+      {
+       "label": "작업",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "tut_task"
+      },
+      {
+       "label": "첫 기차 완성",
+       "event": "onboard_step",
+       "param": "step",
+       "value": "train1_done"
+      }
+     ]
+    }
+   ]
+  },
+  "rainloopsushi": {
+   "title": "빗물초밥 — 인게임",
+   "note": "초기 퍼널만(2026-11-13). onboarding.name 순서는 scripts/state.gd ONBOARDING.",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "sub": "onboarding.name — 게임 코드의 온보딩 순서.",
+     "steps": [
+      {
+       "label": "첫 실행",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_open"
+      },
+      {
+       "label": "튜토리얼 완료",
+       "event": "onboarding",
+       "param": "name",
+       "value": "tutorial_done"
+      },
+      {
+       "label": "첫 직접 서빙",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_hand_plate"
+      },
+      {
+       "label": "매장 2단계",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_expand"
+      },
+      {
+       "label": "첫 방치 정산",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_away_claim"
+      },
+      {
+       "label": "5스테이지",
+       "event": "onboarding",
+       "param": "name",
+       "value": "stage_5"
+      }
+     ]
+    }
+   ]
+  },
+  "haedamhouse": {
+   "title": "해담하우스 — 인게임",
+   "note": "초기 퍼널만(2026-11-13). onboarding.name 순서는 scripts/autoload/analytics.gd ONB.",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "sub": "onboarding.name — 게임 코드의 온보딩 순서.",
+     "steps": [
+      {
+       "label": "앱 열기",
+       "event": "onboarding",
+       "param": "name",
+       "value": "app_open"
+      },
+      {
+       "label": "이름 설정",
+       "event": "onboarding",
+       "param": "name",
+       "value": "name_set"
+      },
+      {
+       "label": "프롤로그 완료",
+       "event": "onboarding",
+       "param": "name",
+       "value": "prologue_done"
+      },
+      {
+       "label": "첫 평일 행동",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_action"
+      },
+      {
+       "label": "첫 히로인 이벤트",
+       "event": "onboarding",
+       "param": "name",
+       "value": "first_hero_event"
+      },
+      {
+       "label": "2주차",
+       "event": "onboarding",
+       "param": "name",
+       "value": "week2"
+      }
+     ]
+    }
+   ]
+  },
+  "pocketarcade": {
+   "title": "포켓 아케이드 — 인게임",
+   "note": "초기 퍼널만(2026-11-13). 미니게임 모음이라 3단계.",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "sub": "앱 열기 → 첫 게임 → 첫 완료.",
+     "steps": [
+      {
+       "label": "앱 열기",
+       "event": "app_open"
+      },
+      {
+       "label": "첫 게임 시작",
+       "event": "game_start"
+      },
+      {
+       "label": "첫 게임 완료",
+       "event": "game_complete"
+      }
+     ]
+    }
+   ]
+  },
+  "facelapse": {
+   "title": "얼굴 나이 변화 기록 — 앱",
+   "note": "초기 퍼널만(2026-11-13). 사진 선택 → 분석 → 결과.",
+   "widgets": [
+    {
+     "type": "funnel",
+     "title": "온보딩 퍼널",
+     "sub": "핵심 기능 첫 사용 흐름.",
+     "steps": [
+      {
+       "label": "사진 선택",
+       "event": "gallery_pick"
+      },
+      {
+       "label": "분석 성공",
+       "event": "analyze_success"
+      },
+      {
+       "label": "결과 보기",
+       "event": "result_view"
+      }
+     ]
+    }
+   ]
   }
  }
 }
