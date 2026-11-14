@@ -146,6 +146,7 @@
    "com.purplusnow.abysslantern": {
     "campaigns": [
      "AbyssLantern_JP_AOS_Live",
+     "AbyssLantern_TW_AOS_Live",
      "AbyssLantern_TR_AOS_Live",
      "AbyssLantern_VN_AOS_Live",
      "AbyssLantern_HK_ZHT_AOS_Live",
@@ -154,41 +155,49 @@
      "AbyssLantern_AR_AOS_Live",
      "AbyssLantern_ID_AOS_Live"
     ],
-    "conv": 8.0,
-    "cost": 1912
+    "conv": 9.0,
+    "cost": 2031
    },
    "com.purplusnow.beearchitect": {
     "campaigns": [
      "BeeArchitect_JP_AOS_Live"
     ],
     "conv": 2.0,
-    "cost": 1007
+    "cost": 1060
    },
    "com.purplusnow.crowncoin": {
     "campaigns": [
+     "CrownCoin_BR_AOS_Live",
      "CrownCoin_JP_AOS_Live",
      "CrownCoin_TR_AOS_Live",
+     "CrownCoin_TW_AOS_Live",
      "CrownCoin_TH_AOS_Live",
      "CrownCoin_VN_AOS_Live",
+     "CrownCoin_SG_EN_AOS_Live",
      "CrownCoin_Low_AOS_Live",
+     "CrownCoin_US_AOS_Live",
+     "CrownCoin_KR_AOS_Live",
      "CrownCoin_MX_AOS_Live",
      "CrownCoin_PH_AOS_Live",
      "CrownCoin_IN_AOS_Live",
      "CrownCoin_AR_AOS_Live",
      "CrownCoin_MY_EN_AOS_Live",
+     "CrownCoin_DE_AOS_Live",
+     "CrownCoin_FR_AOS_Live",
      "CrownCoin_CA_AU_GB_NZ_IE_AOS_Live",
      "CrownCoin_CO_AOS_Live"
     ],
-    "conv": 2.0,
-    "cost": 239
+    "conv": 3.0,
+    "cost": 1584
    },
    "com.purplusnow.gyrogrid": {
     "campaigns": [
+     "Gyrogrid_BR_AOS_Live",
      "Gyrogrid_JP_AOS_Live",
      "Gyrogrid_TH_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 280
+    "cost": 314
    },
    "com.purplusnow.haedamhouse": {
     "campaigns": [
@@ -200,7 +209,7 @@
      "HaedamHouse_VN_AOS_Live"
     ],
     "conv": 4.0,
-    "cost": 2820
+    "cost": 3013
    },
    "com.purplusnow.mergerailway": {
     "campaigns": [
@@ -214,7 +223,7 @@
      "MergeRailway_JP_AOS_Live"
     ],
     "conv": 5.0,
-    "cost": 4253
+    "cost": 4265
    },
    "com.purplusnow.rainloopsushi": {
     "campaigns": [
@@ -230,8 +239,8 @@
      "RainloopSushi_VN_AOS_Live",
      "RainloopSushi_TH_AOS_Live"
     ],
-    "conv": 20.0,
-    "cost": 6551
+    "conv": 28.0,
+    "cost": 6997
    },
    "com.purplusnow.secondactlife": {
     "campaigns": [
@@ -247,16 +256,20 @@
      "SALife_TR_AOS_Live",
      "SALife_CO_AOS_Live",
      "SALife_PE_AOS_Live",
+     "SALife_DE_AOS_Live",
      "SALife_MX_AOS_Live",
      "SALife_AR_AOS_Live",
      "SALife_SG_EN_AOS_Live",
      "SALife_MY_EN_AOS_Live",
      "SALife_ID_AOS_Live",
+     "SALife_ES_AOS_Live",
+     "SALife_IT_AOS_Live",
      "SALife_CL_AOS_Live",
-     "SALife_HK_ZHT_AOS_Live"
+     "SALife_HK_ZHT_AOS_Live",
+     "SALife_CH_DE_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 205
+    "cost": 1141
    },
    "com.purplusnow.worldrestaurant": {
     "campaigns": [
@@ -269,6 +282,7 @@
      "WorldRestaurant_FR_AOS_Live",
      "WorldRestaurant_ES_AOS_Live",
      "WorldRestaurant_AR_AOS_Live",
+     "WorldRestaurant_BE_FR_AOS_Live",
      "WorldRestaurant_TR_AOS_Live",
      "WorldRestaurant_BR_AOS_Live",
      "WorldRestaurant_TH_AOS_Live",
@@ -277,10 +291,10 @@
      "WorldRestaurant_KR_AOS_Live",
      "WorldRestaurant_TW_AOS_Live"
     ],
-    "conv": 46.0,
-    "cost": 9271
+    "conv": 56.0,
+    "cost": 9933
    }
   }
  },
- "updated": "2026-11-14T19:32:56+09:00"
+ "updated": "2026-11-14T20:32:49+09:00"
 }
