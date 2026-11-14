@@ -145,18 +145,19 @@
    "com.purplusnow.abysslantern": {
     "campaigns": [
      "AbyssLantern_JP_AOS_Live",
+     "AbyssLantern_VN_AOS_Live",
      "AbyssLantern_PE_AOS_Live",
      "AbyssLantern_AR_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 107
+    "cost": 201
    },
    "com.purplusnow.beearchitect": {
     "campaigns": [
      "BeeArchitect_JP_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 250
+    "cost": 258
    },
    "com.purplusnow.gyrogrid": {
     "campaigns": [
@@ -164,7 +165,7 @@
      "Gyrogrid_TH_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 81
+    "cost": 93
    },
    "com.purplusnow.haedamhouse": {
     "campaigns": [
@@ -174,7 +175,7 @@
      "HaedamHouse_HK_ZHT_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 669
+    "cost": 793
    },
    "com.purplusnow.mergerailway": {
     "campaigns": [
@@ -187,7 +188,7 @@
      "MergeRailway_JP_AOS_Live"
     ],
     "conv": 1.0,
-    "cost": 1696
+    "cost": 1879
    },
    "com.purplusnow.rainloopsushi": {
     "campaigns": [
@@ -201,8 +202,8 @@
      "RainloopSushi_PH_AOS_Live",
      "RainloopSushi_TH_AOS_Live"
     ],
-    "conv": 0.0,
-    "cost": 1806
+    "conv": 1.0,
+    "cost": 2309
    },
    "com.purplusnow.worldrestaurant": {
     "campaigns": [
@@ -218,10 +219,10 @@
      "WorldRestaurant_VN_AOS_Live",
      "WorldRestaurant_KR_AOS_Live"
     ],
-    "conv": 2.0,
-    "cost": 2239
+    "conv": 5.0,
+    "cost": 2690
    }
   }
  },
- "updated": "2026-11-14T09:32:49+09:00"
+ "updated": "2026-11-14T10:32:48+09:00"
 }
