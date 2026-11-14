@@ -91,10 +91,11 @@
      "HaedamHouse_TW_AOS_Live",
      "HaedamHouse_PH_AOS_Live",
      "HaedamHouse_IT_AOS_Live",
+     "HaedamHouse_TR_AOS_Live",
      "HaedamHouse_HK_ZHT_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 66
+    "cost": 67
    },
    "com.purplusnow.mergerailway": {
     "campaigns": [
@@ -120,7 +121,7 @@
      "RainloopSushi_PH_AOS_Live",
      "RainloopSushi_TH_AOS_Live"
     ],
-    "conv": 3.0,
+    "conv": 4.0,
     "cost": 1912
    },
    "com.purplusnow.worldrestaurant": {
@@ -153,15 +154,15 @@
      "AbyssLantern_AR_AOS_Live",
      "AbyssLantern_ID_AOS_Live"
     ],
-    "conv": 5.0,
-    "cost": 1169
+    "conv": 8.0,
+    "cost": 1912
    },
    "com.purplusnow.beearchitect": {
     "campaigns": [
      "BeeArchitect_JP_AOS_Live"
     ],
     "conv": 2.0,
-    "cost": 998
+    "cost": 1007
    },
    "com.purplusnow.crowncoin": {
     "campaigns": [
@@ -175,10 +176,11 @@
      "CrownCoin_IN_AOS_Live",
      "CrownCoin_AR_AOS_Live",
      "CrownCoin_MY_EN_AOS_Live",
+     "CrownCoin_CA_AU_GB_NZ_IE_AOS_Live",
      "CrownCoin_CO_AOS_Live"
     ],
-    "conv": 0.0,
-    "cost": 87
+    "conv": 2.0,
+    "cost": 239
    },
    "com.purplusnow.gyrogrid": {
     "campaigns": [
@@ -194,10 +196,11 @@
      "HaedamHouse_TW_AOS_Live",
      "HaedamHouse_PH_AOS_Live",
      "HaedamHouse_IT_AOS_Live",
-     "HaedamHouse_HK_ZHT_AOS_Live"
+     "HaedamHouse_HK_ZHT_AOS_Live",
+     "HaedamHouse_VN_AOS_Live"
     ],
     "conv": 4.0,
-    "cost": 2717
+    "cost": 2820
    },
    "com.purplusnow.mergerailway": {
     "campaigns": [
@@ -211,7 +214,7 @@
      "MergeRailway_JP_AOS_Live"
     ],
     "conv": 5.0,
-    "cost": 3738
+    "cost": 4253
    },
    "com.purplusnow.rainloopsushi": {
     "campaigns": [
@@ -227,8 +230,8 @@
      "RainloopSushi_VN_AOS_Live",
      "RainloopSushi_TH_AOS_Live"
     ],
-    "conv": 18.0,
-    "cost": 5697
+    "conv": 20.0,
+    "cost": 6551
    },
    "com.purplusnow.secondactlife": {
     "campaigns": [
@@ -253,7 +256,7 @@
      "SALife_HK_ZHT_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 183
+    "cost": 205
    },
    "com.purplusnow.worldrestaurant": {
     "campaigns": [
@@ -274,10 +277,10 @@
      "WorldRestaurant_KR_AOS_Live",
      "WorldRestaurant_TW_AOS_Live"
     ],
-    "conv": 41.0,
-    "cost": 7722
+    "conv": 46.0,
+    "cost": 9271
    }
   }
  },
- "updated": "2026-11-14T18:32:48+09:00"
+ "updated": "2026-11-14T19:32:56+09:00"
 }
