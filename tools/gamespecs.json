@@ -1656,18 +1656,16 @@
   },
   "rainloopsushi": {
    "title": "빗물초밥 — 인게임",
-   "note": "초기 퍼널만(2026-11-13). 코드(state.gd)는 tutorial_done 이 2번째지만 실제로는 첫 서빙·매장 확장 뒤에 찍혀서(11·8·6명) 실제 흐름 순서로 둠.",
+   "note": "초기 퍼널만(2026-11-13~14). 첫 접속에서 갈 수 있는 단계만 — 방치 정산·스테이지 5 같은 시간 필요한 단계는 새 코호트를 '문제'로 오판해서 뺐다. 순서는 실제 도달 시각 기준.",
    "widgets": [
     {
      "type": "funnel",
      "title": "온보딩 퍼널",
-     "sub": "onboarding.name — 게임 코드의 온보딩 순서.",
+     "sub": "첫 접속 안의 흐름(첫 실행 후 평균 0초 → 1분 → 1.5분 → 7분 → 8분 → 30분).",
      "steps": [
       {
        "label": "첫 실행",
-       "event": "onboarding",
-       "param": "name",
-       "value": "first_open"
+       "event": "first_open"
       },
       {
        "label": "첫 직접 서빙",
@@ -1676,28 +1674,28 @@
        "value": "first_hand_plate"
       },
       {
-       "label": "매장 2단계",
-       "event": "onboarding",
-       "param": "name",
-       "value": "first_expand"
+       "label": "튜토리얼 5",
+       "event": "tutorial_step",
+       "param": "step",
+       "value": "5"
       },
       {
-       "label": "튜토리얼 완료",
-       "event": "onboarding",
-       "param": "name",
-       "value": "tutorial_done"
+       "label": "튜토리얼 6(매장 확장)",
+       "event": "tutorial_step",
+       "param": "step",
+       "value": "6"
       },
       {
-       "label": "첫 방치 정산",
-       "event": "onboarding",
-       "param": "name",
-       "value": "first_away_claim"
+       "label": "튜토리얼 7",
+       "event": "tutorial_step",
+       "param": "step",
+       "value": "7"
       },
       {
-       "label": "5스테이지",
-       "event": "onboarding",
-       "param": "name",
-       "value": "stage_5"
+       "label": "튜토리얼 완료(8)",
+       "event": "tutorial_step",
+       "param": "step",
+       "value": "8"
       }
      ]
     }
