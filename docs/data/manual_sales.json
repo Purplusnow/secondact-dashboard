@@ -1,0 +1,6 @@
+{
+ "_note": "판매 리포트가 아직 안 담은 주문을 손으로 넣는 곳(유료 앱 구매는 GA4 이벤트로 안 남아 자동 반영이 안 된다). earn = Play Console 주문의 '예상 수익'(수수료·세금 뺀 실수령). 판매 리포트의 마지막 주문 시각(iap_sales.json last_order)이 이 주문 시각(at) 이후가 되면 리포트가 이미 담은 것이라 화면이 자동으로 건너뛴다 — 지우지 않아도 이중 집계 안 됨.",
+ "orders": [
+  {"order": "GPA.3337-2378-7758-80241", "package": "com.purplusnow.haemuphotostudio", "at": "2026-11-13T18:44+09:00", "date": "2026-11-13", "country": "KR", "currency": "KRW", "price": 2450, "earn": 2082, "kind": "paid_app", "added": "2026-11-14 · Play Console 주문 스크린샷"}
+ ]
+}

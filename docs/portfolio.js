@@ -87,6 +87,7 @@
       get('data/iap_sales.json'), get('data/common.json'), get('data/feedback.json')]);
     S.fb = fb;
     S.gs = await get('data/gamestats.json');
+    S.manualSales = await get('data/manual_sales.json');   // 판매 리포트 전 주문 수동 기록(유료 앱 구매 등)
     S.adsApps = await get('data/ads_apps.json');   // 광고 손익 탭용(앱별 광고비 — Ads 스크립트 갱신 전엔 없음)
     if (!apps || !daily) { $('#pf-error').hidden = false; return; }
     // review: true = Play 심사 중(스토어 미공개) — 화면에서 뺀다(형 지시 2026-11-12). 매출이 잡히면 '기타(목록 밖)'로 간다.
@@ -181,6 +182,11 @@
         M.apps[k].iap[d] = (M.apps[k].iap[d] || 0) + amt;
       }
     }
+    // 수동 판매 기록(manual_sales.json) — 판매 리포트가 아직 안 담은 주문만. earn 은 이미 실수령(수수료·세금 뺀 값).
+    for (const o of manualOrders()) {
+      const k = byPkg[o.package] || '_other';
+      M.apps[k].iap[o.date] = (M.apps[k].iap[o.date] || 0) + o.earn * rate(o.currency || 'KRW', o.date);
+    }
     for (const r of S.daily) {
       if (!r.iap || covered(r.date)) continue;
       const parts = typeof r.iap === 'number' ? [['KRW', r.iap]] : Object.entries(r.iap);
@@ -207,8 +213,13 @@
   const rev = (k, d) => (S.M.apps[k].ad[d] || 0) + (S.M.apps[k].iap[d] || 0);
   const keys = () => [...S.apps.map(a => a.key), '_other'];
   /* 유형 태그 + 구독 앱은 활성 구독자(추정, common.json subs_active), 유료 앱은 유료 구매자(Play 판매 리포트 주문 − 환불) */
+  /* 수동 주문 중 판매 리포트가 아직 안 담은 것(리포트 마지막 주문 시각 < 주문 시각) */
+  function manualOrders() {
+    const last = (S.sales && S.sales.last_order) || '';
+    return ((S.manualSales && S.manualSales.orders) || []).filter(o => !last || o.at > last);
+  }
   function paidBuyers(a) {
-    let n = 0;
+    let n = manualOrders().filter(o => o.package === a.package).length;
     for (const m of Object.values((S.sales && S.sales.months) || {}))
       for (const day of Object.values(m.by_date || {})) { const x = day[a.package]; if (x) n += (x.n || 0) - (x.refunds || 0); }
     return n;
