@@ -642,6 +642,7 @@ h1 .pf-biz { font-size: 12px; vertical-align: 3px; }
 .pf-roi-from { font-size: 14px; color: var(--ink-2); margin: 0 0 14px; padding: 10px 14px; border: 1px solid var(--hair); border-radius: 8px; background: var(--surface); }
 .pf-roi-from b { color: var(--ink); }
 #roi-tiles .neg { color: var(--bad); }
+#roi-apps .pf-aux, #roi-days .pf-aux { color: var(--ink-2); background: var(--wash); }
 #roi-tiles .pos { color: var(--good); }
 
 /* 초기 퍼널 점검(앱별 탭) — 판정 = 색 + 글자 */

@@ -157,7 +157,7 @@ git pull --rebase
 | 광고매출 | `daily.json` `admob_apps` | `sync` 매시간 | AdMob 이름 → 앱은 apps.json 의 `admob` |
 | 인앱매출 | `iap_sales.json` | `sync`(버킷 설정 시) 또는 `playsales.py --zip` | **Play 판매 리포트가 기준.** 세전가 × 0.85, KST 날짜 |
 | 수동 판매 | `manual_sales.json` | 손으로 | 판매 리포트 전 주문(유료 앱 구매는 GA4 에 안 남는다). earn = 콘솔 '예상 수익'. 리포트 last_order 가 주문 시각 이후면 화면이 자동으로 건너뛴다(이중 집계 없음). 2026-11-14 해무사진관 첫 판매부터. |
-| 마케팅비 | `daily.json` `ads` · `ads_apps.json` | `sync` | **2026-11-13부터 별도 '광고 손익' 탭**(기점 11/13 부터 누적 광고비 vs 누적 매출, 앱별 — `portfolio.js` `ROI_FROM`·`renderRoi`, 지우기 쉽게 한 블록). 앱별 광고비는 Ads 스크립트를 새 버전으로 붙여야 들어온다(그 전엔 '앱 미배정'). 전체·월별 화면에선 여전히 뺀 상태. 이전 메모: 2026-11-12 형 지시로 화면에서 뺐다(타일·월별 마케팅비/손익 열·크레딧 표시). 수집은 계속 돈다(BigQuery 안 씀). 다시 넣으려면 `91aca414` 의 portfolio.js 참고 |
+| 마케팅비 | `daily.json` `ads` · `ads_apps.json` | `sync` | **2026-11-13부터 별도 '광고 손익' 탭**(보조지표: 기점 이후 신규 가입자 — 광고·자연 유입 구분 없이 전부 — 와 가입자당 광고비, 2026-11-14)(기점 11/13 부터 누적 광고비 vs 누적 매출, 앱별 — `portfolio.js` `ROI_FROM`·`renderRoi`, 지우기 쉽게 한 블록). 앱별 광고비는 Ads 스크립트를 새 버전으로 붙여야 들어온다(그 전엔 '앱 미배정'). 전체·월별 화면에선 여전히 뺀 상태. 이전 메모: 2026-11-12 형 지시로 화면에서 뺐다(타일·월별 마케팅비/손익 열·크레딧 표시). 수집은 계속 돈다(BigQuery 안 씀). 다시 넣으려면 `91aca414` 의 portfolio.js 참고 |
 | DAU·리텐션·이벤트 | `common.json` | `common` 수동 | 키 없는 앱은 '지표 미연결' |
 | 게임별 인게임 | `gamestats.json` | `common` 안 | 스펙 `tools/gamespecs.json`(위젯: funnel/levels/breakdown/maxval). 인생 2막은 전용 보드라 제외 |
 | 유저 의견 | `feedback.json` | `common` 안 | **앱 × 날짜 건수만**(형 지시). 내용은 Firebase 콘솔. 쿼리도 created_unix 만 받는다 |

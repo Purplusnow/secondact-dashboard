@@ -588,7 +588,11 @@
     const spend = sum(Object.values(total)), unas = sum(Object.values(unassigned));
     const revOf = k => sum(days.map(d => rev(k, d)));
     const adOf = k => sum(days.map(d => M.apps[k].ad[d] || 0)), iapOf = k => sum(days.map(d => M.apps[k].iap[d] || 0));
+    // 보조지표: 기점 이후 신규 가입자(직접·간접 구분 없이 전부 — 광고 유입 + 자연 유입), 봇 제외. 지표 없는 앱은 null.
+    const newOf = k => (commonOf(k) && commonOf(k).daily ? sum(days.map(d => M.apps[k].new[d] || 0)) : null);
+    const cpu = (sp, n) => (sp > 0 && n > 0 ? won(sp / n) : '—');
     const ks = keys(), revAll = sum(ks.map(revOf));
+    const newAll = sum(S.apps.map(a => newOf(a.key) || 0));
     const p = S.cfg.promo_credit, credit = p && today >= p.from && (!p.to || ROI_FROM <= p.to);
     $('#roi-from').innerHTML = `<b>기점 ${ROI_FROM.replace(/-/g, '.')}</b> — 이날부터 광고비 누적 지출을 0원으로 두고 다시 셉니다. 그 전 지출·매출은 이 탭에 넣지 않습니다.` +
       (credit ? ` <span class="pf-chip" title="config.json promo_credit">구글 프로모션 크레딧 기간</span>` : '');
@@ -598,25 +602,27 @@
       tile('누적 광고비', won(spend), `${days.length}일 · 오늘 ${won(total[today] || 0)}`),
       tile('누적 매출', won(revAll), `광고 ${krw(sum(ks.map(adOf)))} · 인앱 ${krw(sum(ks.map(iapOf)))}`),
       tile('손익', `<span class="${cls(revAll - spend)}">${won(revAll - spend)}</span>`, `ROAS ${roas(revAll, spend)} (매출 ÷ 광고비)`),
+      tile('신규 가입자 (보조지표)', nf(newAll) + '명', `가입자당 광고비 ${cpu(spend, newAll)} · 광고·자연 유입 전부`),
     ].join('');
     $('#roi-sub').textContent = S.adsApps ? '앱별 광고비 = Google Ads 앱 캠페인(패키지) 기준. 앱에 안 묶인 비용은 \'앱 미배정\'.'
       : '⚠ 앱별 광고비가 아직 안 들어온다 — Google Ads 스크립트를 새 버전(tools/google-ads-script.js)으로 바꿔 붙여야 나뉜다. 그 전엔 전부 \'앱 미배정\'.';
-    const rows = S.apps.map(a => ({ k: a.key, name: a.name, color: a.color, sp: perApp[a.key] || 0, ad: adOf(a.key), iap: iapOf(a.key), r: revOf(a.key) }))
+    const rows = S.apps.map(a => ({ k: a.key, name: a.name, color: a.color, sp: perApp[a.key] || 0, ad: adOf(a.key), iap: iapOf(a.key), r: revOf(a.key), nu: newOf(a.key) }))
       .sort((x, y) => (y.sp - x.sp) || (y.r - x.r));
     const oth = revOf('_other');
-    const line = (name, color, sp, ad, iap, r, title = '') => `<tr${title ? ` title="${esc(title)}"` : ''}><td class="date"><span class="dot" style="background:${color}"></span> ${name}</td>` +
+    const line = (name, color, sp, ad, iap, r, title = '', nu = null) => `<tr${title ? ` title="${esc(title)}"` : ''}><td class="date"><span class="dot" style="background:${color}"></span> ${name}</td>` +
       `<td>${sp ? won(sp) : '<span class="pf-muted">—</span>'}</td><td>${won(ad)}</td><td>${won(iap)}</td><td class="sum">${won(r)}</td>` +
-      `<td class="${cls(r - sp)}">${won(r - sp)}</td><td>${roas(r, sp)}</td></tr>`;
-    $('#roi-apps').innerHTML = `<thead><tr><th class="date">앱</th><th>광고비<span class="th-note">누적</span></th><th>광고매출</th><th>인앱매출</th><th>매출<span class="th-note">누적</span></th><th>손익</th><th>ROAS</th></tr></thead><tbody>` +
-      rows.map(x => line(esc(x.name), x.color, x.sp, x.ad, x.iap, x.r)).join('') +
+      `<td class="${cls(r - sp)}">${won(r - sp)}</td><td>${roas(r, sp)}</td>` +
+      `<td class="pf-aux">${nu != null ? nf(nu) : '—'}</td><td class="pf-aux">${cpu(sp, nu)}</td></tr>`;
+    $('#roi-apps').innerHTML = `<thead><tr><th class="date">앱</th><th>광고비<span class="th-note">누적</span></th><th>광고매출</th><th>인앱매출</th><th>매출<span class="th-note">누적</span></th><th>손익</th><th>ROAS</th><th class="pf-aux">신규 가입자<span class="th-note">보조</span></th><th class="pf-aux">가입자당 광고비</th></tr></thead><tbody>` +
+      rows.map(x => line(esc(x.name), x.color, x.sp, x.ad, x.iap, x.r, '', x.nu)).join('') +
       (unas ? line('앱 미배정', OTHER, unas, 0, 0, 0, '앱 캠페인에 묶이지 않았거나 앱별 내역이 없는 날의 광고비') : '') +
       (oth ? line('기타(심사 중·목록 밖)', OTHER, 0, oth, 0, oth) : '') +
-      `</tbody><tfoot><tr><td class="date">합계</td><td>${won(spend)}</td><td>${won(sum(ks.map(adOf)))}</td><td>${won(sum(ks.map(iapOf)))}</td><td class="sum">${won(revAll)}</td><td class="${cls(revAll - spend)}">${won(revAll - spend)}</td><td>${roas(revAll, spend)}</td></tr></tfoot>`;
+      `</tbody><tfoot><tr><td class="date">합계</td><td>${won(spend)}</td><td>${won(sum(ks.map(adOf)))}</td><td>${won(sum(ks.map(iapOf)))}</td><td class="sum">${won(revAll)}</td><td class="${cls(revAll - spend)}">${won(revAll - spend)}</td><td>${roas(revAll, spend)}</td><td class="pf-aux">${nf(newAll)}</td><td class="pf-aux">${cpu(spend, newAll)}</td></tr></tfoot>`;
     let cs = 0, cr = 0;
     const drows = days.map(d => { const s0 = total[d] || 0, r0 = sum(ks.map(k => rev(k, d))); cs += s0; cr += r0;
-      return { d, s0, r0, cs, cr }; }).reverse();
-    $('#roi-days').innerHTML = `<thead><tr><th class="date">날짜</th><th>광고비</th><th>매출</th><th>누적 광고비</th><th>누적 매출</th><th>누적 손익</th></tr></thead><tbody>` +
-      drows.map(x => `<tr><td class="date">${mmdd(x.d)}${x.d === today ? ' <span class="pf-new">오늘</span>' : ''}</td><td>${won(x.s0)}</td><td>${won(x.r0)}</td><td>${won(x.cs)}</td><td>${won(x.cr)}</td><td class="${cls(x.cr - x.cs)}">${won(x.cr - x.cs)}</td></tr>`).join('') + '</tbody>';
+      return { d, s0, r0, cs, cr, n0: sum(S.apps.map(a => M.apps[a.key].new[d] || 0)) }; }).reverse();
+    $('#roi-days').innerHTML = `<thead><tr><th class="date">날짜</th><th>광고비</th><th>매출</th><th>누적 광고비</th><th>누적 매출</th><th>누적 손익</th><th class="pf-aux">신규 가입자<span class="th-note">보조</span></th></tr></thead><tbody>` +
+      drows.map(x => `<tr><td class="date">${mmdd(x.d)}${x.d === today ? ' <span class="pf-new">오늘</span>' : ''}</td><td>${won(x.s0)}</td><td>${won(x.r0)}</td><td>${won(x.cs)}</td><td>${won(x.cr)}</td><td class="${cls(x.cr - x.cs)}">${won(x.cr - x.cs)}</td><td class="pf-aux">${nf(x.n0)}</td></tr>`).join('') + '</tbody>';
   }
   /* ══ 광고 손익 탭 끝 ══ */
 
