@@ -1703,7 +1703,7 @@
   },
   "haedamhouse": {
    "title": "해담하우스 — 인게임",
-   "note": "초기 퍼널만(2026-11-13). onboarding.name 순서는 scripts/autoload/analytics.gd ONB.",
+   "note": "초기 퍼널만(2026-11-13). onboarding.name 순서는 scripts/autoload/analytics.gd ONB. 2026-11-14: 유료 전환 퍼널·잠금 화면 선택 추가(docs/ANALYTICS.md 수익화 절).",
    "widgets": [
     {
      "type": "funnel",
@@ -1747,6 +1747,60 @@
        "value": "week2"
       }
      ]
+    },
+    {
+     "type": "funnel",
+     "title": "유료 전환 퍼널",
+     "sub": "무료 체험(15주) → 잠금 화면 → 구매 → 정식판 해제. 최근 신규 코호트 기준.",
+     "steps": [
+      {
+       "label": "2주차",
+       "event": "onboarding",
+       "param": "name",
+       "value": "week2"
+      },
+      {
+       "label": "8주차",
+       "event": "onboarding",
+       "param": "name",
+       "value": "week8"
+      },
+      {
+       "label": "12주차",
+       "event": "onboarding",
+       "param": "name",
+       "value": "week12"
+      },
+      {
+       "label": "무료 체험 끝(잠금 화면)",
+       "event": "onboarding",
+       "param": "name",
+       "value": "paywall_view"
+      },
+      {
+       "label": "구매 버튼",
+       "event": "paywall_action",
+       "param": "action",
+       "value": "buy"
+      },
+      {
+       "label": "결제 완료",
+       "event": "iap_purchase"
+      },
+      {
+       "label": "정식판 해제",
+       "event": "onboarding",
+       "param": "name",
+       "value": "unlocked"
+      }
+     ]
+    },
+    {
+     "type": "breakdown",
+     "title": "잠금 화면에서 누른 것",
+     "sub": "paywall_action.action — buy/restore/quit 비율(quit 이 높으면 15주 훅·가격 재검토).",
+     "event": "paywall_action",
+     "param": "action"
     }
    ]
   },
