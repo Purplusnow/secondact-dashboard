@@ -556,7 +556,8 @@
     const M = S.M, yday = kstDate(1);
     const has = k => days.some(d => M.apps[k].dau[d]);
     // 순서 = 앱 목록(apps.json) 순서 고정 — 자리가 안 바뀌게(형 지시 2026-11-12). 제목 숫자 = 어제 DAU
-    const order = S.apps.map(a => a.key);
+    // 단, Firebase 미연동 앱(project 없음)은 그릴 게 없으니 맨 뒤로(형 지시 2026-11-16)
+    const order = [...S.apps.filter(a => a.project), ...S.apps.filter(a => !a.project)].map(a => a.key);
     const today = kstDate(0);
     // 리텐션 — 앱별 현황 표와 같은 창(D1: 최근 2주 코호트, D7: 익은 최근 4주 코호트, 가중 평균)
     const retLine = k => {
