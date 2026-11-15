@@ -23,6 +23,8 @@ MAX_GB 를 넘는 앱은 건너뛴다.
 날짜는 전부 KST(이벤트 타임스탬프 기준). 확정 테이블이 없는 날은 intraday 로 채우고
 provisional=true 를 단다(확정본은 26~34시간 늦게 온다).
 """
+from __future__ import annotations
+
 import json
 import os
 import pathlib

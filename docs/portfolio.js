@@ -88,7 +88,8 @@
     S.fb = fb;
     S.gs = await get('data/gamestats.json');
     S.manualSales = await get('data/manual_sales.json');   // 판매 리포트 전 주문 수동 기록(유료 앱 구매 등)
-    S.adsApps = await get('data/ads_apps.json');   // 광고 손익 탭용(앱별 광고비 — Ads 스크립트 갱신 전엔 없음)
+    S.adsApps = await get('data/ads_apps.json');
+    S.iapGa4 = await get('data/iap_ga4.json');   // 인생 2막 외 앱의 GA4 인앱(판매 리포트 전) — tools/iap_apps.py   // 광고 손익 탭용(앱별 광고비 — Ads 스크립트 갱신 전엔 없음)
     if (!apps || !daily) { $('#pf-error').hidden = false; return; }
     // review: true = Play 심사 중(스토어 미공개) — 화면에서 뺀다(형 지시 2026-11-12). 매출이 잡히면 '기타(목록 밖)'로 간다.
     S.apps = apps.apps.filter(a => !a.review);
@@ -114,6 +115,8 @@
     S.daily.forEach(r => r.iap && typeof r.iap === 'object' && Object.keys(r.iap).forEach(c => curs.add(c)));
     Object.values((S.sales && S.sales.by_date) || {}).forEach(pk =>
       Object.values(pk).forEach(v => Object.keys(v.net).forEach(c => curs.add(c))));
+    Object.values((S.iapGa4 && S.iapGa4.apps) || {}).forEach(byDay =>
+      Object.values(byDay).forEach(p => Object.keys(p).forEach(c => curs.add(c))));
     const want = [...curs].filter(c => ECB.has(c) && c !== 'KRW' && c !== 'EUR');
     const start = S.daily.length ? S.daily[0].date : kstDate(90);
     const key = `pf-fx:${start}:${want.sort().join(',')}`;
@@ -193,6 +196,16 @@
       const amt = sum(parts.map(([c, x]) => (x * rate(c, r.date)) / (1 + tax(c)))) * (1 - fee);
       M.apps.secondact.iap[r.date] = amt;
       if (r.iap_src === 'ga4') M.apps.secondact.iapProv[r.date] = true;
+    }
+    // 다른 앱 인앱: 판매 리포트 마지막 주문일 '다음 날'부터만 GA4 기록으로 채운다(리포트와 겹치면 두 번 셈).
+    for (const [k, byDay] of Object.entries((S.iapGa4 && S.iapGa4.apps) || {})) {
+      if (!M.apps[k] || k === 'secondact') continue;
+      for (const [d, parts] of Object.entries(byDay)) {
+        if (lastOrder && d <= lastOrder) continue;
+        const amt = sum(Object.entries(parts).map(([c, x]) => (x * rate(c, d)) / (1 + tax(c)))) * (1 - fee);
+        M.apps[k].iap[d] = (M.apps[k].iap[d] || 0) + amt;
+        M.apps[k].iapProv[d] = true;
+      }
     }
 
     // 공통지표
@@ -503,7 +516,7 @@
     const synced = (S.dailySynced && S.dailySynced.admob) || '';
     const last = S.M.salesCover.last;
     const iapNote = last && last.slice(0, 10) >= today ? `판매 리포트 ${last.slice(11, 16)}까지`
-      : `판매 리포트는 ${last ? last.replace('T', ' ').slice(5, 16) : '—'}까지라 그 뒤 인앱은 ${nameOf('secondact')} GA4 기록만(다른 앱은 리포트가 들어오면 채워짐)`;
+      : `판매 리포트는 ${last ? last.replace('T', ' ').slice(5, 16) : '—'}까지라 그 뒤 인앱은 GA4 결제 기록(표시 'GA4' — 환불 미반영, 리포트가 들어오면 그걸로 바뀜)`;
     $('#pf-day-sub').textContent = `실수령 기준. 광고 = AdMob 추정(매시간, 마지막 ${synced ? synced.slice(11, 16) : '—'}). 인앱 = ${iapNote}.`;
   }
 
@@ -511,7 +524,7 @@
     const c = S.M.salesCover, cm = S.common;
     const ok = cm ? Object.values(cm.apps || {}).filter(x => x.status === 'ok').length : 0;
     return [
-      `인앱: Play 판매 리포트 ${c.months.length ? c.months.map(m => m.slice(0, 4) + '.' + m.slice(4)).join(', ') + ` (마지막 주문 ${c.last ? c.last.replace('T', ' ').slice(0, 16) : '—'})` : '없음'} · 그 밖의 기간은 ${nameOf('secondact')} GA4/수동 기록만.`,
+      `인앱: Play 판매 리포트 ${c.months.length ? c.months.map(m => m.slice(0, 4) + '.' + m.slice(4)).join(', ') + ` (마지막 주문 ${c.last ? c.last.replace('T', ' ').slice(0, 16) : '—'})` : '없음'} · 그 뒤는 GA4 결제 기록/수동 기록.`,
       `광고매출: AdMob 앱별.`,
       `DAU·리텐션: ${cm ? `BigQuery 경량 수집 ${cm.updated} · ${ok}/${S.apps.length}개 앱 연결` : '아직 수집 전'}.`,
     ].map(x => `<span>${esc(x)}</span>`).join('');
