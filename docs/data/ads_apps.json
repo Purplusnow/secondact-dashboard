@@ -239,7 +239,7 @@
      "MergeRailway_TW_AOS_Live",
      "MergeRailway_JP_AOS_Live"
     ],
-    "conv": 8.0,
+    "conv": 9.0,
     "cost": 4940
    },
    "com.purplusnow.rainloopsushi": {
@@ -317,7 +317,34 @@
     "conv": 92.0,
     "cost": 11724
    }
+  },
+  "2026-11-15": {
+   "com.purplusnow.rainloopsushi": {
+    "campaigns": [
+     "RainloopSushi_HK_ZHT_AOS_Live",
+     "RainloopSushi_PE_AOS_Live"
+    ],
+    "conv": 0.0,
+    "cost": 101
+   },
+   "com.purplusnow.worldrestaurant": {
+    "campaigns": [
+     "WorldRestaurant_JP_AOS_Live",
+     "WorldRestaurant_HK_ZHT_AOS_Live",
+     "WorldRestaurant_MY_EN_AOS_Live",
+     "WorldRestaurant_ES_AOS_Live",
+     "WorldRestaurant_AR_AOS_Live",
+     "WorldRestaurant_TH_AOS_Live",
+     "WorldRestaurant_ID_AOS_Live",
+     "WorldRestaurant_CL_AOS_Live",
+     "WorldRestaurant_VN_AOS_Live",
+     "WorldRestaurant_KR_AOS_Live",
+     "WorldRestaurant_TW_AOS_Live"
+    ],
+    "conv": 0.0,
+    "cost": 185
+   }
   }
  },
- "updated": "2026-11-15T09:32:49+09:00"
+ "updated": "2026-11-15T10:32:48+09:00"
 }
