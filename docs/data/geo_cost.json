@@ -5063,7 +5063,7 @@
     "clicks": 30,
     "conv": 4.0,
     "cost": 854,
-    "impr": 584
+    "impr": 585
    },
    "AT": {
     "clicks": 1,
@@ -5075,13 +5075,13 @@
     "clicks": 6,
     "conv": 2.0,
     "cost": 683,
-    "impr": 105
+    "impr": 104
    },
    "BR": {
     "clicks": 35,
     "conv": 1.0,
-    "cost": 818,
-    "impr": 344
+    "cost": 816,
+    "impr": 341
    },
    "CL": {
     "clicks": 1,
@@ -5093,7 +5093,7 @@
     "clicks": 14,
     "conv": 1.0,
     "cost": 309,
-    "impr": 138
+    "impr": 139
    },
    "ES": {
     "clicks": 9,
@@ -5109,32 +5109,32 @@
    },
    "HK": {
     "clicks": 5,
-    "conv": 2.0,
-    "cost": 1415,
-    "impr": 202
+    "conv": 1.0,
+    "cost": 1279,
+    "impr": 206
    },
    "ID": {
-    "clicks": 65,
+    "clicks": 64,
     "conv": 5.0,
-    "cost": 746,
-    "impr": 891
+    "cost": 735,
+    "impr": 882
    },
    "JP": {
-    "clicks": 36,
-    "conv": 10.0,
-    "cost": 2021,
-    "impr": 349
+    "clicks": 37,
+    "conv": 12.0,
+    "cost": 2052,
+    "impr": 352
    },
    "KR": {
     "clicks": 29,
-    "conv": 1.0,
+    "conv": 2.0,
     "cost": 1310,
     "impr": 153
    },
    "MY": {
-    "clicks": 4,
+    "clicks": 3,
     "conv": 0.0,
-    "cost": 235,
+    "cost": 233,
     "impr": 79
    },
    "PE": {
@@ -5146,8 +5146,8 @@
    "PH": {
     "clicks": 44,
     "conv": 0.0,
-    "cost": 1341,
-    "impr": 1018
+    "cost": 1340,
+    "impr": 1013
    },
    "SG": {
     "clicks": 2,
@@ -5156,9 +5156,9 @@
     "impr": 5
    },
    "TH": {
-    "clicks": 55,
+    "clicks": 56,
     "conv": 6.0,
-    "cost": 1378,
+    "cost": 1409,
     "impr": 573
    },
    "TR": {
@@ -5177,10 +5177,16 @@
     "clicks": 52,
     "conv": 6.0,
     "cost": 1054,
-    "impr": 611
+    "impr": 609
    }
   },
   "2026-11-16": {
+   "ID": {
+    "clicks": 1,
+    "conv": 1.0,
+    "cost": 27,
+    "impr": 3
+   },
    "VN": {
     "clicks": 0,
     "conv": 0.0,
@@ -5189,5 +5195,5 @@
    }
   }
  },
- "updated": "2026-11-16T00:32:50+09:00"
+ "updated": "2026-11-16T01:32:48+09:00"
 }

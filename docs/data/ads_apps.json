@@ -340,7 +340,7 @@
      "AbyssLantern_ID_AOS_Live"
     ],
     "conv": 32.0,
-    "cost": 11015
+    "cost": 10894
    },
    "com.purplusnow.rainloopsushi": {
     "campaigns": [
@@ -370,8 +370,8 @@
      "WorldRestaurant_KR_AOS_Live",
      "WorldRestaurant_TW_AOS_Live"
     ],
-    "conv": 14.0,
-    "cost": 3800
+    "conv": 16.0,
+    "cost": 3831
    }
   },
   "2026-11-16": {
@@ -381,8 +381,15 @@
     ],
     "conv": 0.0,
     "cost": 1
+   },
+   "com.purplusnow.worldrestaurant": {
+    "campaigns": [
+     "WorldRestaurant_ID_AOS_Live"
+    ],
+    "conv": 1.0,
+    "cost": 27
    }
   }
  },
- "updated": "2026-11-16T00:32:50+09:00"
+ "updated": "2026-11-16T01:32:48+09:00"
 }
