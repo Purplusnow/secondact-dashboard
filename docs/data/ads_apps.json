@@ -319,6 +319,25 @@
    }
   },
   "2026-11-15": {
+   "com.purplusnow.abysslantern": {
+    "campaigns": [
+     "AbyssLantern_JP_AOS_Live",
+     "AbyssLantern_TW_AOS_Live",
+     "AbyssLantern_ES_AOS_Live",
+     "AbyssLantern_TR_AOS_Live",
+     "AbyssLantern_TH_AOS_Live",
+     "AbyssLantern_VN_AOS_Live",
+     "AbyssLantern_CO_AOS_Live",
+     "AbyssLantern_HK_ZHT_AOS_Live",
+     "AbyssLantern_BR_AOS_Live",
+     "AbyssLantern_PE_AOS_Live",
+     "AbyssLantern_PH_AOS_Live",
+     "AbyssLantern_AR_AOS_Live",
+     "AbyssLantern_ID_AOS_Live"
+    ],
+    "conv": 0.0,
+    "cost": 1168
+   },
    "com.purplusnow.rainloopsushi": {
     "campaigns": [
      "RainloopSushi_PE_AOS_Live"
@@ -343,10 +362,10 @@
      "WorldRestaurant_KR_AOS_Live",
      "WorldRestaurant_TW_AOS_Live"
     ],
-    "conv": 2.0,
-    "cost": 594
+    "conv": 3.0,
+    "cost": 598
    }
   }
  },
- "updated": "2026-11-15T11:32:48+09:00"
+ "updated": "2026-11-15T12:32:47+09:00"
 }
