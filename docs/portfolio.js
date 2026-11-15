@@ -419,7 +419,7 @@
     }).sort((x, y) => y.r30 - x.r30 || (y.dau || 0) - (x.dau || 0));
     const oth = sum(d30.map(d => rev('_other', d)));
     const status = c => !c ? '<span class="pf-chip">지표 미연결</span>'
-      : c.status === 'ok' ? '' : `<span class="pf-chip" title="${esc(c.msg || '')}">${{ no_secret: '지표 미연결', no_dataset: 'BQ 없음', no_data: '이벤트 없음', skipped: '건너뜀', error: '수집 오류' }[c.status] || c.status}</span>`;
+      : c.status === 'ok' ? '' : `<span class="pf-chip" title="${esc(c.msg || '')}">${{ no_firebase: 'Firebase 없음', no_secret: '지표 미연결', no_dataset: 'BQ 없음', no_data: '이벤트 없음', skipped: '건너뜀', error: '수집 오류' }[c.status] || c.status}</span>`;
     const r = x => (x ? `${(x.pct * 100).toFixed(1)}%` : '—');
     $('#pf-apps').innerHTML = `<thead><tr><th class="date">앱</th><th>DAU<span class="th-note">어제</span></th><th>신규<span class="th-note">7일</span></th><th>누적 가입자</th>
       <th>D1</th><th>D7</th><th>광고<span class="th-note">30일</span></th><th>인앱<span class="th-note">30일</span></th><th>매출<span class="th-note">30일</span></th><th>30일 추이</th></tr></thead><tbody>` +
@@ -887,7 +887,7 @@
 
   function statusText(c) {
     if (!c) return '공통지표가 아직 수집되지 않았습니다 — common 워크플로를 돌리세요.';
-    return { no_secret: 'BigQuery 키(GitHub Secret)가 등록되지 않았습니다.', no_dataset: '이 프로젝트에 GA4 BigQuery export 가 없습니다.',
+    return { no_firebase: 'Firebase(GA4) 미연동 앱 — 사용자 지표 없음', no_secret: 'BigQuery 키(GitHub Secret)가 등록되지 않았습니다.', no_dataset: '이 프로젝트에 GA4 BigQuery export 가 없습니다.',
              no_data: '수집 창 안에 이벤트 테이블이 없습니다.', skipped: c.msg, error: '수집 오류: ' + (c.msg || '') }[c.status] || c.msg || '';
   }
 

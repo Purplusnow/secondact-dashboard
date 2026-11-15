@@ -62,7 +62,10 @@ def main() -> int:
     new = 0
     for app in apps:
         st = doc["apps"].setdefault(app["key"], {})
-        if not app.get("secret") or not os.environ.get(app["secret"], "").strip() or not app.get("project"):
+        if not app.get("project"):          # Firebase 없는 앱 — 의견 기능 자체가 없다
+            st.update(status="no_feature")
+            continue
+        if not app.get("secret") or not os.environ.get(app["secret"], "").strip():
             st.update(status="no_secret")
             continue
         try:

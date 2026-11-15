@@ -165,7 +165,9 @@ def subs_active(c, app: dict, ds: str, loc: str, today) -> int | None:
 
 
 def collect(app: dict, prev: dict) -> dict:
-    if not app.get("secret") or not app.get("project"):
+    if not app.get("project"):          # Firebase 를 안 붙인 앱(광고 수익 대시보드) — 키 문제가 아니다
+        return {**prev, "status": "no_firebase"}
+    if not app.get("secret"):
         return {**prev, "status": "no_secret"}
     c = client_for(app["secret"])
     if c is None:
