@@ -31,6 +31,10 @@ MAX_GB = float(os.environ.get("IAP_MAX_GB") or 1)
 # 형의 테스트 폰(갤럭시 S21) — 여기서 난 결제는 판매 리포트에 없는 테스트 결제였다(2026-11-15 확인:
 # 퐁당냥 ₩49,000 · 드레이크윙 · 머지 레일웨이 · 왕관과 금화 10월 KRW 전부 이 기기).
 TEST_MODELS = ("SM-G991N",)
+# 표준 purchase 이벤트 대신 자체 iap_purchase{sku} 만 남기는 앱 — 정가로 계산(국내 KRW, 해외는 USD 정가로
+# 근사. Play 가 나라별로 바꾼 현지가와는 조금 다르다). 2026-11-17 해담하우스 콜롬비아 결제가 0 으로 보여 추가.
+SKU_PRICE = {"haedam_full": {"KRW": 8800, "USD": 6.99}}
+PREFIX = {"haedamhouse": "haedam_"}
 
 VAL = ("COALESCE((SELECT value.double_value FROM UNNEST(event_params) WHERE key='value'),"
        "(SELECT value.float_value FROM UNNEST(event_params) WHERE key='value'),"
@@ -80,6 +84,24 @@ def main() -> None:
                 if r["cur"]:
                     amt = float(r["amt"])
                     got.setdefault(r["d"], {})[r["cur"]] = round(amt, 2) if amt % 1 else int(amt)
+            # 표준 purchase 를 안 남기는 앱(자체 iap_purchase{sku}) — 정가표로 금액을 붙인다
+            skus = [s for s in SKU_PRICE if s.startswith(PREFIX.get(k, "\0"))]
+            if skus:
+                sql2 = f"""
+                  SELECT FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') AS d,
+                         (SELECT value.string_value FROM UNNEST(event_params) WHERE key='sku') AS sku,
+                         geo.country = 'South Korea' AS kr, COUNT(*) AS n
+                  FROM `{a['project']}.{ds}.events_*`
+                  WHERE _TABLE_SUFFIX IN ({lst}) AND event_name = 'iap_purchase'
+                    AND IFNULL(device.mobile_model_name, '') NOT IN ({", ".join(repr(m) for m in TEST_MODELS)})
+                  GROUP BY d, sku, kr"""
+                for r in c.query(sql2, location=loc).result():
+                    p = SKU_PRICE.get(r["sku"])
+                    if not p:
+                        continue
+                    cur = "KRW" if r["kr"] else "USD"
+                    day = got.setdefault(r["d"], {})
+                    day[cur] = round(day.get(cur, 0) + p[cur] * r["n"], 2)
             mine = doc["apps"].setdefault(k, {})
             start = (today - timedelta(days=days)).isoformat()
             for d in [d for d in mine if d >= start]:   # 창 안은 새로 받은 값으로 갈아끼운다
