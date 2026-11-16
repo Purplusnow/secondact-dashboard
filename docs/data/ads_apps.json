@@ -339,7 +339,7 @@
      "AbyssLantern_AR_AOS_Live",
      "AbyssLantern_ID_AOS_Live"
     ],
-    "conv": 35.0,
+    "conv": 36.0,
     "cost": 10929
    },
    "com.purplusnow.rainloopsushi": {
@@ -370,7 +370,7 @@
      "WorldRestaurant_KR_AOS_Live",
      "WorldRestaurant_TW_AOS_Live"
     ],
-    "conv": 18.0,
+    "conv": 19.0,
     "cost": 3834
    }
   },
@@ -380,7 +380,6 @@
      "AbyssLantern_JP_AOS_Live",
      "AbyssLantern_KR_AOS_Live",
      "AbyssLantern_TW_AOS_Live",
-     "AbyssLantern_CA_FR_AOS_Live",
      "AbyssLantern_BE_FR_AOS_Live",
      "AbyssLantern_ES_AOS_Live",
      "AbyssLantern_TR_AOS_Live",
@@ -394,8 +393,8 @@
      "AbyssLantern_AR_AOS_Live",
      "AbyssLantern_ID_AOS_Live"
     ],
-    "conv": 0.0,
-    "cost": 987
+    "conv": 3.0,
+    "cost": 2087
    },
    "com.purplusnow.worldrestaurant": {
     "campaigns": [
@@ -403,12 +402,16 @@
      "WorldRestaurant_HK_ZHT_AOS_Live",
      "WorldRestaurant_PH_AOS_Live",
      "WorldRestaurant_US_AOS_Live",
+     "WorldRestaurant_CA_AU_GB_NZ_IE_AOS_Live",
      "WorldRestaurant_MY_EN_AOS_Live",
      "WorldRestaurant_FR_AOS_Live",
      "WorldRestaurant_ES_AOS_Live",
      "WorldRestaurant_IT_AOS_Live",
+     "WorldRestaurant_MX_AOS_Live",
      "WorldRestaurant_AR_AOS_Live",
      "WorldRestaurant_Low_AOS_Live",
+     "WorldRestaurant_IN_AOS_Live",
+     "WorldRestaurant_TR_AOS_Live",
      "WorldRestaurant_BR_AOS_Live",
      "WorldRestaurant_TH_AOS_Live",
      "WorldRestaurant_ID_AOS_Live",
@@ -416,12 +419,13 @@
      "WorldRestaurant_VN_AOS_Live",
      "WorldRestaurant_KR_AOS_Live",
      "WorldRestaurant_TW_AOS_Live",
-     "WorldRestaurant_CO_AOS_Live"
+     "WorldRestaurant_CO_AOS_Live",
+     "WorldRestaurant_CA_FR_AOS_Live"
     ],
-    "conv": 1.0,
-    "cost": 1819
+    "conv": 8.0,
+    "cost": 3940
    }
   }
  },
- "updated": "2026-11-16T08:32:50+09:00"
+ "updated": "2026-11-16T09:32:49+09:00"
 }
