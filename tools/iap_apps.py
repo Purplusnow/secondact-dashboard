@@ -31,10 +31,9 @@ MAX_GB = float(os.environ.get("IAP_MAX_GB") or 1)
 # 형의 테스트 폰(갤럭시 S21) — 여기서 난 결제는 판매 리포트에 없는 테스트 결제였다(2026-11-15 확인:
 # 퐁당냥 ₩49,000 · 드레이크윙 · 머지 레일웨이 · 왕관과 금화 10월 KRW 전부 이 기기).
 TEST_MODELS = ("SM-G991N",)
-# 표준 purchase 이벤트 대신 자체 iap_purchase{sku} 만 남기는 앱 — 정가로 계산(국내 KRW, 해외는 USD 정가로
-# 근사. Play 가 나라별로 바꾼 현지가와는 조금 다르다). 2026-11-17 해담하우스 콜롬비아 결제가 0 으로 보여 추가.
+# 자체 iap_purchase 에 금액이 없고 sku 만 있는 앱의 정가(국내 KRW, 해외는 USD 정가로 근사 — Play 가 나라별로
+# 바꾼 현지가와는 조금 다르다). 2026-11-17 해담하우스 콜롬비아 결제가 0 으로 보여 추가.
 SKU_PRICE = {"haedam_full": {"KRW": 8800, "USD": 6.99}}
-PREFIX = {"haedamhouse": "haedam_"}
 
 VAL = ("COALESCE((SELECT value.double_value FROM UNNEST(event_params) WHERE key='value'),"
        "(SELECT value.float_value FROM UNNEST(event_params) WHERE key='value'),"
@@ -80,28 +79,47 @@ def main() -> None:
                 print(f"::warning::{k} {gb:.2f}GB > {MAX_GB}GB — 건너뜀")
                 continue
             got: dict[str, dict] = {}
+            cust: dict[str, dict] = {}
             for r in c.query(sql, location=loc).result():
                 if r["cur"]:
                     amt = float(r["amt"])
                     got.setdefault(r["d"], {})[r["cur"]] = round(amt, 2) if amt % 1 else int(amt)
-            # 표준 purchase 를 안 남기는 앱(자체 iap_purchase{sku}) — 정가표로 금액을 붙인다
-            skus = [s for s in SKU_PRICE if s.startswith(PREFIX.get(k, "\0"))]
-            if skus:
-                sql2 = f"""
-                  SELECT FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') AS d,
-                         (SELECT value.string_value FROM UNNEST(event_params) WHERE key='sku') AS sku,
-                         geo.country = 'South Korea' AS kr, COUNT(*) AS n
-                  FROM `{a['project']}.{ds}.events_*`
-                  WHERE _TABLE_SUFFIX IN ({lst}) AND event_name = 'iap_purchase'
-                    AND IFNULL(device.mobile_model_name, '') NOT IN ({", ".join(repr(m) for m in TEST_MODELS)})
-                  GROUP BY d, sku, kr"""
-                for r in c.query(sql2, location=loc).result():
-                    p = SKU_PRICE.get(r["sku"])
-                    if not p:
-                        continue
+            # 표준 purchase 를 안 남기는 앱 — 자체 iap_purchase 이벤트. 앱(템플릿)마다 금액 키가 다르다:
+            #   value+currency(Monet 템플릿: 월드 레스토랑·한붓길·자이로그리드) · micros+currency(빗물초밥·심연의 등불)
+            #   · won(꿀벌 건축가, 원화) · sku 만(해담하우스 → SKU_PRICE 정가)
+            sql2 = f"""
+              SELECT FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') AS d,
+                     UPPER((SELECT value.string_value FROM UNNEST(event_params) WHERE key='currency')) AS cur,
+                     COALESCE((SELECT value.string_value FROM UNNEST(event_params) WHERE key='sku'),
+                              (SELECT value.string_value FROM UNNEST(event_params) WHERE key='product_id'),
+                              (SELECT value.string_value FROM UNNEST(event_params) WHERE key='id')) AS sku,
+                     {VAL} AS val,
+                     (SELECT COALESCE(value.int_value, CAST(value.double_value AS INT64)) FROM UNNEST(event_params) WHERE key='micros') AS micros,
+                     (SELECT COALESCE(value.int_value, CAST(value.double_value AS INT64)) FROM UNNEST(event_params) WHERE key='won') AS won,
+                     geo.country = 'South Korea' AS kr
+              FROM `{a['project']}.{ds}.events_*`
+              WHERE _TABLE_SUFFIX IN ({lst}) AND event_name = 'iap_purchase'
+                AND IFNULL(device.mobile_model_name, '') NOT IN ({", ".join(repr(m) for m in TEST_MODELS)})
+                AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='debug_event') IS NULL"""
+            for r in c.query(sql2, location=loc).result():
+                if r["d"] in got:          # 그날 표준 purchase 가 있으면 그걸 쓴다(이중 계산 방지)
+                    continue
+                if r["val"] and r["cur"]:
+                    cur, amt = r["cur"], float(r["val"])
+                elif r["micros"] and r["cur"]:
+                    cur, amt = r["cur"], r["micros"] / 1e6
+                elif r["won"]:
+                    cur, amt = "KRW", float(r["won"])
+                elif r["sku"] in SKU_PRICE:
                     cur = "KRW" if r["kr"] else "USD"
-                    day = got.setdefault(r["d"], {})
-                    day[cur] = round(day.get(cur, 0) + p[cur] * r["n"], 2)
+                    amt = SKU_PRICE[r["sku"]][cur]
+                else:
+                    print(f"::warning::{k} iap_purchase 금액 모름: {r['sku']}")
+                    continue
+                cust.setdefault(r["d"], {})
+                cust[r["d"]][cur] = round(cust[r["d"]].get(cur, 0) + amt, 2)
+            for d, v in cust.items():
+                got.setdefault(d, v)
             mine = doc["apps"].setdefault(k, {})
             start = (today - timedelta(days=days)).isoformat()
             for d in [d for d in mine if d >= start]:   # 창 안은 새로 받은 값으로 갈아끼운다

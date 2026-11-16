@@ -82,7 +82,7 @@ git pull --rebase
 ---
 - **인생 2막 BigQuery 60일 자동 삭제 해제(2026-11-15):** `second-act-life.analytics_544010325`(서울)의 기본 만료와 events_ 테이블 만료를 콘솔에서 SQL로 지웠다(`SET @@location='asia-northeast3'` 필요). 9/15 원본부터 보존된다. 대시보드 키는 읽기 전용이라 이런 변경은 콘솔에서 해야 한다.
 - **다른 앱 인앱도 GA4로 자동(2026-11-15):** `tools/iap_apps.py` → `docs/data/iap_ga4.json`(common 워크플로). 판매 리포트 마지막 주문일 다음 날부터만 보드에 쓴다. 형 테스트폰 S21(`SM-G991N`) 결제는 뺀다(퐁당냥 ₩49,000·드레이크윙·머지·왕관 10월 KRW 다 테스트였음). 전엔 인생 2막만 GA4라 왕관과 금화 JPY 1,490(11/15) 같은 결제가 0으로 보였다.
-  - **표준 `purchase` 를 안 남기는 앱**(해담하우스: 자체 `iap_purchase{sku}` 만)은 `SKU_PRICE` 정가표로 금액을 붙인다(국내 KRW, 해외 USD 정가 근사). 새 앱이 그렇다면 `SKU_PRICE`·`PREFIX` 에 추가(2026-11-17 해담 콜롬비아 결제가 0으로 보여 추가).
+  - **표준 `purchase` 를 안 남기는 앱**은 자체 `iap_purchase` 를 읽는다(2026-11-17). 앱마다 금액 키가 다름: `value`+`currency`(Monet 템플릿: 월드 레스토랑·한붓길·자이로그리드) · `micros`+`currency`(빗물초밥·심연의 등불) · `won`(꿀벌 건축가) · `sku` 만(해담하우스 → `SKU_PRICE` 정가, 해외는 USD 정가 근사). 그날 표준 `purchase` 가 있으면 그것만 쓴다. 금액을 못 정하면 `::warning::` — 새 앱이면 `SKU_PRICE` 에 추가. 바둑(구독)은 `purchase_done` 이라 아직 안 읽는다(구독자 0).
 
 ## 3. 열려 있는 결정 — 형 답을 기다리는 것
 
