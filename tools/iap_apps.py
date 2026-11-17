@@ -13,6 +13,7 @@ JPY 1,490 이 안 잡힌 일). 그래서 같은 방식(GA4 표준 purchase 의 v
 인증: apps.json 의 secret 이름과 같은 환경변수(common.py 와 같다).
 """
 import json
+import re
 import os
 import sys
 from datetime import date, datetime, timedelta, timezone
@@ -33,6 +34,9 @@ MAX_GB = float(os.environ.get("IAP_MAX_GB") or 1)
 TEST_MODELS = ("SM-G991N",)
 # 자체 iap_purchase 에 금액이 없고 sku 만 있는 앱의 정가(국내 KRW, 해외는 USD 정가로 근사 — Play 가 나라별로
 # 바꾼 현지가와는 조금 다르다). 2026-11-17 해담하우스 콜롬비아 결제가 0 으로 보여 추가.
+# Play 주문번호 형식 GPA.dddd-dddd-dddd-ddddd(구독 갱신은 ..N 접미). 2026-11-17 심연의 등불에서 5마디짜리 가짜
+# 주문번호 + 한국 유저인데 currency=USD 인 '결제' 100여 건(₩119,000 상품 연타)이 들어와 ₩64만으로 잡혔다 — 결제 위조 앱.
+GPA = re.compile(r"^GPA\.\d{4}-\d{4}-\d{4}-\d{5}(\.\.\d+)?$")
 SKU_PRICE = {"haedam_full": {"KRW": 8800, "USD": 6.99}}
 
 VAL = ("COALESCE((SELECT value.double_value FROM UNNEST(event_params) WHERE key='value'),"
@@ -80,6 +84,7 @@ def main() -> None:
                 continue
             got: dict[str, dict] = {}
             cust: dict[str, dict] = {}
+            fake: dict[str, int] = {}
             for r in c.query(sql, location=loc).result():
                 if r["cur"]:
                     amt = float(r["amt"])
@@ -96,13 +101,18 @@ def main() -> None:
                      {VAL} AS val,
                      (SELECT COALESCE(value.int_value, CAST(value.double_value AS INT64)) FROM UNNEST(event_params) WHERE key='micros') AS micros,
                      (SELECT COALESCE(value.int_value, CAST(value.double_value AS INT64)) FROM UNNEST(event_params) WHERE key='won') AS won,
-                     geo.country = 'South Korea' AS kr
+                     geo.country = 'South Korea' AS kr,
+                     COALESCE((SELECT value.string_value FROM UNNEST(event_params) WHERE key='order_id'),
+                              (SELECT value.string_value FROM UNNEST(event_params) WHERE key='order')) AS ord
               FROM `{a['project']}.{ds}.events_*`
               WHERE _TABLE_SUFFIX IN ({lst}) AND event_name = 'iap_purchase'
                 AND IFNULL(device.mobile_model_name, '') NOT IN ({", ".join(repr(m) for m in TEST_MODELS)})
                 AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='debug_event') IS NULL"""
             for r in c.query(sql2, location=loc).result():
                 if r["d"] in got:          # 그날 표준 purchase 가 있으면 그걸 쓴다(이중 계산 방지)
+                    continue
+                if r["ord"] and not GPA.match(r["ord"]):   # 위조 결제(주문번호 형식이 Play 와 다름)
+                    fake[r["d"]] = fake.get(r["d"], 0) + 1
                     continue
                 if r["val"] and r["cur"]:
                     cur, amt = r["cur"], float(r["val"])
@@ -120,6 +130,8 @@ def main() -> None:
                 cust[r["d"]][cur] = round(cust[r["d"]].get(cur, 0) + amt, 2)
             for d, v in cust.items():
                 got.setdefault(d, v)
+            if fake:
+                print(f"::warning::{k} 위조 결제 의심(주문번호 형식 불일치) 제외: {fake}")
             mine = doc["apps"].setdefault(k, {})
             start = (today - timedelta(days=days)).isoformat()
             for d in [d for d in mine if d >= start]:   # 창 안은 새로 받은 값으로 갈아끼운다
