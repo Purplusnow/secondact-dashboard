@@ -50,6 +50,9 @@ jobs:
       GCP_SA_FACELAPSE: ${{ secrets.GCP_SA_FACELAPSE }}
       GCP_SA_PRIVATECAM: ${{ secrets.GCP_SA_PRIVATECAM }}
       GCP_SA_HAEMU: ${{ secrets.GCP_SA_HAEMU }}
+      GCP_SA_AURORATE: ${{ secrets.GCP_SA_AURORATE }}
+      GCP_SA_BLOOMDO: ${{ secrets.GCP_SA_BLOOMDO }}
+      GCP_SA_AMBEROLL: ${{ secrets.GCP_SA_AMBEROLL }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
