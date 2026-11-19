@@ -1440,13 +1440,13 @@
     },
     {
       "date": "2026-11-19",
-      "ads": 9252,
+      "ads": 9363,
       "admob": {
-        "USD": 13.07
+        "USD": 13.03
       },
       "admob_apps": {
         "Crown & Coin: Idle Estate": 6.54,
-        "Second Act: Property Tycoon": 4.22,
+        "Second Act: Property Tycoon": 4.18,
         "Abyss Lantern: Idle Deep RPG": 2.02,
         "World Restaurant Tour": 0.25,
         "Rainloop Sushi: Cozy Idle Shop": 0.02,
@@ -1460,20 +1460,21 @@
     },
     {
       "date": "2026-11-20",
-      "ads": 0,
+      "ads": 51,
       "admob": {
-        "USD": 0.07
+        "USD": 0.31
       },
       "admob_apps": {
-        "Second Act: Property Tycoon": 0.06,
-        "Crown & Coin: Idle Estate": 0.01
+        "Second Act: Property Tycoon": 0.22,
+        "Crown & Coin: Idle Estate": 0.08,
+        "Abyss Lantern: Idle Deep RPG": 0.01
       }
     }
   ],
   "synced": {
     "iap": "2026-11-19T15:40:17+09:00",
-    "ads": "2026-11-20T00:32:54+09:00",
-    "admob": "2026-11-20T00:32:55+09:00",
+    "ads": "2026-11-20T01:32:52+09:00",
+    "admob": "2026-11-20T01:32:53+09:00",
     "iap_scanned": "2026-11-20"
   }
 }
