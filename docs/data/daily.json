@@ -1440,13 +1440,13 @@
     },
     {
       "date": "2026-11-19",
-      "ads": 9222,
+      "ads": 9252,
       "admob": {
-        "USD": 12.96
+        "USD": 13.07
       },
       "admob_apps": {
-        "Crown & Coin: Idle Estate": 6.51,
-        "Second Act: Property Tycoon": 4.14,
+        "Crown & Coin: Idle Estate": 6.54,
+        "Second Act: Property Tycoon": 4.22,
         "Abyss Lantern: Idle Deep RPG": 2.02,
         "World Restaurant Tour": 0.25,
         "Rainloop Sushi: Cozy Idle Shop": 0.02,
@@ -1457,12 +1457,23 @@
         "KRW": 99000
       },
       "iap_src": "ga4"
+    },
+    {
+      "date": "2026-11-20",
+      "ads": 0,
+      "admob": {
+        "USD": 0.07
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.06,
+        "Crown & Coin: Idle Estate": 0.01
+      }
     }
   ],
   "synced": {
     "iap": "2026-11-19T15:40:17+09:00",
-    "ads": "2026-11-19T23:32:59+09:00",
-    "admob": "2026-11-20T00:20:05+09:00",
+    "ads": "2026-11-20T00:32:54+09:00",
+    "admob": "2026-11-20T00:32:55+09:00",
     "iap_scanned": "2026-11-20"
   }
 }
