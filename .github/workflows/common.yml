@@ -53,6 +53,7 @@ jobs:
       GCP_SA_AURORATE: ${{ secrets.GCP_SA_AURORATE }}
       GCP_SA_BLOOMDO: ${{ secrets.GCP_SA_BLOOMDO }}
       GCP_SA_AMBEROLL: ${{ secrets.GCP_SA_AMBEROLL }}
+      GCP_SA_SUBWAYLIVE: ${{ secrets.GCP_SA_SUBWAYLIVE }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

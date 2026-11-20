@@ -22,6 +22,7 @@
     { "key": "aurorate",    "color": 19, "released": "2026-11-15", "biz": "무료", "name": "오로레이트 환율 계산기", "kind": "app", "package": "com.purplusnow.aurorate",    "admob": ["Aurorate", "Aurorate: Currency Converter"],       "project": "aurorate",             "secret": "GCP_SA_AURORATE" },
     { "key": "bloomdo",     "color": 20, "released": "2026-11-15", "biz": "무료", "name": "블룸두",          "kind": "app", "package": "com.purplusnow.bloomdo",     "admob": ["Bloomdo", "Bloomdo: To Do List & Planner"],         "project": "bloomdo-9e29a",        "secret": "GCP_SA_BLOOMDO" },
     { "key": "amberoll",    "color": 21, "released": "2026-11-16", "biz": "무료", "name": "앰버롤 감성 필름카메라", "kind": "app", "package": "com.purplusnow.feelcamera",  "admob": ["Amberoll", "Amberoll: Film Camera Filters"],        "project": "feelcamera-a56ff",     "secret": "GCP_SA_AMBEROLL" },
+    { "key": "subwaylive",  "color": 22, "released": "2026-11-16", "biz": "무료", "name": "서울 지하철 실시간", "kind": "app", "package": "com.purplusnow.subwaylive", "admob": ["Seoul Subway", "Seoul Subway - Live Metro Map"], "project": "subwaylive", "secret": "GCP_SA_SUBWAYLIVE" },
     { "key": "lumenlegion", "review": true, "color": 14, "biz": "무료", "name": "빛의 군단",    "kind": "game", "package": "com.purplusnow.lumenlegion",    "admob": [],                                                "project": "",                     "secret": "" }
   ]
 }
