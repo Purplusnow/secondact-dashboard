@@ -5991,7 +5991,7 @@
     "clicks": 16,
     "conv": 2.0,
     "cost": 201,
-    "impr": 139
+    "impr": 141
    },
    "TW": {
     "clicks": 38,
@@ -6007,49 +6007,109 @@
    },
    "VN": {
     "clicks": 185,
-    "conv": 20.0,
+    "conv": 21.0,
     "cost": 2010,
-    "impr": 1634
+    "impr": 1633
    }
   },
   "2026-11-21": {
-   "ID": {
+   "AR": {
     "clicks": 2,
+    "conv": 0.0,
+    "cost": 1,
+    "impr": 15
+   },
+   "AU": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 38,
+    "impr": 1
+   },
+   "BE": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 298,
+    "impr": 2
+   },
+   "DE": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 22,
+    "impr": 3
+   },
+   "FR": {
+    "clicks": 1,
+    "conv": 0.0,
+    "cost": 14,
+    "impr": 8
+   },
+   "ID": {
+    "clicks": 4,
     "conv": 1.0,
-    "cost": 4,
-    "impr": 10
+    "cost": 25,
+    "impr": 30
    },
    "IN": {
     "clicks": 2,
     "conv": 0.0,
     "cost": 1,
-    "impr": 9
+    "impr": 19
+   },
+   "IT": {
+    "clicks": 3,
+    "conv": 0.0,
+    "cost": 155,
+    "impr": 22
    },
    "JP": {
-    "clicks": 1,
+    "clicks": 8,
     "conv": 0.0,
-    "cost": 1,
-    "impr": 5
+    "cost": 61,
+    "impr": 33
+   },
+   "KR": {
+    "clicks": 3,
+    "conv": 0.0,
+    "cost": 157,
+    "impr": 12
    },
    "MX": {
-    "clicks": 1,
-    "conv": 0.0,
-    "cost": 1,
-    "impr": 2
+    "clicks": 2,
+    "conv": 1.0,
+    "cost": 60,
+    "impr": 3
    },
    "PH": {
+    "clicks": 3,
+    "conv": 0.0,
+    "cost": 13,
+    "impr": 35
+   },
+   "TH": {
     "clicks": 1,
     "conv": 0.0,
-    "cost": 4,
-    "impr": 5
+    "cost": 10,
+    "impr": 27
+   },
+   "TR": {
+    "clicks": 4,
+    "conv": 0.0,
+    "cost": 24,
+    "impr": 16
+   },
+   "TW": {
+    "clicks": 4,
+    "conv": 0.0,
+    "cost": 116,
+    "impr": 22
    },
    "VN": {
-    "clicks": 1,
+    "clicks": 8,
     "conv": 0.0,
-    "cost": 2,
-    "impr": 20
+    "cost": 68,
+    "impr": 73
    }
   }
  },
- "updated": "2026-11-21T20:32:48+09:00"
+ "updated": "2026-11-21T21:32:54+09:00"
 }

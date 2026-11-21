@@ -581,7 +581,7 @@
      "AbyssLantern_AR_AOS_Live",
      "AbyssLantern_ID_AOS_Live"
     ],
-    "conv": 68.0,
+    "conv": 69.0,
     "cost": 15186
    }
   },
@@ -589,16 +589,26 @@
    "com.purplusnow.abysslantern": {
     "campaigns": [
      "AbyssLantern_JP_AOS_Live",
+     "AbyssLantern_KR_AOS_Live",
+     "AbyssLantern_TW_AOS_Live",
+     "AbyssLantern_DE_AOS_Live",
+     "AbyssLantern_FR_AOS_Live",
+     "AbyssLantern_BE_FR_AOS_Live",
+     "AbyssLantern_IT_AOS_Live",
+     "AbyssLantern_TR_AOS_Live",
      "AbyssLantern_MX_AOS_Live",
+     "AbyssLantern_TH_AOS_Live",
      "AbyssLantern_VN_AOS_Live",
+     "AbyssLantern_CA_AU_GB_NZ_IE_AOS_Live",
      "AbyssLantern_PH_AOS_Live",
      "AbyssLantern_IN_AOS_Live",
+     "AbyssLantern_AR_AOS_Live",
      "AbyssLantern_ID_AOS_Live"
     ],
-    "conv": 1.0,
-    "cost": 13
+    "conv": 2.0,
+    "cost": 1063
    }
   }
  },
- "updated": "2026-11-21T20:32:48+09:00"
+ "updated": "2026-11-21T21:32:54+09:00"
 }
