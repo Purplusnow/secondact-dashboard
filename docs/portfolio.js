@@ -448,6 +448,7 @@
     stacked($('#pf-rev'), days, rs, (v, ax) => (ax ? krw(v).replace('₩', '') : won(v)),
       { note: d => (d === today ? ' · 오늘(진행 중)' : '') });
     legend($('#pf-rev-legend'), legendOf(rs));
+    renderDauAll(days);
     renderDauGrid(days);
     renderNew7(today);
     $('#pf-cover').innerHTML = coverNote();
@@ -547,6 +548,22 @@
         `<td class="sum">${has(k) ? nf(tot7(k)) : '—'}</td></tr>`).join('') +
       `</tbody><tfoot><tr><td class="date">합계</td>${cols.map(d => `<td class="sum pf-vd${d === today ? ' pf-vd-today' : ''}">${nf(sum(ks.map(k => M.apps[k].new[d] || 0)))}</td>`).join('')}<td class="sum">${nf(sum(ks.map(tot7)))}</td></tr></tfoot>`;
     document.querySelectorAll('#pf-new7 .pf-row').forEach(tr => tr.addEventListener('click', () => (location.hash = 'app=' + tr.dataset.app)));
+  }
+
+  /* 통합 DAU(형 지시 2026-11-22) — 전체 앱 DAU 합을 앱별 누적 막대로. 색·'기타' 접기는 일매출과 같은 규칙. */
+  function renderDauAll(days) {
+    const M = S.M, yday = kstDate(1);
+    const ks = keys().filter(k => days.some(d => M.apps[k].dau[d]));
+    const ser = fold(ks, k => d => M.apps[k].dau[d] || 0);
+    const tot = d => sum(ks.map(k => M.apps[k].dau[d] || 0));
+    const past = days.filter(d => d <= yday && tot(d) > 0);
+    const avg = past.length ? sum(past.map(tot)) / past.length : 0;
+    $('#pf-dausum').innerHTML = `<span class="pf-muted">어제</span> <b>${nf(tot(yday))}명</b>` +
+      `<span class="pf-muted"> · 최근 ${S.range}일 평균 ${nf(Math.round(avg))}명 · 신규 어제 ${nf(sum(ks.map(k => M.apps[k].new[yday] || 0)))}명</span>`;
+    stacked($('#pf-dau-all'), days, ser,
+      (v, ax) => (ax ? (v >= 1000 ? (v / 1000).toFixed(v >= 1e4 ? 0 : 1) + '천' : nf(v)) : nf(v) + '명'),
+      { note: d => (d === kstDate(0) ? ' · 오늘(진행 중)' : '') });
+    legend($('#pf-dau-all-legend'), legendOf(ser));
   }
 
   /* 앱별 DAU — 앱 하나에 작은 차트 하나(바둑판). '기타'로 접지 않고 목록의 앱을 전부 보인다(형 지시 2026-11-12).
