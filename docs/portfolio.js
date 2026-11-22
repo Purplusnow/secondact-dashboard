@@ -243,7 +243,12 @@
     let extra = '';
     if (a.biz === '구독') {
       const c = commonOf(a.key);
-      if (c && c.subs_active != null) extra = ` <span class="pf-biz-n" title="구독 결제 완료 이벤트 기준 추정(월 31일·연 366일 안) — 갱신·해지는 못 봄">(활성구독자: ${nf(c.subs_active)}명)</span>`;
+      // 앱이 완료 이벤트를 못 남긴 구독(manual_sales kind=subscription)도 플랜 기간 안이면 더한다(형 지시 2026-11-22).
+      // 리포트 반영 여부와 상관없이 센다 — GA4 쪽엔 영영 없는 결제라서. 그러니 GA4 에 잡힌 결제는 수동으로 넣지 말 것.
+      const pd = (a.subs && a.subs.days) || {}, today = kstDate(0);
+      const man = ((S.manualSales && S.manualSales.orders) || []).filter(o => o.package === a.package && o.kind === 'subscription' &&
+        o.date > addDays(today, -(pd[o.plan] || 31))).length;
+      if (c && (c.subs_active != null || man)) extra = ` <span class="pf-biz-n" title="구독 결제 완료 이벤트 기준 추정(월 31일·연 366일 안) — 갱신·해지는 못 봄${man ? ' · 수동 기록 ' + man + '건 포함' : ''}">(활성구독자: ${nf((c.subs_active || 0) + man)}명)</span>`;
     } else if (a.biz === '유료') {
       const last = S.sales && S.sales.last_order;
       extra = ` <span class="pf-biz-n" title="Play 판매 리포트 주문 − 환불${last ? ' · 리포트 ' + esc(last.replace('T', ' ').slice(0, 16)) + '까지' : ' · 리포트 없음'}">(유료구매자: ${nf(paidBuyers(a))}명)</span>`;
