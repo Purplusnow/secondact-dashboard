@@ -643,7 +643,7 @@
      "AbyssLantern_ID_AOS_Live"
     ],
     "conv": 46.0,
-    "cost": 8721
+    "cost": 8736
    },
    "com.purplusnow.crowncoin": {
     "campaigns": [
@@ -674,7 +674,7 @@
      "CrownCoin_BE_FR_AOS_Live"
     ],
     "conv": 25.0,
-    "cost": 4627
+    "cost": 4718
    },
    "com.purplusnow.secondactlife": {
     "campaigns": [
@@ -700,10 +700,76 @@
      "SALife_IT_AOS_Live",
      "SALife_HK_ZHT_AOS_Live"
     ],
-    "conv": 13.0,
+    "conv": 14.0,
     "cost": 3294
+   }
+  },
+  "2026-11-23": {
+   "com.purplusnow.abysslantern": {
+    "campaigns": [
+     "AbyssLantern_JP_AOS_Live",
+     "AbyssLantern_DE_AOS_Live",
+     "AbyssLantern_FR_AOS_Live",
+     "AbyssLantern_BE_FR_AOS_Live",
+     "AbyssLantern_CL_AOS_Live",
+     "AbyssLantern_ES_AOS_Live",
+     "AbyssLantern_IT_AOS_Live",
+     "AbyssLantern_MX_AOS_Live",
+     "AbyssLantern_VN_AOS_Live",
+     "AbyssLantern_CO_AOS_Live",
+     "AbyssLantern_US_AOS_Live",
+     "AbyssLantern_CA_AU_GB_NZ_IE_AOS_Live",
+     "AbyssLantern_BR_AOS_Live",
+     "AbyssLantern_PE_AOS_Live",
+     "AbyssLantern_PH_AOS_Live",
+     "AbyssLantern_AR_AOS_Live",
+     "AbyssLantern_ID_AOS_Live"
+    ],
+    "conv": 0.0,
+    "cost": 758
+   },
+   "com.purplusnow.crowncoin": {
+    "campaigns": [
+     "CrownCoin_BR_AOS_Live",
+     "CrownCoin_VN_AOS_Live",
+     "CrownCoin_US_AOS_Live",
+     "CrownCoin_MX_AOS_Live",
+     "CrownCoin_PH_AOS_Live",
+     "CrownCoin_PE_AOS_Live",
+     "CrownCoin_AR_AOS_Live",
+     "CrownCoin_DE_AOS_Live",
+     "CrownCoin_CO_AOS_Live",
+     "CrownCoin_ID_AOS_Live",
+     "CrownCoin_ES_AOS_Live",
+     "CrownCoin_IT_AOS_Live"
+    ],
+    "conv": 0.0,
+    "cost": 246
+   },
+   "com.purplusnow.secondactlife": {
+    "campaigns": [
+     "SALife_PH_AOS_Live",
+     "SALife_US_AOS_Live",
+     "SALife_TW_AOS_Live",
+     "SALife_JP_AOS_Live",
+     "SALife_TH_AOS_Live",
+     "SALife_BR_AOS_Live",
+     "SALife_IN_AOS_Live",
+     "SALife_FR_AOS_Live",
+     "SALife_TR_AOS_Live",
+     "SALife_CO_AOS_Live",
+     "SALife_DE_AOS_Live",
+     "SALife_MX_AOS_Live",
+     "SALife_AR_AOS_Live",
+     "SALife_ID_AOS_Live",
+     "SALife_ES_AOS_Live",
+     "SALife_IT_AOS_Live",
+     "SALife_CL_AOS_Live"
+    ],
+    "conv": 0.0,
+    "cost": 587
    }
   }
  },
- "updated": "2026-11-23T06:32:48+09:00"
+ "updated": "2026-11-23T07:32:50+09:00"
 }
