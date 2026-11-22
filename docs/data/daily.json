@@ -1478,13 +1478,13 @@
     },
     {
       "date": "2026-11-21",
-      "ads": 1853,
+      "ads": 1888,
       "admob": {
-        "USD": 10.19
+        "USD": 10.18
       },
       "admob_apps": {
         "Crown & Coin: Idle Estate": 3.83,
-        "Second Act: Property Tycoon": 3.39,
+        "Second Act: Property Tycoon": 3.38,
         "Abyss Lantern: Idle Deep RPG": 2.83,
         "World Restaurant Tour": 0.12,
         "Pocket Arcade: Mini Games": 0.01,
@@ -1493,23 +1493,24 @@
     },
     {
       "date": "2026-11-22",
-      "ads": 3468,
+      "ads": 3602,
       "admob": {
-        "USD": 6.11
+        "USD": 6.88
       },
       "admob_apps": {
-        "Crown & Coin: Idle Estate": 4.25,
-        "Second Act: Property Tycoon": 1.09,
-        "Abyss Lantern: Idle Deep RPG": 0.67,
+        "Crown & Coin: Idle Estate": 4.45,
+        "Second Act: Property Tycoon": 1.6,
+        "Abyss Lantern: Idle Deep RPG": 0.72,
         "Merge Railway: Train Makeover": 0.05,
-        "World Restaurant Tour": 0.05
+        "World Restaurant Tour": 0.05,
+        "Plop Cat: Slide & Jigsaw": 0.01
       }
     }
   ],
   "synced": {
     "iap": "2026-11-20T21:24:32+09:00",
-    "ads": "2026-11-22T09:32:48+09:00",
-    "admob": "2026-11-22T09:32:49+09:00",
+    "ads": "2026-11-22T10:32:48+09:00",
+    "admob": "2026-11-22T10:32:48+09:00",
     "iap_scanned": "2026-11-22"
   }
 }
