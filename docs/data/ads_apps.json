@@ -734,8 +734,8 @@
      "AbyssLantern_AR_AOS_Live",
      "AbyssLantern_ID_AOS_Live"
     ],
-    "conv": 35.0,
-    "cost": 8068
+    "conv": 36.0,
+    "cost": 8136
    },
    "com.purplusnow.crowncoin": {
     "campaigns": [
@@ -777,8 +777,8 @@
      "HaedamHouse_AR_AOS_Live",
      "HaedamHouse_VN_AOS_Live"
     ],
-    "conv": 14.0,
-    "cost": 10247
+    "conv": 19.0,
+    "cost": 11762
    },
    "com.purplusnow.secondactlife": {
     "campaigns": [
@@ -810,7 +810,16 @@
     "conv": 16.0,
     "cost": 4524
    }
+  },
+  "2026-11-24": {
+   "com.purplusnow.haedamhouse": {
+    "campaigns": [
+     "HaedamHouse_KR_AOS_Live"
+    ],
+    "conv": 0.0,
+    "cost": 49
+   }
   }
  },
- "updated": "2026-11-23T23:32:58+09:00"
+ "updated": "2026-11-24T00:32:51+09:00"
 }

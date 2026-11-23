@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23",
+  "updated": "2026-11-24",
   "note": "하루 한 줄. 숫자면 원화, {\"USD\": 8.97}이면 그날 환율로 환산. 날짜는 모두 KST 기준.",
   "daily": [
     {
@@ -1511,24 +1511,35 @@
     },
     {
       "date": "2026-11-23",
-      "ads": 26617,
+      "ads": 28201,
       "admob": {
-        "USD": 15.97
+        "USD": 16.49
       },
       "admob_apps": {
-        "Crown & Coin: Idle Estate": 6.88,
-        "Abyss Lantern: Idle Deep RPG": 6.28,
-        "Second Act: Property Tycoon": 2.72,
+        "Crown & Coin: Idle Estate": 7.12,
+        "Abyss Lantern: Idle Deep RPG": 6.48,
+        "Second Act: Property Tycoon": 2.8,
         "World Restaurant Tour": 0.07,
         "Seoul Subway - Live Metro Map": 0.01,
         "Plop Cat: Slide & Jigsaw": 0.01
+      }
+    },
+    {
+      "date": "2026-11-24",
+      "ads": 49,
+      "admob": {
+        "USD": 0.03
+      },
+      "admob_apps": {
+        "Crown & Coin: Idle Estate": 0.02,
+        "Second Act: Property Tycoon": 0.01
       }
     }
   ],
   "synced": {
     "iap": "2026-11-20T21:24:32+09:00",
-    "ads": "2026-11-23T23:32:58+09:00",
-    "admob": "2026-11-23T23:40:53+09:00",
+    "ads": "2026-11-24T00:32:50+09:00",
+    "admob": "2026-11-24T00:32:51+09:00",
     "iap_scanned": "2026-11-23"
   }
 }
