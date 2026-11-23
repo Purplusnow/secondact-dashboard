@@ -1511,14 +1511,14 @@
     },
     {
       "date": "2026-11-23",
-      "ads": 28201,
+      "ads": 28670,
       "admob": {
         "USD": 16.49
       },
       "admob_apps": {
-        "Crown & Coin: Idle Estate": 7.12,
+        "Crown & Coin: Idle Estate": 7.11,
         "Abyss Lantern: Idle Deep RPG": 6.48,
-        "Second Act: Property Tycoon": 2.8,
+        "Second Act: Property Tycoon": 2.81,
         "World Restaurant Tour": 0.07,
         "Seoul Subway - Live Metro Map": 0.01,
         "Plop Cat: Slide & Jigsaw": 0.01
@@ -1526,20 +1526,22 @@
     },
     {
       "date": "2026-11-24",
-      "ads": 49,
+      "ads": 611,
       "admob": {
-        "USD": 0.03
+        "USD": 0.54
       },
       "admob_apps": {
-        "Crown & Coin: Idle Estate": 0.02,
-        "Second Act: Property Tycoon": 0.01
+        "Crown & Coin: Idle Estate": 0.28,
+        "Abyss Lantern: Idle Deep RPG": 0.18,
+        "Second Act: Property Tycoon": 0.07,
+        "Rainloop Sushi: Cozy Idle Shop": 0.01
       }
     }
   ],
   "synced": {
     "iap": "2026-11-20T21:24:32+09:00",
-    "ads": "2026-11-24T00:32:50+09:00",
-    "admob": "2026-11-24T00:36:45+09:00",
+    "ads": "2026-11-24T01:32:50+09:00",
+    "admob": "2026-11-24T01:32:51+09:00",
     "iap_scanned": "2026-11-24"
   }
 }
