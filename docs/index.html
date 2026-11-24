@@ -41,8 +41,9 @@
   </section>
 
   <section class="card">
-    <div class="card-head"><h2>앱별 현황</h2>
-      <p class="card-sub">30일 매출 순. 매출은 실수령 기준(인앱은 세금·수수료 15% 뺌, 광고는 AdMob 추정 수익). D1·D7 은 최근 코호트 가중 평균. 줄을 누르면 그 앱 페이지로 갑니다.</p></div>
+    <div class="card-head pf-head-row"><div><h2>앱별 현황</h2>
+      <p class="card-sub">30일 매출 순. 매출은 실수령 기준(인앱은 세금·수수료 15% 뺌, 광고는 AdMob 추정 수익). D1·D7 은 최근 코호트 가중 평균(클래식: 정확히 그날 · 롤링: 그날 이후 언제든). 줄을 누르면 그 앱 페이지로 갑니다.</p></div>
+      <div class="pf-tabgroup"><div class="tabs pf-retmode"><button class="tab is-on" data-ret="d" type="button" title="정확히 N일째에 다시 온 비율">클래식</button><button class="tab" data-ret="r" type="button" title="N일째 또는 그 뒤 언제든 다시 온 비율">롤링</button></div></div></div>
     <div class="table-scroll"><table class="ledger pf-table" id="pf-apps"></table></div>
   </section>
 
@@ -107,7 +108,7 @@
   <!-- 종합(앱별 탭 첫 서브탭) — 앱을 하나씩 안 열어도 보이게 -->
   <div id="pf-app-summary" hidden>
     <section class="card">
-      <div class="card-head"><h2>종합 — 초기 퍼널 · 핵심 지표</h2><p class="card-sub" id="pf-sum-sub"></p></div>
+      <div class="card-head pf-head-row"><div><h2>종합 — 초기 퍼널 · 핵심 지표</h2><p class="card-sub" id="pf-sum-sub"></p></div><div class="pf-tabgroup"><div class="tabs pf-retmode"><button class="tab is-on" data-ret="d" type="button" title="정확히 N일째에 다시 온 비율">클래식</button><button class="tab" data-ret="r" type="button" title="N일째 또는 그 뒤 언제든 다시 온 비율">롤링</button></div></div></div>
       <div class="table-scroll"><table class="ledger" id="pf-sum-table"></table></div>
     </section>
   </div>
@@ -133,7 +134,7 @@
     <div id="pf-game"></div>
 
     <section class="card">
-      <div class="card-head"><h2>리텐션</h2><p class="card-sub">위: 각 Dn 이 익은 최근 4주 코호트의 가중 평균 — 큰 숫자는 클래식(정확히 N일째에 온 비율), '롤링'은 N일째 또는 그 뒤 언제든 다시 온 비율(최근 코호트는 아직 덜 참). 아래(그날 기준): 가입일별(최근 21일) — 점(·)은 아직 그날이 안 온 칸.</p></div>
+      <div class="card-head pf-head-row"><div><h2>리텐션</h2><p class="card-sub">클래식 = 정확히 N일째에 다시 온 비율 · 롤링 = N일째 또는 그 뒤 언제든 다시 온 비율(시간이 지나면 오르고, 최근 코호트는 아직 덜 참). 위: 각 Dn 이 익은 최근 4주 코호트의 가중 평균. 아래: 가입일별(최근 21일) — 점(·)은 아직 그날이 안 온 칸.</p></div><div class="pf-tabgroup"><div class="tabs pf-retmode"><button class="tab is-on" data-ret="d" type="button" title="정확히 N일째에 다시 온 비율">클래식</button><button class="tab" data-ret="r" type="button" title="N일째 또는 그 뒤 언제든 다시 온 비율">롤링</button></div></div></div>
       <div class="pf-rets" id="pf-ret-tiles"></div>
       <div class="table-scroll"><table class="ledger pf-cohort" id="pf-cohorts"></table></div>
     </section>
