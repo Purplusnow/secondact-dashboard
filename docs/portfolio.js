@@ -259,8 +259,9 @@
   const colorOf = k => (k === '_other' ? OTHER : S.byKey[k].color);
   const commonOf = k => (S.common && S.common.apps && S.common.apps[k]) || null;
 
-  // dN: 정확히 N일째(KST 날짜)에 다시 온 비율. roll=true 면 rN: 1~N일 사이 한 번이라도 다시 온 비율(누적).
-  // 누적값(rN)이 없는 옛 코호트는 빼고 따로 가중한다 — 그래서 두 값의 코호트 인원이 다를 수 있다.
+  // dN: 정확히 N일째(KST 날짜)에 다시 온 비율(클래식). roll=true 면 rN: N일째 또는 그 뒤 언제든 다시 온 비율(롤링).
+  // 롤링은 시간이 지나면 계속 오른다(뒤늦게 온 사람이 더해짐) — 최근 코호트일수록 덜 차 있다.
+  // 롤링값(rN)이 없는 옛 코호트는 빼고 따로 가중한다 — 그래서 두 값의 코호트 인원이 다를 수 있다.
   function retention(k, day, from, to, roll) {
     const c = commonOf(k);
     if (!c || !c.cohorts) return null;
@@ -273,8 +274,8 @@
     return b ? { pct: n / b, base: b } : null;
   }
   const pct1 = x => (x ? (x.pct * 100).toFixed(1) + '%' : '—');
-  // 표 칸용: '정확히 그날' 값 + 옆에 작은 회색 '누적' 값. D1 은 두 방식이 정의상 같아서 누적을 안 붙인다
-  const retCell = (x, xr) => `<td title="${x ? '그날 기준 · 코호트 ' + nf(x.base) + '명' : ''}${xr ? ' / 누적(그때까지 한 번이라도) · ' + nf(xr.base) + '명' : ''}">${pct1(x)}${xr ? ` <span class="pf-muted">누적 ${pct1(xr)}</span>` : ''}</td>`;
+  // 표 칸용: 클래식(정확히 그날) 값 + 옆에 작은 회색 롤링(그날 이후 언제든) 값
+  const retCell = (x, xr) => `<td title="${x ? '클래식(정확히 그날) · 코호트 ' + nf(x.base) + '명' : ''}${xr ? ' / 롤링(그날 이후 언제든) · ' + nf(xr.base) + '명' : ''}">${pct1(x)}${xr ? ` <span class="pf-muted">롤링 ${pct1(xr)}</span>` : ''}</td>`;
 
   /* ── 라우팅(해시) ────────────────────────────────── */
   function route() {
@@ -426,6 +427,7 @@
                dau: A.dau[yday], new7: c && c.daily ? sum(d7.map(d => A.new[d])) : null,
                d1: retention(a.key, 1, addDays(today, -15), addDays(today, -2)),
                d7r: retention(a.key, 7, addDays(today, -37), addDays(today, -8)),
+               d1c: retention(a.key, 1, addDays(today, -15), addDays(today, -2), true),
                d7c: retention(a.key, 7, addDays(today, -37), addDays(today, -8), true),
                trend: d30.map(d => rev(a.key, d)) };
     }).sort((x, y) => y.r30 - x.r30 || (y.dau || 0) - (x.dau || 0));
@@ -436,7 +438,7 @@
       <th>D1</th><th>D7</th><th>광고<span class="th-note">30일</span></th><th>인앱<span class="th-note">30일</span></th><th>매출<span class="th-note">30일</span></th><th>30일 추이</th></tr></thead><tbody>` +
       rows.map(x => `<tr class="pf-row" data-app="${x.a.key}"><td class="date"><span class="dot" style="background:${x.a.color}"></span> ${esc(x.a.name)}${bizTag(x.a)}${x.a.kind === 'app' ? ' <span class="pf-muted">앱</span>' : ''} ${status(x.c)}</td>
         <td>${x.dau != null ? nf(x.dau) : '—'}</td><td>${x.new7 != null ? nf(x.new7) : '—'}</td><td title="${x.c && x.c.total_since ? esc(x.c.total_since) + ' 부터(BigQuery 내보내기 시작) · 봇 제외' : ''}">${x.c && x.c.total_users != null ? nf(x.c.total_users) : '—'}</td>
-        ${retCell(x.d1)}${retCell(x.d7r, x.d7c)}
+        ${retCell(x.d1, x.d1c)}${retCell(x.d7r, x.d7c)}
         <td>${krw(x.ad30)}</td><td>${krw(x.iap30)}</td><td class="sum">${krw(x.r30)}</td><td>${spark(x.trend, x.a.color)}</td></tr>`).join('') +
       (oth ? `<tr><td class="date"><span class="dot" style="background:${OTHER}"></span> 기타(심사 중·목록 밖 AdMob 앱)</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td colspan="2"></td><td class="sum">${krw(oth)}</td><td></td></tr>` : '') +
       `</tbody><tfoot><tr><td class="date">합계</td><td>${dauKs.length ? nf(ydDau) : '—'}</td><td></td><td>${nf(sum(rows.map(x => (x.c && x.c.total_users) || 0)))}</td><td></td><td></td>
@@ -590,9 +592,9 @@
     // 리텐션 — 앱별 현황 표와 같은 창(D1: 최근 2주 코호트, D7: 익은 최근 4주 코호트, 가중 평균)
     const retLine = k => {
       const r1 = retention(k, 1, addDays(today, -15), addDays(today, -2)), r7 = retention(k, 7, addDays(today, -37), addDays(today, -8));
-      const c7 = retention(k, 7, addDays(today, -37), addDays(today, -8), true);
-      const f = (n, r, c) => `<span title="${r ? '그날 기준 · 코호트 ' + nf(r.base) + '명' : '코호트 없음'}${c ? ' / 누적(1~' + n + '일 중 한 번이라도) ' + pct1(c) : ''}">D${n} <b>${pct1(r)}</b>${c ? ' (누적 ' + pct1(c) + ')' : ''}</span>`;
-      return `<div class="pf-mini-ret">${f(1, r1)}${f(7, r7, c7)}</div>`;
+      const c1 = retention(k, 1, addDays(today, -15), addDays(today, -2), true), c7 = retention(k, 7, addDays(today, -37), addDays(today, -8), true);
+      const f = (n, r, c) => `<span title="${r ? '클래식(정확히 그날) · 코호트 ' + nf(r.base) + '명' : '코호트 없음'}${c ? ' / 롤링(' + n + '일째 이후 언제든) ' + pct1(c) : ''}">D${n} <b>${pct1(r)}</b>${c ? ' (롤링 ' + pct1(c) + ')' : ''}</span>`;
+      return `<div class="pf-mini-ret">${f(1, r1, c1)}${f(7, r7, c7)}</div>`;
     };
     const host = $('#pf-dau-grid');
     host.innerHTML = order.map(k => {
@@ -753,14 +755,15 @@
     const order = { bad: 0, ok: 1, good: 2, hold: 3, none: 4 };
     const rows = S.apps.map(a => { const f = funnelCheck(a.key), A = M.apps[a.key], c = commonOf(a.key);
       return { a, f, dau: A.dau[yday], new7: c && c.daily ? sum(d7.map(d => A.new[d] || 0)) : null,
-               d1: retention(a.key, 1, addDays(today, -15), addDays(today, -2)) }; })
+               d1: retention(a.key, 1, addDays(today, -15), addDays(today, -2)),
+               d1c: retention(a.key, 1, addDays(today, -15), addDays(today, -2), true) }; })
       .sort((x, y) => (order[x.f.level] - order[y.f.level]) || ((y.dau || 0) - (x.dau || 0)));
     const cnt = lv => rows.filter(r => r.f.level === lv).length;
     $('#pf-sum-sub').textContent = `문제 ${cnt('bad')} · 양호 ${cnt('ok')} · 좋음 ${cnt('good')} · 판단 보류 ${cnt('hold')} · 퍼널 없음 ${cnt('none')} — 줄을 누르면 그 앱 페이지`;
     $('#pf-sum-table').innerHTML = `<thead><tr><th class="date">앱</th><th>초기 퍼널</th><th class="date">요약</th><th>DAU<span class="th-note">어제</span></th><th>신규<span class="th-note">7일</span></th><th>D1</th></tr></thead><tbody>` +
       rows.map(r => `<tr class="pf-row" data-app="${r.a.key}"><td class="date"><span class="dot" style="background:${r.a.color}"></span> ${esc(r.a.name)}${bizTag(r.a)}</td>` +
         `<td><span class="pf-fc pf-fc-${r.f.level}">${r.f.title}</span></td><td class="date pf-sum-detail">${esc(r.f.detail)}</td>` +
-        `<td>${r.dau != null ? nf(r.dau) : '—'}</td><td>${r.new7 != null ? nf(r.new7) : '—'}</td>${retCell(r.d1)}</tr>`).join('') + '</tbody>';
+        `<td>${r.dau != null ? nf(r.dau) : '—'}</td><td>${r.new7 != null ? nf(r.new7) : '—'}</td>${retCell(r.d1, r.d1c)}</tr>`).join('') + '</tbody>';
     document.querySelectorAll('#pf-sum-table .pf-row').forEach(tr => tr.addEventListener('click', () => (location.hash = 'app=' + tr.dataset.app)));
   }
 
@@ -780,10 +783,10 @@
     const d30 = span(addDays(yday, -29), yday), d7 = span(addDays(yday, -6), yday);
     const r30 = sum(d30.map(d => rev(k, d))), dau30 = sum(d30.map(d => A.dau[d] || 0));
     const d1 = retention(k, 1, addDays(today, -15), addDays(today, -2)), d7r = retention(k, 7, addDays(today, -37), addDays(today, -8));
-    const d7c = retention(k, 7, addDays(today, -37), addDays(today, -8), true);
+    const d1c = retention(k, 1, addDays(today, -15), addDays(today, -2), true), d7c = retention(k, 7, addDays(today, -37), addDays(today, -8), true);
     $('#pf-app-tiles').innerHTML = [
       tile('어제 DAU', A.dau[yday] != null ? nf(A.dau[yday]) + '명' : '—', c && c.daily ? `신규 7일 ${nf(sum(d7.map(d => A.new[d])))}명` : statusText(c)),
-      tile('D1 · D7', `${pct1(d1)} · ${pct1(d7r)}`, (d7c ? `D7 누적(7일 안에 한 번이라도) ${pct1(d7c)} · ` : '') + (d1 ? `최근 2주 코호트 ${nf(d1.base)}명 기준` : '코호트 없음')),
+      tile('D1 · D7', `${pct1(d1)} · ${pct1(d7r)}`, (d1c || d7c ? `롤링(그날 이후 언제든) ${pct1(d1c)} · ${pct1(d7c)} · ` : '') + (d1 ? `최근 2주 코호트 ${nf(d1.base)}명 기준` : '코호트 없음')),
       tile('매출 30일', krw(r30), `광고 ${krw(sum(d30.map(d => A.ad[d] || 0)))} · 인앱 ${krw(sum(d30.map(d => A.iap[d] || 0)))}`),
       tile('ARPDAU 30일', dau30 ? won(r30 / dau30) : '—', dau30 ? `30일 누적 DAU ${nf(dau30)}` : '지표 없음'),
     ].join('');
@@ -930,7 +933,7 @@
                                  c: retention(k, n, addDays(today, -(n + 29)), addDays(today, -(n + 1)), true) }));
     $('#pf-ret-tiles').innerHTML = curve.map(x =>
       `<div class="pf-ret"><span class="pf-muted">D${x.n}</span><b class="num">${pct1(x.r)}</b><span class="pf-muted">${x.r ? nf(x.r.base) + '명' : ''}</span>` +
-      (x.n === 1 ? '' : `<span class="pf-muted" title="1~${x.n}일 사이 한 번이라도 다시 온 비율${x.c ? ' · ' + nf(x.c.base) + '명' : ''}">누적 ${pct1(x.c)}</span>`) + '</div>').join('');
+      (`<span class="pf-muted" title="${x.n}일째 또는 그 뒤 언제든 다시 온 비율${x.c ? ' · ' + nf(x.c.base) + '명' : ''}">롤링 ${pct1(x.c)}</span>`) + '</div>').join('');
     const rows = (c.cohorts || []).slice(-21).reverse();
     const heat = p => SEQ[Math.min(SEQ.length - 1, Math.floor(p * 2 * SEQ.length))];   // 0~50% 를 8단계로
     $('#pf-cohorts').innerHTML = `<thead><tr><th class="date">가입일</th><th>신규</th>${RD.map(n => `<th>D${n}</th>`).join('')}</tr></thead><tbody>` +

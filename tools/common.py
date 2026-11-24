@@ -108,10 +108,10 @@ SELECT 'ret', d0, DATE_DIFF(d, d0, DAY), NULL, NULL, COUNT(DISTINCT u), NULL, NU
 FROM act WHERE d0 BETWEEN @start AND @end AND DATE_DIFF(d, d0, DAY) IN ({ret})
 GROUP BY d0, DATE_DIFF(d, d0, DAY)
 UNION ALL
--- 누적(롤링) 리텐션: 1~k일 사이에 한 번이라도 다시 온 사람
+-- 롤링 리텐션: k일째 또는 그 뒤 언제든 다시 온 사람
 SELECT 'roll', d0, k, NULL, NULL, COUNT(DISTINCT u), NULL, NULL, NULL, NULL, NULL, NULL
 FROM act CROSS JOIN UNNEST([{ret}]) AS k
-WHERE d0 BETWEEN @start AND @end AND DATE_DIFF(d, d0, DAY) BETWEEN 1 AND k
+WHERE d0 BETWEEN @start AND @end AND DATE_DIFF(d, d0, DAY) >= k
 GROUP BY d0, k
 UNION ALL
 SELECT 'evt', d, NULL, e, NULL, COUNT(*), COUNT(DISTINCT u), NULL, NULL, NULL, NULL, NULL
@@ -242,7 +242,7 @@ def collect(app: dict, prev: dict) -> dict:
         for k in RET_DAYS:
             due = (date.fromisoformat(d0) + timedelta(days=k)).isoformat()
             row[f"d{k}"] = ret.get(d0, {}).get(k, 0) if due <= last_day else None
-            # rN: 1~N일 사이 한 번이라도 다시 온 사람(누적). dN: 정확히 N일째에 온 사람
+            # rN: N일째 또는 그 뒤 언제든 다시 온 사람(롤링). dN: 정확히 N일째에 온 사람
             row[f"r{k}"] = roll.get(d0, {}).get(k, 0) if due <= last_day else None
         cohorts[d0] = row
 
