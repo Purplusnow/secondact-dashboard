@@ -108,6 +108,12 @@ SELECT 'ret', d0, DATE_DIFF(d, d0, DAY), NULL, NULL, COUNT(DISTINCT u), NULL, NU
 FROM act WHERE d0 BETWEEN @start AND @end AND DATE_DIFF(d, d0, DAY) IN ({ret})
 GROUP BY d0, DATE_DIFF(d, d0, DAY)
 UNION ALL
+-- 누적(롤링) 리텐션: 1~k일 사이에 한 번이라도 다시 온 사람
+SELECT 'roll', d0, k, NULL, NULL, COUNT(DISTINCT u), NULL, NULL, NULL, NULL, NULL, NULL
+FROM act CROSS JOIN UNNEST([{ret}]) AS k
+WHERE d0 BETWEEN @start AND @end AND DATE_DIFF(d, d0, DAY) BETWEEN 1 AND k
+GROUP BY d0, k
+UNION ALL
 SELECT 'evt', d, NULL, e, NULL, COUNT(*), COUNT(DISTINCT u), NULL, NULL, NULL, NULL, NULL
 FROM ev WHERE d BETWEEN @evstart AND @end GROUP BY d, e
 UNION ALL
@@ -205,7 +211,7 @@ def collect(app: dict, prev: dict) -> dict:
     rows = list(job.result())
     scan_mb = round((job.total_bytes_billed or 0) / 1e6, 1)
 
-    day, base, ret, evt, ver = {}, {}, {}, {}, []
+    day, base, ret, roll, evt, ver = {}, {}, {}, {}, {}, []
     for r in rows:
         k = r["kind"]
         if k == "day":
@@ -217,6 +223,8 @@ def collect(app: dict, prev: dict) -> dict:
             base[r["d"].isoformat()] = r["n"]
         elif k == "ret":
             ret.setdefault(r["d"].isoformat(), {})[int(r["k"])] = r["n"]
+        elif k == "roll":
+            roll.setdefault(r["d"].isoformat(), {})[int(r["k"])] = r["n"]
         elif k == "evt":
             evt.setdefault(r["e"], {})[r["d"].isoformat()] = (r["n"], r["n2"])
         elif k == "ver":
@@ -234,6 +242,8 @@ def collect(app: dict, prev: dict) -> dict:
         for k in RET_DAYS:
             due = (date.fromisoformat(d0) + timedelta(days=k)).isoformat()
             row[f"d{k}"] = ret.get(d0, {}).get(k, 0) if due <= last_day else None
+            # rN: 1~N일 사이 한 번이라도 다시 온 사람(누적). dN: 정확히 N일째에 온 사람
+            row[f"r{k}"] = roll.get(d0, {}).get(k, 0) if due <= last_day else None
         cohorts[d0] = row
 
     # 누적 병합: 창 밖 옛 날짜는 이전 값 유지, 창 안은 새로 계산한 값으로 덮는다.
