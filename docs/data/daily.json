@@ -1526,12 +1526,12 @@
     },
     {
       "date": "2026-11-24",
-      "ads": 20629,
+      "ads": 20654,
       "admob": {
-        "USD": 11.5
+        "USD": 11.55
       },
       "admob_apps": {
-        "Crown & Coin: Idle Estate": 6.55,
+        "Crown & Coin: Idle Estate": 6.6,
         "Second Act: Property Tycoon": 3.04,
         "Abyss Lantern: Idle Deep RPG": 1.63,
         "World Restaurant Tour": 0.14,
@@ -1543,23 +1543,24 @@
     },
     {
       "date": "2026-11-25",
-      "ads": 1444,
+      "ads": 1601,
       "admob": {
-        "USD": 1.49
+        "USD": 1.86
       },
       "admob_apps": {
-        "Crown & Coin: Idle Estate": 0.66,
-        "Abyss Lantern: Idle Deep RPG": 0.51,
-        "Second Act: Property Tycoon": 0.3,
+        "Crown & Coin: Idle Estate": 0.86,
+        "Abyss Lantern: Idle Deep RPG": 0.63,
+        "Second Act: Property Tycoon": 0.34,
         "OneLine Path: One Line Puzzle": 0.01,
-        "Hexa Sort: Bee Architect": 0.01
+        "Hexa Sort: Bee Architect": 0.01,
+        "World Restaurant Tour": 0.01
       }
     }
   ],
   "synced": {
     "iap": "2026-11-20T21:24:32+09:00",
-    "ads": "2026-11-25T03:32:58+09:00",
-    "admob": "2026-11-25T03:32:59+09:00",
+    "ads": "2026-11-25T04:33:01+09:00",
+    "admob": "2026-11-25T04:33:02+09:00",
     "iap_scanned": "2026-11-24"
   }
 }
