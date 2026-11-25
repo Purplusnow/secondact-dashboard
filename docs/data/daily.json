@@ -1543,13 +1543,13 @@
     },
     {
       "date": "2026-11-25",
-      "ads": 15748,
+      "ads": 15972,
       "admob": {
-        "USD": 10.5
+        "USD": 10.68
       },
       "admob_apps": {
-        "Crown & Coin: Idle Estate": 5.24,
-        "Second Act: Property Tycoon": 3.68,
+        "Crown & Coin: Idle Estate": 5.35,
+        "Second Act: Property Tycoon": 3.75,
         "Abyss Lantern: Idle Deep RPG": 1.49,
         "World Restaurant Tour": 0.05,
         "Seoul Subway - Live Metro Map": 0.01,
@@ -1557,12 +1557,23 @@
         "OneLine Path: One Line Puzzle": 0.01,
         "Hexa Sort: Bee Architect": 0.01
       }
+    },
+    {
+      "date": "2026-11-26",
+      "ads": 167,
+      "admob": {
+        "USD": 0.06
+      },
+      "admob_apps": {
+        "Second Act: Property Tycoon": 0.04,
+        "Crown & Coin: Idle Estate": 0.02
+      }
     }
   ],
   "synced": {
     "iap": "2026-11-20T21:24:32+09:00",
-    "ads": "2026-11-25T23:32:51+09:00",
-    "admob": "2026-11-26T00:10:08+09:00",
+    "ads": "2026-11-26T00:32:52+09:00",
+    "admob": "2026-11-26T00:32:53+09:00",
     "iap_scanned": "2026-11-26"
   }
 }
