@@ -1391,7 +1391,7 @@
   },
   "haemu": {
    "title": "해무사진관 — 인게임",
-   "note": "유료 미연시(v1.1.0부터 계측). 이벤트 사전: ~/dev/girl-game/docs/ANALYTICS.md. 핵심은 어디서 멈추나(day_start), 2회차 전환(second_run), 루트·엔딩 분포.",
+   "note": "미연시 — 2026-11-26 유료 → 무료 체험(5일차까지)+정식판 해금(haemu_full) 전환(v1.2.0). v1.1.0부터 계측. 이벤트 사전: ~/dev/girl-game/docs/ANALYTICS.md. 핵심은 어디서 멈추나(day_start), 2회차 전환(second_run), 루트·엔딩 분포.",
    "widgets": [
     {
      "type": "funnel",
@@ -1495,6 +1495,56 @@
        "value": "all_endings"
       }
      ]
+    },
+    {
+     "type": "funnel",
+     "title": "유료 전환 퍼널",
+     "sub": "무료 체험(5일차) → 6일차 잠금 화면 → 결제 → 정식판 해제. 최근 신규 코호트 기준(11/26 전 설치자는 유료 시절 구매자라 잠금 화면이 안 뜬다).",
+     "steps": [
+      {
+       "label": "새 게임",
+       "event": "onboarding",
+       "param": "name",
+       "value": "new_game"
+      },
+      {
+       "label": "자유행동(4일차)",
+       "event": "onboarding",
+       "param": "name",
+       "value": "free_day"
+      },
+      {
+       "label": "5일차",
+       "event": "day_start",
+       "param": "day",
+       "value": "5"
+      },
+      {
+       "label": "무료 체험 끝(6일차 잠금 화면)",
+       "event": "paywall_view",
+       "param": "from",
+       "value": "day"
+      },
+      {
+       "label": "결제 완료",
+       "event": "paywall_buy",
+       "param": "result",
+       "value": "ok"
+      },
+      {
+       "label": "정식판 해제",
+       "event": "full_grant",
+       "param": "source",
+       "value": "paid"
+      }
+     ]
+    },
+    {
+     "type": "breakdown",
+     "title": "결제 시도 결과",
+     "sub": "paywall_buy.result — ok/canceled/pending/error(canceled 가 높으면 가격·결제 창 재검토).",
+     "event": "paywall_buy",
+     "param": "result"
     },
     {
      "type": "maxval",
