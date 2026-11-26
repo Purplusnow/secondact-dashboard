@@ -37,7 +37,11 @@ TEST_MODELS = ("SM-G991N",)
 # Play 주문번호 형식 GPA.dddd-dddd-dddd-ddddd(구독 갱신은 ..N 접미). 2026-11-17 심연의 등불에서 5마디짜리 가짜
 # 주문번호 + 한국 유저인데 currency=USD 인 '결제' 100여 건(₩119,000 상품 연타)이 들어와 ₩64만으로 잡혔다 — 결제 위조 앱.
 GPA = re.compile(r"^GPA\.\d{4}-\d{4}-\d{4}-\d{5}(\.\.\d+)?$")
-SKU_PRICE = {"haedam_full": {"KRW": 8800, "USD": 6.99}}
+SKU_PRICE = {"haedam_full": {"KRW": 8800, "USD": 6.99},
+             "haemu_full": {"KRW": 6600, "USD": 4.99}}
+# iap_purchase 대신 paywall_buy(result='ok') 로 결제를 남기는 앱 → 그 앱의 정식판 sku.
+# 해무사진관: 2026-11-26 유료 앱 → 무료+정식판 해금(haemu_full)으로 전환. 이벤트에 sku 가 없고 v1.3.0 부터 order_id 가 붙는다.
+PAYWALL_SKU = {"haemu": "haemu_full"}
 
 VAL = ("COALESCE((SELECT value.double_value FROM UNNEST(event_params) WHERE key='value'),"
        "(SELECT value.float_value FROM UNNEST(event_params) WHERE key='value'),"
@@ -92,6 +96,8 @@ def main() -> None:
             # 표준 purchase 를 안 남기는 앱 — 자체 iap_purchase 이벤트. 앱(템플릿)마다 금액 키가 다르다:
             #   value+currency(Monet 템플릿: 월드 레스토랑·한붓길·자이로그리드) · micros+currency(빗물초밥·심연의 등불)
             #   · won(꿀벌 건축가, 원화) · sku 만(해담하우스 → SKU_PRICE 정가)
+            #   · paywall_buy result=ok(해무사진관 — PAYWALL_SKU 정가, 웹 테스트 web=1 은 뺀다)
+            pw = "TRUE" if k in PAYWALL_SKU else "FALSE"
             sql2 = f"""
               SELECT FORMAT_TIMESTAMP('%Y-%m-%d', TIMESTAMP_MICROS(event_timestamp), 'Asia/Seoul') AS d,
                      UPPER((SELECT value.string_value FROM UNNEST(event_params) WHERE key='currency')) AS cur,
@@ -105,7 +111,10 @@ def main() -> None:
                      COALESCE((SELECT value.string_value FROM UNNEST(event_params) WHERE key='order_id'),
                               (SELECT value.string_value FROM UNNEST(event_params) WHERE key='order')) AS ord
               FROM `{a['project']}.{ds}.events_*`
-              WHERE _TABLE_SUFFIX IN ({lst}) AND event_name = 'iap_purchase'
+              WHERE _TABLE_SUFFIX IN ({lst})
+                AND (event_name = 'iap_purchase' OR ({pw} AND event_name = 'paywall_buy'
+                     AND (SELECT value.string_value FROM UNNEST(event_params) WHERE key='result') = 'ok'
+                     AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='web') IS NULL))
                 AND IFNULL(device.mobile_model_name, '') NOT IN ({", ".join(repr(m) for m in TEST_MODELS)})
                 AND (SELECT value.int_value FROM UNNEST(event_params) WHERE key='debug_event') IS NULL"""
             for r in c.query(sql2, location=loc).result():
@@ -120,9 +129,9 @@ def main() -> None:
                     cur, amt = r["cur"], r["micros"] / 1e6
                 elif r["won"]:
                     cur, amt = "KRW", float(r["won"])
-                elif r["sku"] in SKU_PRICE:
+                elif (r["sku"] or PAYWALL_SKU.get(k)) in SKU_PRICE:
                     cur = "KRW" if r["kr"] else "USD"
-                    amt = SKU_PRICE[r["sku"]][cur]
+                    amt = SKU_PRICE[r["sku"] or PAYWALL_SKU[k]][cur]
                 else:
                     print(f"::warning::{k} iap_purchase 금액 모름: {r['sku']}")
                     continue
