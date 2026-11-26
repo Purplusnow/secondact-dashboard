@@ -83,6 +83,11 @@ jobs:
       - name: 앱별 인앱(GA4)
         continue-on-error: true
         run: python3 tools/iap_apps.py
+      # 환불·취소 주문(Play Voided Purchases API, 최근 30일) → refunds.json. 보드가 GA4 인앱에서 뺀다(2026-11-27~).
+      # 키는 GCP_SA_CROWNCOIN 서비스 계정 — Play Console 계정 권한 '재무 데이터, 주문… 보기'.
+      - name: 환불·취소(Play)
+        continue-on-error: true
+        run: python3 tools/refunds.py
       - name: 커밋
         run: |
           git config user.name  "secondact-bot"
@@ -90,7 +95,7 @@ jobs:
           # common·gamestats·feedback.json 은 이 잡만 쓴다 — 밀리면 최신 위에 내 파일만 얹어 다시 민다.
           # daily.json(iap 필드)은 sync 와 공유라 복사하지 않고 다시 수집한다.
           FILES="docs/data/common.json"
-          for f in docs/data/feedback.json docs/data/gamestats.json docs/data/iap_ga4.json; do [ -f "$f" ] && FILES="$FILES $f"; done
+          for f in docs/data/feedback.json docs/data/gamestats.json docs/data/iap_ga4.json docs/data/refunds.json; do [ -f "$f" ] && FILES="$FILES $f"; done
           mkdir -p "$RUNNER_TEMP/keep" && cp $FILES "$RUNNER_TEMP/keep/"
           for i in 1 2 3; do
             git add $FILES docs/data/daily.json

@@ -89,6 +89,7 @@
     S.gs = await get('data/gamestats.json');
     S.manualSales = await get('data/manual_sales.json');   // 판매 리포트 전 주문 수동 기록(유료 앱 구매 등)
     S.adsApps = await get('data/ads_apps.json');
+    S.refunds = await get('data/refunds.json');   // Play 환불·취소 주문(tools/refunds.py) — GA4 로 센 인앱에서 뺀다
     S.iapGa4 = await get('data/iap_ga4.json');   // 인생 2막 외 앱의 GA4 인앱(판매 리포트 전) — tools/iap_apps.py   // 광고 손익 탭용(앱별 광고비 — Ads 스크립트 갱신 전엔 없음)
     if (!apps || !daily) { $('#pf-error').hidden = false; return; }
     // review: true = Play 심사 중(스토어 미공개) — 화면에서 뺀다(형 지시 2026-11-12). 매출이 잡히면 '기타(목록 밖)'로 간다.
@@ -207,6 +208,14 @@
         M.apps[k].iapProv[d] = true;
       }
     }
+    // 환불·취소(refunds.json): GA4 는 결제만 알고 환불을 모른다 → 판매 리포트가 덮지 않는 날에서만 뺀다.
+    // 리포트가 덮는 날은 리포트가 이미 뺐고, 테스트 폰 결제는 GA4 집계에서 애초에 빠져 있다.
+    for (const o of Object.values((S.refunds && S.refunds.orders) || {})) {
+      const k = o.app;
+      if (!M.apps[k] || o.amt == null || o.test || o.covered || o.manual) continue;
+      if (k === 'secondact' ? covered(o.date) : (lastOrder && o.date <= lastOrder)) continue;
+      M.apps[k].iap[o.date] = (M.apps[k].iap[o.date] || 0) - ((o.amt * rate(o.cur, o.date)) / (1 + tax(o.cur))) * (1 - fee);
+    }
 
     // 공통지표
     for (const a of S.apps) {
@@ -229,7 +238,8 @@
   /* 수동 주문 중 판매 리포트가 아직 안 담은 것(리포트 마지막 주문 시각 < 주문 시각) */
   function manualOrders() {
     const last = (S.sales && S.sales.last_order) || '';
-    return ((S.manualSales && S.manualSales.orders) || []).filter(o => !last || o.at > last);
+    const refunded = (S.refunds && S.refunds.orders) || {};
+    return ((S.manualSales && S.manualSales.orders) || []).filter(o => (!last || o.at > last) && !refunded[o.order]);
   }
   function paidBuyers(a) {
     let n = manualOrders().filter(o => o.package === a.package).length;

@@ -1,0 +1,74 @@
+{
+ "orders": {
+  "GPA.3313-3722-5454-82837": {
+   "app": "crowncoin",
+   "purchased": "2026-10-28",
+   "voided": "2026-10-31",
+   "reason": "unacknowledged_purchase",
+   "source": "google",
+   "kind": "iap"
+  },
+  "GPA.3384-1827-1334-22470": {
+   "app": "crowncoin",
+   "purchased": "2026-10-28",
+   "voided": "2026-10-31",
+   "reason": "unacknowledged_purchase",
+   "source": "google",
+   "kind": "iap"
+  },
+  "GPA.3391-2074-9307-91058": {
+   "app": "crowncoin",
+   "purchased": "2026-10-30",
+   "voided": "2026-10-30",
+   "reason": "not_received",
+   "source": "user",
+   "kind": "iap"
+  },
+  "GPA.3350-0880-6931-55046": {
+   "app": "haedamhouse",
+   "purchased": "2026-11-25",
+   "voided": "2026-11-25",
+   "reason": "remorse",
+   "source": "user",
+   "kind": "iap",
+   "date": "2026-11-25",
+   "cur": "KRW",
+   "amt": 8800,
+   "test": false,
+   "match": "order"
+  },
+  "GPA.3341-0998-6263-00425": {
+   "app": "haedamhouse",
+   "purchased": "2026-11-27",
+   "voided": "2026-11-27",
+   "reason": "remorse",
+   "source": "user",
+   "kind": "iap"
+  }
+ },
+ "access": {
+  "pocketarcade": 200,
+  "adrevenue": 200,
+  "privatecam": 200,
+  "secondact": 200,
+  "plopcat": 200,
+  "crowncoin": 200,
+  "baduk": 200,
+  "haemu": 200,
+  "gyrogrid": 200,
+  "onelinepath": 200,
+  "beearchitect": 200,
+  "mergerailway": 200,
+  "facelapse": 200,
+  "haedamhouse": 200,
+  "worldrest": 200,
+  "rainloopsushi": 200,
+  "abysslantern": 200,
+  "drakewing": 200,
+  "aurorate": 200,
+  "bloomdo": 200,
+  "amberoll": 200,
+  "subwaylive": 200
+ },
+ "updated": "2026-11-27T07:35:48+09:00"
+}
