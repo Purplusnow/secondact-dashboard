@@ -1,0 +1,36 @@
+# 앱 하나의 국가별 누적 광고매출(AdMob) — 수동 실행 전용. 아무것도 커밋하지 않는다(로그로만).
+name: admob-geo
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: 'AdMob 앱 이름에 들어가는 글자 (예: Second Act)'
+        required: true
+        default: 'Second Act'
+      since:
+        description: '시작일 YYYY-MM-DD'
+        required: false
+        default: '2026-08-30'
+
+permissions:
+  contents: read
+
+jobs:
+  geo:
+    runs-on: ubuntu-latest
+    env:
+      ADMOB_CLIENT_ID: ${{ secrets.ADMOB_CLIENT_ID }}
+      ADMOB_CLIENT_SECRET: ${{ secrets.ADMOB_CLIENT_SECRET }}
+      ADMOB_REFRESH_TOKEN: ${{ secrets.ADMOB_REFRESH_TOKEN }}
+      ADMOB_PUBLISHER_ID: ${{ secrets.ADMOB_PUBLISHER_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 조회
+        env:
+          APP: ${{ inputs.app }}
+          SINCE: ${{ inputs.since }}
+        run: python3 tools/admob_geo.py --app "$APP" --since "$SINCE"
