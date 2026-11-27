@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-27",
+  "updated": "2026-11-28",
   "note": "하루 한 줄. 숫자면 원화, {\"USD\": 8.97}이면 그날 환율로 환산. 날짜는 모두 KST 기준.",
   "daily": [
     {
@@ -1577,12 +1577,12 @@
     {
       "date": "2026-11-27",
       "admob": {
-        "USD": 13.38
+        "USD": 14.0
       },
       "admob_apps": {
-        "Crown & Coin: Idle Estate": 7.06,
-        "Abyss Lantern: Idle Deep RPG": 2.82,
-        "Second Act: Property Tycoon": 2.21,
+        "Crown & Coin: Idle Estate": 7.39,
+        "Abyss Lantern: Idle Deep RPG": 2.92,
+        "Second Act: Property Tycoon": 2.4,
         "World Restaurant Tour": 0.44,
         "FaceLapse: AI Face Age": 0.42,
         "Merge Railway: Train Makeover": 0.38,
@@ -1591,17 +1591,27 @@
         "Aurorate: Currency Converter": 0.01,
         "Drakewing: Dragon Sky Shooter": 0.01
       },
-      "ads": 14640,
+      "ads": 14785,
       "iap": {
         "AUD": 2.89
       },
       "iap_src": "ga4"
+    },
+    {
+      "date": "2026-11-28",
+      "ads": 0,
+      "admob": {
+        "USD": 0.13
+      },
+      "admob_apps": {
+        "Crown & Coin: Idle Estate": 0.13
+      }
     }
   ],
   "synced": {
     "iap": "2026-11-27T20:13:07+09:00",
-    "ads": "2026-11-27T23:32:50+09:00",
-    "admob": "2026-11-27T23:32:50+09:00",
+    "ads": "2026-11-28T00:32:54+09:00",
+    "admob": "2026-11-28T00:32:55+09:00",
     "iap_scanned": "2026-11-27"
   }
 }
