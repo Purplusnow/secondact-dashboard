@@ -1577,10 +1577,10 @@
     {
       "date": "2026-11-27",
       "admob": {
-        "USD": 14.05
+        "USD": 14.0
       },
       "admob_apps": {
-        "Crown & Coin: Idle Estate": 7.44,
+        "Crown & Coin: Idle Estate": 7.39,
         "Abyss Lantern: Idle Deep RPG": 2.92,
         "Second Act: Property Tycoon": 2.4,
         "World Restaurant Tour": 0.44,
@@ -1591,7 +1591,7 @@
         "Aurorate: Currency Converter": 0.01,
         "Drakewing: Dragon Sky Shooter": 0.01
       },
-      "ads": 14844,
+      "ads": 14872,
       "iap": {
         "AUD": 2.89
       },
@@ -1601,21 +1601,21 @@
       "date": "2026-11-28",
       "ads": 0,
       "admob": {
-        "USD": 0.74
+        "USD": 1.01
       },
       "admob_apps": {
+        "Crown & Coin: Idle Estate": 0.37,
         "Private Camera - Photo Vault": 0.34,
-        "Crown & Coin: Idle Estate": 0.23,
-        "Abyss Lantern: Idle Deep RPG": 0.11,
-        "Second Act: Property Tycoon": 0.05,
+        "Second Act: Property Tycoon": 0.17,
+        "Abyss Lantern: Idle Deep RPG": 0.12,
         "Aurorate: Currency Converter": 0.01
       }
     }
   ],
   "synced": {
     "iap": "2026-11-27T20:13:07+09:00",
-    "ads": "2026-11-28T01:32:52+09:00",
-    "admob": "2026-11-28T01:32:53+09:00",
+    "ads": "2026-11-28T02:32:54+09:00",
+    "admob": "2026-11-28T02:32:55+09:00",
     "iap_scanned": "2026-11-27"
   }
 }
