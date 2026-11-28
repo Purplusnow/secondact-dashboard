@@ -844,7 +844,7 @@
      "HaedamHouse_KR_AOS_Live"
     ],
     "conv": 51.0,
-    "cost": 14981
+    "cost": 15030
    }
   },
   "2026-11-28": {
@@ -854,16 +854,24 @@
      "AbyssLantern_TW_AOS_Live"
     ],
     "conv": 0.0,
-    "cost": 13
+    "cost": 120
    },
    "com.purplusnow.haedamhouse": {
     "campaigns": [
      "HaedamHouse_KR_AOS_Live"
     ],
     "conv": 1.0,
-    "cost": 1940
+    "cost": 2673
+   },
+   "com.purplusnow.secondactlife": {
+    "campaigns": [
+     "SALife_US_AOS_Live",
+     "SALife_KR_AOS_Live"
+    ],
+    "conv": 0.0,
+    "cost": 119
    }
   }
  },
- "updated": "2026-11-28T09:32:50+09:00"
+ "updated": "2026-11-28T10:35:35+09:00"
 }
